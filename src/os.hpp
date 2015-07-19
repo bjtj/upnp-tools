@@ -70,6 +70,8 @@
 #	include <sys/stat.h>
 #	include <io.h>
 
+#	define __func__ __FUNCTION__
+
 #endif /* OS DETECTING */
 
 
@@ -333,8 +335,8 @@ namespace OS {
 		virtual bool compareFd(int fd);
 		virtual int getFd();
 
-		virtual int recv(char * buffer, int max);
-		virtual int send(char * buffer, int length);
+		virtual int recv(char * buffer, size_t max);
+		virtual int send(char * buffer, size_t length);
 
 		virtual void shutdown(/* type */);
 		virtual void close();
@@ -419,6 +421,7 @@ namespace OS {
 		virtual void setReuseAddr();
 		virtual void setBroadcast();
 		virtual int joinGroup(const char * group);
+		virtual int joinGroup(const std::string & group);
 		virtual int bind();
 		virtual int connect();
 
@@ -426,8 +429,8 @@ namespace OS {
 		virtual bool compareFd(int fd);
 		virtual int getFd();
 
-		virtual int recv(char * buffer, int max);
-		virtual int send(const char * host, int port, char * buffer, int length);
+		virtual int recv(char * buffer, size_t max);
+		virtual int send(const char * host, int port, char * buffer, size_t length);
 
 		virtual void shutdown(/* type */);
 		virtual void close();

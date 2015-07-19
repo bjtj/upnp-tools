@@ -1,6 +1,7 @@
 bin_PROGRAMS=upnp-tools
 upnp_tools_SOURCES=Text.hpp Text.cpp \
 	os.hpp os.cpp \
+	HttpHeader.hpp HttpHeader.cpp \
 	SSDPServer.hpp SSDPServer.cpp \
 	main.cpp
 

@@ -518,10 +518,10 @@ namespace OS {
 		virtual int getFd() {
 			return socket();
 		}
-		virtual int recv(char * buffer, int max) {
+		virtual int recv(char * buffer, size_t max) {
 			return ::read(socket(), buffer, max);
 		}
-		virtual int send(char * buffer, int length) {
+		virtual int send(char * buffer, size_t length) {
 			return ::write(socket(), buffer, length);
 		}
 		virtual void shutdown(/* type */) {}
@@ -641,14 +641,14 @@ namespace OS {
 		virtual int getFd() {
 			return (int)this->socket();
 		}
-		virtual int recv(char * buffer, int max) {
+		virtual int recv(char * buffer, size_t max) {
 			if (this->socket() == INVALID_SOCKET) {
 				return -1;
 			}
 			return ::recv(this->socket(), buffer, max, 0);
 		}
 
-		virtual int send(char * buffer, int length) {
+		virtual int send(char * buffer, size_t length) {
 			if (this->socket() == INVALID_SOCKET) {
 				return -1;
 			}
@@ -733,11 +733,11 @@ namespace OS {
 	int Socket::getFd() {
 		return socketImpl ? socketImpl->getFd() : -1;
 	}
-	int Socket::recv(char * buffer, int max) {
+	int Socket::recv(char * buffer, size_t max) {
 		return socketImpl ? socketImpl->recv(buffer, max) : -1;
 	}
 	
-	int Socket::send(char * buffer, int length) {
+	int Socket::send(char * buffer, size_t length) {
 		return socketImpl ? socketImpl->send(buffer, length) : -1;
 	}
 
@@ -1185,7 +1185,7 @@ namespace OS {
 		virtual int getFd() {
 			return socket();
 		}
-		virtual int recv(char * buffer, int max) {
+		virtual int recv(char * buffer, size_t max) {
 			struct sockaddr_in client_addr;
 			socklen_t client_addr_size = sizeof(client_addr);
 			return ::recvfrom(socket(), buffer, max, 0,
@@ -1194,7 +1194,7 @@ namespace OS {
 		virtual int send(const char * host,
 						 int port,
 						 char * buffer,
-						 int length) {
+						 size_t length) {
 
 			int ret = -1;
 			char portstr[10] = {0,};
@@ -1360,14 +1360,14 @@ namespace OS {
 		virtual int getFd() {
 			return (int)socket();
 		}
-		virtual int recv(char * buffer, int max) {
+		virtual int recv(char * buffer, size_t max) {
 			if (socket() == INVALID_SOCKET) {
 				return -1;
 			}
 			return ::recv(socket(), buffer, max, 0);
 		}
 
-		virtual int send(char * buffer, int length) {
+		virtual int send(char * buffer, size_t length) {
 			if (socket() == INVALID_SOCKET) {
 				return -1;
 			}
@@ -1464,6 +1464,9 @@ namespace OS {
 	int DatagramSocket::joinGroup(const char * host) {
 		return socketImpl ? socketImpl->joinGroup(host) : -1;
 	}
+	int DatagramSocket::joinGroup(const std::string & group) {
+		return joinGroup(group.c_str());
+	}
 	int DatagramSocket::connect() {
 		return socketImpl ? socketImpl->connect() : -1;
 	}
@@ -1479,12 +1482,12 @@ namespace OS {
 	int DatagramSocket::getFd() {
 		return socketImpl ? socketImpl->getFd() : -1;
 	}
-	int DatagramSocket::recv(char * buffer, int max) {
+	int DatagramSocket::recv(char * buffer, size_t max) {
 		return socketImpl ? socketImpl->recv(buffer, max) : -1;
 	}
 	
 	int DatagramSocket::send(const char * host, int port,
-							 char * buffer, int length) {
+							 char * buffer, size_t length) {
 		return socketImpl ? socketImpl->send(host, port, buffer, length) : -1;
 	}
 
