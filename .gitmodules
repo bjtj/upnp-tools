@@ -1,0 +1,3 @@
+[submodule "deps/http-server"]
+	path = deps/http-server
+	url = https://github.com/bjtj/http-server.git

@@ -1,1 +1,3 @@
-SUBDIRS=src
+ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
+
+SUBDIRS=deps/http-server src

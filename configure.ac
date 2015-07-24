@@ -4,11 +4,15 @@
 AC_PREREQ([2.69])
 AC_INIT([upnp-tools], [0.1], [bjtj10@gmail.com])
 
-AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE
+
+LT_PREREQ([2.2])
+LT_INIT([dlopen])
 
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADERS([config.h])
+
+AC_CONFIG_MACRO_DIR([m4])
 
 # Checks for programs.
 AC_PROG_CXX
@@ -36,5 +40,8 @@ AC_FUNC_MALLOC
 AC_CHECK_FUNCS([gettimeofday memset mkdir socket strcasecmp])
 
 AC_CONFIG_FILES([Makefile
-                 src/Makefile])
+				 src/Makefile])
+
+AC_CONFIG_SUBDIRS([deps/http-server])
+
 AC_OUTPUT
