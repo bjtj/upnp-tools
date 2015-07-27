@@ -5,10 +5,9 @@ DEPS=`ls`
 
 for ITEM in $DEPS; do
 	TARGET="$BASE/$ITEM"
+	echo "$TARGET"
 	if [ -d "$TARGET" ]; then
 		cd "$TARGET"
-		git submodule init
-		git submodule update
-		git pull
+		git pull origin master
 	fi
 done
