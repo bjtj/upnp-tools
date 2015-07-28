@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: libupnp-tools
+Description: UPnP Tools C++ Library
+Version: @VERSION@
+Libs: -L${libdir} -lupnp-tools
+Cflags: -I${includedir}/libupnp-tools

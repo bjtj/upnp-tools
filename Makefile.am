@@ -1,3 +1,6 @@
-ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
+ACLOCAL_AMFLAGS=-I m4 ${ACLOCAL_FLAGS}
 
-SUBDIRS = deps/oslayer deps/http-server libupnp-tools examples
+pkgconfigdir=$(libdir)/pkgconfig
+pkgconfig_DATA=upnp-tools.pc
+
+SUBDIRS=libupnp-tools examples

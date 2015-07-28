@@ -25,6 +25,9 @@ AC_PROG_MKDIR_P
 # Checks for libraries.
 ACX_PTHREAD
 
+PKG_CHECK_MODULES([LIBOSLAYER], [oslayer])
+PKG_CHECK_MODULES([LIBHTTP_SERVER], [http-server])
+
 # Checks for header files.
 AC_CHECK_HEADERS([arpa/inet.h netdb.h netinet/in.h sys/socket.h sys/time.h unistd.h])
 
@@ -41,9 +44,7 @@ AC_CHECK_FUNCS([gettimeofday memset mkdir socket strcasecmp])
 
 AC_CONFIG_FILES([Makefile
 				 libupnp-tools/Makefile
-				 examples/Makefile])
-
-AC_CONFIG_SUBDIRS([deps/oslayer
-				   deps/http-server])
+				 examples/Makefile
+				 upnp-tools.pc])
 
 AC_OUTPUT

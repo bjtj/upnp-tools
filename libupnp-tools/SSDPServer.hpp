@@ -1,8 +1,8 @@
 #ifndef __SSDP_SERVER_HPP__
 #define __SSDP_SERVER_HPP__
 
-#include "os.hpp"
-#include "HttpHeader.hpp"
+#include <liboslayer/os.hpp>
+#include <libhttp-server/HttpHeader.hpp>
 
 #include <string>
 #include <vector>

@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "UPnPDevice.hpp"
-#include "HttpServer.hpp"
 
 namespace UPNP {
 
