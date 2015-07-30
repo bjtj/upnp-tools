@@ -15,11 +15,11 @@ public:
 	}
 
 	virtual void onMsearch(HttpHeader & header) {
-		std::cout << "msearch - " << header.getHeaderField("ST") << std::endl;
+		std::cout << "msearch - " << header.getHeaderFieldIgnoreCase("ST") << std::endl;
 	}
 
 	virtual void onNotify(HttpHeader & header) {
-		std::cout << "notify - " << header.getHeaderField("Location") << std::endl;
+		std::cout << "notify - " << header.getHeaderFieldIgnoreCase("Location") << std::endl;
 	}
 };
 

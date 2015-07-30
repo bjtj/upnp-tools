@@ -1,6 +1,7 @@
 #include "SSDPServer.hpp"
 #include "Text.hpp"
 #include <algorithm>
+#include <libhttp-server/HttpHeaderParser.hpp>
 
 namespace SSDP {
 
