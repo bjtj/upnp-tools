@@ -8,27 +8,37 @@
 
 namespace UPNP {
 
+	/**
+	 * @brief upnp device
+	 */
 	class UPnPDevice {
 	private:
+
+		std::string udn;
+		std::string friendlyName;
+		
 		UPnPDevice * parent;
-		std::vector<UPnPDevice *> embeddedDevices;
-		std::vector<UPnPService *> services;
+		std::vector<UPnPDevice> embeddedDevices;
+		std::vector<UPnPService> services;
 		
 	public:
 		UPnPDevice();
 		virtual ~UPnPDevice();
-	};
-	
-	class UPnPDevicePool {
-	private:
-		std::vector<UPnPDevice*> devices;
-	public:
-		UPnPDevicePool();
-		virtual ~UPnPDevicePool();
 
-		void add(UPnPDevice * device);
-		void remove(UPnPDevice * device);
-		UPnPDevice & getDevice(std::string udn);
+
+		void setUdn(std::string udn);
+		std::string getUdn();
+		void setFriendlyName(std::string friendlyName);
+		std::string getFriendlyName();
+		
+		void setParent(UPnPDevice * parent);
+		UPnPDevice * getParent();
+		void addEmbeddedDevice(UPnPDevice & embeddedDevice);
+		void removeEmbeddedDevice(UPnPDevice & embeddedDevice);
+		UPnPDevice getEmbeddedDevice(int index);
+		void addService(UPnPService & service);
+		void removeService(UPnPService & service);
+		UPnPService getService(std::string serviceType);
 	};
 
 }

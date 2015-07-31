@@ -65,14 +65,15 @@ namespace UPNP {
 	 */
 	class UPnPService {
 	private:
-		
+		std::string serviceType;
 		std::vector<UPnPAction> actions;
 		
 	public:
 		
-		UPnPService();
+		UPnPService(std::string serviceType);
 		virtual ~UPnPService();
 
+		std::string getServiceType();
 		UPnPAction & getAction(std::string name);
 
 		virtual int sendAction(UPnPActionRequest & request);
