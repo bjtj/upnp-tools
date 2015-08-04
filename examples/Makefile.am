@@ -1,6 +1,13 @@
-noinst_PROGRAMS = upnp-tools
-upnp_tools_SOURCES = main.cpp
-upnp_tools_CPPFLAGS =-I$(top_srcdir)/libupnp-tools
-upnp_tools_CXXFLAGS = $(PTHREAD_CXXFLAGS) $(LIBOSLAYER_CFLAGS) $(LIBHTTP_SERVER_CFLAGS)
-upnp_tools_LDFLAGS = $(PTHREAD_CFLAGS)
-upnp_tools_LDADD = ../libupnp-tools/libupnp-tools.la $(LIBOSLAYER_LIBS) $(LIBHTTP_SERVER_LIBS)
+noinst_PROGRAMS = ssdp-server cp
+
+ssdp_server_SOURCES = ssdp-server.cpp
+ssdp_server_CPPFLAGS =-I$(top_srcdir)/libupnp-tools
+ssdp_server_CXXFLAGS = $(PTHREAD_CXXFLAGS) $(LIBOSLAYER_CFLAGS) $(LIBHTTP_SERVER_CFLAGS)
+ssdp_server_LDFLAGS = $(PTHREAD_CFLAGS)
+ssdp_server_LDADD = ../libupnp-tools/libupnp-tools.la $(LIBOSLAYER_LIBS) $(LIBHTTP_SERVER_LIBS)
+
+cp_SOURCES = cp.cpp
+cp_CPPFLAGS =-I$(top_srcdir)/libupnp-tools
+cp_CXXFLAGS = $(PTHREAD_CXXFLAGS) $(LIBOSLAYER_CFLAGS) $(LIBHTTP_SERVER_CFLAGS)
+cp_LDFLAGS = $(PTHREAD_CFLAGS)
+cp_LDADD = ../libupnp-tools/libupnp-tools.la $(LIBOSLAYER_LIBS) $(LIBHTTP_SERVER_LIBS)
