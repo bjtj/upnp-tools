@@ -14,7 +14,7 @@ namespace UPNP {
 	class UPnPActionArgument {
 	private:
 		std::string name;
-		StateVariable stateVariable;
+		UPnPStateVariable stateVariable;
 		argument_direction_e direction;
 		
 	public:

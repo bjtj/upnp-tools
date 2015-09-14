@@ -1,6 +1,9 @@
+#include <algorithm>
 #include "UPnPDevice.hpp"
 
 namespace UPNP {
+
+	using namespace std;
 
 	UPnPDevice::UPnPDevice() : parent(NULL) {
 	}
@@ -50,7 +53,7 @@ namespace UPNP {
 	}
 
 	UPnPDevice UPnPDevice::getEmbeddedDevice(int index) {
-		return embeddedDevice[index];
+		return embeddedDevices[index];
 	}
 
 	void UPnPDevice::addService(UPnPService & service) {
@@ -69,10 +72,14 @@ namespace UPNP {
 			 iter != services.end(); iter++) {
 			
 			UPnPService & service = *iter;
-			if (!service.getServiceType.compare(serviceType)) {
+			if (!service.getServiceType().compare(serviceType)) {
 				return service;
 			}
 		}
 		return UPnPService();
+	}
+
+	bool UPnPDevice::operator==(const UPnPDevice &other) const {
+		return (this->udn.compare(other.udn) == 0);
 	}
 }

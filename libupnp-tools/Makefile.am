@@ -1,7 +1,7 @@
 lib_LTLIBRARIES = libupnp-tools.la
 
 libupnp_toolsincdir = ${includedir}/upnp-tools
-libupnp_toolsinc_HEADERS =
+libupnp_toolsinc_HEADERS = \
 						SSDPServer.hpp \
 						UPnP.hpp \
 						UPnPAction.hpp \
@@ -14,7 +14,7 @@ libupnp_toolsinc_HEADERS =
 						UPnPService.hpp \
 						UPnPStateVariable.hpp
 
-libupnp_tools_la_SOURCES =
+libupnp_tools_la_SOURCES = \
 						SSDPServer.cpp \
 						SSDPServer.hpp \
 						UPnP.hpp \
@@ -30,6 +30,7 @@ libupnp_tools_la_SOURCES =
 						UPnPDevicePool.cpp \
 						UPnPDevicePool.hpp \
 						UPnPServer.hpp \
+						UPnPService.cpp \
 						UPnPService.hpp \
 						UPnPStateVariable.cpp \
 						UPnPStateVariable.hpp

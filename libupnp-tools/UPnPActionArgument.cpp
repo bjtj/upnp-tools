@@ -1,6 +1,8 @@
 #include "UPnPActionArgument.hpp"
 
 namespace UPNP {
+
+	using namespace std;
 	
 	UPnPActionArgument::UPnPActionArgument() : direction(UNKNOWN_DIRECTION) {
 	}

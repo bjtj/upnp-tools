@@ -39,7 +39,7 @@ namespace UPNP {
 	class UPnPControlPoint {
 	private:
 		std::string searchTarget;
-		SSDPServer ssdpServer;
+		SSDP::SSDPServer ssdpServer;
 		SSDPHandler ssdpHandler;
 		HTTP::HttpServer httpServer;
 		std::vector<UPnPDevice> devices;
@@ -55,7 +55,7 @@ namespace UPNP {
 		virtual bool isRunning();
 
 		virtual void sendMsearch();
-		virtual vector<UPnPDevice> getDeviceList();
+		virtual std::vector<UPnPDevice> getDeviceList();
 		virtual UPnPDevice getDevice(std::string udn);
 		virtual void removeAllDevices();
 

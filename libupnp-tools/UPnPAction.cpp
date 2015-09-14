@@ -16,6 +16,10 @@ namespace UPNP {
 		return arguments;
 	}
 	vector<UPnPStateVariable> & UPnPAction::getStateVariables() {
-		return stateVariable;
+		return stateVariables;
+	}
+
+	bool UPnPAction::isEmpty() {
+		return name.empty();
 	}
 }

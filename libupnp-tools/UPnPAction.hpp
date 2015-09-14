@@ -28,6 +28,8 @@ namespace UPNP {
 
 		std::vector<UPnPActionArgument> & getArguments();
 		std::vector<UPnPStateVariable> & getStateVariables();
+
+		bool isEmpty();
 	};
 	
 }

@@ -20,7 +20,7 @@ namespace UPNP {
 	string UPnPStateVariable::getDataType() {
 		return dataType;
 	}
-	void setDefaultValue(std::string & defValue) {
+	void UPnPStateVariable::setDefaultValue(std::string & defValue) {
 		this->defValue = defValue;
 	}
 	string UPnPStateVariable::getDefaultValue() {

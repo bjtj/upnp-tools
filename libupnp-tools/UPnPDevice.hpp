@@ -40,6 +40,8 @@ namespace UPNP {
 		void addService(UPnPService & service);
 		void removeService(UPnPService & service);
 		UPnPService getService(std::string serviceType);
+
+		bool operator==(const UPnPDevice &other) const;
 	};
 }
 
