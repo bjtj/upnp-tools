@@ -2,6 +2,7 @@
 
 namespace UPNP {
 
+	using namespace std;
 
 	/**
 	 * @brief ssdp handler
@@ -10,28 +11,31 @@ namespace UPNP {
 	}
 	SSDPHandler::~SSDPHandler() {
 	}
-	void SSDPHandler::onMsearch(HTTP::HttpHeader & header) {
-	}
 	void SSDPHandler::onNotify(HTTP::HttpHeader & header) {
+		// request device description
 	}
 
 	/**
 	 * @brief upnp control point
 	 */
-
-	UPnPControlPoint::UPnPControlPoint(std::string searchTarget) : 
-		searchTarget(searchTarget), listener(NULL) {
+	UPnPControlPoint::UPnPControlPoint(int port, string searchTarget) : 
+		searchTarget(searchTarget), httpServer(port), listener(NULL) {
 	}
 
 	UPnPControlPoint::~UPnPControlPoint() {
 	}
 
-	void UPnPControlPoint::start() {
-		ssdpServer.start();
+	void UPnPControlPoint::startAsync() {
+
+		ssdpServer.addNotifyHandler(&ssdpHandler);
+		
+		ssdpServer.startAsync();
+		httpServer.startAsync();
 	}
 
 	void UPnPControlPoint::stop() {
 		ssdpServer.stop();
+		httpServer.stop();
 	}
 
 	bool UPnPControlPoint::isRunning() {
@@ -47,7 +51,11 @@ namespace UPNP {
 	}
 
 	UPnPDevice UPnPControlPoint::getDevice(std::string udn) {
-		for (vector<UPnPDevice>::iterator iter = devices.begin(); iter != devices.end(); iter++) {
+		
+		for (vector<UPnPDevice>::iterator iter = devices.begin(); 
+			 iter != devices.end();
+			 iter++) {
+			
 			UPnPDevice & device = *iter;
 			if (!device.getUdn().compare(udn)) {
 				return device;

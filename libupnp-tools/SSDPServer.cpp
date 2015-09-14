@@ -91,6 +91,9 @@ namespace SSDP {
 
 		stopPollingThread();
 
+		notifyHandlers.clear();
+		msearchHandlers.clear();
+
 		if (socket) {
 			delete socket;
 			socket = NULL;

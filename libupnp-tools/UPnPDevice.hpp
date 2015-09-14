@@ -31,8 +31,9 @@ namespace UPNP {
 		void setFriendlyName(std::string friendlyName);
 		std::string getFriendlyName();
 		
-		void setParent(UPnPDevice * parent);
-		UPnPDevice * getParent();
+		void setParentDevice(UPnPDevice * parent);
+		UPnPDevice * getParentDevice();
+		bool isRootDevice();
 		void addEmbeddedDevice(UPnPDevice & embeddedDevice);
 		void removeEmbeddedDevice(UPnPDevice & embeddedDevice);
 		UPnPDevice getEmbeddedDevice(int index);
@@ -40,7 +41,6 @@ namespace UPNP {
 		void removeService(UPnPService & service);
 		UPnPService getService(std::string serviceType);
 	};
-
 }
 
 #endif

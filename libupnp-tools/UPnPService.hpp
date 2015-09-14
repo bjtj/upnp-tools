@@ -3,62 +3,11 @@
 
 #include <vector>
 
+#include "UPnPStateVariable.hpp"
+#include "UPnPAction.hpp"
+
+
 namespace UPNP {
-
-	class UPnPServiceBuilder;
-
-	/**
-	 * @brief upnp state variable
-	 */
-	class UPnPStateVariable {
-	private:
-	public:
-		
-		UPnPStateVariable();
-		virtual ~UPnPStateVariable();
-
-		std::string getName();
-		std::string getDataType();
-		bool isSet(std::string flag);
-		std::vector<std::string> getAllowedValueList();
-	};
-
-	/**
-	 * @brief upnp action argument
-	 */
-	class UPnPActionArgument {
-	private:
-	public:
-		
-		UPnPActionArgument();
-		virtual ~UPnPActionArgument();
-
-		bool inDirection();
-		bool outDirection();
-		std::string getName();
-		std::string getStateVariableName();
-	};
-
-	/**
-	 * @brief upnp action
-	 */
-	class UPnPAction {
-	private:
-		
-		std::vector<UPnPActionArgument> arguments;
-		std::vector<UPnPStateVariable> stateVariables;
-		
-	public:
-		
-		UPnPAction();
-		virtual ~UPnPAction();
-
-		virtual std::string getName();
-
-		std::vector<UPnPActionArgument> & getArguments();
-		std::vector<UPnPStateVariable> & getStateVariables();
-	};
-
 
 	/**
 	 * @brief upnp service
@@ -69,7 +18,6 @@ namespace UPNP {
 		std::vector<UPnPAction> actions;
 		
 	public:
-		
 		UPnPService(std::string serviceType);
 		virtual ~UPnPService();
 
@@ -79,8 +27,6 @@ namespace UPNP {
 		virtual int sendAction(UPnPActionRequest & request);
 		virtual int subscribe(UPnPSubscriber * subscriber);
 		virtual int unsubscribe(UPnPSubscriber * subscriber);
-
-		UPnPServiceBuilder * getBuilder();
 	};
 
 	/**
@@ -88,11 +34,9 @@ namespace UPNP {
 	 */
 	class UPnPServiceBuilder {
 	private:
-		
 		UPnPService * service;
 		
 	public:
-		
 		UPnPServiceBuilder();
 		virtual ~UPnPServiceBuilder();
 

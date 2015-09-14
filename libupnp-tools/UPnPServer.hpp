@@ -8,40 +8,30 @@
 
 namespace UPNP {
 
-	class OnDeviceAddListener {
+	/**
+	 * @brief device add remove listener
+	 */
+	class OnDeviceAddRemoveListener {
 	private:
 	public:
 		OnDeviceAddListener(){}
 		virtual ~OnDeviceAddListener(){}
 
 		virtual void onDeviceAdd(UPnPDevice & device) = 0;
-	};
-
-
-	class OnDeviceRemoveListener {
-	private:
-	public:
-		OnDeviceRemoveListener(){}
-		virtual ~OnDeviceRemoveListener(){}
-
 		virtual void onDeviceRemove(UPnPDevice & device) = 0;
 	};
 
-	
-	
+	/**
+	 * @brief UPNP Server
+	 */
 	class UPnPServer {
 	private:
-		
 		std::vector<UPnPDevice*> devices;
-		
 		SSDP::SSDPServer * ssdpServer;
 		HTTP::HttpServer * httpServer;
-
-		OnDeviceAddListener * addListener;
-		OnDeviceRemoveListener * removeListener;
+		OnDeviceAddRemoveListener * addRemoveListener;
 		
 	public:
-		
 		UPnPServer();
 		virtual ~UPnPServer();
 
@@ -49,8 +39,7 @@ namespace UPNP {
 		virtual void stop();
 		virtual bool isRunning();
 
-		void setOnDeviceAddListener(OnDeviceAddListener * addListener);
-		void setOnDeviceRemoveListener(OnDeviceRemoveListener * removeListener);
+		void setOnDeviceAddRemoveListener(OnDeviceAddRemoveListener * addRemoveListener);
 	};
 	
 }

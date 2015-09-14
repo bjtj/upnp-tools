@@ -1,7 +1,7 @@
 #ifndef __UPNP_CONTROL_POINT_HPP__
 #define __UPNP_CONTROL_POINT_HPP__
 
-#include <libhttp-server/HttpHeader.hpp>
+#include <libhttp-server/Http.hpp>
 
 #include <string>
 #include <vector>
@@ -26,11 +26,10 @@ namespace UPNP {
 	/**
 	 * @brief ssdp handler
 	 */
-	class SSDPHandler : public SSDP::OnMsearchHandler, public SSDP::OnNotifyHandler {
+	class SSDPHandler : public SSDP::OnNotifyHandler {
 	public:
 		SSDPHandler();
 		virtual ~SSDPHandler();
-		virtual void onMsearch(HTTP::HttpHeader & header);
 		virtual void onNotify(HTTP::HttpHeader & header);
 	};
 
@@ -39,16 +38,19 @@ namespace UPNP {
 	 */
 	class UPnPControlPoint {
 	private:
-		SSDPServer ssdpServer;
-		std::vector<UPnPDevice> devices;
 		std::string searchTarget;
+		SSDPServer ssdpServer;
+		SSDPHandler ssdpHandler;
+		HTTP::HttpServer httpServer;
+		std::vector<UPnPDevice> devices;
+		
 		OnDeviceAddRemoveListener * listener;
 		
 	public:
-		UPnPControlPoint();
+		UPnPControlPoint(int port, std::string searchTarget);
 		virtual ~UPnPControlPoint();
 
-		virtual void start();
+		virtual void startAsync();
 		virtual void stop();
 		virtual bool isRunning();
 
