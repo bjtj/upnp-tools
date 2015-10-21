@@ -17,3 +17,5 @@ Makefile.in
 
 /world
 /build
+
+config.h.in~

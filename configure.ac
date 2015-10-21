@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.69])
+# AC_PREREQ([2.69])
 AC_INIT([upnp-tools], [0.1], [bjtj10@gmail.com])
 
 AC_CONFIG_SRCDIR([libupnp-tools/SSDPServer.cpp])
@@ -32,7 +32,7 @@ PKG_CHECK_MODULES([LIBHTTP_SERVER], [http-server])
 AC_CHECK_HEADERS([arpa/inet.h netdb.h netinet/in.h sys/socket.h sys/time.h unistd.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
-AC_CHECK_HEADER_STDBOOL
+# AC_CHECK_HEADER_STDBOOL
 AC_TYPE_MODE_T
 AC_TYPE_SIZE_T
 
