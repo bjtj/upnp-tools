@@ -1,5 +1,5 @@
 #include "SSDPServer.hpp"
-#include "Text.hpp"
+#include <liboslayer/Text.hpp>
 #include <algorithm>
 #include <libhttp-server/HttpHeaderParser.hpp>
 

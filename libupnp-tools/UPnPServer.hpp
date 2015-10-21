@@ -4,6 +4,9 @@
 #include <string>
 #include <vector>
 
+#include <libhttp-server/Http.hpp>
+
+#include "SSDPServer.hpp"
 #include "UPnPDevice.hpp"
 
 namespace UPNP {
@@ -14,8 +17,8 @@ namespace UPNP {
 	class OnDeviceAddRemoveListener {
 	private:
 	public:
-		OnDeviceAddListener(){}
-		virtual ~OnDeviceAddListener(){}
+		OnDeviceAddRemoveListener() {}
+		virtual ~OnDeviceAddRemoveListener() {}
 
 		virtual void onDeviceAdd(UPnPDevice & device) = 0;
 		virtual void onDeviceRemove(UPnPDevice & device) = 0;

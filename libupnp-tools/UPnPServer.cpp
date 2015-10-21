@@ -2,6 +2,8 @@
 
 namespace UPNP {
 
+	using namespace SSDP;
+
 	UPnPServer::UPnPServer() :
 		ssdpServer(NULL), httpServer(NULL), addRemoveListener(NULL) {
 	}
