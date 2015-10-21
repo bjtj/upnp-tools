@@ -7,6 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E8E0FECC1BD8492300292C54 /* UPnPDevicePool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2BE1BD7D8FE00E89DC5 /* UPnPDevicePool.cpp */; settings = {ASSET_TAGS = (); }; };
+		E8E0FECD1BD8492300292C54 /* UPnPServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2C01BD7D8FE00E89DC5 /* UPnPServer.cpp */; settings = {ASSET_TAGS = (); }; };
+		E8E0FECE1BD8492300292C54 /* UPnPStateVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2C41BD7D8FE00E89DC5 /* UPnPStateVariable.cpp */; settings = {ASSET_TAGS = (); }; };
+		E8E0FECF1BD8492300292C54 /* SSDPServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2B21BD7D8FE00E89DC5 /* SSDPServer.cpp */; settings = {ASSET_TAGS = (); }; };
+		E8E0FED01BD8492300292C54 /* upnp_tools.m in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2AA1BD7D8BB00E89DC5 /* upnp_tools.m */; };
+		E8E0FED11BD8492300292C54 /* UPnPService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2C21BD7D8FE00E89DC5 /* UPnPService.cpp */; settings = {ASSET_TAGS = (); }; };
+		E8E0FED21BD8492300292C54 /* UPnPDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2BC1BD7D8FE00E89DC5 /* UPnPDevice.cpp */; settings = {ASSET_TAGS = (); }; };
+		E8E0FED31BD8492300292C54 /* UPnPAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2B51BD7D8FE00E89DC5 /* UPnPAction.cpp */; settings = {ASSET_TAGS = (); }; };
+		E8E0FED41BD8492300292C54 /* UPnPActionArgument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2B71BD7D8FE00E89DC5 /* UPnPActionArgument.cpp */; settings = {ASSET_TAGS = (); }; };
+		E8E0FED51BD8492300292C54 /* UPnPControlPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2BA1BD7D8FE00E89DC5 /* UPnPControlPoint.cpp */; settings = {ASSET_TAGS = (); }; };
+		E8E0FEDA1BD8492300292C54 /* upnp_tools.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = E8FAB2A81BD7D8BB00E89DC5 /* upnp_tools.h */; };
+		E8E0FEE31BD8497B00292C54 /* libhttp-server cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8E0FEE11BD8492300292C54 /* libhttp-server cocoa.a */; };
+		E8E0FEE41BD8497B00292C54 /* liboslayer-cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8FAB2F91BD7D9E100E89DC5 /* liboslayer-cocoa.a */; };
 		E8FAB2A91BD7D8BB00E89DC5 /* upnp_tools.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = E8FAB2A81BD7D8BB00E89DC5 /* upnp_tools.h */; };
 		E8FAB2AB1BD7D8BB00E89DC5 /* upnp_tools.m in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2AA1BD7D8BB00E89DC5 /* upnp_tools.m */; };
 		E8FAB2C61BD7D8FE00E89DC5 /* SSDPServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2B21BD7D8FE00E89DC5 /* SSDPServer.cpp */; settings = {ASSET_TAGS = (); }; };
@@ -23,6 +36,27 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		E8E0FEC81BD8492300292C54 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E8FAB2F11BD7D9E000E89DC5 /* oslayer.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = E882FE7D1BD5312600E1C8C7;
+			remoteInfo = oslayer;
+		};
+		E8E0FECA1BD8492300292C54 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E8FAB2CF1BD7D92300E89DC5 /* http-server.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = E8FAB2371BD7D29800E89DC5;
+			remoteInfo = "http-server";
+		};
+		E8E0FEE01BD8492300292C54 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E8FAB2CF1BD7D92300E89DC5 /* http-server.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E8E0FEC01BD848EB00292C54;
+			remoteInfo = "http-server cocoa";
+		};
 		E8FAB2D41BD7D92300E89DC5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = E8FAB2CF1BD7D92300E89DC5 /* http-server.xcodeproj */;
@@ -61,6 +95,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		E8E0FED91BD8492300292C54 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+				E8E0FEDA1BD8492300292C54 /* upnp_tools.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E8FAB2A31BD7D8BB00E89DC5 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -74,6 +118,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		E8E0FEDE1BD8492300292C54 /* libupnp-tools cocoa.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libupnp-tools cocoa.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8FAB2A51BD7D8BB00E89DC5 /* libupnp-tools.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libupnp-tools.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8FAB2A81BD7D8BB00E89DC5 /* upnp_tools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = upnp_tools.h; sourceTree = "<group>"; };
 		E8FAB2AA1BD7D8BB00E89DC5 /* upnp_tools.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = upnp_tools.m; sourceTree = "<group>"; };
@@ -102,6 +147,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		E8E0FED61BD8492300292C54 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E8E0FEE41BD8497B00292C54 /* liboslayer-cocoa.a in Frameworks */,
+				E8E0FEE31BD8497B00292C54 /* libhttp-server cocoa.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E8FAB2A21BD7D8BB00E89DC5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -129,6 +183,7 @@
 			isa = PBXGroup;
 			children = (
 				E8FAB2A51BD7D8BB00E89DC5 /* libupnp-tools.a */,
+				E8E0FEDE1BD8492300292C54 /* libupnp-tools cocoa.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -173,6 +228,7 @@
 			isa = PBXGroup;
 			children = (
 				E8FAB2D51BD7D92300E89DC5 /* libhttp-server.a */,
+				E8E0FEE11BD8492300292C54 /* libhttp-server cocoa.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -189,6 +245,25 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		E8E0FEC61BD8492300292C54 /* upnp-tools cocoa */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E8E0FEDB1BD8492300292C54 /* Build configuration list for PBXNativeTarget "upnp-tools cocoa" */;
+			buildPhases = (
+				E8E0FECB1BD8492300292C54 /* Sources */,
+				E8E0FED61BD8492300292C54 /* Frameworks */,
+				E8E0FED91BD8492300292C54 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E8E0FEC71BD8492300292C54 /* PBXTargetDependency */,
+				E8E0FEC91BD8492300292C54 /* PBXTargetDependency */,
+			);
+			name = "upnp-tools cocoa";
+			productName = "upnp-tools";
+			productReference = E8E0FEDE1BD8492300292C54 /* libupnp-tools cocoa.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		E8FAB2A41BD7D8BB00E89DC5 /* upnp-tools */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = E8FAB2AE1BD7D8BB00E89DC5 /* Build configuration list for PBXNativeTarget "upnp-tools" */;
@@ -245,11 +320,19 @@
 			projectRoot = "";
 			targets = (
 				E8FAB2A41BD7D8BB00E89DC5 /* upnp-tools */,
+				E8E0FEC61BD8492300292C54 /* upnp-tools cocoa */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		E8E0FEE11BD8492300292C54 /* libhttp-server cocoa.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libhttp-server cocoa.a";
+			remoteRef = E8E0FEE01BD8492300292C54 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		E8FAB2D51BD7D92300E89DC5 /* libhttp-server.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -274,6 +357,23 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXSourcesBuildPhase section */
+		E8E0FECB1BD8492300292C54 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E8E0FECC1BD8492300292C54 /* UPnPDevicePool.cpp in Sources */,
+				E8E0FECD1BD8492300292C54 /* UPnPServer.cpp in Sources */,
+				E8E0FECE1BD8492300292C54 /* UPnPStateVariable.cpp in Sources */,
+				E8E0FECF1BD8492300292C54 /* SSDPServer.cpp in Sources */,
+				E8E0FED01BD8492300292C54 /* upnp_tools.m in Sources */,
+				E8E0FED11BD8492300292C54 /* UPnPService.cpp in Sources */,
+				E8E0FED21BD8492300292C54 /* UPnPDevice.cpp in Sources */,
+				E8E0FED31BD8492300292C54 /* UPnPAction.cpp in Sources */,
+				E8E0FED41BD8492300292C54 /* UPnPActionArgument.cpp in Sources */,
+				E8E0FED51BD8492300292C54 /* UPnPControlPoint.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E8FAB2A11BD7D8BB00E89DC5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -294,6 +394,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		E8E0FEC71BD8492300292C54 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = oslayer;
+			targetProxy = E8E0FEC81BD8492300292C54 /* PBXContainerItemProxy */;
+		};
+		E8E0FEC91BD8492300292C54 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "http-server";
+			targetProxy = E8E0FECA1BD8492300292C54 /* PBXContainerItemProxy */;
+		};
 		E8FAB2D81BD7D96A00E89DC5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "http-server";
@@ -307,6 +417,34 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		E8E0FEDC1BD8492300292C54 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					../../../oslayer,
+					"../../../http-server",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		E8E0FEDD1BD8492300292C54 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					../../../oslayer,
+					"../../../http-server",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
 		E8FAB2AC1BD7D8BB00E89DC5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -414,6 +552,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		E8E0FEDB1BD8492300292C54 /* Build configuration list for PBXNativeTarget "upnp-tools cocoa" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E8E0FEDC1BD8492300292C54 /* Debug */,
+				E8E0FEDD1BD8492300292C54 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		E8FAB2A01BD7D8BB00E89DC5 /* Build configuration list for PBXProject "upnp-tools" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -430,6 +577,7 @@
 				E8FAB2B01BD7D8BB00E89DC5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
