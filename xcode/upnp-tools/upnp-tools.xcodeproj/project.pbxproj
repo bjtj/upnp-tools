@@ -1,0 +1,437 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		E8FAB2A91BD7D8BB00E89DC5 /* upnp_tools.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = E8FAB2A81BD7D8BB00E89DC5 /* upnp_tools.h */; };
+		E8FAB2AB1BD7D8BB00E89DC5 /* upnp_tools.m in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2AA1BD7D8BB00E89DC5 /* upnp_tools.m */; };
+		E8FAB2C61BD7D8FE00E89DC5 /* SSDPServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2B21BD7D8FE00E89DC5 /* SSDPServer.cpp */; settings = {ASSET_TAGS = (); }; };
+		E8FAB2C71BD7D8FE00E89DC5 /* UPnPAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2B51BD7D8FE00E89DC5 /* UPnPAction.cpp */; settings = {ASSET_TAGS = (); }; };
+		E8FAB2C81BD7D8FE00E89DC5 /* UPnPActionArgument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2B71BD7D8FE00E89DC5 /* UPnPActionArgument.cpp */; settings = {ASSET_TAGS = (); }; };
+		E8FAB2C91BD7D8FE00E89DC5 /* UPnPControlPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2BA1BD7D8FE00E89DC5 /* UPnPControlPoint.cpp */; settings = {ASSET_TAGS = (); }; };
+		E8FAB2CA1BD7D8FE00E89DC5 /* UPnPDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2BC1BD7D8FE00E89DC5 /* UPnPDevice.cpp */; settings = {ASSET_TAGS = (); }; };
+		E8FAB2CB1BD7D8FE00E89DC5 /* UPnPDevicePool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2BE1BD7D8FE00E89DC5 /* UPnPDevicePool.cpp */; settings = {ASSET_TAGS = (); }; };
+		E8FAB2CC1BD7D8FE00E89DC5 /* UPnPServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2C01BD7D8FE00E89DC5 /* UPnPServer.cpp */; settings = {ASSET_TAGS = (); }; };
+		E8FAB2CD1BD7D8FE00E89DC5 /* UPnPService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2C21BD7D8FE00E89DC5 /* UPnPService.cpp */; settings = {ASSET_TAGS = (); }; };
+		E8FAB2CE1BD7D8FE00E89DC5 /* UPnPStateVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2C41BD7D8FE00E89DC5 /* UPnPStateVariable.cpp */; settings = {ASSET_TAGS = (); }; };
+		E8FAB2D91BD7D97200E89DC5 /* libhttp-server.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8FAB2D51BD7D92300E89DC5 /* libhttp-server.a */; };
+		E8FAB2FC1BD7D9ED00E89DC5 /* liboslayer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8FAB2F71BD7D9E100E89DC5 /* liboslayer.a */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		E8FAB2D41BD7D92300E89DC5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E8FAB2CF1BD7D92300E89DC5 /* http-server.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E8FAB2381BD7D29800E89DC5;
+			remoteInfo = "http-server";
+		};
+		E8FAB2D71BD7D96A00E89DC5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E8FAB2CF1BD7D92300E89DC5 /* http-server.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = E8FAB2371BD7D29800E89DC5;
+			remoteInfo = "http-server";
+		};
+		E8FAB2F61BD7D9E100E89DC5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E8FAB2F11BD7D9E000E89DC5 /* oslayer.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E882FE7E1BD5312600E1C8C7;
+			remoteInfo = oslayer;
+		};
+		E8FAB2F81BD7D9E100E89DC5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E8FAB2F11BD7D9E000E89DC5 /* oslayer.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E8FAB21E1BD7C36200E89DC5;
+			remoteInfo = "oslayer-cocoa";
+		};
+		E8FAB2FA1BD7D9E600E89DC5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E8FAB2F11BD7D9E000E89DC5 /* oslayer.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = E882FE7D1BD5312600E1C8C7;
+			remoteInfo = oslayer;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		E8FAB2A31BD7D8BB00E89DC5 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+				E8FAB2A91BD7D8BB00E89DC5 /* upnp_tools.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		E8FAB2A51BD7D8BB00E89DC5 /* libupnp-tools.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libupnp-tools.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E8FAB2A81BD7D8BB00E89DC5 /* upnp_tools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = upnp_tools.h; sourceTree = "<group>"; };
+		E8FAB2AA1BD7D8BB00E89DC5 /* upnp_tools.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = upnp_tools.m; sourceTree = "<group>"; };
+		E8FAB2B21BD7D8FE00E89DC5 /* SSDPServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SSDPServer.cpp; path = "../../libupnp-tools/SSDPServer.cpp"; sourceTree = "<group>"; };
+		E8FAB2B31BD7D8FE00E89DC5 /* SSDPServer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SSDPServer.hpp; path = "../../libupnp-tools/SSDPServer.hpp"; sourceTree = "<group>"; };
+		E8FAB2B41BD7D8FE00E89DC5 /* UPnP.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UPnP.hpp; path = "../../libupnp-tools/UPnP.hpp"; sourceTree = "<group>"; };
+		E8FAB2B51BD7D8FE00E89DC5 /* UPnPAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UPnPAction.cpp; path = "../../libupnp-tools/UPnPAction.cpp"; sourceTree = "<group>"; };
+		E8FAB2B61BD7D8FE00E89DC5 /* UPnPAction.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UPnPAction.hpp; path = "../../libupnp-tools/UPnPAction.hpp"; sourceTree = "<group>"; };
+		E8FAB2B71BD7D8FE00E89DC5 /* UPnPActionArgument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UPnPActionArgument.cpp; path = "../../libupnp-tools/UPnPActionArgument.cpp"; sourceTree = "<group>"; };
+		E8FAB2B81BD7D8FE00E89DC5 /* UPnPActionArgument.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UPnPActionArgument.hpp; path = "../../libupnp-tools/UPnPActionArgument.hpp"; sourceTree = "<group>"; };
+		E8FAB2B91BD7D8FE00E89DC5 /* UPnPActionArgumentDirection.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UPnPActionArgumentDirection.hpp; path = "../../libupnp-tools/UPnPActionArgumentDirection.hpp"; sourceTree = "<group>"; };
+		E8FAB2BA1BD7D8FE00E89DC5 /* UPnPControlPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UPnPControlPoint.cpp; path = "../../libupnp-tools/UPnPControlPoint.cpp"; sourceTree = "<group>"; };
+		E8FAB2BB1BD7D8FE00E89DC5 /* UPnPControlPoint.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UPnPControlPoint.hpp; path = "../../libupnp-tools/UPnPControlPoint.hpp"; sourceTree = "<group>"; };
+		E8FAB2BC1BD7D8FE00E89DC5 /* UPnPDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UPnPDevice.cpp; path = "../../libupnp-tools/UPnPDevice.cpp"; sourceTree = "<group>"; };
+		E8FAB2BD1BD7D8FE00E89DC5 /* UPnPDevice.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UPnPDevice.hpp; path = "../../libupnp-tools/UPnPDevice.hpp"; sourceTree = "<group>"; };
+		E8FAB2BE1BD7D8FE00E89DC5 /* UPnPDevicePool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UPnPDevicePool.cpp; path = "../../libupnp-tools/UPnPDevicePool.cpp"; sourceTree = "<group>"; };
+		E8FAB2BF1BD7D8FE00E89DC5 /* UPnPDevicePool.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UPnPDevicePool.hpp; path = "../../libupnp-tools/UPnPDevicePool.hpp"; sourceTree = "<group>"; };
+		E8FAB2C01BD7D8FE00E89DC5 /* UPnPServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UPnPServer.cpp; path = "../../libupnp-tools/UPnPServer.cpp"; sourceTree = "<group>"; };
+		E8FAB2C11BD7D8FE00E89DC5 /* UPnPServer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UPnPServer.hpp; path = "../../libupnp-tools/UPnPServer.hpp"; sourceTree = "<group>"; };
+		E8FAB2C21BD7D8FE00E89DC5 /* UPnPService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UPnPService.cpp; path = "../../libupnp-tools/UPnPService.cpp"; sourceTree = "<group>"; };
+		E8FAB2C31BD7D8FE00E89DC5 /* UPnPService.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UPnPService.hpp; path = "../../libupnp-tools/UPnPService.hpp"; sourceTree = "<group>"; };
+		E8FAB2C41BD7D8FE00E89DC5 /* UPnPStateVariable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UPnPStateVariable.cpp; path = "../../libupnp-tools/UPnPStateVariable.cpp"; sourceTree = "<group>"; };
+		E8FAB2C51BD7D8FE00E89DC5 /* UPnPStateVariable.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UPnPStateVariable.hpp; path = "../../libupnp-tools/UPnPStateVariable.hpp"; sourceTree = "<group>"; };
+		E8FAB2CF1BD7D92300E89DC5 /* http-server.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "http-server.xcodeproj"; path = "../../../http-server/xcode/http-server/http-server.xcodeproj"; sourceTree = "<group>"; };
+		E8FAB2F11BD7D9E000E89DC5 /* oslayer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = oslayer.xcodeproj; path = ../../../oslayer/xcode/oslayer/oslayer.xcodeproj; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		E8FAB2A21BD7D8BB00E89DC5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E8FAB2FC1BD7D9ED00E89DC5 /* liboslayer.a in Frameworks */,
+				E8FAB2D91BD7D97200E89DC5 /* libhttp-server.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		E8FAB29C1BD7D8BB00E89DC5 = {
+			isa = PBXGroup;
+			children = (
+				E8FAB2F11BD7D9E000E89DC5 /* oslayer.xcodeproj */,
+				E8FAB2CF1BD7D92300E89DC5 /* http-server.xcodeproj */,
+				E8FAB2B11BD7D8E200E89DC5 /* upnp-tools-c++ */,
+				E8FAB2A71BD7D8BB00E89DC5 /* upnp-tools */,
+				E8FAB2A61BD7D8BB00E89DC5 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E8FAB2A61BD7D8BB00E89DC5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E8FAB2A51BD7D8BB00E89DC5 /* libupnp-tools.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E8FAB2A71BD7D8BB00E89DC5 /* upnp-tools */ = {
+			isa = PBXGroup;
+			children = (
+				E8FAB2A81BD7D8BB00E89DC5 /* upnp_tools.h */,
+				E8FAB2AA1BD7D8BB00E89DC5 /* upnp_tools.m */,
+			);
+			path = "upnp-tools";
+			sourceTree = "<group>";
+		};
+		E8FAB2B11BD7D8E200E89DC5 /* upnp-tools-c++ */ = {
+			isa = PBXGroup;
+			children = (
+				E8FAB2B21BD7D8FE00E89DC5 /* SSDPServer.cpp */,
+				E8FAB2B31BD7D8FE00E89DC5 /* SSDPServer.hpp */,
+				E8FAB2B41BD7D8FE00E89DC5 /* UPnP.hpp */,
+				E8FAB2B51BD7D8FE00E89DC5 /* UPnPAction.cpp */,
+				E8FAB2B61BD7D8FE00E89DC5 /* UPnPAction.hpp */,
+				E8FAB2B71BD7D8FE00E89DC5 /* UPnPActionArgument.cpp */,
+				E8FAB2B81BD7D8FE00E89DC5 /* UPnPActionArgument.hpp */,
+				E8FAB2B91BD7D8FE00E89DC5 /* UPnPActionArgumentDirection.hpp */,
+				E8FAB2BA1BD7D8FE00E89DC5 /* UPnPControlPoint.cpp */,
+				E8FAB2BB1BD7D8FE00E89DC5 /* UPnPControlPoint.hpp */,
+				E8FAB2BC1BD7D8FE00E89DC5 /* UPnPDevice.cpp */,
+				E8FAB2BD1BD7D8FE00E89DC5 /* UPnPDevice.hpp */,
+				E8FAB2BE1BD7D8FE00E89DC5 /* UPnPDevicePool.cpp */,
+				E8FAB2BF1BD7D8FE00E89DC5 /* UPnPDevicePool.hpp */,
+				E8FAB2C01BD7D8FE00E89DC5 /* UPnPServer.cpp */,
+				E8FAB2C11BD7D8FE00E89DC5 /* UPnPServer.hpp */,
+				E8FAB2C21BD7D8FE00E89DC5 /* UPnPService.cpp */,
+				E8FAB2C31BD7D8FE00E89DC5 /* UPnPService.hpp */,
+				E8FAB2C41BD7D8FE00E89DC5 /* UPnPStateVariable.cpp */,
+				E8FAB2C51BD7D8FE00E89DC5 /* UPnPStateVariable.hpp */,
+			);
+			name = "upnp-tools-c++";
+			sourceTree = "<group>";
+		};
+		E8FAB2D01BD7D92300E89DC5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E8FAB2D51BD7D92300E89DC5 /* libhttp-server.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E8FAB2F21BD7D9E000E89DC5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E8FAB2F71BD7D9E100E89DC5 /* liboslayer.a */,
+				E8FAB2F91BD7D9E100E89DC5 /* liboslayer-cocoa.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E8FAB2A41BD7D8BB00E89DC5 /* upnp-tools */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E8FAB2AE1BD7D8BB00E89DC5 /* Build configuration list for PBXNativeTarget "upnp-tools" */;
+			buildPhases = (
+				E8FAB2A11BD7D8BB00E89DC5 /* Sources */,
+				E8FAB2A21BD7D8BB00E89DC5 /* Frameworks */,
+				E8FAB2A31BD7D8BB00E89DC5 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E8FAB2FB1BD7D9E600E89DC5 /* PBXTargetDependency */,
+				E8FAB2D81BD7D96A00E89DC5 /* PBXTargetDependency */,
+			);
+			name = "upnp-tools";
+			productName = "upnp-tools";
+			productReference = E8FAB2A51BD7D8BB00E89DC5 /* libupnp-tools.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E8FAB29D1BD7D8BB00E89DC5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0700;
+				ORGANIZATIONNAME = TJ;
+				TargetAttributes = {
+					E8FAB2A41BD7D8BB00E89DC5 = {
+						CreatedOnToolsVersion = 7.0.1;
+					};
+				};
+			};
+			buildConfigurationList = E8FAB2A01BD7D8BB00E89DC5 /* Build configuration list for PBXProject "upnp-tools" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = E8FAB29C1BD7D8BB00E89DC5;
+			productRefGroup = E8FAB2A61BD7D8BB00E89DC5 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = E8FAB2D01BD7D92300E89DC5 /* Products */;
+					ProjectRef = E8FAB2CF1BD7D92300E89DC5 /* http-server.xcodeproj */;
+				},
+				{
+					ProductGroup = E8FAB2F21BD7D9E000E89DC5 /* Products */;
+					ProjectRef = E8FAB2F11BD7D9E000E89DC5 /* oslayer.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				E8FAB2A41BD7D8BB00E89DC5 /* upnp-tools */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		E8FAB2D51BD7D92300E89DC5 /* libhttp-server.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libhttp-server.a";
+			remoteRef = E8FAB2D41BD7D92300E89DC5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E8FAB2F71BD7D9E100E89DC5 /* liboslayer.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = liboslayer.a;
+			remoteRef = E8FAB2F61BD7D9E100E89DC5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E8FAB2F91BD7D9E100E89DC5 /* liboslayer-cocoa.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "liboslayer-cocoa.a";
+			remoteRef = E8FAB2F81BD7D9E100E89DC5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXSourcesBuildPhase section */
+		E8FAB2A11BD7D8BB00E89DC5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E8FAB2CB1BD7D8FE00E89DC5 /* UPnPDevicePool.cpp in Sources */,
+				E8FAB2CC1BD7D8FE00E89DC5 /* UPnPServer.cpp in Sources */,
+				E8FAB2CE1BD7D8FE00E89DC5 /* UPnPStateVariable.cpp in Sources */,
+				E8FAB2C61BD7D8FE00E89DC5 /* SSDPServer.cpp in Sources */,
+				E8FAB2AB1BD7D8BB00E89DC5 /* upnp_tools.m in Sources */,
+				E8FAB2CD1BD7D8FE00E89DC5 /* UPnPService.cpp in Sources */,
+				E8FAB2CA1BD7D8FE00E89DC5 /* UPnPDevice.cpp in Sources */,
+				E8FAB2C71BD7D8FE00E89DC5 /* UPnPAction.cpp in Sources */,
+				E8FAB2C81BD7D8FE00E89DC5 /* UPnPActionArgument.cpp in Sources */,
+				E8FAB2C91BD7D8FE00E89DC5 /* UPnPControlPoint.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		E8FAB2D81BD7D96A00E89DC5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "http-server";
+			targetProxy = E8FAB2D71BD7D96A00E89DC5 /* PBXContainerItemProxy */;
+		};
+		E8FAB2FB1BD7D9E600E89DC5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = oslayer;
+			targetProxy = E8FAB2FA1BD7D9E600E89DC5 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		E8FAB2AC1BD7D8BB00E89DC5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		E8FAB2AD1BD7D8BB00E89DC5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		E8FAB2AF1BD7D8BB00E89DC5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					../../../oslayer,
+					"../../../http-server",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		E8FAB2B01BD7D8BB00E89DC5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					../../../oslayer,
+					"../../../http-server",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		E8FAB2A01BD7D8BB00E89DC5 /* Build configuration list for PBXProject "upnp-tools" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E8FAB2AC1BD7D8BB00E89DC5 /* Debug */,
+				E8FAB2AD1BD7D8BB00E89DC5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E8FAB2AE1BD7D8BB00E89DC5 /* Build configuration list for PBXNativeTarget "upnp-tools" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E8FAB2AF1BD7D8BB00E89DC5 /* Debug */,
+				E8FAB2B01BD7D8BB00E89DC5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E8FAB29D1BD7D8BB00E89DC5 /* Project object */;
+}
