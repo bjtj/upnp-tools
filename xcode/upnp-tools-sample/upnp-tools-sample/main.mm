@@ -9,11 +9,32 @@
 #import <Foundation/Foundation.h>
 
 #import <libupnp-tools/SSDPServer.hpp>
-
+#import <libhttp-server/HttpClient.cpp>
+#import <string>
 
 using namespace std;
 using namespace SSDP;
 using namespace HTTP;
+
+class MyHttpResponseHandler : public HttpResponseHandler {
+private:
+public:
+    MyHttpResponseHandler() {}
+    virtual ~MyHttpResponseHandler() {}
+    
+    virtual void onResponse(HttpClient & client, HttpHeader & responseHeader, Socket & socket) {
+        
+        char buffer[1024] = {0,};
+        int contentLength = responseHeader.getContentLength();
+        int total = 0;
+        int len;
+        while (contentLength > total && (len = socket.recv(buffer, sizeof(buffer))) > 0) {
+            string msg(buffer, len);
+            NSLog(@"%s", msg.c_str());
+            total += len;
+        }
+    }
+};
 
 class SSDPHandler : public OnMsearchHandler, public OnNotifyHandler {
 private:
@@ -28,7 +49,15 @@ public:
     }
     
     virtual void onNotify(HttpHeader & header) {
-        NSLog(@"notify - %s", header["Location"].c_str());
+        string location = header["Location"];
+        NSLog(@"notify - %s", location.c_str());
+        if (!location.empty()) {
+            HttpClient client;
+            Url url(location);
+            MyHttpResponseHandler handler;
+            client.setHttpResponseHandler(&handler);
+            client.request(url);
+        }
     }
 };
 

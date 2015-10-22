@@ -431,6 +431,7 @@
 				E8E0FE771BD8480B00292C54 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
