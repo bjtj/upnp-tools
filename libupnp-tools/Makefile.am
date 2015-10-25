@@ -12,7 +12,12 @@ libupnp_toolsinc_HEADERS = \
 						UPnPDevicePool.hpp \
 						UPnPServer.hpp \
 						UPnPService.hpp \
-						UPnPStateVariable.hpp
+						UPnPStateVariable.hpp \
+						StringReader.hpp \
+						XmlDocument.hpp \
+						XmlDocumentPrinter.hpp \
+						XmlDomParser.hpp \
+						XmlNodeFinder.hpp
 
 libupnp_tools_la_SOURCES = \
 						SSDPServer.cpp \
@@ -33,7 +38,17 @@ libupnp_tools_la_SOURCES = \
 						UPnPService.cpp \
 						UPnPService.hpp \
 						UPnPStateVariable.cpp \
-						UPnPStateVariable.hpp
+						UPnPStateVariable.hpp \
+						StringReader.cpp \
+						StringReader.hpp \
+						XmlDocument.cpp \
+						XmlDocument.hpp \
+						XmlDocumentPrinter.cpp \
+						XmlDocumentPrinter.hpp \
+						XmlDomParser.cpp \
+						XmlDomParser.hpp \
+						XmlNodeFinder.cpp \
+						XmlNodeFinder.hpp
 
 libupnp_tools_la_CXXFLAGS = $(PTHREAD_CXXFLAGS) $(LIBOSLAYER_CFLAGS) $(LIBHTTP_SERVER_CFLAGS)
 libupnp_tools_la_LDFLAGS = $(PTHREAD_CFLAGS)
