@@ -11,20 +11,21 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{A97BFF5C-B08C-40BD-8243-D21270563918}</ProjectGuid>
-    <RootNamespace>upnptools</RootNamespace>
+    <ProjectGuid>{F2C7EA0D-0C95-4830-BC58-31AB494B32F9}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>sample</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -36,67 +37,56 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\oslayer;..\..\http-server;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\oslayer;..\..\..\http-server;..\..\..\upnp-tools;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
-    <Lib>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-    </Lib>
-    <Lib>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\libupnp-tools\SSDPServer.cpp" />
-    <ClCompile Include="..\libupnp-tools\UPnPAction.cpp" />
-    <ClCompile Include="..\libupnp-tools\UPnPActionArgument.cpp" />
-    <ClCompile Include="..\libupnp-tools\UPnPControlPoint.cpp" />
-    <ClCompile Include="..\libupnp-tools\UPnPDevice.cpp" />
-    <ClCompile Include="..\libupnp-tools\UPnPDevicePool.cpp" />
-    <ClCompile Include="..\libupnp-tools\UPnPServer.cpp" />
-    <ClCompile Include="..\libupnp-tools\UPnPService.cpp" />
-    <ClCompile Include="..\libupnp-tools\UPnPStateVariable.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\libupnp-tools\SSDPServer.hpp" />
-    <ClInclude Include="..\libupnp-tools\UPnP.hpp" />
-    <ClInclude Include="..\libupnp-tools\UPnPAction.hpp" />
-    <ClInclude Include="..\libupnp-tools\UPnPActionArgument.hpp" />
-    <ClInclude Include="..\libupnp-tools\UPnPActionArgumentDirection.hpp" />
-    <ClInclude Include="..\libupnp-tools\UPnPControlPoint.hpp" />
-    <ClInclude Include="..\libupnp-tools\UPnPDevice.hpp" />
-    <ClInclude Include="..\libupnp-tools\UPnPDevicePool.hpp" />
-    <ClInclude Include="..\libupnp-tools\UPnPServer.hpp" />
-    <ClInclude Include="..\libupnp-tools\UPnPService.hpp" />
-    <ClInclude Include="..\libupnp-tools\UPnPStateVariable.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\http-server\win32\http-server.vcxproj">
+    <ProjectReference Include="..\..\..\http-server\win32\http-server.vcxproj">
       <Project>{a8ae25bb-c71f-a261-60d4-5a82f496550a}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\oslayer\win32\oslayer.vcxproj">
+    <ProjectReference Include="..\..\..\oslayer\win32\oslayer.vcxproj">
       <Project>{2367396a-6d69-5e61-11dc-66efbb2456d0}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\upnp-tools.vcxproj">
+      <Project>{a97bff5c-b08c-40bd-8243-d21270563918}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

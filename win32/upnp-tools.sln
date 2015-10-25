@@ -3,12 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "upnp-tools", "upnp-tools.vcxproj", "{A97BFF5C-B08C-40BD-8243-D21270563918}"
 	ProjectSection(ProjectDependencies) = postProject
-		{A86AEA6E-750B-7C94-4188-77B9D2FCD973} = {A86AEA6E-750B-7C94-4188-77B9D2FCD973}
+		{A8AE25BB-C71F-A261-60D4-5A82F496550A} = {A8AE25BB-C71F-A261-60D4-5A82F496550A}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "oslayer", "..\..\oslayer\win32\oslayer.vcxproj", "{62F62888-B617-D1C5-DD02-0CC27E78A455}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "oslayer", "..\..\oslayer\win32\oslayer.vcxproj", "{2367396A-6D69-5E61-11DC-66EFBB2456D0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "http-server", "..\..\http-server\win32\http-server.vcxproj", "{A86AEA6E-750B-7C94-4188-77B9D2FCD973}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "http-server", "..\..\http-server\win32\http-server.vcxproj", "{A8AE25BB-C71F-A261-60D4-5A82F496550A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sample", "sample\sample.vcxproj", "{F2C7EA0D-0C95-4830-BC58-31AB494B32F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,14 +22,18 @@ Global
 		{A97BFF5C-B08C-40BD-8243-D21270563918}.Debug|Win32.Build.0 = Debug|Win32
 		{A97BFF5C-B08C-40BD-8243-D21270563918}.Release|Win32.ActiveCfg = Release|Win32
 		{A97BFF5C-B08C-40BD-8243-D21270563918}.Release|Win32.Build.0 = Release|Win32
-		{62F62888-B617-D1C5-DD02-0CC27E78A455}.Debug|Win32.ActiveCfg = Debug|Win32
-		{62F62888-B617-D1C5-DD02-0CC27E78A455}.Debug|Win32.Build.0 = Debug|Win32
-		{62F62888-B617-D1C5-DD02-0CC27E78A455}.Release|Win32.ActiveCfg = Release|Win32
-		{62F62888-B617-D1C5-DD02-0CC27E78A455}.Release|Win32.Build.0 = Release|Win32
-		{A86AEA6E-750B-7C94-4188-77B9D2FCD973}.Debug|Win32.ActiveCfg = Debug|Win32
-		{A86AEA6E-750B-7C94-4188-77B9D2FCD973}.Debug|Win32.Build.0 = Debug|Win32
-		{A86AEA6E-750B-7C94-4188-77B9D2FCD973}.Release|Win32.ActiveCfg = Release|Win32
-		{A86AEA6E-750B-7C94-4188-77B9D2FCD973}.Release|Win32.Build.0 = Release|Win32
+		{2367396A-6D69-5E61-11DC-66EFBB2456D0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2367396A-6D69-5E61-11DC-66EFBB2456D0}.Debug|Win32.Build.0 = Debug|Win32
+		{2367396A-6D69-5E61-11DC-66EFBB2456D0}.Release|Win32.ActiveCfg = Release|Win32
+		{2367396A-6D69-5E61-11DC-66EFBB2456D0}.Release|Win32.Build.0 = Release|Win32
+		{A8AE25BB-C71F-A261-60D4-5A82F496550A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A8AE25BB-C71F-A261-60D4-5A82F496550A}.Debug|Win32.Build.0 = Debug|Win32
+		{A8AE25BB-C71F-A261-60D4-5A82F496550A}.Release|Win32.ActiveCfg = Release|Win32
+		{A8AE25BB-C71F-A261-60D4-5A82F496550A}.Release|Win32.Build.0 = Release|Win32
+		{F2C7EA0D-0C95-4830-BC58-31AB494B32F9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F2C7EA0D-0C95-4830-BC58-31AB494B32F9}.Debug|Win32.Build.0 = Debug|Win32
+		{F2C7EA0D-0C95-4830-BC58-31AB494B32F9}.Release|Win32.ActiveCfg = Release|Win32
+		{F2C7EA0D-0C95-4830-BC58-31AB494B32F9}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
