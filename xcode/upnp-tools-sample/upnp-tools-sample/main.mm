@@ -9,11 +9,13 @@
 #import <Foundation/Foundation.h>
 
 #import <libupnp-tools/SSDPServer.hpp>
+#import <libupnp-tools/UPnPControlPoint.hpp>
 #import <libhttp-server/HttpClient.cpp>
 #import <string>
 
 using namespace std;
 using namespace SSDP;
+using namespace UPNP;
 using namespace HTTP;
 
 class MyHttpResponseHandler : public HttpResponseHandler {
@@ -75,12 +77,22 @@ static void s_test_ssdp_server() {
     server.stop();
 }
 
+static void s_test_cp() {
+    UPnPControlPoint cp(1900, "ssdp:all");
+    cp.startAsync();
+    
+    getchar();
+    
+    cp.stop();
+}
+
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
         // insert code here...
         NSLog(@"Hello, World!");
         
-        s_test_ssdp_server();
+        // s_test_ssdp_server();
+        s_test_cp();
     }
     return 0;
 }

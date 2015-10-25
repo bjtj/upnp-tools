@@ -4,7 +4,7 @@ namespace XML {
 
 	using namespace std;
 	
-	StringReader::StringReader(string & data) : spaces(" \t\r\n"), data(data), pos(0) {
+	StringReader::StringReader(const string & data) : spaces(" \t\r\n"), data(data), pos(0) {
 	}
 	
 	StringReader::~StringReader() {
@@ -102,7 +102,7 @@ namespace XML {
 		return pos >= data.length();
 	}
 
-	string & StringReader::getData() {
+	const string & StringReader::getData() {
 		return data;
 	}
 

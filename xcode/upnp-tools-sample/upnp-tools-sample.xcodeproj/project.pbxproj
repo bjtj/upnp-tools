@@ -14,18 +14,32 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		E82789831BDD943A0009E46A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E8E0FE781BD8482A00292C54 /* upnp-tools.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = E8E0FEC61BD8492300292C54;
+			remoteInfo = "upnp-tools cocoa";
+		};
+		E82789851BDD943D0009E46A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E8E0FE8E1BD8487D00292C54 /* http-server.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = E8E0FEA51BD848EB00292C54;
+			remoteInfo = "http-server cocoa";
+		};
+		E82789871BDD94400009E46A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E8E0FE941BD8488A00292C54 /* oslayer.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = E8FAB2111BD7C36200E89DC5;
+			remoteInfo = "oslayer-cocoa";
+		};
 		E8E0FE7F1BD8482A00292C54 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = E8E0FE781BD8482A00292C54 /* upnp-tools.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = E8FAB2A51BD7D8BB00E89DC5;
-			remoteInfo = "upnp-tools";
-		};
-		E8E0FE811BD8483C00292C54 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8E0FE781BD8482A00292C54 /* upnp-tools.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = E8FAB2A41BD7D8BB00E89DC5;
 			remoteInfo = "upnp-tools";
 		};
 		E8E0FE921BD8487D00292C54 /* PBXContainerItemProxy */ = {
@@ -48,20 +62,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = E8FAB21E1BD7C36200E89DC5;
 			remoteInfo = "oslayer-cocoa";
-		};
-		E8E0FE9D1BD8489300292C54 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8E0FE8E1BD8487D00292C54 /* http-server.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = E8FAB2371BD7D29800E89DC5;
-			remoteInfo = "http-server";
-		};
-		E8E0FE9F1BD8489700292C54 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8E0FE941BD8488A00292C54 /* oslayer.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = E882FE7D1BD5312600E1C8C7;
-			remoteInfo = oslayer;
 		};
 		E8E0FEC31BD8490300292C54 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -182,9 +182,9 @@
 			buildRules = (
 			);
 			dependencies = (
-				E8E0FEA01BD8489700292C54 /* PBXTargetDependency */,
-				E8E0FE9E1BD8489300292C54 /* PBXTargetDependency */,
-				E8E0FE821BD8483C00292C54 /* PBXTargetDependency */,
+				E82789881BDD94400009E46A /* PBXTargetDependency */,
+				E82789861BDD943D0009E46A /* PBXTargetDependency */,
+				E82789841BDD943A0009E46A /* PBXTargetDependency */,
 			);
 			name = "upnp-tools-sample";
 			productName = "upnp-tools-sample";
@@ -293,20 +293,20 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		E8E0FE821BD8483C00292C54 /* PBXTargetDependency */ = {
+		E82789841BDD943A0009E46A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "upnp-tools";
-			targetProxy = E8E0FE811BD8483C00292C54 /* PBXContainerItemProxy */;
+			name = "upnp-tools cocoa";
+			targetProxy = E82789831BDD943A0009E46A /* PBXContainerItemProxy */;
 		};
-		E8E0FE9E1BD8489300292C54 /* PBXTargetDependency */ = {
+		E82789861BDD943D0009E46A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "http-server";
-			targetProxy = E8E0FE9D1BD8489300292C54 /* PBXContainerItemProxy */;
+			name = "http-server cocoa";
+			targetProxy = E82789851BDD943D0009E46A /* PBXContainerItemProxy */;
 		};
-		E8E0FEA01BD8489700292C54 /* PBXTargetDependency */ = {
+		E82789881BDD94400009E46A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = oslayer;
-			targetProxy = E8E0FE9F1BD8489700292C54 /* PBXContainerItemProxy */;
+			name = "oslayer-cocoa";
+			targetProxy = E82789871BDD94400009E46A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include <libhttp-server/Http.hpp>
+#include <libhttp-server/HttpServer.hpp>
 
 #include "SSDPServer.hpp"
 #include "UPnPDevice.hpp"

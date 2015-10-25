@@ -45,7 +45,7 @@ namespace XML {
 	private:
 		const char * specials;
 	public:
-		XmlStringReader(std::string & data);
+		XmlStringReader(const std::string & data);
 		virtual ~XmlStringReader();
 
 		bool isBlocker(char ch);
@@ -76,7 +76,7 @@ namespace XML {
 		bool isEndTag(std::string & tag);
 		bool isSingleTag(std::string & tag);
 		
-		XmlDocument parse(std::string & data);
+		XmlDocument parse(const std::string & data);
 	};
 }
 

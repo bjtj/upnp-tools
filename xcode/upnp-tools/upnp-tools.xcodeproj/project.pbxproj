@@ -7,6 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E82789091BDCDBDD0009E46A /* StringReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82788FF1BDCDBDD0009E46A /* StringReader.cpp */; settings = {ASSET_TAGS = (); }; };
+		E827890A1BDCDBDD0009E46A /* XmlDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82789011BDCDBDD0009E46A /* XmlDocument.cpp */; settings = {ASSET_TAGS = (); }; };
+		E827890B1BDCDBDD0009E46A /* XmlDocumentPrinter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82789031BDCDBDD0009E46A /* XmlDocumentPrinter.cpp */; settings = {ASSET_TAGS = (); }; };
+		E827890C1BDCDBDD0009E46A /* XmlDomParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82789051BDCDBDD0009E46A /* XmlDomParser.cpp */; settings = {ASSET_TAGS = (); }; };
+		E827890D1BDCDBDD0009E46A /* XmlNodeFinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82789071BDCDBDD0009E46A /* XmlNodeFinder.cpp */; settings = {ASSET_TAGS = (); }; };
+		E827898F1BDD95B90009E46A /* StringReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82788FF1BDCDBDD0009E46A /* StringReader.cpp */; };
+		E82789901BDD95B90009E46A /* XmlDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82789011BDCDBDD0009E46A /* XmlDocument.cpp */; };
+		E82789911BDD95B90009E46A /* XmlDocumentPrinter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82789031BDCDBDD0009E46A /* XmlDocumentPrinter.cpp */; };
+		E82789921BDD95B90009E46A /* XmlDomParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82789051BDCDBDD0009E46A /* XmlDomParser.cpp */; };
+		E82789931BDD95B90009E46A /* XmlNodeFinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82789071BDCDBDD0009E46A /* XmlNodeFinder.cpp */; };
 		E8E0FECC1BD8492300292C54 /* UPnPDevicePool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2BE1BD7D8FE00E89DC5 /* UPnPDevicePool.cpp */; settings = {ASSET_TAGS = (); }; };
 		E8E0FECD1BD8492300292C54 /* UPnPServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2C01BD7D8FE00E89DC5 /* UPnPServer.cpp */; settings = {ASSET_TAGS = (); }; };
 		E8E0FECE1BD8492300292C54 /* UPnPStateVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2C41BD7D8FE00E89DC5 /* UPnPStateVariable.cpp */; settings = {ASSET_TAGS = (); }; };
@@ -18,7 +28,7 @@
 		E8E0FED41BD8492300292C54 /* UPnPActionArgument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2B71BD7D8FE00E89DC5 /* UPnPActionArgument.cpp */; settings = {ASSET_TAGS = (); }; };
 		E8E0FED51BD8492300292C54 /* UPnPControlPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2BA1BD7D8FE00E89DC5 /* UPnPControlPoint.cpp */; settings = {ASSET_TAGS = (); }; };
 		E8E0FEDA1BD8492300292C54 /* upnp_tools.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = E8FAB2A81BD7D8BB00E89DC5 /* upnp_tools.h */; };
-		E8E0FEE31BD8497B00292C54 /* libhttp-server cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8E0FEE11BD8492300292C54 /* libhttp-server cocoa.a */; };
+		E8E0FEE31BD8497B00292C54 /* libhttp-server-cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8E0FEE11BD8492300292C54 /* libhttp-server-cocoa.a */; };
 		E8E0FEE41BD8497B00292C54 /* liboslayer-cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8FAB2F91BD7D9E100E89DC5 /* liboslayer-cocoa.a */; };
 		E8FAB2A91BD7D8BB00E89DC5 /* upnp_tools.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = E8FAB2A81BD7D8BB00E89DC5 /* upnp_tools.h */; };
 		E8FAB2AB1BD7D8BB00E89DC5 /* upnp_tools.m in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2AA1BD7D8BB00E89DC5 /* upnp_tools.m */; };
@@ -36,19 +46,19 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		E8E0FEC81BD8492300292C54 /* PBXContainerItemProxy */ = {
+		E827897C1BDD94070009E46A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = E8FAB2F11BD7D9E000E89DC5 /* oslayer.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = E882FE7D1BD5312600E1C8C7;
-			remoteInfo = oslayer;
+			remoteGlobalIDString = E8FAB2111BD7C36200E89DC5;
+			remoteInfo = "oslayer-cocoa";
 		};
-		E8E0FECA1BD8492300292C54 /* PBXContainerItemProxy */ = {
+		E827897E1BDD94100009E46A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = E8FAB2CF1BD7D92300E89DC5 /* http-server.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = E8FAB2371BD7D29800E89DC5;
-			remoteInfo = "http-server";
+			remoteGlobalIDString = E8E0FEA51BD848EB00292C54;
+			remoteInfo = "http-server cocoa";
 		};
 		E8E0FEE01BD8492300292C54 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -118,7 +128,17 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		E8E0FEDE1BD8492300292C54 /* libupnp-tools cocoa.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libupnp-tools cocoa.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E82788FF1BDCDBDD0009E46A /* StringReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StringReader.cpp; path = "../../libupnp-tools/StringReader.cpp"; sourceTree = "<group>"; };
+		E82789001BDCDBDD0009E46A /* StringReader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = StringReader.hpp; path = "../../libupnp-tools/StringReader.hpp"; sourceTree = "<group>"; };
+		E82789011BDCDBDD0009E46A /* XmlDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XmlDocument.cpp; path = "../../libupnp-tools/XmlDocument.cpp"; sourceTree = "<group>"; };
+		E82789021BDCDBDD0009E46A /* XmlDocument.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = XmlDocument.hpp; path = "../../libupnp-tools/XmlDocument.hpp"; sourceTree = "<group>"; };
+		E82789031BDCDBDD0009E46A /* XmlDocumentPrinter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XmlDocumentPrinter.cpp; path = "../../libupnp-tools/XmlDocumentPrinter.cpp"; sourceTree = "<group>"; };
+		E82789041BDCDBDD0009E46A /* XmlDocumentPrinter.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = XmlDocumentPrinter.hpp; path = "../../libupnp-tools/XmlDocumentPrinter.hpp"; sourceTree = "<group>"; };
+		E82789051BDCDBDD0009E46A /* XmlDomParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XmlDomParser.cpp; path = "../../libupnp-tools/XmlDomParser.cpp"; sourceTree = "<group>"; };
+		E82789061BDCDBDD0009E46A /* XmlDomParser.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = XmlDomParser.hpp; path = "../../libupnp-tools/XmlDomParser.hpp"; sourceTree = "<group>"; };
+		E82789071BDCDBDD0009E46A /* XmlNodeFinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XmlNodeFinder.cpp; path = "../../libupnp-tools/XmlNodeFinder.cpp"; sourceTree = "<group>"; };
+		E82789081BDCDBDD0009E46A /* XmlNodeFinder.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = XmlNodeFinder.hpp; path = "../../libupnp-tools/XmlNodeFinder.hpp"; sourceTree = "<group>"; };
+		E8E0FEDE1BD8492300292C54 /* libupnp-tools-cocoa.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libupnp-tools-cocoa.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8FAB2A51BD7D8BB00E89DC5 /* libupnp-tools.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libupnp-tools.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8FAB2A81BD7D8BB00E89DC5 /* upnp_tools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = upnp_tools.h; sourceTree = "<group>"; };
 		E8FAB2AA1BD7D8BB00E89DC5 /* upnp_tools.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = upnp_tools.m; sourceTree = "<group>"; };
@@ -152,7 +172,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E8E0FEE41BD8497B00292C54 /* liboslayer-cocoa.a in Frameworks */,
-				E8E0FEE31BD8497B00292C54 /* libhttp-server cocoa.a in Frameworks */,
+				E8E0FEE31BD8497B00292C54 /* libhttp-server-cocoa.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -183,7 +203,7 @@
 			isa = PBXGroup;
 			children = (
 				E8FAB2A51BD7D8BB00E89DC5 /* libupnp-tools.a */,
-				E8E0FEDE1BD8492300292C54 /* libupnp-tools cocoa.a */,
+				E8E0FEDE1BD8492300292C54 /* libupnp-tools-cocoa.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -200,6 +220,16 @@
 		E8FAB2B11BD7D8E200E89DC5 /* upnp-tools-c++ */ = {
 			isa = PBXGroup;
 			children = (
+				E82788FF1BDCDBDD0009E46A /* StringReader.cpp */,
+				E82789001BDCDBDD0009E46A /* StringReader.hpp */,
+				E82789011BDCDBDD0009E46A /* XmlDocument.cpp */,
+				E82789021BDCDBDD0009E46A /* XmlDocument.hpp */,
+				E82789031BDCDBDD0009E46A /* XmlDocumentPrinter.cpp */,
+				E82789041BDCDBDD0009E46A /* XmlDocumentPrinter.hpp */,
+				E82789051BDCDBDD0009E46A /* XmlDomParser.cpp */,
+				E82789061BDCDBDD0009E46A /* XmlDomParser.hpp */,
+				E82789071BDCDBDD0009E46A /* XmlNodeFinder.cpp */,
+				E82789081BDCDBDD0009E46A /* XmlNodeFinder.hpp */,
 				E8FAB2B21BD7D8FE00E89DC5 /* SSDPServer.cpp */,
 				E8FAB2B31BD7D8FE00E89DC5 /* SSDPServer.hpp */,
 				E8FAB2B41BD7D8FE00E89DC5 /* UPnP.hpp */,
@@ -228,7 +258,7 @@
 			isa = PBXGroup;
 			children = (
 				E8FAB2D51BD7D92300E89DC5 /* libhttp-server.a */,
-				E8E0FEE11BD8492300292C54 /* libhttp-server cocoa.a */,
+				E8E0FEE11BD8492300292C54 /* libhttp-server-cocoa.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -245,9 +275,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		E8E0FEC61BD8492300292C54 /* upnp-tools cocoa */ = {
+		E8E0FEC61BD8492300292C54 /* upnp-tools-cocoa */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E8E0FEDB1BD8492300292C54 /* Build configuration list for PBXNativeTarget "upnp-tools cocoa" */;
+			buildConfigurationList = E8E0FEDB1BD8492300292C54 /* Build configuration list for PBXNativeTarget "upnp-tools-cocoa" */;
 			buildPhases = (
 				E8E0FECB1BD8492300292C54 /* Sources */,
 				E8E0FED61BD8492300292C54 /* Frameworks */,
@@ -256,12 +286,12 @@
 			buildRules = (
 			);
 			dependencies = (
-				E8E0FEC71BD8492300292C54 /* PBXTargetDependency */,
-				E8E0FEC91BD8492300292C54 /* PBXTargetDependency */,
+				E827897F1BDD94100009E46A /* PBXTargetDependency */,
+				E827897D1BDD94070009E46A /* PBXTargetDependency */,
 			);
-			name = "upnp-tools cocoa";
+			name = "upnp-tools-cocoa";
 			productName = "upnp-tools";
-			productReference = E8E0FEDE1BD8492300292C54 /* libupnp-tools cocoa.a */;
+			productReference = E8E0FEDE1BD8492300292C54 /* libupnp-tools-cocoa.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		E8FAB2A41BD7D8BB00E89DC5 /* upnp-tools */ = {
@@ -320,16 +350,16 @@
 			projectRoot = "";
 			targets = (
 				E8FAB2A41BD7D8BB00E89DC5 /* upnp-tools */,
-				E8E0FEC61BD8492300292C54 /* upnp-tools cocoa */,
+				E8E0FEC61BD8492300292C54 /* upnp-tools-cocoa */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		E8E0FEE11BD8492300292C54 /* libhttp-server cocoa.a */ = {
+		E8E0FEE11BD8492300292C54 /* libhttp-server-cocoa.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libhttp-server cocoa.a";
+			path = "libhttp-server-cocoa.a";
 			remoteRef = E8E0FEE01BD8492300292C54 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -361,6 +391,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E827898F1BDD95B90009E46A /* StringReader.cpp in Sources */,
+				E82789901BDD95B90009E46A /* XmlDocument.cpp in Sources */,
+				E82789911BDD95B90009E46A /* XmlDocumentPrinter.cpp in Sources */,
+				E82789921BDD95B90009E46A /* XmlDomParser.cpp in Sources */,
+				E82789931BDD95B90009E46A /* XmlNodeFinder.cpp in Sources */,
 				E8E0FECC1BD8492300292C54 /* UPnPDevicePool.cpp in Sources */,
 				E8E0FECD1BD8492300292C54 /* UPnPServer.cpp in Sources */,
 				E8E0FECE1BD8492300292C54 /* UPnPStateVariable.cpp in Sources */,
@@ -380,13 +415,18 @@
 			files = (
 				E8FAB2CB1BD7D8FE00E89DC5 /* UPnPDevicePool.cpp in Sources */,
 				E8FAB2CC1BD7D8FE00E89DC5 /* UPnPServer.cpp in Sources */,
+				E827890D1BDCDBDD0009E46A /* XmlNodeFinder.cpp in Sources */,
 				E8FAB2CE1BD7D8FE00E89DC5 /* UPnPStateVariable.cpp in Sources */,
 				E8FAB2C61BD7D8FE00E89DC5 /* SSDPServer.cpp in Sources */,
 				E8FAB2AB1BD7D8BB00E89DC5 /* upnp_tools.m in Sources */,
+				E827890C1BDCDBDD0009E46A /* XmlDomParser.cpp in Sources */,
 				E8FAB2CD1BD7D8FE00E89DC5 /* UPnPService.cpp in Sources */,
+				E82789091BDCDBDD0009E46A /* StringReader.cpp in Sources */,
 				E8FAB2CA1BD7D8FE00E89DC5 /* UPnPDevice.cpp in Sources */,
+				E827890A1BDCDBDD0009E46A /* XmlDocument.cpp in Sources */,
 				E8FAB2C71BD7D8FE00E89DC5 /* UPnPAction.cpp in Sources */,
 				E8FAB2C81BD7D8FE00E89DC5 /* UPnPActionArgument.cpp in Sources */,
+				E827890B1BDCDBDD0009E46A /* XmlDocumentPrinter.cpp in Sources */,
 				E8FAB2C91BD7D8FE00E89DC5 /* UPnPControlPoint.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -394,15 +434,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		E8E0FEC71BD8492300292C54 /* PBXTargetDependency */ = {
+		E827897D1BDD94070009E46A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = oslayer;
-			targetProxy = E8E0FEC81BD8492300292C54 /* PBXContainerItemProxy */;
+			name = "oslayer-cocoa";
+			targetProxy = E827897C1BDD94070009E46A /* PBXContainerItemProxy */;
 		};
-		E8E0FEC91BD8492300292C54 /* PBXTargetDependency */ = {
+		E827897F1BDD94100009E46A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "http-server";
-			targetProxy = E8E0FECA1BD8492300292C54 /* PBXContainerItemProxy */;
+			name = "http-server cocoa";
+			targetProxy = E827897E1BDD94100009E46A /* PBXContainerItemProxy */;
 		};
 		E8FAB2D81BD7D96A00E89DC5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -552,7 +592,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		E8E0FEDB1BD8492300292C54 /* Build configuration list for PBXNativeTarget "upnp-tools cocoa" */ = {
+		E8E0FEDB1BD8492300292C54 /* Build configuration list for PBXNativeTarget "upnp-tools-cocoa" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E8E0FEDC1BD8492300292C54 /* Debug */,

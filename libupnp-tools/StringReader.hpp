@@ -8,11 +8,11 @@ namespace XML {
 	class StringReader {
 	private:
 		const char * spaces;
-		std::string & data;
+		const std::string & data;
 		size_t pos;
 		
 	public:
-		StringReader(std::string & data);
+		StringReader(const std::string & data);
 		virtual ~StringReader();
 
 		void setSpaces(const char * spaces);
@@ -24,7 +24,7 @@ namespace XML {
 		bool contains(char ch, const char * list);
 		void skipSpaces();
 		bool endOfString();
-		std::string & getData();
+		const std::string & getData();
 		bool isSpace(char ch);
 	};
 }

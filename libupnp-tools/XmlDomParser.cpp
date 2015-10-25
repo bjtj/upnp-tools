@@ -60,7 +60,7 @@ namespace XML {
 		return symbol.substr(f+1);
 	}
 
-	XmlStringReader::XmlStringReader(string & data) : StringReader(data), specials("=") {
+	XmlStringReader::XmlStringReader(const string & data) : StringReader(data), specials("=") {
 		setSpaces(" \t\r\n");
 	}
 
@@ -230,7 +230,7 @@ namespace XML {
 		return Text::startsWith(tag, "<") && Text::endsWith(tag, "/>");
 	}
 
-	XmlDocument XmlDomParser::parse(string & data) {
+	XmlDocument XmlDomParser::parse(const string & data) {
         
         XmlDocument doc;
         XmlStringReader reader(data);

@@ -1,7 +1,6 @@
 #ifndef __UPNP_DEVICE_POLL_HPP__
 #define __UPNP_DEVICE_POLL_HPP__
 
-#include <libhttp-server/Http.hpp>
 #include <vector>
 #include <string>
 #include "UPnPDevice.hpp"
