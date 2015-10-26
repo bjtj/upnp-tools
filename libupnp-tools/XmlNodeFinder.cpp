@@ -104,7 +104,6 @@ namespace XML {
 	}
 
 
-
 	XmlNode XmlNodeFinder::getNodeByTagName(XmlNode & node, const string & tagName) {
 		TagNameCondition condition(tagName, 1);
 		vector<XmlNode> nodes = XmlNodeFinder::collect(node, condition);
@@ -131,7 +130,7 @@ namespace XML {
 		return found.getFirstContent();
 	}
 
-	vector<string> getAllContentsByTagName(XmlNode & node, const string & tagName) {
+	vector<string> XmlNodeFinder::getAllContentsByTagName(XmlNode & node, const string & tagName) {
 		vector<string> ret;
 		vector<XmlNode> nodes = XmlNodeFinder::getAllNodesByTagName(node, tagName);
 		for (size_t i = 0; i < nodes.size(); i++) {

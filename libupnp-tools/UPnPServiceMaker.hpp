@@ -18,8 +18,10 @@ namespace UPNP {
 
 		UPnPStateVariable makeUPnPStateVariable(XML::XmlNode & node);
 		UPnPAction makeUPnPAction(XML::XmlNode & node, std::vector<UPnPStateVariable> & serviceStateTable);
-		UPnPStateVariable UPnPServiceMaker::getStateVariable(std::vector<UPnPStateVariable> & serviceStateTable, std::string & name);
-		UPnPActionArgument makeUPnPActionArgument(XML::XmlNode & node, std::vector<UPnPStateVariable> & serviceStateTable);
+		UPnPStateVariable getStateVariable(std::vector<UPnPStateVariable> & serviceStateTable,
+										   const std::string & name);
+		UPnPActionArgument makeUPnPActionArgument(XML::XmlNode & node,
+												  std::vector<UPnPStateVariable> & serviceStateTable);
 	};
 }
 

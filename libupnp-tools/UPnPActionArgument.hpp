@@ -27,7 +27,7 @@ namespace UPNP {
 		std::string getStateVariableName();
 
 		void setName(const std::string & name);
-		void setStateVariable(UPnPStateVariable & stateVariable);
+		void setStateVariable(const UPnPStateVariable & stateVariable);
 		void setDirection(const std::string & direction);
 	};
 	

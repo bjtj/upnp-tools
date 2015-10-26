@@ -26,7 +26,7 @@ namespace UPNP {
 		this->name = name;
 	}
 
-	void UPnPActionArgument::setStateVariable(UPnPStateVariable & stateVariable) {
+	void UPnPActionArgument::setStateVariable(const UPnPStateVariable & stateVariable) {
 		this->stateVariable = stateVariable;
 	}
 

@@ -8,19 +8,19 @@ namespace UPNP {
 	}
 	UPnPStateVariable::~UPnPStateVariable() {
 	}
-	void UPnPStateVariable::setName(std::string & name) {
+	void UPnPStateVariable::setName(const std::string & name) {
 		this->name = name;
 	}
 	string UPnPStateVariable::getName() {
 		return name;
 	}
-	void UPnPStateVariable::setDataType(std::string & dataType) {
+	void UPnPStateVariable::setDataType(const std::string & dataType) {
 		this->dataType = dataType;
 	}
 	string UPnPStateVariable::getDataType() {
 		return dataType;
 	}
-	void UPnPStateVariable::setDefaultValue(std::string & defValue) {
+	void UPnPStateVariable::setDefaultValue(const std::string & defValue) {
 		this->defValue = defValue;
 	}
 	string UPnPStateVariable::getDefaultValue() {
@@ -30,11 +30,11 @@ namespace UPNP {
 		return allowedValueList;
 	}
 
-	void UPnPStateVariable::setAllowedValueList(vector<string> & list) {
+	void UPnPStateVariable::setAllowedValueList(const vector<string> & list) {
 		this->allowedValueList = list;
 	}
 
-	void UPnPStateVariable::addAllowedValue(std::string & item) {
+	void UPnPStateVariable::addAllowedValue(const std::string & item) {
 		allowedValueList.push_back(item);
 	}
 	
