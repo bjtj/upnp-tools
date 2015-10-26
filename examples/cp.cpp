@@ -1,93 +1,44 @@
 #include <iostream>
 #include <string>
 #include <map>
-#include "Text.hpp"
+#include <liboslayer/Text.hpp>
 
-// #include "UPnPControlPoint.hpp"
+#include <libupnp-tools/UPnPControlPoint.hpp>
 
 using namespace std;
 using namespace UTIL;
+using namespace UPNP;
 
-
-/**
- * proc
- */
-class Proc {
+class MyDeviceAddRemoveHandle : public OnDeviceAddRemoveListener {
 private:
 public:
-    Proc() {}
-    virtual ~Proc() {}
+	MyDeviceAddRemoveHandle() {}
+	virtual ~MyDeviceAddRemoveHandle() {}
 
-	virtual void proc(vector<string> & toks) = 0;
+	virtual void onDeviceAdd(UPnPDevice & device) {
+		cout << "[Device Added] udn: " << device["UDN"] << endl;
+	}
+	virtual void onDeviceRemove(UPnPDevice & device) {
+	}
 };
 
-/**
- * repl
- */
-class Repl : public Proc {
-private:
-	bool done;
-	map<string, Proc*> procs;
-public:
-    Repl();
-    virtual ~Repl();
+static void s_test_cp() {
+    UPnPControlPoint cp(1900, "ssdp:all");
 
-	virtual void loop();
-	virtual void proc(vector<string> & toks);
-	void finish();
+	MyDeviceAddRemoveHandle listener;
+	cp.setOnDeviceAddRemoveListener(&listener);
 
-	void addProc(string name, Proc* proc);
-	void removeProc(string name);
-	Proc * getProc(string name);
-};
-
-Repl::Repl() {
+    cp.startAsync();
+    
+    getchar();
+    
+    cp.stop();
 }
-
-Repl::~Repl() {
-}
-
-void Repl::loop() {
-	while (!done) {
-		string line;
-		std::getline(std::cin, line);
-		vector<string> toks = Text::split(line, " ");
-		proc(toks);
-	}
-}
-
-void Repl::proc(vector<string> & toks) {
-	if (toks.size() > 0) {
-		Proc * p = getProc(toks[0]);
-		if (p) {
-			p->proc(toks);
-		}
-	}
-}
-
-void Repl::finish() {
-	done = true;
-}
-
-void Repl::addProc(string name, Proc* proc) {
-	procs[name] = proc;
-}
-void Repl::removeProc(string name) {
-	procs.erase(name);
-}
-Proc * Repl::getProc(string name) {
-	return procs[name];
-}
-
-
 
 /**
  * main
  */
 int main(int argc, char *args[]) {
-
-	Repl repl;
-	repl.loop();
-
+	s_test_cp();
     return 0;
 }

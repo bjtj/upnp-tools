@@ -26,6 +26,56 @@ namespace UPNP {
         }
 	}
     
+    BuildTarget::BuildTarget() : cp(NULL), targetDevice(NULL), targetService(NULL) {
+    }
+    
+    BuildTarget::BuildTarget(UPnPControlPoint * cp) : cp(cp), targetDevice(NULL), targetService(NULL) {
+    }
+    
+    BuildTarget::~BuildTarget() {
+    }
+    
+    BuildTarget::BuildTarget(const BuildTarget & other) {
+        cp = other.cp;
+        device = other.device;
+        targetDevice = other.targetDevice;
+        targetService = other.targetService;
+    }
+    
+    
+    bool BuildTarget::hasTargetdDevice() {
+        return targetDevice == NULL;
+    }
+    bool BuildTarget::hasTagetService() {
+        return targetService != NULL;
+    }
+    UPnPDevice & BuildTarget::getDevice() {
+        return device;
+    }
+    void BuildTarget::setDevice(const UPnPDevice & device) {
+        this->device = device;
+    }
+    void BuildTarget::setTargetDevice(UPnPDevice * targetDevice) {
+        this->targetDevice = targetDevice;
+    }
+    void BuildTarget::setTargetService(UPnPService * targetService) {
+        this->targetService = targetService;
+    }
+    
+    UPnPDevice * BuildTarget::getTargetDevice() {
+        return targetDevice;
+    }
+    UPnPService * BuildTarget::getTargetService() {
+        return targetService;
+    }
+    
+    void BuildTarget::addScpdUrl(const string & serviceType, Url & scpdUrl) {
+        scpdTable[serviceType] = scpdUrl;
+    }
+    
+    map<string, Url> & BuildTarget::getScpdTable() {
+        return scpdTable;
+    }
     
     
     ControlPointHttpResponseHandler::ControlPointHttpResponseHandler(UPnPControlPoint & cp) : cp(cp) {
@@ -35,16 +85,16 @@ namespace UPNP {
         
     }
     
-    void ControlPointHttpResponseHandler::onResponse(HttpClient & client,
+    void ControlPointHttpResponseHandler::onResponse(HttpClient<BuildTarget> & client,
                                                      HttpHeader & responseHeader,
-                                                     Socket & socket) {
+                                                     Socket & socket,
+                                                     BuildTarget buildTarget) {
         HttpResponseDump dump;
         string deviceDescription = dump.dump(responseHeader, socket);
-        cp.addDevice(deviceDescription);
+        BuildTarget target = cp.registerBuildingDevice(deviceDescription);
+        
     }
     
-    
-
 	/**
 	 * @brief upnp control point
 	 */
@@ -129,12 +179,13 @@ namespace UPNP {
         
         Url url(urlString);
         string get = "GET";
-        httpClient.request(url, get, NULL, 0);
+        httpClient.request(url, get, NULL, 0, BuildTarget(this));
     }
     
-    void UPnPControlPoint::addDevice(const string & deviceDescription) {
+    BuildTarget UPnPControlPoint::registerBuildingDevice(const string & deviceDescription) {
+        BuildTarget target;
         UPnPDevice device = makeUPnPDevice(deviceDescription);
-        addDevice(device);
+        return target;
     }
     
     void UPnPControlPoint::addDevice(UPnPDevice & device) {

@@ -43,6 +43,7 @@ namespace UPNP {
 		void addService(UPnPService & service);
 		void removeService(UPnPService & service);
 		UPnPService getService(std::string serviceType);
+        std::vector<UPnPService> & getServices();
 
 		bool operator==(const UPnPDevice &other) const;
 		std::string & operator[] (const std::string & name);

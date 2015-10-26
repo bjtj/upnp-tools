@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E8E0FE721BD8480B00292C54 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = E8E0FE711BD8480B00292C54 /* main.mm */; };
+		E8C743C81BDEC8B200101962 /* cp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8C743C71BDEC8B200101962 /* cp.cpp */; };
 		E8E0FEA41BD848D300292C54 /* liboslayer-cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8E0FE9C1BD8488A00292C54 /* liboslayer-cocoa.a */; };
-		E8E0FEC51BD8490800292C54 /* libhttp-server cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8E0FEC41BD8490300292C54 /* libhttp-server cocoa.a */; };
-		E8E0FEE81BD849CF00292C54 /* libupnp-tools cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8E0FEE71BD849CA00292C54 /* libupnp-tools cocoa.a */; };
+		E8E0FEC51BD8490800292C54 /* libhttp-server-cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8E0FEC41BD8490300292C54 /* libhttp-server-cocoa.a */; };
+		E8E0FEE81BD849CF00292C54 /* libupnp-tools-cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8E0FEE71BD849CA00292C54 /* libupnp-tools-cocoa.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -93,6 +93,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		E8C743C71BDEC8B200101962 /* cp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cp.cpp; path = ../../../examples/cp.cpp; sourceTree = "<group>"; };
 		E8E0FE6E1BD8480B00292C54 /* upnp-tools-sample */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "upnp-tools-sample"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8E0FE711BD8480B00292C54 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		E8E0FE781BD8482A00292C54 /* upnp-tools.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "upnp-tools.xcodeproj"; path = "../upnp-tools/upnp-tools.xcodeproj"; sourceTree = "<group>"; };
@@ -106,8 +107,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				E8E0FEA41BD848D300292C54 /* liboslayer-cocoa.a in Frameworks */,
-				E8E0FEC51BD8490800292C54 /* libhttp-server cocoa.a in Frameworks */,
-				E8E0FEE81BD849CF00292C54 /* libupnp-tools cocoa.a in Frameworks */,
+				E8E0FEC51BD8490800292C54 /* libhttp-server-cocoa.a in Frameworks */,
+				E8E0FEE81BD849CF00292C54 /* libupnp-tools-cocoa.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -136,6 +137,7 @@
 		E8E0FE701BD8480B00292C54 /* upnp-tools-sample */ = {
 			isa = PBXGroup;
 			children = (
+				E8C743C71BDEC8B200101962 /* cp.cpp */,
 				E8E0FE711BD8480B00292C54 /* main.mm */,
 			);
 			path = "upnp-tools-sample";
@@ -145,7 +147,7 @@
 			isa = PBXGroup;
 			children = (
 				E8E0FE801BD8482A00292C54 /* libupnp-tools.a */,
-				E8E0FEE71BD849CA00292C54 /* libupnp-tools cocoa.a */,
+				E8E0FEE71BD849CA00292C54 /* libupnp-tools-cocoa.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -154,7 +156,7 @@
 			isa = PBXGroup;
 			children = (
 				E8E0FE931BD8487D00292C54 /* libhttp-server.a */,
-				E8E0FEC41BD8490300292C54 /* libhttp-server cocoa.a */,
+				E8E0FEC41BD8490300292C54 /* libhttp-server-cocoa.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -265,17 +267,17 @@
 			remoteRef = E8E0FE9B1BD8488A00292C54 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		E8E0FEC41BD8490300292C54 /* libhttp-server cocoa.a */ = {
+		E8E0FEC41BD8490300292C54 /* libhttp-server-cocoa.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libhttp-server cocoa.a";
+			path = "libhttp-server-cocoa.a";
 			remoteRef = E8E0FEC31BD8490300292C54 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		E8E0FEE71BD849CA00292C54 /* libupnp-tools cocoa.a */ = {
+		E8E0FEE71BD849CA00292C54 /* libupnp-tools-cocoa.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libupnp-tools cocoa.a";
+			path = "libupnp-tools-cocoa.a";
 			remoteRef = E8E0FEE61BD849CA00292C54 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -286,7 +288,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E8E0FE721BD8480B00292C54 /* main.mm in Sources */,
+				E8C743C81BDEC8B200101962 /* cp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

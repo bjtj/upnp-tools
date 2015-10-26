@@ -80,6 +80,10 @@ namespace UPNP {
 		}
 		return UPnPService();
 	}
+    
+    std::vector<UPnPService> & UPnPDevice::getServices() {
+        return services;
+    }
 
 	bool UPnPDevice::operator==(const UPnPDevice &other) const {
 		return (this->udn.compare(other.udn) == 0);

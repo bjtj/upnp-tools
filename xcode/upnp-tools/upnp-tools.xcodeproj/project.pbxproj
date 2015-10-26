@@ -7,40 +7,44 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E82789091BDCDBDD0009E46A /* StringReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82788FF1BDCDBDD0009E46A /* StringReader.cpp */; settings = {ASSET_TAGS = (); }; };
-		E827890A1BDCDBDD0009E46A /* XmlDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82789011BDCDBDD0009E46A /* XmlDocument.cpp */; settings = {ASSET_TAGS = (); }; };
-		E827890B1BDCDBDD0009E46A /* XmlDocumentPrinter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82789031BDCDBDD0009E46A /* XmlDocumentPrinter.cpp */; settings = {ASSET_TAGS = (); }; };
-		E827890C1BDCDBDD0009E46A /* XmlDomParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82789051BDCDBDD0009E46A /* XmlDomParser.cpp */; settings = {ASSET_TAGS = (); }; };
-		E827890D1BDCDBDD0009E46A /* XmlNodeFinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82789071BDCDBDD0009E46A /* XmlNodeFinder.cpp */; settings = {ASSET_TAGS = (); }; };
+		E82789091BDCDBDD0009E46A /* StringReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82788FF1BDCDBDD0009E46A /* StringReader.cpp */; };
+		E827890A1BDCDBDD0009E46A /* XmlDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82789011BDCDBDD0009E46A /* XmlDocument.cpp */; };
+		E827890B1BDCDBDD0009E46A /* XmlDocumentPrinter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82789031BDCDBDD0009E46A /* XmlDocumentPrinter.cpp */; };
+		E827890C1BDCDBDD0009E46A /* XmlDomParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82789051BDCDBDD0009E46A /* XmlDomParser.cpp */; };
+		E827890D1BDCDBDD0009E46A /* XmlNodeFinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82789071BDCDBDD0009E46A /* XmlNodeFinder.cpp */; };
 		E827898F1BDD95B90009E46A /* StringReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82788FF1BDCDBDD0009E46A /* StringReader.cpp */; };
 		E82789901BDD95B90009E46A /* XmlDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82789011BDCDBDD0009E46A /* XmlDocument.cpp */; };
 		E82789911BDD95B90009E46A /* XmlDocumentPrinter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82789031BDCDBDD0009E46A /* XmlDocumentPrinter.cpp */; };
 		E82789921BDD95B90009E46A /* XmlDomParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82789051BDCDBDD0009E46A /* XmlDomParser.cpp */; };
 		E82789931BDD95B90009E46A /* XmlNodeFinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82789071BDCDBDD0009E46A /* XmlNodeFinder.cpp */; };
-		E8E0FECC1BD8492300292C54 /* UPnPDevicePool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2BE1BD7D8FE00E89DC5 /* UPnPDevicePool.cpp */; settings = {ASSET_TAGS = (); }; };
-		E8E0FECD1BD8492300292C54 /* UPnPServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2C01BD7D8FE00E89DC5 /* UPnPServer.cpp */; settings = {ASSET_TAGS = (); }; };
-		E8E0FECE1BD8492300292C54 /* UPnPStateVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2C41BD7D8FE00E89DC5 /* UPnPStateVariable.cpp */; settings = {ASSET_TAGS = (); }; };
-		E8E0FECF1BD8492300292C54 /* SSDPServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2B21BD7D8FE00E89DC5 /* SSDPServer.cpp */; settings = {ASSET_TAGS = (); }; };
+		E8C743C31BDEC82000101962 /* UPnPDeviceMaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8C743BF1BDEC82000101962 /* UPnPDeviceMaker.cpp */; };
+		E8C743C41BDEC82000101962 /* UPnPServiceMaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8C743C11BDEC82000101962 /* UPnPServiceMaker.cpp */; };
+		E8C743C51BDEC83100101962 /* UPnPDeviceMaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8C743BF1BDEC82000101962 /* UPnPDeviceMaker.cpp */; };
+		E8C743C61BDEC83100101962 /* UPnPServiceMaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8C743C11BDEC82000101962 /* UPnPServiceMaker.cpp */; };
+		E8E0FECC1BD8492300292C54 /* UPnPDevicePool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2BE1BD7D8FE00E89DC5 /* UPnPDevicePool.cpp */; };
+		E8E0FECD1BD8492300292C54 /* UPnPServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2C01BD7D8FE00E89DC5 /* UPnPServer.cpp */; };
+		E8E0FECE1BD8492300292C54 /* UPnPStateVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2C41BD7D8FE00E89DC5 /* UPnPStateVariable.cpp */; };
+		E8E0FECF1BD8492300292C54 /* SSDPServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2B21BD7D8FE00E89DC5 /* SSDPServer.cpp */; };
 		E8E0FED01BD8492300292C54 /* upnp_tools.m in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2AA1BD7D8BB00E89DC5 /* upnp_tools.m */; };
-		E8E0FED11BD8492300292C54 /* UPnPService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2C21BD7D8FE00E89DC5 /* UPnPService.cpp */; settings = {ASSET_TAGS = (); }; };
-		E8E0FED21BD8492300292C54 /* UPnPDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2BC1BD7D8FE00E89DC5 /* UPnPDevice.cpp */; settings = {ASSET_TAGS = (); }; };
-		E8E0FED31BD8492300292C54 /* UPnPAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2B51BD7D8FE00E89DC5 /* UPnPAction.cpp */; settings = {ASSET_TAGS = (); }; };
-		E8E0FED41BD8492300292C54 /* UPnPActionArgument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2B71BD7D8FE00E89DC5 /* UPnPActionArgument.cpp */; settings = {ASSET_TAGS = (); }; };
-		E8E0FED51BD8492300292C54 /* UPnPControlPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2BA1BD7D8FE00E89DC5 /* UPnPControlPoint.cpp */; settings = {ASSET_TAGS = (); }; };
+		E8E0FED11BD8492300292C54 /* UPnPService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2C21BD7D8FE00E89DC5 /* UPnPService.cpp */; };
+		E8E0FED21BD8492300292C54 /* UPnPDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2BC1BD7D8FE00E89DC5 /* UPnPDevice.cpp */; };
+		E8E0FED31BD8492300292C54 /* UPnPAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2B51BD7D8FE00E89DC5 /* UPnPAction.cpp */; };
+		E8E0FED41BD8492300292C54 /* UPnPActionArgument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2B71BD7D8FE00E89DC5 /* UPnPActionArgument.cpp */; };
+		E8E0FED51BD8492300292C54 /* UPnPControlPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2BA1BD7D8FE00E89DC5 /* UPnPControlPoint.cpp */; };
 		E8E0FEDA1BD8492300292C54 /* upnp_tools.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = E8FAB2A81BD7D8BB00E89DC5 /* upnp_tools.h */; };
 		E8E0FEE31BD8497B00292C54 /* libhttp-server-cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8E0FEE11BD8492300292C54 /* libhttp-server-cocoa.a */; };
 		E8E0FEE41BD8497B00292C54 /* liboslayer-cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8FAB2F91BD7D9E100E89DC5 /* liboslayer-cocoa.a */; };
 		E8FAB2A91BD7D8BB00E89DC5 /* upnp_tools.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = E8FAB2A81BD7D8BB00E89DC5 /* upnp_tools.h */; };
 		E8FAB2AB1BD7D8BB00E89DC5 /* upnp_tools.m in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2AA1BD7D8BB00E89DC5 /* upnp_tools.m */; };
-		E8FAB2C61BD7D8FE00E89DC5 /* SSDPServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2B21BD7D8FE00E89DC5 /* SSDPServer.cpp */; settings = {ASSET_TAGS = (); }; };
-		E8FAB2C71BD7D8FE00E89DC5 /* UPnPAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2B51BD7D8FE00E89DC5 /* UPnPAction.cpp */; settings = {ASSET_TAGS = (); }; };
-		E8FAB2C81BD7D8FE00E89DC5 /* UPnPActionArgument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2B71BD7D8FE00E89DC5 /* UPnPActionArgument.cpp */; settings = {ASSET_TAGS = (); }; };
-		E8FAB2C91BD7D8FE00E89DC5 /* UPnPControlPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2BA1BD7D8FE00E89DC5 /* UPnPControlPoint.cpp */; settings = {ASSET_TAGS = (); }; };
-		E8FAB2CA1BD7D8FE00E89DC5 /* UPnPDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2BC1BD7D8FE00E89DC5 /* UPnPDevice.cpp */; settings = {ASSET_TAGS = (); }; };
-		E8FAB2CB1BD7D8FE00E89DC5 /* UPnPDevicePool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2BE1BD7D8FE00E89DC5 /* UPnPDevicePool.cpp */; settings = {ASSET_TAGS = (); }; };
-		E8FAB2CC1BD7D8FE00E89DC5 /* UPnPServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2C01BD7D8FE00E89DC5 /* UPnPServer.cpp */; settings = {ASSET_TAGS = (); }; };
-		E8FAB2CD1BD7D8FE00E89DC5 /* UPnPService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2C21BD7D8FE00E89DC5 /* UPnPService.cpp */; settings = {ASSET_TAGS = (); }; };
-		E8FAB2CE1BD7D8FE00E89DC5 /* UPnPStateVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2C41BD7D8FE00E89DC5 /* UPnPStateVariable.cpp */; settings = {ASSET_TAGS = (); }; };
+		E8FAB2C61BD7D8FE00E89DC5 /* SSDPServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2B21BD7D8FE00E89DC5 /* SSDPServer.cpp */; };
+		E8FAB2C71BD7D8FE00E89DC5 /* UPnPAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2B51BD7D8FE00E89DC5 /* UPnPAction.cpp */; };
+		E8FAB2C81BD7D8FE00E89DC5 /* UPnPActionArgument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2B71BD7D8FE00E89DC5 /* UPnPActionArgument.cpp */; };
+		E8FAB2C91BD7D8FE00E89DC5 /* UPnPControlPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2BA1BD7D8FE00E89DC5 /* UPnPControlPoint.cpp */; };
+		E8FAB2CA1BD7D8FE00E89DC5 /* UPnPDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2BC1BD7D8FE00E89DC5 /* UPnPDevice.cpp */; };
+		E8FAB2CB1BD7D8FE00E89DC5 /* UPnPDevicePool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2BE1BD7D8FE00E89DC5 /* UPnPDevicePool.cpp */; };
+		E8FAB2CC1BD7D8FE00E89DC5 /* UPnPServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2C01BD7D8FE00E89DC5 /* UPnPServer.cpp */; };
+		E8FAB2CD1BD7D8FE00E89DC5 /* UPnPService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2C21BD7D8FE00E89DC5 /* UPnPService.cpp */; };
+		E8FAB2CE1BD7D8FE00E89DC5 /* UPnPStateVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8FAB2C41BD7D8FE00E89DC5 /* UPnPStateVariable.cpp */; };
 		E8FAB2D91BD7D97200E89DC5 /* libhttp-server.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8FAB2D51BD7D92300E89DC5 /* libhttp-server.a */; };
 		E8FAB2FC1BD7D9ED00E89DC5 /* liboslayer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8FAB2F71BD7D9E100E89DC5 /* liboslayer.a */; };
 /* End PBXBuildFile section */
@@ -138,6 +142,10 @@
 		E82789061BDCDBDD0009E46A /* XmlDomParser.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = XmlDomParser.hpp; path = "../../libupnp-tools/XmlDomParser.hpp"; sourceTree = "<group>"; };
 		E82789071BDCDBDD0009E46A /* XmlNodeFinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XmlNodeFinder.cpp; path = "../../libupnp-tools/XmlNodeFinder.cpp"; sourceTree = "<group>"; };
 		E82789081BDCDBDD0009E46A /* XmlNodeFinder.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = XmlNodeFinder.hpp; path = "../../libupnp-tools/XmlNodeFinder.hpp"; sourceTree = "<group>"; };
+		E8C743BF1BDEC82000101962 /* UPnPDeviceMaker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UPnPDeviceMaker.cpp; path = "../../libupnp-tools/UPnPDeviceMaker.cpp"; sourceTree = "<group>"; };
+		E8C743C01BDEC82000101962 /* UPnPDeviceMaker.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UPnPDeviceMaker.hpp; path = "../../libupnp-tools/UPnPDeviceMaker.hpp"; sourceTree = "<group>"; };
+		E8C743C11BDEC82000101962 /* UPnPServiceMaker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UPnPServiceMaker.cpp; path = "../../libupnp-tools/UPnPServiceMaker.cpp"; sourceTree = "<group>"; };
+		E8C743C21BDEC82000101962 /* UPnPServiceMaker.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UPnPServiceMaker.hpp; path = "../../libupnp-tools/UPnPServiceMaker.hpp"; sourceTree = "<group>"; };
 		E8E0FEDE1BD8492300292C54 /* libupnp-tools-cocoa.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libupnp-tools-cocoa.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8FAB2A51BD7D8BB00E89DC5 /* libupnp-tools.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libupnp-tools.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8FAB2A81BD7D8BB00E89DC5 /* upnp_tools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = upnp_tools.h; sourceTree = "<group>"; };
@@ -220,6 +228,10 @@
 		E8FAB2B11BD7D8E200E89DC5 /* upnp-tools-c++ */ = {
 			isa = PBXGroup;
 			children = (
+				E8C743BF1BDEC82000101962 /* UPnPDeviceMaker.cpp */,
+				E8C743C01BDEC82000101962 /* UPnPDeviceMaker.hpp */,
+				E8C743C11BDEC82000101962 /* UPnPServiceMaker.cpp */,
+				E8C743C21BDEC82000101962 /* UPnPServiceMaker.hpp */,
 				E82788FF1BDCDBDD0009E46A /* StringReader.cpp */,
 				E82789001BDCDBDD0009E46A /* StringReader.hpp */,
 				E82789011BDCDBDD0009E46A /* XmlDocument.cpp */,
@@ -319,7 +331,7 @@
 		E8FAB29D1BD7D8BB00E89DC5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0700;
+				LastUpgradeCheck = 0710;
 				ORGANIZATIONNAME = TJ;
 				TargetAttributes = {
 					E8FAB2A41BD7D8BB00E89DC5 = {
@@ -391,6 +403,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E8C743C51BDEC83100101962 /* UPnPDeviceMaker.cpp in Sources */,
+				E8C743C61BDEC83100101962 /* UPnPServiceMaker.cpp in Sources */,
 				E827898F1BDD95B90009E46A /* StringReader.cpp in Sources */,
 				E82789901BDD95B90009E46A /* XmlDocument.cpp in Sources */,
 				E82789911BDD95B90009E46A /* XmlDocumentPrinter.cpp in Sources */,
@@ -420,6 +434,7 @@
 				E8FAB2C61BD7D8FE00E89DC5 /* SSDPServer.cpp in Sources */,
 				E8FAB2AB1BD7D8BB00E89DC5 /* upnp_tools.m in Sources */,
 				E827890C1BDCDBDD0009E46A /* XmlDomParser.cpp in Sources */,
+				E8C743C31BDEC82000101962 /* UPnPDeviceMaker.cpp in Sources */,
 				E8FAB2CD1BD7D8FE00E89DC5 /* UPnPService.cpp in Sources */,
 				E82789091BDCDBDD0009E46A /* StringReader.cpp in Sources */,
 				E8FAB2CA1BD7D8FE00E89DC5 /* UPnPDevice.cpp in Sources */,
@@ -427,6 +442,7 @@
 				E8FAB2C71BD7D8FE00E89DC5 /* UPnPAction.cpp in Sources */,
 				E8FAB2C81BD7D8FE00E89DC5 /* UPnPActionArgument.cpp in Sources */,
 				E827890B1BDCDBDD0009E46A /* XmlDocumentPrinter.cpp in Sources */,
+				E8C743C41BDEC82000101962 /* UPnPServiceMaker.cpp in Sources */,
 				E8FAB2C91BD7D8FE00E89DC5 /* UPnPControlPoint.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -460,6 +476,7 @@
 		E8E0FEDC1BD8492300292C54 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				HEADER_SEARCH_PATHS = (
 					../../../oslayer,
 					"../../../http-server",
@@ -474,6 +491,7 @@
 		E8E0FEDD1BD8492300292C54 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				HEADER_SEARCH_PATHS = (
 					../../../oslayer,
 					"../../../http-server",
