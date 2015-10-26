@@ -1,6 +1,7 @@
 #ifndef __UPNP_DEVICE_HPP__
 #define __UPNP_DEVICE_HPP__
 
+#include <map>
 #include <vector>
 #include <string>
 
@@ -20,6 +21,8 @@ namespace UPNP {
 		UPnPDevice * parent;
 		std::vector<UPnPDevice> embeddedDevices;
 		std::vector<UPnPService> services;
+
+		std::map<std::string, std::string> properties;
 		
 	public:
 		UPnPDevice();
@@ -42,6 +45,7 @@ namespace UPNP {
 		UPnPService getService(std::string serviceType);
 
 		bool operator==(const UPnPDevice &other) const;
+		std::string & operator[] (const std::string & name);
 	};
 }
 

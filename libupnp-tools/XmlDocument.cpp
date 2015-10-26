@@ -144,8 +144,16 @@ namespace XML {
 		return EMPTY_ATTRIBUTE;
 	}
 
+	string XmlNode::getAttributeValue(const string & name) {
+		return getAttribute(name).getValue();
+	}
+
 	vector<XmlAttribute> & XmlNode::getAttributes() {
 		return attributes;
+	}
+
+	string XmlNode::getFirstContent() {
+		return children.size() > 0 ? children[0].getData() : "";
 	}
 	
 	XmlNode& XmlNode::operator[](size_t index) {

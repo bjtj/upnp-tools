@@ -17,7 +17,6 @@ namespace UPNP {
 
 		std::string name;
 		std::vector<UPnPActionArgument> arguments;
-		std::vector<UPnPStateVariable> stateVariables;
 		
 	public:
 		
@@ -27,7 +26,7 @@ namespace UPNP {
 		std::string getName();
 
 		std::vector<UPnPActionArgument> & getArguments();
-		std::vector<UPnPStateVariable> & getStateVariables();
+		void setArguments(std::vector<UPnPActionArgument> &);
 
 		bool isEmpty();
 	};

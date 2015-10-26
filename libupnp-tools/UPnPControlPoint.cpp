@@ -1,8 +1,7 @@
 #include "UPnPControlPoint.hpp"
 #include <libhttp-server/Url.hpp>
 #include "XmlDomParser.hpp"
-
-#include <iostream>
+#include "UPnPDeviceMaker.hpp"
 
 namespace UPNP {
 
@@ -128,8 +127,6 @@ namespace UPNP {
     
     void UPnPControlPoint::ssdpDeviceFound(const string & urlString) {
         
-        cout << "ssdp device found: " << urlString << endl;
-        
         Url url(urlString);
         string get = "GET";
         httpClient.request(url, get, NULL, 0);
@@ -143,6 +140,9 @@ namespace UPNP {
     void UPnPControlPoint::addDevice(UPnPDevice & device) {
         deviceListLock.wait();
         devices.push_back(device);
+		if (listener) {
+			listener->onDeviceAdd(device);
+		}
         deviceListLock.post();
     }
     
@@ -160,12 +160,11 @@ namespace UPNP {
     }
     
     UPnPDevice UPnPControlPoint::makeUPnPDevice(const string & deviceDescription) {
-        
-        cout << "make upnp device: " << deviceDescription << endl;
-        
         UPnPDevice device;
         XmlDomParser parser;
         XmlDocument doc = parser.parse(deviceDescription);
+		UPnPDeviceMaker maker;
+		device = maker.makeDeviceWithDeviceDescription(doc);
         return device;
     }
 }

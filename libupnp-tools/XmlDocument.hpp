@@ -63,10 +63,12 @@ namespace XML {
 		size_t size();
 		void setAttribute(const std::string & name, const std::string & value);
 		void setAttribute(XmlAttribute & attribute);
+		std::string getAttributeValue(const std::string & name);
 		XmlAttribute & getAttribute(const std::string & name);
 		std::vector<XmlAttribute> & getAttributes();
 		bool isTextNode();
 		bool isElementNode();
+		std::string getFirstContent();
 		XmlNode & operator[](size_t index);
 	};
 

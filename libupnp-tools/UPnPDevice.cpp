@@ -13,18 +13,20 @@ namespace UPNP {
 
 	void UPnPDevice::setUdn(std::string udn) {
 		this->udn = udn;
+		properties["UDN"] = udn;
 	}
 
 	std::string UPnPDevice::getUdn() {
-		return udn;
+		return properties["UDN"];
 	}
 
 	void UPnPDevice::setFriendlyName(std::string friendlyName) {
 		this->friendlyName = friendlyName;
+		properties["friendlyName"] = friendlyName;
 	}
 
 	std::string UPnPDevice::getFriendlyName() {
-		return friendlyName;
+		return properties["friendlyName"];
 	}
 
 	void UPnPDevice::setParentDevice(UPnPDevice * parent) {
@@ -81,5 +83,9 @@ namespace UPNP {
 
 	bool UPnPDevice::operator==(const UPnPDevice &other) const {
 		return (this->udn.compare(other.udn) == 0);
+	}
+
+	string & UPnPDevice::operator[] (const string & name){
+		return properties[name];
 	}
 }

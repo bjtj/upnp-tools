@@ -44,11 +44,19 @@ namespace XML {
 		std::vector<XmlNode> getAllNodesByTagName(const std::string & tagName);
 		void iterate(IteratorCallback<XmlNode> & callback);
 		std::vector<XmlNode> collect(Condition<XmlNode> & condition);
-
 		std::string getContentByTagName(const std::string & tagName);
+		std::vector<std::string> getAllContentsByTagName(const std::string & tagName);
+
+	public:
+		static XmlNode getNodeByTagName(XmlNode & node, const std::string & tagName);
+		static std::vector<XmlNode> getAllNodesByTagName(XmlNode & node, const std::string & tagName);
+		static void iterate(XmlNode & node, IteratorCallback<XmlNode> & callback);
+		static std::vector<XmlNode> collect(XmlNode & node, Condition<XmlNode> & condition);
+		static std::string getContentByTagName(XmlNode & node, const std::string & tagName);
+		static std::vector<std::string> getAllContentsByTagName(XmlNode & node, const std::string & tagName);
 
 	private:
-		void iterate_r(XmlNode & node, IteratorCallback<XmlNode> & callback);
+		static void iterate_r(XmlNode & node, IteratorCallback<XmlNode> & callback);
 	};
 
 }

@@ -15,8 +15,9 @@ namespace UPNP {
 	vector<UPnPActionArgument> & UPnPAction::getArguments() {
 		return arguments;
 	}
-	vector<UPnPStateVariable> & UPnPAction::getStateVariables() {
-		return stateVariables;
+
+	void UPnPAction::setArguments(vector<UPnPActionArgument> & arguments) {
+		this->arguments = arguments;
 	}
 
 	bool UPnPAction::isEmpty() {

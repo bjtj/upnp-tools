@@ -3,11 +3,11 @@
 
 namespace UPNP {
 
-	typedef enum _argument_direction_e {
+	typedef enum _UPnPActionArgumentDirection {
 		UNKNOWN_DIRECTION,
 		IN_DIRECTION,
 		OUT_DIRECTION
-	} argument_direction_e;
+	} UPnPActionArgumentDirection;
 
 	
 }

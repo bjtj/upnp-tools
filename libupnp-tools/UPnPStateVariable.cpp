@@ -29,8 +29,16 @@ namespace UPNP {
 	vector<string> & UPnPStateVariable::getAllowedValueList() {
 		return allowedValueList;
 	}
+
+	void UPnPStateVariable::setAllowedValueList(vector<string> & list) {
+		this->allowedValueList = list;
+	}
+
 	void UPnPStateVariable::addAllowedValue(std::string & item) {
 		allowedValueList.push_back(item);
 	}
 	
+	string & UPnPStateVariable::operator[] (const string & name) {
+		return properties[name];
+	}
 }

@@ -84,18 +84,61 @@ namespace XML {
 	}
 
 	XmlNode XmlNodeFinder::getNodeByTagName(const string & tagName) {
-		TagNameCondition condition(tagName, 1);
-		vector<XmlNode> nodes = collect(condition);
-		return nodes.size() > 0 ? nodes[0] : XmlNode();
+		return XmlNodeFinder::getNodeByTagName(doc.getRootNode(), tagName);
 	}
 	
 	vector<XmlNode> XmlNodeFinder::getAllNodesByTagName(const string & tagName) {
-		TagNameCondition cond(tagName, -1);
-		return collect(cond);
+		return XmlNodeFinder::getAllNodesByTagName(doc.getRootNode(), tagName);
 	}
 	
 	void XmlNodeFinder::iterate(IteratorCallback<XmlNode> & callback) {
-		iterate_r(doc.getRootNode(), callback);
+		XmlNodeFinder::iterate(doc.getRootNode(), callback);
+	}
+	
+	vector<XmlNode> XmlNodeFinder::collect(Condition<XmlNode> & condition) {
+		return XmlNodeFinder::collect(doc.getRootNode(), condition);
+	}
+	
+	string XmlNodeFinder::getContentByTagName(const string & tagName) {
+		return XmlNodeFinder::getContentByTagName(doc.getRootNode(), tagName);
+	}
+
+
+
+	XmlNode XmlNodeFinder::getNodeByTagName(XmlNode & node, const string & tagName) {
+		TagNameCondition condition(tagName, 1);
+		vector<XmlNode> nodes = XmlNodeFinder::collect(node, condition);
+		return nodes.size() > 0 ? nodes[0] : XmlNode();
+	}
+
+	vector<XmlNode> XmlNodeFinder::getAllNodesByTagName(XmlNode & node, const string & tagName) {
+		TagNameCondition cond(tagName, -1);
+		return XmlNodeFinder::collect(node, cond);
+	}
+
+	void XmlNodeFinder::iterate(XmlNode & node, IteratorCallback<XmlNode> & callback) {
+		iterate_r(node, callback);
+	}
+
+	vector<XmlNode> XmlNodeFinder::collect(XmlNode & node, Condition<XmlNode> & condition) {
+		CollectIterator iter(condition);
+		XmlNodeFinder::iterate(node, iter);
+		return iter.getResult();
+	}
+
+	string XmlNodeFinder::getContentByTagName(XmlNode & node, const string & tagName) {
+		XmlNode found = XmlNodeFinder::getNodeByTagName(node, tagName);
+		return found.getFirstContent();
+	}
+
+	vector<string> getAllContentsByTagName(XmlNode & node, const string & tagName) {
+		vector<string> ret;
+		vector<XmlNode> nodes = XmlNodeFinder::getAllNodesByTagName(node, tagName);
+		for (size_t i = 0; i < nodes.size(); i++) {
+			XmlNode & found = nodes[i];
+			ret.push_back(found.getFirstContent());
+		}
+		return ret;
 	}
 
 	void XmlNodeFinder::iterate_r(XmlNode & node, IteratorCallback<XmlNode> & callback) {
@@ -106,17 +149,5 @@ namespace XML {
 		for (size_t i = 0; i < node.getChildren().size(); i++) {
 			iterate_r(node.getNode(i), callback);
 		}
-	}
-	
-	vector<XmlNode> XmlNodeFinder::collect(Condition<XmlNode> & condition) {
-		CollectIterator iter(condition);
-		iterate(iter);
-		return iter.getResult();
-	}
-
-
-	string XmlNodeFinder::getContentByTagName(const string & tagName) {
-		XmlNode node = getNodeByTagName(tagName);
-		return node.size() > 0 ? node[0].getData() : "";
 	}
 }

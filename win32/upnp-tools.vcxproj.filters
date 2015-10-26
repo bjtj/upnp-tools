@@ -42,6 +42,27 @@
     <ClCompile Include="..\libupnp-tools\UPnPStateVariable.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="..\libupnp-tools\StringReader.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libupnp-tools\XmlDocument.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libupnp-tools\XmlDocumentPrinter.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libupnp-tools\XmlDomParser.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libupnp-tools\XmlNodeFinder.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libupnp-tools\UPnPDeviceMaker.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libupnp-tools\UPnPServiceMaker.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\libupnp-tools\SSDPServer.hpp">
@@ -75,6 +96,27 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPStateVariable.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libupnp-tools\XmlNodeFinder.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libupnp-tools\XmlDomParser.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libupnp-tools\XmlDocumentPrinter.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libupnp-tools\XmlDocument.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libupnp-tools\StringReader.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libupnp-tools\UPnPDeviceMaker.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libupnp-tools\UPnPServiceMaker.hpp">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

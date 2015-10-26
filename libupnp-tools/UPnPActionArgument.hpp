@@ -15,7 +15,7 @@ namespace UPNP {
 	private:
 		std::string name;
 		UPnPStateVariable stateVariable;
-		argument_direction_e direction;
+		std::string direction;
 		
 	public:
 		UPnPActionArgument();
@@ -25,6 +25,10 @@ namespace UPNP {
 		bool outArgument();
 		std::string getName();
 		std::string getStateVariableName();
+
+		void setName(const std::string & name);
+		void setStateVariable(UPnPStateVariable & stateVariable);
+		void setDirection(const std::string & direction);
 	};
 	
 }

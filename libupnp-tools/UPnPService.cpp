@@ -6,9 +6,6 @@ namespace UPNP {
 
 	UPnPService::UPnPService() {
 	}
-
-	UPnPService::UPnPService(std::string serviceType) : serviceType(serviceType) {
-	}
 	
 	UPnPService::~UPnPService() {
 	}
@@ -29,11 +26,35 @@ namespace UPNP {
 		return UPnPAction();
 	}
 
+	vector<UPnPAction> & UPnPService::getActions() {
+		return actions;
+	}
+
+	vector<UPnPStateVariable> & UPnPService::getStateVariables() {
+		return stateVariables;
+	}
+
 	bool UPnPService::isEmpty() {
 		return serviceType.empty();
 	}
 
+	void UPnPService::setServiceType(const std::string & serviceType) {
+		this->serviceType = serviceType;
+	}
+
+	void UPnPService::setActions(std::vector<UPnPAction> & actions) {
+		this->actions = actions;
+	}
+
+	void UPnPService::setStateVariables(std::vector<UPnPStateVariable> & stateVariables) {
+		this->stateVariables = stateVariables;
+	}
+
 	bool UPnPService::operator==(const UPnPService &other) const {
 		return (this->serviceType.compare(other.serviceType) == 0);
+	}
+
+	string & UPnPService::operator[](const string & name) {
+		return properties[name];
 	}
 }
