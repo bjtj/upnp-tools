@@ -14,7 +14,9 @@ namespace UPNP {
 	public:
 		UPnPServiceMaker();
 		virtual ~UPnPServiceMaker();
-		UPnPService makeWithScpd(const std::string & serviceType, XML::XmlDocument & doc);
+
+		UPnPService makeServiceWithXmlNode(XML::XmlNode & serviceNode);
+		Scpd makeScpdWithXmlDocument(const std::string & serviceType, XML::XmlDocument & doc);
 
 		UPnPStateVariable makeUPnPStateVariable(XML::XmlNode & node);
 		UPnPAction makeUPnPAction(XML::XmlNode & node, std::vector<UPnPStateVariable> & serviceStateTable);

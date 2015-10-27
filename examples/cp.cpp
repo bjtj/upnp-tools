@@ -16,7 +16,7 @@ public:
 	virtual ~MyDeviceAddRemoveHandle() {}
 
 	virtual void onDeviceAdd(UPnPDevice & device) {
-		cout << "[Device Added] udn: " << device["UDN"] << endl;
+		cout << "[Device Added] udn: " << device["UDN"] << " - " << device["friendlyName"] << endl;
 	}
 	virtual void onDeviceRemove(UPnPDevice & device) {
 	}

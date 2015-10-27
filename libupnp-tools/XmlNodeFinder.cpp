@@ -104,35 +104,35 @@ namespace XML {
 	}
 
 
-	XmlNode XmlNodeFinder::getNodeByTagName(XmlNode & node, const string & tagName) {
+	XmlNode XmlNodeFinder::getNodeByTagName(XmlNode & node, const string & tagName, int maxDepth) {
 		TagNameCondition condition(tagName, 1);
-		vector<XmlNode> nodes = XmlNodeFinder::collect(node, condition);
+		vector<XmlNode> nodes = XmlNodeFinder::collect(node, condition, maxDepth);
 		return nodes.size() > 0 ? nodes[0] : XmlNode();
 	}
 
-	vector<XmlNode> XmlNodeFinder::getAllNodesByTagName(XmlNode & node, const string & tagName) {
+	vector<XmlNode> XmlNodeFinder::getAllNodesByTagName(XmlNode & node, const string & tagName, int maxDepth) {
 		TagNameCondition cond(tagName, -1);
-		return XmlNodeFinder::collect(node, cond);
+		return XmlNodeFinder::collect(node, cond, maxDepth);
 	}
 
-	void XmlNodeFinder::iterate(XmlNode & node, IteratorCallback<XmlNode> & callback) {
-		iterate_r(node, callback);
+	void XmlNodeFinder::iterate(XmlNode & node, IteratorCallback<XmlNode> & callback, int maxDepth) {
+		iterate_r(node, callback, 0, maxDepth);
 	}
 
-	vector<XmlNode> XmlNodeFinder::collect(XmlNode & node, Condition<XmlNode> & condition) {
+	vector<XmlNode> XmlNodeFinder::collect(XmlNode & node, Condition<XmlNode> & condition, int maxDepth) {
 		CollectIterator iter(condition);
-		XmlNodeFinder::iterate(node, iter);
+		XmlNodeFinder::iterate(node, iter, maxDepth);
 		return iter.getResult();
 	}
 
-	string XmlNodeFinder::getContentByTagName(XmlNode & node, const string & tagName) {
-		XmlNode found = XmlNodeFinder::getNodeByTagName(node, tagName);
+	string XmlNodeFinder::getContentByTagName(XmlNode & node, const string & tagName, int maxDepth) {
+		XmlNode found = XmlNodeFinder::getNodeByTagName(node, tagName, maxDepth);
 		return found.getFirstContent();
 	}
 
-	vector<string> XmlNodeFinder::getAllContentsByTagName(XmlNode & node, const string & tagName) {
+	vector<string> XmlNodeFinder::getAllContentsByTagName(XmlNode & node, const string & tagName, int maxDepth) {
 		vector<string> ret;
-		vector<XmlNode> nodes = XmlNodeFinder::getAllNodesByTagName(node, tagName);
+		vector<XmlNode> nodes = XmlNodeFinder::getAllNodesByTagName(node, tagName, maxDepth);
 		for (size_t i = 0; i < nodes.size(); i++) {
 			XmlNode & found = nodes[i];
 			ret.push_back(found.getFirstContent());
@@ -140,13 +140,17 @@ namespace XML {
 		return ret;
 	}
 
-	void XmlNodeFinder::iterate_r(XmlNode & node, IteratorCallback<XmlNode> & callback) {
+	void XmlNodeFinder::iterate_r(XmlNode & node, IteratorCallback<XmlNode> & callback, int depth, int maxDepth) {
 		if (callback.wantFinish()) {
 			return;
 		}
 		callback.onItem(node);
+		if (maxDepth >= 0 && depth >= maxDepth) {
+			return;
+		}
+		depth++;
 		for (size_t i = 0; i < node.getChildren().size(); i++) {
-			iterate_r(node.getNode(i), callback);
+			iterate_r(node[i], callback, depth, maxDepth);
 		}
 	}
 }

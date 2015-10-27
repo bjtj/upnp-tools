@@ -10,15 +10,35 @@
 
 namespace UPNP {
 
+	class Scpd {
+	private:
+		std::vector<UPnPAction> actions;
+		std::vector<UPnPStateVariable> stateVariables;
+
+		std::map<std::string, std::string> properties;
+
+	public:
+		Scpd();
+		virtual ~Scpd();
+
+		UPnPAction getAction(std::string name);
+		std::vector<UPnPAction> & getActions();
+		std::vector<UPnPStateVariable> & getStateVariables();
+
+		void setActions(std::vector<UPnPAction> & actions);
+		void setStateVariables(std::vector<UPnPStateVariable> & stateVariables);
+
+		std::string & operator[](const std::string & name);
+	};
+
 	/**
 	 * @brief upnp service
 	 */
 	class UPnPService {
 	private:
-		std::string serviceType;
-		std::vector<UPnPAction> actions;
-		std::vector<UPnPStateVariable> stateVariables;
 		std::map<std::string, std::string> properties;
+
+		Scpd scpd;
 
 	public:
 		static UPnPService EMPTY;
@@ -28,21 +48,12 @@ namespace UPNP {
 		virtual ~UPnPService();
 
 		std::string getServiceType();
-		UPnPAction getAction(std::string name);
-		std::vector<UPnPAction> & getActions();
-		std::vector<UPnPStateVariable> & getStateVariables();
-
-		// virtual int sendAction(UPnPActionRequest & request);
-		// virtual int subscribe(UPnPSubscriber * subscriber);
-		// virtual int unsubscribe(UPnPSubscriber * subscriber);
-
-		bool isEmpty();
-
+		bool empty();
 		void setServiceType(const std::string & serviceType);
-		void setActions(std::vector<UPnPAction> & actions);
-		void setStateVariables(std::vector<UPnPStateVariable> & stateVariables);
 
-		bool operator==(const UPnPService &other) const;
+		void setScpd(Scpd & scpd);
+		Scpd & getScpd();
+
 		std::string & operator[](const std::string & name);
 	};
 }

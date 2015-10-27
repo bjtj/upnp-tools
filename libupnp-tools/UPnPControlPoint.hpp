@@ -10,6 +10,8 @@
 #include "SSDPServer.hpp"
 #include "UPnPDevice.hpp"
 
+#include "XmlDocument.hpp"
+
 namespace UPNP {
     
     class UPnPControlPoint;
@@ -44,29 +46,24 @@ namespace UPNP {
     class BuildTarget {
     private:
         UPnPControlPoint * cp;
-        UPnPDevice device;
-        UPnPDevice * targetDevice;
+        UPnPDevice * deviceFrame;
         UPnPService * targetService;
-        
-        std::map<std::string, HTTP::Url> scpdTable;
+		HTTP::Url url;
         
     public:
         BuildTarget();
         BuildTarget(UPnPControlPoint * cp);
         virtual ~BuildTarget();
-        BuildTarget(const BuildTarget & other);
         
-        bool hasTargetdDevice();
+		bool empty();
         bool hasTagetService();
-        UPnPDevice & getDevice();
-        void setDevice(const UPnPDevice & device);
-        UPnPDevice * getTargetDevice();
+        UPnPDevice * getDeviceFrame();
+        void setDeviceFrame(UPnPDevice * deviceFrame);
         UPnPService * getTargetService();
-        void setTargetDevice(UPnPDevice * targetDevice);
         void setTargetService(UPnPService * targetService);
-        
-        void addScpdUrl(const std::string & serviceType, HTTP::Url & scpdUrl);
-        std::map<std::string, HTTP::Url> & getScpdTable();
+		HTTP::Url & getUrl();
+		void setUrl(HTTP::Url & url);
+		UPnPControlPoint * getControlPoint();
     };
     
     /**
@@ -94,8 +91,9 @@ namespace UPNP {
 		SSDP::SSDPServer ssdpServer;
 		ControlPointSSDPHandler ssdpHandler;
 		HTTP::HttpServer httpServer;
-        std::vector<BuildTarget> buildingDevices;
-		std::vector<UPnPDevice> devices;
+        std::map<std::string, std::vector<BuildTarget>> buildTargetTable;
+		std::map<std::string, UPnPDevice> deviceFrames;
+		std::map<std::string, UPnPDevice> devices;
 		
 		OnDeviceAddRemoveListener * listener;
         
@@ -123,13 +121,24 @@ namespace UPNP {
 		void setOnDeviceAddRemoveListener(OnDeviceAddRemoveListener * listener);
         
         void ssdpDeviceFound(const std::string & urlString);
-        BuildTarget registerBuildingDevice(const std::string & deviceDescription);
+        
         void addDevice(UPnPDevice & device);
         void removeDevice(const std::string & udn);
         bool hasDevice(const std::string & udn);
-        UPnPDevice makeUPnPDevice(const std::string & deviceDescription);
-    };
+		UPnPDevice & getDevice(const std::string & udn);
 
+		UPnPDevice makeUPnPDeviceFrame(XML::XmlDocument & doc);
+		UPnPDevice * registerDeviceFrame(UPnPDevice & deviceFrame);
+		void removeDeviceFrame(const std::string & udn);
+		std::vector<BuildTarget> makeBuildTargets(UPnPDevice * device, HTTP::Url & url);
+		void registerBuildTargets(const std::string & udn, std::vector<BuildTarget> & buildTargets);
+		void registerBuildTarget(const std::string & udn, BuildTarget & buildTarget);
+		void unregisterBuildTarget(BuildTarget & buildTarget);
+		void setScpdToUPnPService(UPnPService & targetService, XML::XmlDocument & doc);
+
+		void handleDeviceDescrition(XML::XmlDocument & doc, HTTP::Url & url);
+		void handleScpd(BuildTarget & buildTarget, XML::XmlDocument & doc);
+    };
 }
 
 #endif

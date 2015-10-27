@@ -4,17 +4,12 @@ namespace UPNP {
 
 	using namespace std;
 
-	UPnPService::UPnPService() {
+	Scpd::Scpd() {
 	}
-	
-	UPnPService::~UPnPService() {
+	Scpd::~Scpd() {
 	}
-	
-	string UPnPService::getServiceType() {
-		return serviceType;
-	}
-	
-	UPnPAction UPnPService::getAction(std::string name) {
+
+	UPnPAction Scpd::getAction(string name) {
 		for (vector<UPnPAction>::iterator iter = actions.begin();
 			 iter != actions.end(); iter++) {
 
@@ -26,32 +21,52 @@ namespace UPNP {
 		return UPnPAction();
 	}
 
-	vector<UPnPAction> & UPnPService::getActions() {
+	vector<UPnPAction> & Scpd::getActions() {
 		return actions;
 	}
 
-	vector<UPnPStateVariable> & UPnPService::getStateVariables() {
+	vector<UPnPStateVariable> & Scpd::getStateVariables() {
 		return stateVariables;
 	}
 
-	bool UPnPService::isEmpty() {
-		return serviceType.empty();
-	}
-
-	void UPnPService::setServiceType(const std::string & serviceType) {
-		this->serviceType = serviceType;
-	}
-
-	void UPnPService::setActions(std::vector<UPnPAction> & actions) {
+	void Scpd::setActions(vector<UPnPAction> & actions) {
 		this->actions = actions;
 	}
 
-	void UPnPService::setStateVariables(std::vector<UPnPStateVariable> & stateVariables) {
+	void Scpd::setStateVariables(vector<UPnPStateVariable> & stateVariables) {
 		this->stateVariables = stateVariables;
 	}
 
-	bool UPnPService::operator==(const UPnPService &other) const {
-		return (this->serviceType.compare(other.serviceType) == 0);
+	string & Scpd::operator[](const string & name) {
+		return properties[name];
+	}
+
+
+
+	UPnPService::UPnPService() {
+	}
+	
+	UPnPService::~UPnPService() {
+	}
+	
+	string UPnPService::getServiceType() {
+		return properties["serviceType"];
+	}
+	
+
+	bool UPnPService::empty() {
+		return getServiceType().empty();
+	}
+
+	void UPnPService::setServiceType(const std::string & serviceType) {
+		properties["serviceType"] = serviceType;
+	}
+
+	void UPnPService::setScpd(Scpd & scpd) {
+		this->scpd = scpd;
+	}
+	Scpd & UPnPService::getScpd() {
+		return scpd;
 	}
 
 	string & UPnPService::operator[](const string & name) {

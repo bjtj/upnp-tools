@@ -48,15 +48,15 @@ namespace XML {
 		std::vector<std::string> getAllContentsByTagName(const std::string & tagName);
 
 	public:
-		static XmlNode getNodeByTagName(XmlNode & node, const std::string & tagName);
-		static std::vector<XmlNode> getAllNodesByTagName(XmlNode & node, const std::string & tagName);
-		static void iterate(XmlNode & node, IteratorCallback<XmlNode> & callback);
-		static std::vector<XmlNode> collect(XmlNode & node, Condition<XmlNode> & condition);
-		static std::string getContentByTagName(XmlNode & node, const std::string & tagName);
-		static std::vector<std::string> getAllContentsByTagName(XmlNode & node, const std::string & tagName);
+		static XmlNode getNodeByTagName(XmlNode & node, const std::string & tagName, int maxDepth = -1);
+		static std::vector<XmlNode> getAllNodesByTagName(XmlNode & node, const std::string & tagName, int maxDepth = -1);
+		static void iterate(XmlNode & node, IteratorCallback<XmlNode> & callback, int maxDepth = -1);
+		static std::vector<XmlNode> collect(XmlNode & node, Condition<XmlNode> & condition, int maxDepth = -1);
+		static std::string getContentByTagName(XmlNode & node, const std::string & tagName, int maxDepth = -1);
+		static std::vector<std::string> getAllContentsByTagName(XmlNode & node, const std::string & tagName, int maxDepth = -1);
 
 	private:
-		static void iterate_r(XmlNode & node, IteratorCallback<XmlNode> & callback);
+		static void iterate_r(XmlNode & node, IteratorCallback<XmlNode> & callback, int depth, int maxDepth = -1);
 	};
 
 }

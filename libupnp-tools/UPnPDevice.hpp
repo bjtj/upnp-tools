@@ -14,15 +14,11 @@ namespace UPNP {
 	 */
 	class UPnPDevice {
 	private:
-
-		std::string udn;
-		std::string friendlyName;
 		
+		std::map<std::string, std::string> properties;
 		UPnPDevice * parent;
 		std::vector<UPnPDevice> embeddedDevices;
 		std::vector<UPnPService> services;
-
-		std::map<std::string, std::string> properties;
 		
 	public:
 		UPnPDevice();
@@ -38,14 +34,14 @@ namespace UPNP {
 		UPnPDevice * getParentDevice();
 		bool isRootDevice();
 		void addEmbeddedDevice(UPnPDevice & embeddedDevice);
-		void removeEmbeddedDevice(UPnPDevice & embeddedDevice);
-		UPnPDevice getEmbeddedDevice(int index);
+		void removeEmbeddedDevice(size_t index);
+		UPnPDevice & getEmbeddedDevice(int index);
+		std::vector<UPnPDevice> & getEmbeddedDevices();
 		void addService(UPnPService & service);
-		void removeService(UPnPService & service);
+		void removeService(size_t index);
 		UPnPService getService(std::string serviceType);
         std::vector<UPnPService> & getServices();
 
-		bool operator==(const UPnPDevice &other) const;
 		std::string & operator[] (const std::string & name);
 	};
 }

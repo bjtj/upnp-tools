@@ -12,7 +12,6 @@ namespace UPNP {
 	}
 
 	void UPnPDevice::setUdn(std::string udn) {
-		this->udn = udn;
 		properties["UDN"] = udn;
 	}
 
@@ -21,7 +20,6 @@ namespace UPNP {
 	}
 
 	void UPnPDevice::setFriendlyName(std::string friendlyName) {
-		this->friendlyName = friendlyName;
 		properties["friendlyName"] = friendlyName;
 	}
 
@@ -46,26 +44,24 @@ namespace UPNP {
 		embeddedDevices.push_back(embeddedDevice);
 	}
 
-	void UPnPDevice::removeEmbeddedDevice(UPnPDevice & embeddedDevice) {
-		embeddedDevice.setParentDevice(NULL);
-		embeddedDevices.erase(std::remove(embeddedDevices.begin(),
-										  embeddedDevices.end(),
-										  embeddedDevice), embeddedDevices.end());
-		
+	void UPnPDevice::removeEmbeddedDevice(size_t index) {
+		embeddedDevices.erase(embeddedDevices.begin() + index);
 	}
 
-	UPnPDevice UPnPDevice::getEmbeddedDevice(int index) {
+	UPnPDevice & UPnPDevice::getEmbeddedDevice(int index) {
 		return embeddedDevices[index];
+	}
+
+	vector<UPnPDevice> & UPnPDevice::getEmbeddedDevices() {
+		return embeddedDevices;
 	}
 
 	void UPnPDevice::addService(UPnPService & service) {
 		services.push_back(service);
 	}
 
-	void UPnPDevice::removeService(UPnPService & service) {
-		services.erase(std::remove(services.begin(),
-								   services.end(),
-								   service), services.end());
+	void UPnPDevice::removeService(size_t index) {
+		services.erase(services.begin() + index);
 	}
 
 	UPnPService UPnPDevice::getService(std::string serviceType) {
@@ -84,10 +80,6 @@ namespace UPNP {
     std::vector<UPnPService> & UPnPDevice::getServices() {
         return services;
     }
-
-	bool UPnPDevice::operator==(const UPnPDevice &other) const {
-		return (this->udn.compare(other.udn) == 0);
-	}
 
 	string & UPnPDevice::operator[] (const string & name){
 		return properties[name];

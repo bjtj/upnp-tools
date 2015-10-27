@@ -1,4 +1,5 @@
 #include "XmlDocument.hpp"
+#include "macros.hpp"
 
 namespace XML {
 
@@ -155,10 +156,6 @@ namespace XML {
 	string XmlNode::getFirstContent() {
 		return children.size() > 0 ? children[0].getData() : "";
 	}
-	
-	XmlNode& XmlNode::operator[](size_t index) {
-		return getNode(index);
-	}
 
 	bool XmlNode::isTextNode() {
 		return !data.empty();
@@ -168,6 +165,22 @@ namespace XML {
 		return !tagName.empty();
 	}
 
+	int XmlNode::getChildrenElementNodeCount() {
+		int cnt = 0;
+		LOOP_VEC(children, i) {
+			XmlNode & node = children[i];
+			if (node.isElementNode()) {
+				cnt++;
+			}
+		}
+		return cnt;
+	}
+	
+	XmlNode& XmlNode::operator[](size_t index) {
+		return getNode(index);
+	}
+
+	
     XmlDocument::XmlDocument() {
 	}
     
