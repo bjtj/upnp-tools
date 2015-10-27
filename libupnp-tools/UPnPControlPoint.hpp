@@ -91,7 +91,7 @@ namespace UPNP {
 		SSDP::SSDPServer ssdpServer;
 		ControlPointSSDPHandler ssdpHandler;
 		HTTP::HttpServer httpServer;
-        std::map<std::string, std::vector<BuildTarget>> buildTargetTable;
+        std::map<std::string, std::vector<BuildTarget> > buildTargetTable;
 		std::map<std::string, UPnPDevice> deviceFrames;
 		std::map<std::string, UPnPDevice> devices;
 		

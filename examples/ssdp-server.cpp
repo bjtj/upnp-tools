@@ -1,6 +1,6 @@
 #include <iostream>
 #include <liboslayer/os.hpp>
-#include "SSDPServer.hpp"
+#include <libupnp-tools/SSDPServer.hpp>
 
 using namespace std;
 using namespace SSDP;
