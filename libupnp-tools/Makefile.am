@@ -4,6 +4,7 @@ libupnp_toolsincdir = ${includedir}/upnp-tools
 libupnp_toolsinc_HEADERS = \
 	SSDPServer.hpp \
 	StringReader.hpp \
+	Timer.hpp \
 	UPnP.hpp \
 	UPnPAction.hpp \
 	UPnPActionArgument.hpp \
@@ -26,6 +27,8 @@ libupnp_tools_la_SOURCES = \
 	SSDPServer.hpp \
 	StringReader.cpp \
 	StringReader.hpp \
+	Timer.cpp \
+	Timer.hpp \
 	UPnP.hpp \
 	UPnPAction.cpp \
 	UPnPAction.hpp \

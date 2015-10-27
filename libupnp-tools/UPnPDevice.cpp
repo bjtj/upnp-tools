@@ -1,15 +1,44 @@
 #include <algorithm>
 #include "UPnPDevice.hpp"
 
+#include "macros.hpp"
+
 namespace UPNP {
 
 	using namespace std;
 
 	UPnPDevice::UPnPDevice() : parent(NULL) {
 	}
+    
+    UPnPDevice::UPnPDevice(const UPnPDevice & other) {
+        this->properties = other.properties;
+        this->parent = other.parent;
+        this->embeddedDevices = other.embeddedDevices;
+        this->services = other.services;
+        
+        rebaseParents(this);
+    }
 
 	UPnPDevice::~UPnPDevice() {
 	}
+    
+    UPnPDevice UPnPDevice::copy() {
+        UPnPDevice device(*this);
+        return device;
+    }
+    
+    void UPnPDevice::rebaseParents() {
+        rebaseParents(this);
+    }
+    
+    void UPnPDevice::rebaseParents(UPnPDevice * parent) {
+        vector<UPnPDevice> & embeddedDevices = parent->getEmbeddedDevices();
+        LOOP_VEC(embeddedDevices, i) {
+            UPnPDevice & embeddedDevice = embeddedDevices[i];
+            embeddedDevice.parent = parent;
+            rebaseParents(&embeddedDevice);
+        }
+    }
 
 	void UPnPDevice::setUdn(std::string udn) {
 		properties["UDN"] = udn;
@@ -34,6 +63,14 @@ namespace UPNP {
 	UPnPDevice * UPnPDevice::getParentDevice() {
 		return parent;
 	}
+    
+    UPnPDevice * UPnPDevice::getRootDevice() {
+        UPnPDevice * device = this;
+        while (device->getParentDevice()) {
+            device = device->getParentDevice();
+        }
+        return device;
+    }
 
 	bool UPnPDevice::isRootDevice() {
 		return parent == NULL;
@@ -77,7 +114,7 @@ namespace UPNP {
 		return UPnPService();
 	}
     
-    std::vector<UPnPService> & UPnPDevice::getServices() {
+    vector<UPnPService> & UPnPDevice::getServices() {
         return services;
     }
 

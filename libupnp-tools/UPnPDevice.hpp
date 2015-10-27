@@ -22,8 +22,12 @@ namespace UPNP {
 		
 	public:
 		UPnPDevice();
+        UPnPDevice(const UPnPDevice & other);
 		virtual ~UPnPDevice();
 
+        UPnPDevice copy();
+        void rebaseParents();
+        void rebaseParents(UPnPDevice * parent);
 
 		void setUdn(std::string udn);
 		std::string getUdn();
@@ -32,6 +36,7 @@ namespace UPNP {
 		
 		void setParentDevice(UPnPDevice * parent);
 		UPnPDevice * getParentDevice();
+        UPnPDevice * getRootDevice();
 		bool isRootDevice();
 		void addEmbeddedDevice(UPnPDevice & embeddedDevice);
 		void removeEmbeddedDevice(size_t index);

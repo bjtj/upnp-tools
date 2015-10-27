@@ -17,6 +17,8 @@
 		E82789911BDD95B90009E46A /* XmlDocumentPrinter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82789031BDCDBDD0009E46A /* XmlDocumentPrinter.cpp */; };
 		E82789921BDD95B90009E46A /* XmlDomParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82789051BDCDBDD0009E46A /* XmlDomParser.cpp */; };
 		E82789931BDD95B90009E46A /* XmlNodeFinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82789071BDCDBDD0009E46A /* XmlNodeFinder.cpp */; };
+		E857BAE91BE03C6300D2022F /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E857BAE71BE03C6300D2022F /* Timer.cpp */; };
+		E857BAEA1BE03D3300D2022F /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E857BAE71BE03C6300D2022F /* Timer.cpp */; };
 		E8C743C31BDEC82000101962 /* UPnPDeviceMaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8C743BF1BDEC82000101962 /* UPnPDeviceMaker.cpp */; };
 		E8C743C41BDEC82000101962 /* UPnPServiceMaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8C743C11BDEC82000101962 /* UPnPServiceMaker.cpp */; };
 		E8C743C51BDEC83100101962 /* UPnPDeviceMaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8C743BF1BDEC82000101962 /* UPnPDeviceMaker.cpp */; };
@@ -142,6 +144,8 @@
 		E82789061BDCDBDD0009E46A /* XmlDomParser.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = XmlDomParser.hpp; path = "../../libupnp-tools/XmlDomParser.hpp"; sourceTree = "<group>"; };
 		E82789071BDCDBDD0009E46A /* XmlNodeFinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XmlNodeFinder.cpp; path = "../../libupnp-tools/XmlNodeFinder.cpp"; sourceTree = "<group>"; };
 		E82789081BDCDBDD0009E46A /* XmlNodeFinder.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = XmlNodeFinder.hpp; path = "../../libupnp-tools/XmlNodeFinder.hpp"; sourceTree = "<group>"; };
+		E857BAE71BE03C6300D2022F /* Timer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Timer.cpp; path = "../../libupnp-tools/Timer.cpp"; sourceTree = "<group>"; };
+		E857BAE81BE03C6300D2022F /* Timer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Timer.hpp; path = "../../libupnp-tools/Timer.hpp"; sourceTree = "<group>"; };
 		E8C743BF1BDEC82000101962 /* UPnPDeviceMaker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UPnPDeviceMaker.cpp; path = "../../libupnp-tools/UPnPDeviceMaker.cpp"; sourceTree = "<group>"; };
 		E8C743C01BDEC82000101962 /* UPnPDeviceMaker.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UPnPDeviceMaker.hpp; path = "../../libupnp-tools/UPnPDeviceMaker.hpp"; sourceTree = "<group>"; };
 		E8C743C11BDEC82000101962 /* UPnPServiceMaker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UPnPServiceMaker.cpp; path = "../../libupnp-tools/UPnPServiceMaker.cpp"; sourceTree = "<group>"; };
@@ -228,6 +232,8 @@
 		E8FAB2B11BD7D8E200E89DC5 /* upnp-tools-c++ */ = {
 			isa = PBXGroup;
 			children = (
+				E857BAE71BE03C6300D2022F /* Timer.cpp */,
+				E857BAE81BE03C6300D2022F /* Timer.hpp */,
 				E8C743BF1BDEC82000101962 /* UPnPDeviceMaker.cpp */,
 				E8C743C01BDEC82000101962 /* UPnPDeviceMaker.hpp */,
 				E8C743C11BDEC82000101962 /* UPnPServiceMaker.cpp */,
@@ -403,6 +409,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E857BAEA1BE03D3300D2022F /* Timer.cpp in Sources */,
 				E8C743C51BDEC83100101962 /* UPnPDeviceMaker.cpp in Sources */,
 				E8C743C61BDEC83100101962 /* UPnPServiceMaker.cpp in Sources */,
 				E827898F1BDD95B90009E46A /* StringReader.cpp in Sources */,
@@ -442,6 +449,7 @@
 				E8FAB2C71BD7D8FE00E89DC5 /* UPnPAction.cpp in Sources */,
 				E8FAB2C81BD7D8FE00E89DC5 /* UPnPActionArgument.cpp in Sources */,
 				E827890B1BDCDBDD0009E46A /* XmlDocumentPrinter.cpp in Sources */,
+				E857BAE91BE03C6300D2022F /* Timer.cpp in Sources */,
 				E8C743C41BDEC82000101962 /* UPnPServiceMaker.cpp in Sources */,
 				E8FAB2C91BD7D8FE00E89DC5 /* UPnPControlPoint.cpp in Sources */,
 			);

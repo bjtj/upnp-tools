@@ -1,4 +1,5 @@
 #include "UPnPDeviceMaker.hpp"
+#include "UPnPServiceMaker.hpp"
 #include "XmlNodeFinder.hpp"
 #include "macros.hpp"
 
@@ -39,6 +40,17 @@ namespace UPNP {
 				device[name] = value;
 			}
 		}
+        
+        XmlNode serviceListNode = XmlNodeFinder::getNodeByTagName(deviceNode, "serviceList", 1);
+        if (!serviceListNode.empty()) {
+            vector<XmlNode> serviceNodes = XmlNodeFinder::getAllNodesByTagName(serviceListNode, "service", 1);
+            LOOP_VEC(serviceNodes, i) {
+                XmlNode & serviceNode = serviceNodes[i];
+                UPnPServiceMaker serviceMaker;
+                UPnPService service = serviceMaker.makeServiceWithXmlNode(serviceNode);
+                device.addService(service);
+            }
+        }
 
 		XmlNode deviceListNode = XmlNodeFinder::getNodeByTagName(deviceNode, "deviceList", 1);
 		if (!deviceListNode.empty()) {

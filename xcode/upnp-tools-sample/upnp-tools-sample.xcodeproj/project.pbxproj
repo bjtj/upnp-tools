@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		E8C743C81BDEC8B200101962 /* cp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8C743C71BDEC8B200101962 /* cp.cpp */; };
-		E8E0FEA41BD848D300292C54 /* liboslayer-cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8E0FE9C1BD8488A00292C54 /* liboslayer-cocoa.a */; };
-		E8E0FEC51BD8490800292C54 /* libhttp-server-cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8E0FEC41BD8490300292C54 /* libhttp-server-cocoa.a */; };
 		E8E0FEE81BD849CF00292C54 /* libupnp-tools-cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8E0FEE71BD849CA00292C54 /* libupnp-tools-cocoa.a */; };
 /* End PBXBuildFile section */
 
@@ -21,54 +19,12 @@
 			remoteGlobalIDString = E8E0FEC61BD8492300292C54;
 			remoteInfo = "upnp-tools cocoa";
 		};
-		E82789851BDD943D0009E46A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8E0FE8E1BD8487D00292C54 /* http-server.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = E8E0FEA51BD848EB00292C54;
-			remoteInfo = "http-server cocoa";
-		};
-		E82789871BDD94400009E46A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8E0FE941BD8488A00292C54 /* oslayer.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = E8FAB2111BD7C36200E89DC5;
-			remoteInfo = "oslayer-cocoa";
-		};
 		E8E0FE7F1BD8482A00292C54 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = E8E0FE781BD8482A00292C54 /* upnp-tools.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = E8FAB2A51BD7D8BB00E89DC5;
 			remoteInfo = "upnp-tools";
-		};
-		E8E0FE921BD8487D00292C54 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8E0FE8E1BD8487D00292C54 /* http-server.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E8FAB2381BD7D29800E89DC5;
-			remoteInfo = "http-server";
-		};
-		E8E0FE991BD8488A00292C54 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8E0FE941BD8488A00292C54 /* oslayer.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E882FE7E1BD5312600E1C8C7;
-			remoteInfo = oslayer;
-		};
-		E8E0FE9B1BD8488A00292C54 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8E0FE941BD8488A00292C54 /* oslayer.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E8FAB21E1BD7C36200E89DC5;
-			remoteInfo = "oslayer-cocoa";
-		};
-		E8E0FEC31BD8490300292C54 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E8E0FE8E1BD8487D00292C54 /* http-server.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E8E0FEC01BD848EB00292C54;
-			remoteInfo = "http-server cocoa";
 		};
 		E8E0FEE61BD849CA00292C54 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -97,8 +53,6 @@
 		E8E0FE6E1BD8480B00292C54 /* upnp-tools-sample */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "upnp-tools-sample"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8E0FE711BD8480B00292C54 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		E8E0FE781BD8482A00292C54 /* upnp-tools.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "upnp-tools.xcodeproj"; path = "../upnp-tools/upnp-tools.xcodeproj"; sourceTree = "<group>"; };
-		E8E0FE8E1BD8487D00292C54 /* http-server.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "http-server.xcodeproj"; path = "../../../http-server/xcode/http-server/http-server.xcodeproj"; sourceTree = "<group>"; };
-		E8E0FE941BD8488A00292C54 /* oslayer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = oslayer.xcodeproj; path = ../../../oslayer/xcode/oslayer/oslayer.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,8 +60,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E8E0FEA41BD848D300292C54 /* liboslayer-cocoa.a in Frameworks */,
-				E8E0FEC51BD8490800292C54 /* libhttp-server-cocoa.a in Frameworks */,
 				E8E0FEE81BD849CF00292C54 /* libupnp-tools-cocoa.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -118,8 +70,6 @@
 		E8E0FE651BD8480B00292C54 = {
 			isa = PBXGroup;
 			children = (
-				E8E0FE941BD8488A00292C54 /* oslayer.xcodeproj */,
-				E8E0FE8E1BD8487D00292C54 /* http-server.xcodeproj */,
 				E8E0FE781BD8482A00292C54 /* upnp-tools.xcodeproj */,
 				E8E0FE701BD8480B00292C54 /* upnp-tools-sample */,
 				E8E0FE6F1BD8480B00292C54 /* Products */,
@@ -152,24 +102,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		E8E0FE8F1BD8487D00292C54 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				E8E0FE931BD8487D00292C54 /* libhttp-server.a */,
-				E8E0FEC41BD8490300292C54 /* libhttp-server-cocoa.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		E8E0FE951BD8488A00292C54 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				E8E0FE9A1BD8488A00292C54 /* liboslayer.a */,
-				E8E0FE9C1BD8488A00292C54 /* liboslayer-cocoa.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -184,8 +116,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				E82789881BDD94400009E46A /* PBXTargetDependency */,
-				E82789861BDD943D0009E46A /* PBXTargetDependency */,
 				E82789841BDD943A0009E46A /* PBXTargetDependency */,
 			);
 			name = "upnp-tools-sample";
@@ -219,14 +149,6 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = E8E0FE8F1BD8487D00292C54 /* Products */;
-					ProjectRef = E8E0FE8E1BD8487D00292C54 /* http-server.xcodeproj */;
-				},
-				{
-					ProductGroup = E8E0FE951BD8488A00292C54 /* Products */;
-					ProjectRef = E8E0FE941BD8488A00292C54 /* oslayer.xcodeproj */;
-				},
-				{
 					ProductGroup = E8E0FE791BD8482A00292C54 /* Products */;
 					ProjectRef = E8E0FE781BD8482A00292C54 /* upnp-tools.xcodeproj */;
 				},
@@ -244,34 +166,6 @@
 			fileType = archive.ar;
 			path = "libupnp-tools.a";
 			remoteRef = E8E0FE7F1BD8482A00292C54 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		E8E0FE931BD8487D00292C54 /* libhttp-server.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libhttp-server.a";
-			remoteRef = E8E0FE921BD8487D00292C54 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		E8E0FE9A1BD8488A00292C54 /* liboslayer.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = liboslayer.a;
-			remoteRef = E8E0FE991BD8488A00292C54 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		E8E0FE9C1BD8488A00292C54 /* liboslayer-cocoa.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "liboslayer-cocoa.a";
-			remoteRef = E8E0FE9B1BD8488A00292C54 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		E8E0FEC41BD8490300292C54 /* libhttp-server-cocoa.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libhttp-server-cocoa.a";
-			remoteRef = E8E0FEC31BD8490300292C54 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		E8E0FEE71BD849CA00292C54 /* libupnp-tools-cocoa.a */ = {
@@ -299,16 +193,6 @@
 			isa = PBXTargetDependency;
 			name = "upnp-tools cocoa";
 			targetProxy = E82789831BDD943A0009E46A /* PBXContainerItemProxy */;
-		};
-		E82789861BDD943D0009E46A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "http-server cocoa";
-			targetProxy = E82789851BDD943D0009E46A /* PBXContainerItemProxy */;
-		};
-		E82789881BDD94400009E46A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "oslayer-cocoa";
-			targetProxy = E82789871BDD94400009E46A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

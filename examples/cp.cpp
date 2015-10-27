@@ -19,6 +19,7 @@ public:
 		cout << "[Device Added] udn: " << device["UDN"] << " - " << device["friendlyName"] << endl;
 	}
 	virtual void onDeviceRemove(UPnPDevice & device) {
+        cout << "[Device Removed] udn: " << device["UDN"] << " - " << device["friendlyName"] << endl;
 	}
 };
 
