@@ -69,6 +69,7 @@
   <ItemGroup>
     <ClCompile Include="..\libupnp-tools\SSDPServer.cpp" />
     <ClCompile Include="..\libupnp-tools\StringReader.cpp" />
+    <ClCompile Include="..\libupnp-tools\Timer.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPAction.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPActionArgument.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPControlPoint.cpp" />
@@ -88,6 +89,7 @@
     <ClInclude Include="..\libupnp-tools\macros.hpp" />
     <ClInclude Include="..\libupnp-tools\SSDPServer.hpp" />
     <ClInclude Include="..\libupnp-tools\StringReader.hpp" />
+    <ClInclude Include="..\libupnp-tools\Timer.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnP.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPAction.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPActionArgument.hpp" />

@@ -6,7 +6,7 @@ using namespace std;
 using namespace SSDP;
 using namespace HTTP;
 
-class SSDPHandler : public OnMsearchHandler, public OnNotifyHandler {
+class SSDPHandler : public OnMsearchHandler, public OnNotifyHandler, public OnHttpResponseHandler {
 private:
 public:
     SSDPHandler() {
@@ -15,11 +15,15 @@ public:
 	}
 
 	virtual void onMsearch(HttpHeader & header) {
-		std::cout << "msearch - " << header.getHeaderFieldIgnoreCase("ST") << std::endl;
+		std::cout << "msearch - " << header["ST"] << std::endl;
 	}
 
 	virtual void onNotify(HttpHeader & header) {
-		std::cout << "notify - " << header.getHeaderFieldIgnoreCase("Location") << std::endl;
+		std::cout << "notify - " << header["NTS"] << " . " << header["Location"] << std::endl;
+	}
+
+	virtual void onHttpResponse(HttpHeader & header) {
+		std::cout << "response - " << header["Location"] << std::endl;
 	}
 };
 
@@ -32,8 +36,19 @@ static void s_test_ssdp_server() {
 	server.startAsync();
 	server.addNotifyHandler(&handler);
 	server.addMsearchHandler(&handler);
+	server.addHttpResponseHandler(&handler);
 
-	getchar();
+	while (1) {
+		char buffer[1024] = {0,};
+		fgets(buffer, sizeof(buffer) - 1, stdin);
+		buffer[strlen(buffer) - 1] = 0;
+		if (!strcmp(buffer, "q")) {
+			break;
+		}
+		if (!strcmp(buffer, "m")) {
+			server.sendMsearch("upnp:rootdevice");
+		}
+	}
 
 	server.stop();
 }

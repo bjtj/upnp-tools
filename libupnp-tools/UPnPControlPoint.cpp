@@ -22,12 +22,12 @@ namespace UPNP {
 	}
 	ControlPointSSDPHandler::~ControlPointSSDPHandler() {
 	}
-	void ControlPointSSDPHandler::onNotify(HTTP::HttpHeader & header) {
-		// request device description
+	void ControlPointSSDPHandler::onNotify(HttpHeader & header) {
         
         string nts = header["NTS"];
+		string nt = header["NT"];
         
-        if (Text::equalsIgnoreCase(nts, "ssdp:alive")) {
+		if (Text::equalsIgnoreCase(nts, "ssdp:alive") && cp.filter(nt)) {
             string location = header["Location"];
             if (!location.empty()) {
                 cp.ssdpDeviceFound(location);
@@ -40,10 +40,21 @@ namespace UPNP {
                 cp.ssdpDeviceRemoved(usn);
             }
         }
-        
-        
+	}
+
+	void ControlPointSSDPHandler::onHttpResponse(HttpHeader & header) {
+		string st = header["ST"];
+		if (cp.filter(st)) {
+            string location = header["Location"];
+            if (!location.empty()) {
+                cp.ssdpDeviceFound(location);
+            }
+        }
 	}
         
+	/**
+	 *
+	 */
     BuildTarget::BuildTarget(UPnPControlPoint & cp) : cp(cp), device(NULL), targetService(NULL) {
     }
 		
@@ -85,6 +96,9 @@ namespace UPNP {
 	}
     
     
+	/**
+	 *
+	 */
     ControlPointHttpResponseHandler::ControlPointHttpResponseHandler(UPnPControlPoint & cp) : cp(cp) {
         
     }
@@ -116,9 +130,10 @@ namespace UPNP {
 	/**
 	 * @brief upnp control point
 	 */
-	UPnPControlPoint::UPnPControlPoint(int port, string searchTarget) : 
-		httpClient(5), searchTarget(searchTarget), ssdpHandler(*this), httpServer(port), listener(NULL),
-        httpResponseHandler(*this), deviceListLock(1), buildTargetLock(1) {
+
+	UPnPControlPoint::UPnPControlPoint(int port, string searchTarget, vector<string> & searchTargetFilters) : 
+		httpClient(10), searchTarget(searchTarget), ssdpHandler(*this), httpServer(port), listener(NULL),
+			httpResponseHandler(*this), deviceListLock(1), buildTargetLock(1), searchTargetFilters(searchTargetFilters) {
             
             httpClient.setHttpResponseHandler(&httpResponseHandler);
             httpClient.setFollowRedirect(true);
@@ -132,6 +147,7 @@ namespace UPNP {
         httpClient.start();
 
 		ssdpServer.addNotifyHandler(&ssdpHandler);
+		ssdpServer.addHttpResponseHandler(&ssdpHandler);
 		
 		ssdpServer.startAsync();
 		httpServer.startAsync();
@@ -140,6 +156,9 @@ namespace UPNP {
 	void UPnPControlPoint::stop() {
         
         httpClient.stop();
+
+		ssdpServer.removeNotifyHandler(&ssdpHandler);
+		ssdpServer.removeHttpResponseHandler(&ssdpHandler);
         
 		ssdpServer.stop();
 		httpServer.stop();
@@ -336,5 +355,36 @@ namespace UPNP {
 		unregisterBuildTarget(buildTarget);
 
         buildTargetLock.post();
+	}
+
+	void UPnPControlPoint::addSearchTargetFilter(const string & type) {
+		FOREACH_VEC(searchTargetFilters, string, filter) {
+			if (!filter->compare(type)) {
+				return;
+			}
+		}
+		searchTargetFilters.push_back(type);
+	}
+
+	void UPnPControlPoint::removeSearchTargetFilter(const string & type) {
+		FOREACH_VEC(searchTargetFilters, string, filter) {
+			if (!filter->compare(type)) {
+				searchTargetFilters.erase(filter);
+				return;
+			}
+		}
+	}
+
+	vector<string> & UPnPControlPoint::getSearchTargetFilters() {
+		return searchTargetFilters;
+	}
+
+	bool UPnPControlPoint::filter(const std::string & target) {
+		FOREACH_VEC(searchTargetFilters, string, filter) {
+			if (!filter->compare(target)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

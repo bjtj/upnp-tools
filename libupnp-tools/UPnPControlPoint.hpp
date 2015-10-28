@@ -29,13 +29,14 @@ namespace UPNP {
 	/**
 	 * @brief ssdp handler
 	 */
-	class ControlPointSSDPHandler : public SSDP::OnNotifyHandler {
+	class ControlPointSSDPHandler : public SSDP::OnNotifyHandler, public SSDP::OnHttpResponseHandler {
     private:
         UPnPControlPoint & cp;
 	public:
 		ControlPointSSDPHandler(UPnPControlPoint & cp);
 		virtual ~ControlPointSSDPHandler();
 		virtual void onNotify(HTTP::HttpHeader & header);
+		virtual void onHttpResponse(HTTP::HttpHeader & header);
 	};
     
     /**
@@ -98,9 +99,10 @@ namespace UPNP {
         OS::Semaphore deviceListLock;
         OS::Semaphore buildTargetLock;
         Timer timer;
+		std::vector<std::string> searchTargetFilters;
 		
 	public:
-		UPnPControlPoint(int port, std::string searchTarget);
+		UPnPControlPoint(int port, std::string searchTarget, std::vector<std::string> & searchTargetFilters);
 		virtual ~UPnPControlPoint();
 
 		virtual void startAsync();
@@ -129,6 +131,10 @@ namespace UPNP {
 		void setScpdToUPnPService(UPnPService * targetService, XML::XmlDocument & doc);
 		void handleDeviceDescrition(XML::XmlDocument & doc, HTTP::Url & url);
 		void handleScpd(BuildTarget * buildTarget, XML::XmlDocument & doc);
+		void addSearchTargetFilter(const std::string & type);
+		void removeSearchTargetFilter(const std::string & type);
+		std::vector<std::string> & getSearchTargetFilters();
+		bool filter(const std::string & target);
     };
 }
 

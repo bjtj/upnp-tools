@@ -30,6 +30,7 @@ namespace SSDP {
 	SSDPConfig::SSDPConfig() :
 		userAgent("Linux/2.x UPnP/1.1 App/0.1"),
 		port(1900),
+		msearchPort(56789),
 		multicastGroup("239.255.255.250") {
 	}
 	
@@ -51,6 +52,14 @@ namespace SSDP {
 	int SSDPConfig::getPort() {
 		return port;
 	}
+
+	void SSDPConfig::setMsearchPort(int msearchPort) {
+		this->msearchPort = port;
+	}
+
+	int SSDPConfig::getMsearchPort() {
+		return msearchPort;
+	}
 	
 	void SSDPConfig::setMulticastGroup(std::string group) {
 		this->multicastGroup = group;
@@ -63,21 +72,32 @@ namespace SSDP {
 	/**
 	 * @brief sddp server
 	 */
-	SSDPServer::SSDPServer() : socket(NULL), pollingThread(NULL) {
+	SSDPServer::SSDPServer() : socket(NULL), msearchSocket(NULL), pollingThread(NULL) {
 	}
-	SSDPServer::SSDPServer(SSDPConfig & config) : config(config), socket(NULL), pollingThread(NULL) {
+	SSDPServer::SSDPServer(SSDPConfig & config) : config(config), socket(NULL), msearchSocket(NULL), pollingThread(NULL) {
 	}
 	SSDPServer::~SSDPServer() {
 	}
 
 	void SSDPServer::start() {
 		int port = config.getPort();
+		int msearchPort = config.getMsearchPort();
 		string & group = config.getMulticastGroup();
 		if (!socket) {
 			socket = new DatagramSocket(port);
 			socket->setReuseAddr();
 			socket->setBroadcast();
 			socket->joinGroup(group);
+			
+			socket->registerSelector(selector);
+		}
+
+		if (!msearchSocket) {
+
+			msearchSocket = new DatagramSocket(msearchPort);
+			msearchSocket->setReuseAddr();
+			msearchSocket->setBroadcast();
+			msearchSocket->bind();
 			
 			socket->registerSelector(selector);
 		}
@@ -93,10 +113,16 @@ namespace SSDP {
 
 		notifyHandlers.clear();
 		msearchHandlers.clear();
+		httpResponseHandlers.clear();
 
 		if (socket) {
 			delete socket;
 			socket = NULL;
+		}
+
+		if (msearchSocket) {
+			delete msearchSocket;
+			msearchSocket = NULL;
 		}
 	}
 	bool SSDPServer::isRunning() {
@@ -106,8 +132,18 @@ namespace SSDP {
 	void SSDPServer::poll(unsigned long timeout) {
 		if (selector.select(timeout) > 0) {
 			char buffer[4096] = {0,};
-			if (socket->recv(buffer, sizeof(buffer)) > 0) {
-				handleMessage(buffer, sizeof(buffer));
+			int len;
+
+			if (selector.isSelected(socket->getFd())) {
+				if ((len = socket->recv(buffer, sizeof(buffer))) > 0) {
+					handleMessage(buffer, len);
+				}
+			}
+
+			if (selector.isSelected(msearchSocket->getFd())) {
+				if ((len = msearchSocket->recv(buffer, sizeof(buffer))) > 0) {
+					handleMessage(buffer, len);
+				}
 			}
 		}
 	}
@@ -118,12 +154,14 @@ namespace SSDP {
 
 		int ret = parser.parse(header);
 		if (ret == 0) {
-			HttpRequestHeader header(parser.getHeader());
-			string method = header.getMethod();
-			if (!method.compare("M-SEARCH")) {
+			HttpHeader & header = parser.getHeader();
+			string method = header.getPart1();
+			if (Text::equalsIgnoreCase(method, "M-SEARCH")) {
 				onMsearch(header);
-			} else if (!method.compare("NOTIFY")) {
+			} else if (Text::equalsIgnoreCase(method, "NOTIFY")) {
 				onNotify(header);
+			} else if (Text::startsWith(method, "HTTP")) {
+				onHttpResponse(header);
 			} else {
 			}
 		}
@@ -156,6 +194,12 @@ namespace SSDP {
 		}
 	}
 
+	void SSDPServer::onHttpResponse(HttpHeader & header) {
+		for (size_t i = 0; i < httpResponseHandlers.size(); i++) {
+			httpResponseHandlers[i]->onHttpResponse(header);
+		}
+	}
+
 	void SSDPServer::sendMsearch(string type) {
 
 		int port = config.getPort();
@@ -164,13 +208,14 @@ namespace SSDP {
 
 		string packet = "M-SEARCH * HTTP/1.1\r\n"
 			"HOST: " + group +  ":" +  Text::toString(port) + "\r\n"
-			"MAN: \"ssdp:discovery\"\r\n"
-			"MX: 3\r\n"
+			"MAN: \"ssdp:discover\"\r\n"
+			"MX: 10\r\n"
 			"ST: " + type + "\r\n"
 			"USER-AGENT: " + userAgent + "\r\n"
+			"Content-Length: 0\r\n"
 			"\r\n";
 
-		socket->send(group.c_str(), port, (char*)packet.c_str(), packet.length());
+		msearchSocket->send(group.c_str(), port, (char*)packet.c_str(), packet.length());
 	}
 
 	void SSDPServer::addNotifyHandler(OnNotifyHandler * handler) {
@@ -195,6 +240,19 @@ namespace SSDP {
 			msearchHandlers.erase(std::remove(msearchHandlers.begin(),
 											 msearchHandlers.end(),
 											 handler), msearchHandlers.end());
+		}
+	}
+
+	void SSDPServer::addHttpResponseHandler(OnHttpResponseHandler * handler) {
+		if (handler) {
+			httpResponseHandlers.push_back(handler);
+		}
+	}
+	void SSDPServer::removeHttpResponseHandler(OnHttpResponseHandler * handler) {
+		if (handler) {
+			httpResponseHandlers.erase(std::remove(httpResponseHandlers.begin(),
+											 httpResponseHandlers.end(),
+											 handler), httpResponseHandlers.end());
 		}
 	}
 

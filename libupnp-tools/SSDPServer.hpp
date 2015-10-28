@@ -36,6 +36,18 @@ namespace SSDP {
 	};
 
 	/**
+	 *
+	 */
+	class OnHttpResponseHandler {
+	private:
+	public:
+		OnHttpResponseHandler() {}
+		virtual ~OnHttpResponseHandler() {}
+
+		virtual void onHttpResponse(HTTP::HttpHeader & header) = 0;
+	};
+
+	/**
 	 * @brief polling thread
 	 */
 	class PollingThread : public OS::Thread {
@@ -55,6 +67,7 @@ namespace SSDP {
 	private:
 		std::string userAgent;
 		int port;
+		int msearchPort;
 		std::string multicastGroup;
 	public:
 		SSDPConfig();
@@ -64,6 +77,8 @@ namespace SSDP {
 		std::string & getUserAgent();
 		void setPort(int port);
 		int getPort();
+		void setMsearchPort(int msearchPort);
+		int getMsearchPort();
 		void setMulticastGroup(std::string group);
 		std::string & getMulticastGroup();
 	};
@@ -77,8 +92,11 @@ namespace SSDP {
 		SSDPConfig config;
 		std::vector<OnNotifyHandler*> notifyHandlers;
 		std::vector<OnMsearchHandler*> msearchHandlers;
+		std::vector<OnHttpResponseHandler*> httpResponseHandlers;
+		
 		OS::Selector selector;
 		OS::DatagramSocket * socket;
+		OS::DatagramSocket * msearchSocket;
 		PollingThread * pollingThread;
 
 	public:
@@ -99,6 +117,7 @@ namespace SSDP {
 		void stopPollingThread();
 		void onMsearch(HTTP::HttpHeader & header);
 		void onNotify(HTTP::HttpHeader & header);
+		void onHttpResponse(HTTP::HttpHeader & header);
 
 	public:
 		virtual void sendMsearch(std::string type);
@@ -107,6 +126,8 @@ namespace SSDP {
 		void removeNotifyHandler(OnNotifyHandler * handler);
 		void addMsearchHandler(OnMsearchHandler * handler);
 		void removeMsearchHandler(OnMsearchHandler * handler);
+		void addHttpResponseHandler(OnHttpResponseHandler * handler);
+		void removeHttpResponseHandler(OnHttpResponseHandler * handler);
 
 		SSDPConfig & getConfig();
 	};

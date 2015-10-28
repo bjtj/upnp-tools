@@ -63,6 +63,9 @@
     <ClCompile Include="..\libupnp-tools\UPnPServiceMaker.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="..\libupnp-tools\Timer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\libupnp-tools\SSDPServer.hpp">
@@ -120,6 +123,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\macros.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libupnp-tools\Timer.hpp">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
