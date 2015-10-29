@@ -30,7 +30,7 @@ namespace SSDP {
 	SSDPConfig::SSDPConfig() :
 		userAgent("Linux/2.x UPnP/1.1 App/0.1"),
 		port(1900),
-		msearchPort(56789),
+		msearchPort(12345),
 		multicastGroup("239.255.255.250") {
 	}
 	
@@ -72,9 +72,9 @@ namespace SSDP {
 	/**
 	 * @brief sddp server
 	 */
-	SSDPServer::SSDPServer() : socket(NULL), msearchSocket(NULL), pollingThread(NULL) {
+	SSDPServer::SSDPServer() : mcastSocket(NULL), msearchSocket(NULL), pollingThread(NULL) {
 	}
-	SSDPServer::SSDPServer(SSDPConfig & config) : config(config), socket(NULL), msearchSocket(NULL), pollingThread(NULL) {
+	SSDPServer::SSDPServer(SSDPConfig & config) : config(config), mcastSocket(NULL), msearchSocket(NULL), pollingThread(NULL) {
 	}
 	SSDPServer::~SSDPServer() {
 	}
@@ -83,23 +83,21 @@ namespace SSDP {
 		int port = config.getPort();
 		int msearchPort = config.getMsearchPort();
 		string & group = config.getMulticastGroup();
-		if (!socket) {
-			socket = new DatagramSocket(port);
-			socket->setReuseAddr();
-			socket->setBroadcast();
-			socket->joinGroup(group);
+		if (!mcastSocket) {
+			mcastSocket = new DatagramSocket(port);
+			mcastSocket->setReuseAddr();
+			mcastSocket->joinGroup(group);
 			
-			socket->registerSelector(selector);
+			mcastSocket->registerSelector(selector);
 		}
 
 		if (!msearchSocket) {
 
 			msearchSocket = new DatagramSocket(msearchPort);
 			msearchSocket->setReuseAddr();
-			msearchSocket->setBroadcast();
 			msearchSocket->bind();
 			
-			socket->registerSelector(selector);
+			msearchSocket->registerSelector(selector);
 		}
 	}
 	void SSDPServer::startAsync() {
@@ -116,8 +114,8 @@ namespace SSDP {
 		httpResponseHandlers.clear();
 
 		if (socket) {
-			delete socket;
-			socket = NULL;
+			delete mcastSocket;
+			mcastSocket = NULL;
 		}
 
 		if (msearchSocket) {
@@ -131,18 +129,21 @@ namespace SSDP {
 
 	void SSDPServer::poll(unsigned long timeout) {
 		if (selector.select(timeout) > 0) {
-			char buffer[4096] = {0,};
-			int len;
-
-			if (selector.isSelected(socket->getFd())) {
-				if ((len = socket->recv(buffer, sizeof(buffer))) > 0) {
-					handleMessage(buffer, len);
+			if (selector.isSelected(mcastSocket->getFd())) {
+				char buffer[4096] = {0,};
+				DatagramPacket packet(buffer, sizeof(buffer));
+				int len;
+				if ((len = mcastSocket->recv(packet)) > 0) {
+					handleMessage(packet.getData(), packet.getLength());
 				}
 			}
 
 			if (selector.isSelected(msearchSocket->getFd())) {
-				if ((len = msearchSocket->recv(buffer, sizeof(buffer))) > 0) {
-					handleMessage(buffer, len);
+				char buffer[4096] = {0,};
+				DatagramPacket packet(buffer, sizeof(buffer));
+				int len;
+				if ((len = msearchSocket->recv(packet)) > 0) {
+					handleMessage(packet.getData(), packet.getLength());
 				}
 			}
 		}
@@ -200,7 +201,7 @@ namespace SSDP {
 		}
 	}
 
-	void SSDPServer::sendMsearch(string type) {
+	int SSDPServer::sendMsearch(string type) {
 
 		int port = config.getPort();
 		string & group = config.getMulticastGroup();
@@ -215,7 +216,7 @@ namespace SSDP {
 			"Content-Length: 0\r\n"
 			"\r\n";
 
-		msearchSocket->send(group.c_str(), port, (char*)packet.c_str(), packet.length());
+		return  msearchSocket->send(group.c_str(), port, (char*)packet.c_str(), packet.length());
 	}
 
 	void SSDPServer::addNotifyHandler(OnNotifyHandler * handler) {

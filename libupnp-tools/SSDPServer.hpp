@@ -95,7 +95,7 @@ namespace SSDP {
 		std::vector<OnHttpResponseHandler*> httpResponseHandlers;
 		
 		OS::Selector selector;
-		OS::DatagramSocket * socket;
+		OS::DatagramSocket * mcastSocket;
 		OS::DatagramSocket * msearchSocket;
 		PollingThread * pollingThread;
 
@@ -120,7 +120,7 @@ namespace SSDP {
 		void onHttpResponse(HTTP::HttpHeader & header);
 
 	public:
-		virtual void sendMsearch(std::string type);
+		virtual int sendMsearch(std::string type);
 
 		void addNotifyHandler(OnNotifyHandler * handler);
 		void removeNotifyHandler(OnNotifyHandler * handler);
