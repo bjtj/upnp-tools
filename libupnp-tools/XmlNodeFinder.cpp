@@ -13,7 +13,7 @@ namespace XML {
 	}
 
 	template<typename T>
-	bool Condition<T>::test(T & item) {
+	bool Condition<T>::test(const T & item) const {
 		return false;
 	}
 
@@ -37,7 +37,7 @@ namespace XML {
 		CollectIterator(Condition<XmlNode> & condition) : condition(condition) {}
 		virtual ~CollectIterator() {}
 
-		virtual void onItem(XmlNode & node) {
+		virtual void onItem(const XmlNode & node) {
 			if (condition.test(node)) {
 				result.push_back(node);
 			}
@@ -77,7 +77,7 @@ namespace XML {
 	};
 
 
-	XmlNodeFinder::XmlNodeFinder(XmlDocument & doc) : doc(doc){
+	XmlNodeFinder::XmlNodeFinder(const XmlDocument & doc) : doc(doc){
 	}
 	
 	XmlNodeFinder::~XmlNodeFinder() {
@@ -104,33 +104,33 @@ namespace XML {
 	}
 
 
-	XmlNode XmlNodeFinder::getNodeByTagName(XmlNode & node, const string & tagName, int maxDepth) {
+	XmlNode XmlNodeFinder::getNodeByTagName(const XmlNode & node, const string & tagName, int maxDepth) {
 		TagNameCondition condition(tagName, 1);
 		vector<XmlNode> nodes = XmlNodeFinder::collect(node, condition, maxDepth);
 		return nodes.size() > 0 ? nodes[0] : XmlNode();
 	}
 
-	vector<XmlNode> XmlNodeFinder::getAllNodesByTagName(XmlNode & node, const string & tagName, int maxDepth) {
+	vector<XmlNode> XmlNodeFinder::getAllNodesByTagName(const XmlNode & node, const string & tagName, int maxDepth) {
 		TagNameCondition cond(tagName, -1);
 		return XmlNodeFinder::collect(node, cond, maxDepth);
 	}
 
-	void XmlNodeFinder::iterate(XmlNode & node, IteratorCallback<XmlNode> & callback, int maxDepth) {
+	void XmlNodeFinder::iterate(const XmlNode & node, IteratorCallback<XmlNode> & callback, int maxDepth) {
 		iterate_r(node, callback, 0, maxDepth);
 	}
 
-	vector<XmlNode> XmlNodeFinder::collect(XmlNode & node, Condition<XmlNode> & condition, int maxDepth) {
+	vector<XmlNode> XmlNodeFinder::collect(const XmlNode & node, Condition<XmlNode> & condition, int maxDepth) {
 		CollectIterator iter(condition);
 		XmlNodeFinder::iterate(node, iter, maxDepth);
 		return iter.getResult();
 	}
 
-	string XmlNodeFinder::getContentByTagName(XmlNode & node, const string & tagName, int maxDepth) {
+	string XmlNodeFinder::getContentByTagName(const XmlNode & node, const string & tagName, int maxDepth) {
 		XmlNode found = XmlNodeFinder::getNodeByTagName(node, tagName, maxDepth);
 		return found.getFirstContent();
 	}
 
-	vector<string> XmlNodeFinder::getAllContentsByTagName(XmlNode & node, const string & tagName, int maxDepth) {
+	vector<string> XmlNodeFinder::getAllContentsByTagName(const XmlNode & node, const string & tagName, int maxDepth) {
 		vector<string> ret;
 		vector<XmlNode> nodes = XmlNodeFinder::getAllNodesByTagName(node, tagName, maxDepth);
 		for (size_t i = 0; i < nodes.size(); i++) {
@@ -140,7 +140,7 @@ namespace XML {
 		return ret;
 	}
 
-	void XmlNodeFinder::iterate_r(XmlNode & node, IteratorCallback<XmlNode> & callback, int depth, int maxDepth) {
+	void XmlNodeFinder::iterate_r(const XmlNode & node, IteratorCallback<XmlNode> & callback, int depth, int maxDepth) {
 		if (callback.wantFinish()) {
 			return;
 		}

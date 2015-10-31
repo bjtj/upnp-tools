@@ -7,6 +7,9 @@
 
 namespace XML {
 
+    /**
+     * @brief iteration condition
+     */
 	template <typename T>
 	class Condition {
 	private:
@@ -16,28 +19,34 @@ namespace XML {
 		Condition(const std::string & rule);
 		virtual ~Condition();
 
-		virtual bool test(T & item);
+		virtual bool test(const T & item) const;
 		std::string & getRule();
 		virtual bool wantFinish();
 	};
 
+    /**
+     * @brief iterator callback
+     */
 	template <typename T>
 	class IteratorCallback {
 	private:
 	public:
 		IteratorCallback() {}
 		virtual ~IteratorCallback() {}
-		virtual void onItem(T & item) = 0;
+		virtual void onItem(const T & item) = 0;
 		virtual bool wantFinish() {return false;}
 	};
 
 
+    /**
+     * @brief xml node finder
+     */
 	class XmlNodeFinder {
 	private:
-		XmlDocument & doc;
+		const XmlDocument & doc;
 		
 	public:
-		XmlNodeFinder(XmlDocument & doc);
+		XmlNodeFinder(const XmlDocument & doc);
 		virtual ~XmlNodeFinder();
 
 		XmlNode getNodeByTagName(const std::string & tagName);
@@ -48,15 +57,15 @@ namespace XML {
 		std::vector<std::string> getAllContentsByTagName(const std::string & tagName);
 
 	public:
-		static XmlNode getNodeByTagName(XmlNode & node, const std::string & tagName, int maxDepth = -1);
-		static std::vector<XmlNode> getAllNodesByTagName(XmlNode & node, const std::string & tagName, int maxDepth = -1);
-		static void iterate(XmlNode & node, IteratorCallback<XmlNode> & callback, int maxDepth = -1);
-		static std::vector<XmlNode> collect(XmlNode & node, Condition<XmlNode> & condition, int maxDepth = -1);
-		static std::string getContentByTagName(XmlNode & node, const std::string & tagName, int maxDepth = -1);
-		static std::vector<std::string> getAllContentsByTagName(XmlNode & node, const std::string & tagName, int maxDepth = -1);
+		static XmlNode getNodeByTagName(const XmlNode & node, const std::string & tagName, int maxDepth = -1);
+		static std::vector<XmlNode> getAllNodesByTagName(const XmlNode & node, const std::string & tagName, int maxDepth = -1);
+		static void iterate(const XmlNode & node, IteratorCallback<XmlNode> & callback, int maxDepth = -1);
+		static std::vector<XmlNode> collect(const XmlNode & node, Condition<XmlNode> & condition, int maxDepth = -1);
+		static std::string getContentByTagName(const XmlNode & node, const std::string & tagName, int maxDepth = -1);
+		static std::vector<std::string> getAllContentsByTagName(const XmlNode & node, const std::string & tagName, int maxDepth = -1);
 
 	private:
-		static void iterate_r(XmlNode & node, IteratorCallback<XmlNode> & callback, int depth, int maxDepth = -1);
+		static void iterate_r(const XmlNode & node, IteratorCallback<XmlNode> & callback, int depth, int maxDepth = -1);
 	};
 
 }

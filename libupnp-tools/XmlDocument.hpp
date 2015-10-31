@@ -6,6 +6,9 @@
 
 namespace XML {
     
+    /**
+     * @brief xml namespace
+     */
     class XmlNamespace {
     private:
         std::string alias;
@@ -18,6 +21,9 @@ namespace XML {
         std::string getUri();
     };
 
+    /**
+     * @brief xml attribute
+     */
 	class XmlAttribute {
 	private:
         std::string ns;
@@ -31,11 +37,14 @@ namespace XML {
         void setNamespace(const std::string & ns);
 		void setName(const std::string & name);
 		void setValue(const std::string & value);
-        std::string getNamespace();
-		std::string getName();
-		std::string getValue();
+        std::string getNamespace() const;
+		std::string getName() const;
+		std::string getValue() const;
 	};
 
+    /**
+     * @brief xml node
+     */
 	class XmlNode {
 	private:
         std::string data;
@@ -48,31 +57,38 @@ namespace XML {
 	public:
         XmlNode();
         virtual ~XmlNode();
-        std::string & getData();
+        const std::string & getData() const;
         void setData(const std::string & data);
-		std::string & getNamespace();
+		const std::string & getNamespace() const;
 		void setNamespace(const std::string & ns);
-		std::string & getTagName();
+		const std::string & getTagName() const;
 		void setTagName(const std::string & tagName);
+        
         void setParent(XmlNode * parent);
         XmlNode * getParent();
+        
         XmlNode * addNode(XmlNode & node);
-        XmlNode & getNode(size_t index);
-		std::vector<XmlNode> & getChildren();
+        const XmlNode & getNode(size_t index) const;
+		const std::vector<XmlNode> & getChildren() const;
 		bool empty();
 		size_t size();
+        
 		void setAttribute(const std::string & name, const std::string & value);
-		void setAttribute(XmlAttribute & attribute);
-		std::string getAttributeValue(const std::string & name);
-		XmlAttribute & getAttribute(const std::string & name);
-		std::vector<XmlAttribute> & getAttributes();
-		bool isTextNode();
-		bool isElementNode();
-		std::string getFirstContent();
-		int getChildrenElementNodeCount();
-		XmlNode & operator[](size_t index);
+		void setAttribute(const XmlAttribute & attribute);
+		std::string getAttributeValue(const std::string & name) const;
+		const XmlAttribute & getAttribute(const std::string & name) const;
+		const std::vector<XmlAttribute> & getAttributes() const;
+        
+		bool isTextNode() const;
+		bool isElementNode() const;
+		std::string getFirstContent() const;
+		int getChildrenElementNodeCount() const;
+		const XmlNode & operator[](size_t index) const;
 	};
 
+    /**
+     * @brief xml document
+     */
 	class XmlDocument {
 	private:
         std::string prologue;
@@ -85,7 +101,7 @@ namespace XML {
         
         void addNamespacePhase(std::string & nsPhrase);
         XmlNamespace getNamespaceWithAlias(const std::string & alias);
-        XmlNode & getRootNode();
+        const XmlNode & getRootNode() const;
 		void setRootNode(XmlNode & rootNode);
         void setPrologue(const std::string & prologue);
 	};

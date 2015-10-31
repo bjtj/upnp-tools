@@ -40,13 +40,13 @@ namespace XML {
 	void XmlAttribute::setValue(const string & value) {
 		this->value = value;
 	}
-    string XmlAttribute::getNamespace() {
+    string XmlAttribute::getNamespace() const {
         return ns;
     }
-	string XmlAttribute::getName() {
+	string XmlAttribute::getName() const {
 		return name;
 	}
-	string XmlAttribute::getValue() {
+	string XmlAttribute::getValue() const {
 		return value;
 	}
 
@@ -57,7 +57,7 @@ namespace XML {
     XmlNode::~XmlNode() {
     }
 
-	string & XmlNode::getData() {
+	const string & XmlNode::getData() const {
         return data;
     }
 	
@@ -65,7 +65,7 @@ namespace XML {
         this->data = data;
     }
 
-	string & XmlNode::getNamespace() {
+	const string & XmlNode::getNamespace() const {
 		return ns;
 	}
 	
@@ -73,7 +73,7 @@ namespace XML {
 		this->ns = ns;
 	}
 
-    string & XmlNode::getTagName() {
+    const string & XmlNode::getTagName() const {
 		return tagName;
 	}
 
@@ -95,11 +95,11 @@ namespace XML {
         return &(children[children.size() - 1]);
     }
     
-    XmlNode & XmlNode::getNode(size_t index) {
+    const XmlNode & XmlNode::getNode(size_t index) const {
         return children[index];
     }
     
-    vector<XmlNode> & XmlNode::getChildren() {
+    const vector<XmlNode> & XmlNode::getChildren() const {
 		return children;
 	}
 
@@ -123,7 +123,7 @@ namespace XML {
 		attributes.push_back(XmlAttribute(name, value));
 	}
 	
-	void XmlNode::setAttribute(XmlAttribute & attribute) {
+	void XmlNode::setAttribute(const XmlAttribute & attribute) {
 		for (size_t i = 0; i < attributes.size(); i++) {
 			XmlAttribute & attr = attributes[i];
 			if (!attr.getName().compare(attribute.getName())) {
@@ -135,9 +135,9 @@ namespace XML {
 		attributes.push_back(attribute);
 	}
 	
-	XmlAttribute & XmlNode::getAttribute(const string & name) {
+	const XmlAttribute & XmlNode::getAttribute(const string & name) const {
 		for (size_t i = 0; i < attributes.size(); i++) {
-			XmlAttribute & attr = attributes[i];
+			const XmlAttribute & attr = attributes[i];
 			if (!attr.getName().compare(name)) {
 				return attr;
 			}
@@ -145,30 +145,30 @@ namespace XML {
 		return EMPTY_ATTRIBUTE;
 	}
 
-	string XmlNode::getAttributeValue(const string & name) {
+	string XmlNode::getAttributeValue(const string & name) const {
 		return getAttribute(name).getValue();
 	}
 
-	vector<XmlAttribute> & XmlNode::getAttributes() {
+	const vector<XmlAttribute> & XmlNode::getAttributes() const {
 		return attributes;
 	}
 
-	string XmlNode::getFirstContent() {
+	string XmlNode::getFirstContent() const {
 		return children.size() > 0 ? children[0].getData() : "";
 	}
 
-	bool XmlNode::isTextNode() {
+	bool XmlNode::isTextNode() const {
 		return !data.empty();
 	}
 	
-	bool XmlNode::isElementNode() {
+	bool XmlNode::isElementNode() const {
 		return !tagName.empty();
 	}
 
-	int XmlNode::getChildrenElementNodeCount() {
+	int XmlNode::getChildrenElementNodeCount() const {
 		int cnt = 0;
 		LOOP_VEC(children, i) {
-			XmlNode & node = children[i];
+			const XmlNode & node = children[i];
 			if (node.isElementNode()) {
 				cnt++;
 			}
@@ -176,7 +176,7 @@ namespace XML {
 		return cnt;
 	}
 	
-	XmlNode& XmlNode::operator[](size_t index) {
+	const XmlNode& XmlNode::operator[](size_t index) const {
 		return getNode(index);
 	}
 
@@ -201,7 +201,7 @@ namespace XML {
         return XmlNamespace();
     }
     
-    XmlNode & XmlDocument::getRootNode() {
+    const XmlNode & XmlDocument::getRootNode() const {
         return rootNode;
     }
 

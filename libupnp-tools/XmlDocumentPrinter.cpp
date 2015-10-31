@@ -15,7 +15,7 @@ namespace XML {
 		return printNodeTree(doc.getRootNode());
 	}
 
-	string XmlDocumentPrinter::printNodeTree(XmlNode & node) {
+	string XmlDocumentPrinter::printNodeTree(const XmlNode & node) {
 		string ret;
 		if (node.isElementNode()) {
 			ret.append(printStartTag(node));
@@ -30,7 +30,7 @@ namespace XML {
 		return ret;
 	}
 
-	string XmlDocumentPrinter::printStartTag(XmlNode & node) {
+	string XmlDocumentPrinter::printStartTag(const XmlNode & node) {
 		string tagName = printNamespaceAndName(node.getNamespace(), node.getTagName());
 		string attributes;
 		for (size_t i = 0; i < node.getAttributes().size(); i++) {
@@ -39,18 +39,18 @@ namespace XML {
 		return "<" + tagName + attributes + ">"; 
 	}
 
-	string XmlDocumentPrinter::printEndTag(XmlNode & node) {
+	string XmlDocumentPrinter::printEndTag(const XmlNode & node) {
 		return "</" + printNamespaceAndName(node.getNamespace(), node.getTagName()) + ">";
 	}
 
-	string XmlDocumentPrinter::printAttribute(XmlAttribute & attribute) {
+	string XmlDocumentPrinter::printAttribute(const XmlAttribute & attribute) {
 		if (attribute.getName().empty()) {
 			return "";
 		}
 		return printNamespaceAndName(attribute.getNamespace(), attribute.getName()) + "=" + attribute.getValue();
 	}
 
-	string XmlDocumentPrinter::printText(string & text) {
+	string XmlDocumentPrinter::printText(const string & text) {
 		return text;
 	}
 

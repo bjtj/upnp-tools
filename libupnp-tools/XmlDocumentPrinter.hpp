@@ -16,11 +16,11 @@ namespace XML {
 
 		std::string printDocument();
 
-		virtual std::string printNodeTree(XmlNode & node);
-		virtual std::string printStartTag(XmlNode & node);
-		virtual std::string printEndTag(XmlNode & node);
-		virtual std::string printAttribute(XmlAttribute & attribute);
-		virtual std::string printText(std::string & text);
+		virtual std::string printNodeTree(const XmlNode & node);
+		virtual std::string printStartTag(const XmlNode & node);
+		virtual std::string printEndTag(const XmlNode & node);
+		virtual std::string printAttribute(const XmlAttribute & attribute);
+		virtual std::string printText(const std::string & text);
         virtual std::string printNamespaceAndName(const std::string & ns, const std::string & name);
 	};
 }
