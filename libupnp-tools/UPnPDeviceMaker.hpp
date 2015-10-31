@@ -12,8 +12,8 @@ namespace UPNP {
 		UPnPDeviceMaker();
 		virtual ~UPnPDeviceMaker();
 
-		UPnPDevice makeDeviceWithDeviceDescription(XML::XmlDocument & doc);
-		UPnPDevice makeDeviceWithDeviceNode(XML::XmlNode & deviceNode);
+		static UPnPDevice makeDeviceWithDeviceDescription(const XML::XmlDocument & doc);
+		static UPnPDevice makeDeviceWithDeviceNode(const XML::XmlNode & deviceNode);
 	};
 
 }

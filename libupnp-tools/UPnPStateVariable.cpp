@@ -11,7 +11,7 @@ namespace UPNP {
 	void UPnPStateVariable::setName(const std::string & name) {
 		this->name = name;
 	}
-	string UPnPStateVariable::getName() {
+	string UPnPStateVariable::getName() const {
 		return name;
 	}
 	void UPnPStateVariable::setDataType(const std::string & dataType) {

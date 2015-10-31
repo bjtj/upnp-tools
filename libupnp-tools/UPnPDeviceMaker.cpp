@@ -14,7 +14,7 @@ namespace UPNP {
 	UPnPDeviceMaker::~UPnPDeviceMaker() {
 	}
 
-	UPnPDevice UPnPDeviceMaker::makeDeviceWithDeviceDescription(XmlDocument & doc) {
+	UPnPDevice UPnPDeviceMaker::makeDeviceWithDeviceDescription(const XmlDocument & doc) {
 		UPnPDevice device;
 
 		XmlNodeFinder finder(doc);
@@ -29,11 +29,11 @@ namespace UPNP {
 		return device;
 	}
 
-	UPnPDevice UPnPDeviceMaker::makeDeviceWithDeviceNode(XML::XmlNode & deviceNode) {
+	UPnPDevice UPnPDeviceMaker::makeDeviceWithDeviceNode(const XML::XmlNode & deviceNode) {
 		UPnPDevice device;
-		vector<XmlNode> & children = deviceNode.getChildren();
+		const vector<XmlNode> & children = deviceNode.getChildren();
 		LOOP_VEC(children, i) {
-			XmlNode & node = children[i];
+			const XmlNode & node = children[i];
 			if (node.isElementNode() && node.getChildrenElementNodeCount() == 0) {
 				string name = node.getTagName();
 				string value = node.getFirstContent();

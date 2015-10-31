@@ -85,7 +85,7 @@ namespace UPNP {
 		embeddedDevices.erase(embeddedDevices.begin() + index);
 	}
 
-	UPnPDevice & UPnPDevice::getEmbeddedDevice(int index) {
+	UPnPDevice & UPnPDevice::getEmbeddedDevice(size_t index) {
 		return embeddedDevices[index];
 	}
 
@@ -113,6 +113,10 @@ namespace UPNP {
 		}
 		return UPnPService();
 	}
+    
+    UPnPService & UPnPDevice::getService(size_t index) {
+        return services[index];
+    }
     
     vector<UPnPService> & UPnPDevice::getServices() {
         return services;

@@ -24,7 +24,7 @@ namespace UPNP {
 		virtual ~UPnPStateVariable();
 
 		void setName(const std::string & name);
-		std::string getName();
+		std::string getName() const;
 		void setDataType(const std::string & dataType);
 		std::string getDataType();
 		void setDefaultValue(const std::string & defValue);

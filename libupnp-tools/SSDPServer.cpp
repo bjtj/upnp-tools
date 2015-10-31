@@ -113,7 +113,7 @@ namespace SSDP {
 		msearchHandlers.clear();
 		httpResponseHandlers.clear();
 
-		if (socket) {
+		if (mcastSocket) {
 			delete mcastSocket;
 			mcastSocket = NULL;
 		}
@@ -124,7 +124,7 @@ namespace SSDP {
 		}
 	}
 	bool SSDPServer::isRunning() {
-		return (socket != NULL);
+		return (mcastSocket != NULL);
 	}
 
 	void SSDPServer::poll(unsigned long timeout) {

@@ -15,9 +15,9 @@ namespace UPNP {
 
 	UPnPService UPnPServiceMaker::makeServiceWithXmlNode(XmlNode & serviceNode) {
 		UPnPService service;
-		vector<XmlNode> & nodes = serviceNode.getChildren();
+		const vector<XmlNode> & nodes = serviceNode.getChildren();
 		LOOP_VEC(nodes, i) {
-			XmlNode & node = nodes[i];
+			const XmlNode & node = nodes[i];
 			if (node.isElementNode() && node.getChildrenElementNodeCount() == 0) {
 				string name = node.getTagName();
 				string value = node.getFirstContent();
@@ -33,26 +33,32 @@ namespace UPNP {
 		XmlNodeFinder finder(doc);
 		scpd["specMajorVersion"] = finder.getContentByTagName("major");
 		scpd["specMinorVersion"] = finder.getContentByTagName("minor");
-
-		vector<UPnPStateVariable> stateVariables;
-		vector<XmlNode> stateVariableNodes = finder.getAllNodesByTagName("stateVariable");
-		for (size_t i = 0; i < stateVariableNodes.size(); i++) {
-			XmlNode & stateVariableNode = stateVariableNodes[i];
-			stateVariables.push_back(makeUPnPStateVariable(stateVariableNode));
-		}
-
-		vector<UPnPAction> actions;
-		vector<XmlNode> actionNodes = finder.getAllNodesByTagName("action");
-		for (size_t i = 0; i < actionNodes.size(); i++) {
-			XmlNode & actionNode = actionNodes[i];
-			actions.push_back(makeUPnPAction(actionNode, stateVariables));
-		}
-
-		scpd.setStateVariables(stateVariables);
-		scpd.setActions(actions);
-
-		return scpd;
+        
+        return makeScpdFromXmlNode(doc.getRootNode());
 	}
+    
+    Scpd UPnPServiceMaker::makeScpdFromXmlNode(const XmlNode & xmlNode) {
+        
+        Scpd scpd;
+        vector<UPnPStateVariable> stateVariables;
+        vector<XmlNode> stateVariableNodes = XmlNodeFinder::getAllNodesByTagName(xmlNode, "stateVariable");
+        for (size_t i = 0; i < stateVariableNodes.size(); i++) {
+            XmlNode & stateVariableNode = stateVariableNodes[i];
+            stateVariables.push_back(makeUPnPStateVariable(stateVariableNode));
+        }
+        
+        vector<UPnPAction> actions;
+        vector<XmlNode> actionNodes = XmlNodeFinder::getAllNodesByTagName(xmlNode, "action");
+        for (size_t i = 0; i < actionNodes.size(); i++) {
+            XmlNode & actionNode = actionNodes[i];
+            actions.push_back(makeUPnPAction(actionNode, stateVariables));
+        }
+        
+        scpd.setStateVariables(stateVariables);
+        scpd.setActions(actions);
+        
+        return scpd;
+    }
 
 	UPnPStateVariable UPnPServiceMaker::makeUPnPStateVariable(XmlNode & node) {
 		UPnPStateVariable stateVariable;

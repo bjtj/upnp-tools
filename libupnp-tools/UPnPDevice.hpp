@@ -40,11 +40,12 @@ namespace UPNP {
 		bool isRootDevice();
 		void addEmbeddedDevice(UPnPDevice & embeddedDevice);
 		void removeEmbeddedDevice(size_t index);
-		UPnPDevice & getEmbeddedDevice(int index);
+		UPnPDevice & getEmbeddedDevice(size_t index);
 		std::vector<UPnPDevice> & getEmbeddedDevices();
 		void addService(UPnPService & service);
 		void removeService(size_t index);
 		UPnPService getService(std::string serviceType);
+        UPnPService & getService(size_t index);
         std::vector<UPnPService> & getServices();
 
 		std::string & operator[] (const std::string & name);
