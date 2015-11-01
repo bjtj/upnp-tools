@@ -3,27 +3,28 @@
 
 #include <vector>
 #include <string>
+#include <liboslayer/os.hpp>
 #include "UPnPDevice.hpp"
+#include "UPnPServicePosition.hpp"
 
 namespace UPNP {
 
-	/**
-	 * @brief upnp device pool
-	 */
-	class UPnPDevicePool {
-	private:
-		std::vector<UPnPDevice> devices;
-		
-	public:
-		UPnPDevicePool();
-		virtual ~UPnPDevicePool();
-
-		void requestDeviceDescription(std::string url);
-		void requestScpd(std::string url);
-
-		UPnPDevice getDevice(std::string udn);
-		
-	};
+    class DevicePool {
+    private:
+        OS::Semaphore deviceTableLock;
+        std::map<std::string, UPnPDevice> deviceTable;
+    public:
+        DevicePool();
+        virtual ~DevicePool();
+        void clear();
+        UPnPDevice & getDevice(std::string udn);
+        bool hasDevice(std::string udn);
+        void addDevice(UPnPDevice & device);
+        void updateDevice(UPnPDevice & device);
+        void removeDevice(std::string udn);
+        UPnPService * traverseService(const UPnPDevice & device, const ServicePosition & servicePosition);
+        void bindScpd(const ServicePosition & servicePosition, const Scpd & scpd);
+    };
 
 }
 

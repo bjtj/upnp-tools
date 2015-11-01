@@ -56,15 +56,6 @@ static void printHttpResponse(HttpHeader & header) {
 //    logd(LOG_SSDP, "HTTP - %s\n", header.toString().c_str());
 }
 
-class UPnPDeviceWriter : public UPnPDevice {
-public:
-    UPnPDeviceWriter();
-    virtual ~UPnPDeviceWriter();
-    
-    void addEmbeddedDevice();
-    void addService();
-    void bindScpd();
-};
 
 class ServicePosition {
 private:
@@ -657,8 +648,18 @@ public:
         
     }
     
+    void printEmbeddedDevices(UPnPDevice & device) {
+        vector<UPnPDevice> & embeddedDevices = device.getEmbeddedDevices();
+        LOOP_VEC(embeddedDevices, i) {
+            UPnPDevice & embeddedDevice = embeddedDevices[i];
+            logd(LOG_APP, " - embedded: %s\n", embeddedDevice.getFriendlyName().c_str());
+            printEmbeddedDevices(embeddedDevice);
+        }
+    }
+    
     virtual void onDeviceAdded(UPnPDevice & device) {
         logd(LOG_APP, "added: %s (%s)\n", device.getUdn().c_str(), device.getFriendlyName().c_str());
+        printEmbeddedDevices(device);
     }
     virtual void onDeviceRemoved(UPnPDevice & device) {
         logd(LOG_APP, "removed: %s (%s)\n", device.getUdn().c_str(), device.getFriendlyName().c_str());
