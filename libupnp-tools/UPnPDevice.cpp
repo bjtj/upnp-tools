@@ -93,6 +93,10 @@ namespace UPNP {
 		return embeddedDevices;
 	}
 
+	void UPnPDevice::setServices(const std::vector<UPnPService> & services) {
+		this->services = services;
+	}
+
 	void UPnPDevice::addService(UPnPService & service) {
 		services.push_back(service);
 	}

@@ -42,6 +42,7 @@ namespace UPNP {
 		void removeEmbeddedDevice(size_t index);
 		UPnPDevice & getEmbeddedDevice(size_t index);
 		std::vector<UPnPDevice> & getEmbeddedDevices();
+		void setServices(const std::vector<UPnPService> & services);
 		void addService(UPnPService & service);
 		void removeService(size_t index);
 		UPnPService getService(std::string serviceType);

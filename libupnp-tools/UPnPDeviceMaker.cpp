@@ -40,17 +40,8 @@ namespace UPNP {
 				device[name] = value;
 			}
 		}
-        
-        XmlNode serviceListNode = XmlNodeFinder::getNodeByTagName(deviceNode, "serviceList", 1);
-        if (!serviceListNode.empty()) {
-            vector<XmlNode> serviceNodes = XmlNodeFinder::getAllNodesByTagName(serviceListNode, "service", 1);
-            LOOP_VEC(serviceNodes, i) {
-                XmlNode & serviceNode = serviceNodes[i];
-                UPnPServiceMaker serviceMaker;
-                UPnPService service = serviceMaker.makeServiceWithXmlNode(serviceNode);
-                device.addService(service);
-            }
-        }
+
+		device.setServices(makeServiceListFromXmlNode(deviceNode));
 
 		XmlNode deviceListNode = XmlNodeFinder::getNodeByTagName(deviceNode, "deviceList", 1);
 		if (!deviceListNode.empty()) {
@@ -63,4 +54,21 @@ namespace UPNP {
 
 		return device;
 	}
+
+	vector<UPnPService> UPnPDeviceMaker::makeServiceListFromXmlNode(const XmlNode & deviceNode) {
+		vector<UPnPService> services;
+		XmlNode serviceListNode = XmlNodeFinder::getNodeByTagName(deviceNode, "serviceList", 1);
+        if (!serviceListNode.empty()) {
+            vector<XmlNode> serviceNodes = XmlNodeFinder::getAllNodesByTagName(serviceListNode, "service", 1);
+            LOOP_VEC(serviceNodes, i) {
+                XmlNode & serviceNode = serviceNodes[i];
+                UPnPServiceMaker serviceMaker;
+                UPnPService service = serviceMaker.makeServiceWithXmlNode(serviceNode);
+                services.push_back(service);
+            }
+        }
+		return services;
+	}
+
+
 }

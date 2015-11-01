@@ -11,6 +11,7 @@
 #include <libupnp-tools/UPnPServiceMaker.hpp>
 #include <libupnp-tools/XmlDocument.hpp>
 #include <libupnp-tools/XmlDomParser.hpp>
+#include <libupnp-tools/macros.hpp>
 
 using namespace std;
 using namespace OS;
@@ -20,7 +21,11 @@ using namespace SSDP;
 using namespace UPNP;
 using namespace XML;
 
-#define logd printf
+#define LOG_COMMON 1
+#define LOG_CP 1
+#define LOG_SSDP 0
+
+#define logd(ENABLE, ...) if (ENABLE) printf(__VA_ARGS__)
 
 static size_t readline(char * buffer, size_t max) {
 	fgets(buffer, (int)max - 1, stdin);
@@ -31,20 +36,20 @@ static size_t readline(char * buffer, size_t max) {
 static void printNotify(HttpHeader & header) {
 	string nts = header["NTS"];
 	if (Text::equalsIgnoreCase(nts, "ssdp:alive")) {
-		//logd("NOTIFY - %s (url: %s)\n", nts.c_str(), header["Location"].c_str());
+		logd(LOG_SSDP, "NOTIFY - %s (url: %s)\n", nts.c_str(), header["Location"].c_str());
 	} else if (Text::equalsIgnoreCase(nts, "ssdp:byebye")) {
-		//logd("NOTIFY - %s\n", nts.c_str());
+		logd(LOG_SSDP, "NOTIFY - %s\n", nts.c_str());
 	} else {
-		//logd("NOTIFY - unknown (%s)\n", nts.c_str());
+		logd(LOG_SSDP, "NOTIFY - unknown (%s)\n", nts.c_str());
 	}
 }
 
 static void printMsearch(HttpHeader & header) {
-	//logd("M-SEARCH - ST: %s\n", header["ST"].c_str());
+	logd(LOG_SSDP, "M-SEARCH - ST: %s\n", header["ST"].c_str());
 }
 
 static void printHttpResponse(HttpHeader & header) {
-	//logd("HTTP - %s (url: %s)\n", header["ST"].c_str(), header["Location"].c_str());
+	logd(LOG_SSDP, "HTTP - %s (url: %s)\n", header["ST"].c_str(), header["Location"].c_str());
 }
 
 class UPnPDeviceWriter : public UPnPDevice {
@@ -59,22 +64,22 @@ public:
 
 class ServicePosition {
 private:
-    string udn;
-    vector<size_t> deviceIndices;
-    size_t serviceIndex;
-    string serviceType;
-    int traverseDepth;
+    mutable string udn;
+    mutable vector<size_t> deviceIndices;
+    mutable size_t serviceIndex;
+    mutable string serviceType;
+    mutable size_t traverseDepth;
 public:
     ServicePosition();
     virtual ~ServicePosition();
  
-    void setUdn(string udn);
-    string & getUdn();
-    void enterDevice(size_t index);
-    void resetTraverse();
-    size_t traverseDevice();
-    bool hasNextDevice();
-    size_t getServiceIndex();
+    void setUdn(const string & udn) const;
+    string & getUdn() const;
+    void enterDevice(size_t index) const;
+    void resetTraverse() const;
+    size_t traverseDevice() const;
+    bool hasNextDevice() const;
+    size_t getServiceIndex() const;
 };
 
 ServicePosition::ServicePosition() : traverseDepth(0), serviceIndex(0) {
@@ -83,26 +88,33 @@ ServicePosition::ServicePosition() : traverseDepth(0), serviceIndex(0) {
 ServicePosition::~ServicePosition() {
 }
 
-void ServicePosition::enterDevice(size_t index) {
+void ServicePosition::setUdn(const string & udn) const {
+	this->udn = udn;
+}
+string & ServicePosition::getUdn() const {
+	return udn;
+}
+
+void ServicePosition::enterDevice(size_t index) const {
     deviceIndices.push_back(index);
 }
 
-void ServicePosition::resetTraverse() {
+void ServicePosition::resetTraverse() const {
     traverseDepth = 0;
 }
 
-size_t ServicePosition::traverseDevice() {
+size_t ServicePosition::traverseDevice() const {
     if (!hasNextDevice()) {
         throw Exception("no more index", -1, 0);
     }
     return deviceIndices[traverseDepth++];
 }
 
-bool ServicePosition::hasNextDevice() {
+bool ServicePosition::hasNextDevice() const {
     return traverseDepth < deviceIndices.size();
 }
 
-size_t ServicePosition::getServiceIndex() {
+size_t ServicePosition::getServiceIndex() const {
     return serviceIndex;
 }
 
@@ -177,8 +189,8 @@ public:
     }
     
     virtual void onDeviceHelloWithUrl(string url) = 0;
-    virtual void onDeviceDescriptionInXml(string xmlDoc) = 0;
-    virtual void onScpdInXml(ServicePosition & servicePosition, string xmlDoc) = 0;
+    virtual void onDeviceDescriptionInXml(string baseUrl, string xmlDoc) = 0;
+    virtual void onScpdInXml(const ServicePosition & servicePosition, string xmlDoc) = 0;
     virtual void onDeviceByeBye(string udn) = 0;
 };
 
@@ -322,8 +334,8 @@ public:
     void sendMsearch(string searchType);
     
     virtual void onDeviceHelloWithUrl(string url);
-    virtual void onDeviceDescriptionInXml(string xmlDoc);
-    virtual void onScpdInXml(ServicePosition & servicePosition, string xmlDoc);
+    virtual void onDeviceDescriptionInXml(string baseUrl, string xmlDoc);
+    virtual void onScpdInXml(const ServicePosition & servicePosition, string xmlDoc);
     virtual void onDeviceByeBye(string udn);
     
     UPnPDevice makeDeviceFromXml(XmlNode & xmlNode);
@@ -366,24 +378,41 @@ void ControlPoint::stop() {
 }
 
 void ControlPoint::sendMsearch(string searchType) {
+	logd(LOG_CP, "send msearch/%s\n", searchType.c_str());
     ssdp.sendMsearch(searchType);
 }
 
 void ControlPoint::onDeviceHelloWithUrl(string url) {
-    logd("hello: %s\n", url.c_str());
+    logd(LOG_CP, "hello: %s\n", url.c_str());
      httpClientThreadPool.request(Url(url), "GET", NULL, 0, RequestSession(RequestType::DEVICE_DESCRIPTION_TYPE));
 }
 
-void ControlPoint::onDeviceDescriptionInXml(string xmlDoc) {
+void ControlPoint::onDeviceDescriptionInXml(string baseUrl, string xmlDoc) {
     // TODO: add to constructing device pool
-    logd("xmlDoc: %s\n", xmlDoc.c_str());
     XmlDomParser parser;
     UPnPDevice device = UPnPDeviceMaker::makeDeviceWithDeviceDescription(parser.parse(xmlDoc));
-    //logd("device description: %s\n", device.getUdn().c_str());
+    logd(LOG_CP, "device description / udn : %s\n", device.getUdn().c_str());
+
+	vector<UPnPService> & services = device.getServices();
+	LOOP_VEC(services, i) {
+		UPnPService & service = services[i];
+		string scpdurl = service["SCPDURL"];
+		logd(LOG_CP, "SCPDURL: %s\n", scpdurl.c_str());
+		Url url = Url(baseUrl);
+		url.setPath(scpdurl);
+		httpClientThreadPool.request(url, "GET", NULL, 0, RequestSession(RequestType::SCPD_TYPE));
+	}
 }
 
-void ControlPoint::onScpdInXml(ServicePosition & servicePosition, string xmlDoc) {
+void ControlPoint::onScpdInXml(const ServicePosition & servicePosition, string xmlDoc) {
     // TODO: bind scpd to device
+	XmlDomParser parser;
+    Scpd scpd = UPnPServiceMaker::makeScpdWithXmlDocument("", parser.parse(xmlDoc));
+	vector<UPnPAction> actions = scpd.getActions();
+	LOOP_VEC(actions, i) {
+		UPnPAction & action = actions[i];
+		logd(LOG_CP, "action: %s\n", action.getName().c_str());
+	}
 }
 
 void ControlPoint::onDeviceByeBye(string udn) {
@@ -403,11 +432,14 @@ Scpd ControlPoint::makeScpdFromXml(XmlNode & xmlNode) {
 void ControlPoint::onResponse(HttpClient<RequestSession> & httpClient, HttpHeader & responseHeader, OS::Socket & socket, RequestSession session) {
     
     if (session.getRequestType() == RequestType::DEVICE_DESCRIPTION) {
-        // logd("device descrition received\n");
-        
         string dump = HttpResponseDump::dump(responseHeader, socket);
-        this->onDeviceDescriptionInXml(dump);
-    }
+		char baseUrl[1024] = {0,};
+		snprintf(baseUrl, sizeof(baseUrl), "http://%s:%d", socket.getHost(), socket.getPort());
+        this->onDeviceDescriptionInXml(baseUrl, dump);
+	} else if (session.getRequestType() == RequestType::SCPD) {
+		string dump = HttpResponseDump::dump(responseHeader, socket);
+		this->onScpdInXml(ServicePosition(), dump);
+	}
 }
 
 
@@ -416,6 +448,8 @@ int main(int argc, char * args[]) {
     ControlPoint cp;
 
     cp.startAsync();
+
+	logd(LOG_COMMON, "start\n");
 
 	while (1) {
 		char buffer[1024] = {0,};
@@ -430,7 +464,7 @@ int main(int argc, char * args[]) {
 
     cp.stop();
 
-	logd("exit\n");
+	logd(LOG_COMMON, "exit\n");
 
 	return 0;
 }

@@ -19,7 +19,7 @@ namespace XML {
 		Condition(const std::string & rule);
 		virtual ~Condition();
 
-		virtual bool test(const T & item) const;
+		virtual bool test(const T & item) = 0;
 		std::string & getRule();
 		virtual bool wantFinish();
 	};

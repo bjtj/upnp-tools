@@ -13,11 +13,6 @@ namespace XML {
 	}
 
 	template<typename T>
-	bool Condition<T>::test(const T & item) const {
-		return false;
-	}
-
-	template<typename T>
 	string & Condition<T>::getRule() {
 		return rule;
 	}
@@ -64,8 +59,9 @@ namespace XML {
 		}
 		virtual ~TagNameCondition() {}
 
-		virtual bool test(XmlNode & item) {
-			bool ret = (!getRule().compare(item.getTagName()));
+		virtual bool test(const XmlNode & item) {
+			string rule = getRule();
+			bool ret = (!rule.compare(item.getTagName()));
 			if (ret) {
 				count++;
 			}

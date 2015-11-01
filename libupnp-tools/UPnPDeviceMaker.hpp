@@ -14,6 +14,7 @@ namespace UPNP {
 
 		static UPnPDevice makeDeviceWithDeviceDescription(const XML::XmlDocument & doc);
 		static UPnPDevice makeDeviceWithDeviceNode(const XML::XmlNode & deviceNode);
+		static std::vector<UPnPService> makeServiceListFromXmlNode(const XML::XmlNode & deviceNode);
 	};
 
 }
