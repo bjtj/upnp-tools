@@ -13,7 +13,7 @@ namespace UPNP {
 	UPnPServiceMaker::~UPnPServiceMaker() {
 	}
 
-	UPnPService UPnPServiceMaker::makeServiceWithXmlNode(XmlNode & serviceNode) {
+	UPnPService UPnPServiceMaker::makeServiceWithXmlNode(const XmlNode & serviceNode) {
 		UPnPService service;
 		const vector<XmlNode> & nodes = serviceNode.getChildren();
 		LOOP_VEC(nodes, i) {
@@ -27,7 +27,7 @@ namespace UPNP {
 		return service;
 	}
 
-	Scpd UPnPServiceMaker::makeScpdWithXmlDocument(const string & serviceType, XmlDocument & doc) {
+	Scpd UPnPServiceMaker::makeScpdWithXmlDocument(const string & serviceType, const XmlDocument & doc) {
 
 		Scpd scpd;
 		XmlNodeFinder finder(doc);
@@ -60,7 +60,7 @@ namespace UPNP {
         return scpd;
     }
 
-	UPnPStateVariable UPnPServiceMaker::makeUPnPStateVariable(XmlNode & node) {
+	UPnPStateVariable UPnPServiceMaker::makeUPnPStateVariable(const XmlNode & node) {
 		UPnPStateVariable stateVariable;
 		stateVariable.setName(XmlNodeFinder::getContentByTagName(node, "name"));
 		stateVariable.setDataType(XmlNodeFinder::getContentByTagName(node, "dataType"));
@@ -69,8 +69,11 @@ namespace UPNP {
 		return stateVariable;
 	}
 
-	UPnPAction UPnPServiceMaker::makeUPnPAction(XmlNode & node, vector<UPnPStateVariable> & serviceStateTable) {
+	UPnPAction UPnPServiceMaker::makeUPnPAction(const XmlNode & node, const vector<UPnPStateVariable> & serviceStateTable) {
 		UPnPAction action;
+        
+        action.setName(XmlNodeFinder::getContentByTagName(node, "name"));
+        
 		vector<UPnPActionArgument> arguments;
 		vector<XmlNode> argumentNodes = XmlNodeFinder::getAllNodesByTagName(node, "argument");
 		for (size_t i = 0; i < argumentNodes.size(); i++) {
@@ -82,7 +85,7 @@ namespace UPNP {
 		return action;
 	}
 
-	UPnPStateVariable UPnPServiceMaker::getStateVariable(vector<UPnPStateVariable> & serviceStateTable,
+	UPnPStateVariable UPnPServiceMaker::getStateVariable(const vector<UPnPStateVariable> & serviceStateTable,
 														 const string & name) {
 		for (size_t i = 0; i < serviceStateTable.size(); i++) {
 			if (!serviceStateTable[i].getName().compare(name)) {
@@ -92,8 +95,8 @@ namespace UPNP {
 		return UPnPStateVariable();
 	}
 
-	UPnPActionArgument UPnPServiceMaker::makeUPnPActionArgument(XmlNode & node,
-																vector<UPnPStateVariable> & serviceStateTable) {
+	UPnPActionArgument UPnPServiceMaker::makeUPnPActionArgument(const XmlNode & node,
+																const vector<UPnPStateVariable> & serviceStateTable) {
 		UPnPActionArgument argument;
 		argument.setName(XmlNodeFinder::getContentByTagName(node, "name"));
 		argument.setDirection(XmlNodeFinder::getContentByTagName(node, "direction"));

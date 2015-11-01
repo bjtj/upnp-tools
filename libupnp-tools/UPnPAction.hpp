@@ -23,6 +23,7 @@ namespace UPNP {
 		UPnPAction();
 		virtual ~UPnPAction();
 
+        void setName(const std::string & name);
 		std::string getName();
 
 		std::vector<UPnPActionArgument> & getArguments();

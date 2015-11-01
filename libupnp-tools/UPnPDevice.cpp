@@ -85,11 +85,11 @@ namespace UPNP {
 		embeddedDevices.erase(embeddedDevices.begin() + index);
 	}
 
-	UPnPDevice & UPnPDevice::getEmbeddedDevice(size_t index) {
+	UPnPDevice & UPnPDevice::getEmbeddedDevice(size_t index) const {
 		return embeddedDevices[index];
 	}
 
-	vector<UPnPDevice> & UPnPDevice::getEmbeddedDevices() {
+	vector<UPnPDevice> & UPnPDevice::getEmbeddedDevices() const {
 		return embeddedDevices;
 	}
 
@@ -105,7 +105,7 @@ namespace UPNP {
 		services.erase(services.begin() + index);
 	}
 
-	UPnPService UPnPDevice::getService(std::string serviceType) {
+	UPnPService UPnPDevice::getService(std::string serviceType) const {
 		for (
 			 vector<UPnPService>::iterator iter = services.begin();
 			 iter != services.end(); iter++) {
@@ -118,11 +118,11 @@ namespace UPNP {
 		return UPnPService();
 	}
     
-    UPnPService & UPnPDevice::getService(size_t index) {
+    UPnPService & UPnPDevice::getService(size_t index) const {
         return services[index];
     }
     
-    vector<UPnPService> & UPnPDevice::getServices() {
+    vector<UPnPService> & UPnPDevice::getServices() const {
         return services;
     }
 

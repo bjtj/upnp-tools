@@ -62,7 +62,7 @@ namespace UPNP {
 		properties["serviceType"] = serviceType;
 	}
 
-	void UPnPService::setScpd(Scpd & scpd) {
+	void UPnPService::setScpd(const Scpd & scpd) {
 		this->scpd = scpd;
 	}
 	Scpd & UPnPService::getScpd() {

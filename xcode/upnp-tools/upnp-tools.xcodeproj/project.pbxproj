@@ -19,6 +19,8 @@
 		E82789931BDD95B90009E46A /* XmlNodeFinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82789071BDCDBDD0009E46A /* XmlNodeFinder.cpp */; };
 		E857BAE91BE03C6300D2022F /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E857BAE71BE03C6300D2022F /* Timer.cpp */; };
 		E857BAEA1BE03D3300D2022F /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E857BAE71BE03C6300D2022F /* Timer.cpp */; };
+		E857BB151BE60BBA00D2022F /* Uuid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E857BB131BE60BBA00D2022F /* Uuid.cpp */; };
+		E857BB161BE60BBA00D2022F /* Uuid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E857BB131BE60BBA00D2022F /* Uuid.cpp */; };
 		E8C743C31BDEC82000101962 /* UPnPDeviceMaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8C743BF1BDEC82000101962 /* UPnPDeviceMaker.cpp */; };
 		E8C743C41BDEC82000101962 /* UPnPServiceMaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8C743C11BDEC82000101962 /* UPnPServiceMaker.cpp */; };
 		E8C743C51BDEC83100101962 /* UPnPDeviceMaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8C743BF1BDEC82000101962 /* UPnPDeviceMaker.cpp */; };
@@ -146,6 +148,8 @@
 		E82789081BDCDBDD0009E46A /* XmlNodeFinder.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = XmlNodeFinder.hpp; path = "../../libupnp-tools/XmlNodeFinder.hpp"; sourceTree = "<group>"; };
 		E857BAE71BE03C6300D2022F /* Timer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Timer.cpp; path = "../../libupnp-tools/Timer.cpp"; sourceTree = "<group>"; };
 		E857BAE81BE03C6300D2022F /* Timer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Timer.hpp; path = "../../libupnp-tools/Timer.hpp"; sourceTree = "<group>"; };
+		E857BB131BE60BBA00D2022F /* Uuid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Uuid.cpp; path = "../../libupnp-tools/Uuid.cpp"; sourceTree = "<group>"; };
+		E857BB141BE60BBA00D2022F /* Uuid.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Uuid.hpp; path = "../../libupnp-tools/Uuid.hpp"; sourceTree = "<group>"; };
 		E8C743BF1BDEC82000101962 /* UPnPDeviceMaker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UPnPDeviceMaker.cpp; path = "../../libupnp-tools/UPnPDeviceMaker.cpp"; sourceTree = "<group>"; };
 		E8C743C01BDEC82000101962 /* UPnPDeviceMaker.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UPnPDeviceMaker.hpp; path = "../../libupnp-tools/UPnPDeviceMaker.hpp"; sourceTree = "<group>"; };
 		E8C743C11BDEC82000101962 /* UPnPServiceMaker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UPnPServiceMaker.cpp; path = "../../libupnp-tools/UPnPServiceMaker.cpp"; sourceTree = "<group>"; };
@@ -268,6 +272,8 @@
 				E8FAB2C31BD7D8FE00E89DC5 /* UPnPService.hpp */,
 				E8FAB2C41BD7D8FE00E89DC5 /* UPnPStateVariable.cpp */,
 				E8FAB2C51BD7D8FE00E89DC5 /* UPnPStateVariable.hpp */,
+				E857BB131BE60BBA00D2022F /* Uuid.cpp */,
+				E857BB141BE60BBA00D2022F /* Uuid.hpp */,
 			);
 			name = "upnp-tools-c++";
 			sourceTree = "<group>";
@@ -420,6 +426,7 @@
 				E8E0FECC1BD8492300292C54 /* UPnPDevicePool.cpp in Sources */,
 				E8E0FECD1BD8492300292C54 /* UPnPServer.cpp in Sources */,
 				E8E0FECE1BD8492300292C54 /* UPnPStateVariable.cpp in Sources */,
+				E857BB161BE60BBA00D2022F /* Uuid.cpp in Sources */,
 				E8E0FECF1BD8492300292C54 /* SSDPServer.cpp in Sources */,
 				E8E0FED01BD8492300292C54 /* upnp_tools.m in Sources */,
 				E8E0FED11BD8492300292C54 /* UPnPService.cpp in Sources */,
@@ -445,6 +452,7 @@
 				E8FAB2CD1BD7D8FE00E89DC5 /* UPnPService.cpp in Sources */,
 				E82789091BDCDBDD0009E46A /* StringReader.cpp in Sources */,
 				E8FAB2CA1BD7D8FE00E89DC5 /* UPnPDevice.cpp in Sources */,
+				E857BB151BE60BBA00D2022F /* Uuid.cpp in Sources */,
 				E827890A1BDCDBDD0009E46A /* XmlDocument.cpp in Sources */,
 				E8FAB2C71BD7D8FE00E89DC5 /* UPnPAction.cpp in Sources */,
 				E8FAB2C81BD7D8FE00E89DC5 /* UPnPActionArgument.cpp in Sources */,

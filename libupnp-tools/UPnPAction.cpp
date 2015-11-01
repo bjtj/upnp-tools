@@ -8,6 +8,10 @@ namespace UPNP {
 	}
 	UPnPAction::~UPnPAction() {
 	}
+    
+    void UPnPAction::setName(const string & name) {
+        this->name = name;
+    }
 	
 	string UPnPAction::getName() {
 		return name;

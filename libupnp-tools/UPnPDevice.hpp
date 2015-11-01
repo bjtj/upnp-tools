@@ -17,8 +17,8 @@ namespace UPNP {
 		
 		std::map<std::string, std::string> properties;
 		UPnPDevice * parent;
-		std::vector<UPnPDevice> embeddedDevices;
-		std::vector<UPnPService> services;
+		mutable std::vector<UPnPDevice> embeddedDevices;
+		mutable std::vector<UPnPService> services;
 		
 	public:
 		UPnPDevice();
@@ -40,14 +40,14 @@ namespace UPNP {
 		bool isRootDevice();
 		void addEmbeddedDevice(UPnPDevice & embeddedDevice);
 		void removeEmbeddedDevice(size_t index);
-		UPnPDevice & getEmbeddedDevice(size_t index);
-		std::vector<UPnPDevice> & getEmbeddedDevices();
+		UPnPDevice & getEmbeddedDevice(size_t index) const;
+		std::vector<UPnPDevice> & getEmbeddedDevices() const;
 		void setServices(const std::vector<UPnPService> & services);
 		void addService(UPnPService & service);
 		void removeService(size_t index);
-		UPnPService getService(std::string serviceType);
-        UPnPService & getService(size_t index);
-        std::vector<UPnPService> & getServices();
+		UPnPService getService(std::string serviceType) const;
+        UPnPService & getService(size_t index) const;
+        std::vector<UPnPService> & getServices() const;
 
 		std::string & operator[] (const std::string & name);
 	};

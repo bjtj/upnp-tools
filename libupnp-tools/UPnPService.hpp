@@ -51,7 +51,7 @@ namespace UPNP {
 		bool empty();
 		void setServiceType(const std::string & serviceType);
 
-		void setScpd(Scpd & scpd);
+		void setScpd(const Scpd & scpd);
 		Scpd & getScpd();
 
 		std::string & operator[](const std::string & name);
