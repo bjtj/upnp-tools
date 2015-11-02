@@ -5,6 +5,7 @@
 #include <libhttp-server/HttpClientThreadPool.hpp>
 #include <string>
 #include <vector>
+#include <map>
 #include "SSDPServer.hpp"
 #include "UPnPDevice.hpp"
 #include "UPnPDevicePool.hpp"
@@ -12,6 +13,7 @@
 #include "UPnPServicePosition.hpp"
 #include "XmlDocument.hpp"
 #include "Timer.hpp"
+#include "UniqueIdGenerator.hpp"
 
 namespace UPNP {
     
@@ -23,10 +25,12 @@ namespace UPNP {
 		static const int UNKNOWN;
 		static const int DEVICE_DESCRIPTION;
 		static const int SCPD;
+        static const int ACTION_INVOKE;
     
 		static const UPnPHttpRequestType UNKNOWN_TYPE;
 		static const UPnPHttpRequestType DEVICE_DESCRIPTION_TYPE;
 		static const UPnPHttpRequestType SCPD_TYPE;
+        static const UPnPHttpRequestType ACTION_INVOKE_TYPE;
     
 	private:
 		int type;
@@ -46,6 +50,7 @@ namespace UPNP {
 	 */
 	class UPnPHttpRequestSession {
 	private:
+        ID_TYPE id;
 		UPnPDeviceDetection * deviceDetection;
 		UPnPHttpRequestType type;
 		UPnPServicePosition servicePosition;
@@ -54,6 +59,8 @@ namespace UPNP {
 		UPnPHttpRequestSession();
 		UPnPHttpRequestSession(const UPnPHttpRequestType & type);
 		virtual ~UPnPHttpRequestSession();
+        void setId(ID_TYPE id);
+        ID_TYPE getId();
 		void setServicePosition(const UPnPServicePosition & servicePosition);
 		UPnPServicePosition & getServicePosition();
 		UPnPHttpRequestType getRequestType();
@@ -88,6 +95,28 @@ namespace UPNP {
 		virtual void onDeviceRemoved(UPnPDevice & device) = 0;
 	};
 
+    /**
+     * @brief action parameters
+     */
+    class ActionParameters {
+    private:
+        mutable std::map<std::string, std::string> params;
+    public:
+        ActionParameters();
+        virtual ~ActionParameters();
+        std::string & operator[] (const std::string & name) const;
+    };
+    
+    /**
+     * @brief invoek action response listener
+     */
+    class InvokeActionResponseListener {
+    private:
+    public:
+        InvokeActionResponseListener() {}
+        virtual ~InvokeActionResponseListener() {}
+        virtual void onActionResponse(const UPnPService & service, const std::string & actionName, const ActionParameters & in, const ActionParameters & out) = 0;
+    };
 	
 	/**
 	 * @brief upnp ssdp message handler
@@ -109,12 +138,14 @@ namespace UPNP {
 	 */
 	class UPnPControlPoint : public UPnPDeviceDetection, public HTTP::HttpResponseHandler<UPnPHttpRequestSession> {
 	private:
+        UniqueIdGenerator gen;
 		UPnPDevicePool devicePool;
 		SSDP::SSDPServer ssdp;
 		UPnPSSDPMessageHandler ssdpHandler;
 		HTTP::HttpClientThreadPool<UPnPHttpRequestSession> httpClientThreadPool;
 		UPnPControlPointSsdpNotifyFilter filter;
 		DeviceAddRemoveListener * deviceListener;
+        InvokeActionResponseListener * invokeActionResponseListener;
     
 	public:
 		UPnPControlPoint();
@@ -132,15 +163,14 @@ namespace UPNP {
 		virtual void onScpdInXml(const UPnPServicePosition & servicePosition, std::string xmlDoc);
 		virtual void onDeviceByeBye(std::string udn);
     
-		UPnPDevice makeDeviceFromXml(XML::XmlNode & xmlNode);
-		UPnPService makeServiceFromXml(XML::XmlNode & xmlNode);
-		Scpd makeScpdFromXml(XML::XmlNode & xmlNode);
-    
 		virtual void onResponse(HTTP::HttpClient<UPnPHttpRequestSession> & httpClient, HTTP::HttpHeader & responseHeader, OS::Socket & socket, UPnPHttpRequestSession userData);
     
 		void setFilter(const UPnPControlPointSsdpNotifyFilter & filter);
 		std::vector<UPnPServicePosition> makeServicePositions(UPnPServicePositionMaker & maker, const UPnPDevice & device);
 		void setDeviceAddRemoveListener(DeviceAddRemoveListener * deviceListener);
+        
+        void setInvokeActionResponseListener(InvokeActionResponseListener * invokeActionResponseListener);
+        ID_TYPE invokeAction(const UPnPService & service, const std::string & actionName, const ActionParameters & in);
 	};
 }
 

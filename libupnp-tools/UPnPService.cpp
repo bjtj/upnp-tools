@@ -49,11 +49,6 @@ namespace UPNP {
 	UPnPService::~UPnPService() {
 	}
 	
-	string UPnPService::getServiceType() {
-		return properties["serviceType"];
-	}
-	
-
 	bool UPnPService::empty() {
 		return getServiceType().empty();
 	}
@@ -61,6 +56,10 @@ namespace UPNP {
 	void UPnPService::setServiceType(const std::string & serviceType) {
 		properties["serviceType"] = serviceType;
 	}
+    
+    string UPnPService::getServiceType() const {
+        return properties["serviceType"];
+    }
 
 	void UPnPService::setScpd(const Scpd & scpd) {
 		this->scpd = scpd;
@@ -68,8 +67,15 @@ namespace UPNP {
 	Scpd & UPnPService::getScpd() {
 		return scpd;
 	}
+    
+    void UPnPService::setBaseUrl(const string & baseUrl) {
+        this->baseUrl = baseUrl;
+    }
+    string UPnPService::getBaseUrl() const {
+        return baseUrl;
+    }
 
-	string & UPnPService::operator[](const string & name) {
+	string & UPnPService::operator[](const string & name) const {
 		return properties[name];
 	}
 }

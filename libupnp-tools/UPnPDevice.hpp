@@ -14,11 +14,11 @@ namespace UPNP {
 	 */
 	class UPnPDevice {
 	private:
-		
 		std::map<std::string, std::string> properties;
 		UPnPDevice * parent;
 		mutable std::vector<UPnPDevice> embeddedDevices;
 		mutable std::vector<UPnPService> services;
+        std::string baseUrl;
 		
 	public:
 		UPnPDevice();
@@ -48,6 +48,9 @@ namespace UPNP {
 		UPnPService getService(std::string serviceType) const;
         UPnPService & getService(size_t index) const;
         std::vector<UPnPService> & getServices() const;
+        
+        void setBaseUrl(const std::string & baseUrl);
+        std::string getBaseUrl();
 
 		std::string & operator[] (const std::string & name);
 	};

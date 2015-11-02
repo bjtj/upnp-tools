@@ -15,8 +15,8 @@ namespace UPNP {
 		UPnPServiceMaker();
 		virtual ~UPnPServiceMaker();
 
-		static UPnPService makeServiceWithXmlNode(const XML::XmlNode & serviceNode);
-		static Scpd makeScpdWithXmlDocument(const std::string & serviceType, const XML::XmlDocument & doc);
+        static UPnPService makeServiceFromXmlNode(const std::string & baseUrl, const XML::XmlNode & serviceNode);
+		static Scpd makeScpdFromXmlDocument(const std::string & serviceType, const XML::XmlDocument & doc);
         static Scpd makeScpdFromXmlNode(const XML::XmlNode & xmlNode);
 
 		static UPnPStateVariable makeUPnPStateVariable(const XML::XmlNode & node);

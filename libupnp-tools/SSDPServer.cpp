@@ -15,6 +15,7 @@ namespace SSDP {
 	 */
 	PollingThread::PollingThread(SSDPServer & server) : server(server) {
 	}
+    
 	PollingThread::~PollingThread() {
 	}
 	
@@ -95,11 +96,41 @@ namespace SSDP {
 
 		if (!msearchSocket) {
 
+            int bindResult;
 			msearchSocket = new DatagramSocket(msearchPort);
-			msearchSocket->setReuseAddr();
-			if (msearchSocket->bind() < 0) {
-				throw IOException("bind() error", -1, 0);
-			}
+            
+            // https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers
+            // any random port range : 49152–65535
+            class MyRandomPortBinder : public RandomPortBinder {
+            private:
+                int startPort;
+                int currentPort;
+                int endPort;
+            public:
+                MyRandomPortBinder() : startPort(49152), currentPort(0), endPort(65535) {}
+                virtual ~MyRandomPortBinder() {}
+                virtual void start() {
+                    currentPort = startPort;
+                }
+                virtual int getNextPort() {
+                    return currentPort++;
+                }
+                virtual bool wantFinish() {
+                    return currentPort > endPort;
+                }
+                virtual int getSelectedPort() {
+                    return currentPort;
+                }
+            };
+            MyRandomPortBinder portBinder;
+            bindResult = msearchSocket->randomBind(portBinder);
+
+//            msearchSocket->setReuseAddr();
+//            bindResult = msearchSocket->bind();
+            
+            if (bindResult) {
+                throw IOException("bind() error", -1, 0);
+            }
 			
 			msearchSocket->registerSelector(selector);
 		}
@@ -168,8 +199,11 @@ namespace SSDP {
 			} else if (Text::startsWith(method, "HTTP")) {
 				onHttpResponse(header);
 			} else {
+                // unknown ssdp message
 			}
-		}
+        } else {
+            // unexpected message
+        }
 	}
 
 	void SSDPServer::startPollingThread() {

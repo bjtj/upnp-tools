@@ -14,8 +14,9 @@ namespace UPNP {
 	UPnPDeviceMaker::~UPnPDeviceMaker() {
 	}
 
-	UPnPDevice UPnPDeviceMaker::makeDeviceWithDeviceDescription(const XmlDocument & doc) {
+	UPnPDevice UPnPDeviceMaker::makeDeviceFromDeviceDescription(const string & baseUrl, const XmlDocument & doc) {
 		UPnPDevice device;
+        device.setBaseUrl(baseUrl);
 
 		XmlNodeFinder finder(doc);
 		XmlNode deviceNode = finder.getNodeByTagName("device");
@@ -24,13 +25,14 @@ namespace UPNP {
 			return device;
 		}
 
-		device = makeDeviceWithDeviceNode(deviceNode);
+		device = makeDeviceFromDeviceNode(baseUrl, deviceNode);
 
 		return device;
 	}
 
-	UPnPDevice UPnPDeviceMaker::makeDeviceWithDeviceNode(const XML::XmlNode & deviceNode) {
+	UPnPDevice UPnPDeviceMaker::makeDeviceFromDeviceNode(const string & baseUrl, const XmlNode & deviceNode) {
 		UPnPDevice device;
+        device.setBaseUrl(baseUrl);
 		const vector<XmlNode> & children = deviceNode.getChildren();
 		LOOP_VEC(children, i) {
 			const XmlNode & node = children[i];
@@ -41,13 +43,13 @@ namespace UPNP {
 			}
 		}
 
-		device.setServices(makeServiceListFromXmlNode(deviceNode));
+		device.setServices(makeServiceListFromXmlNode(baseUrl, deviceNode));
 
 		XmlNode deviceListNode = XmlNodeFinder::getNodeByTagName(deviceNode, "deviceList", 1);
 		if (!deviceListNode.empty()) {
 			vector<XmlNode> deviceNodes = XmlNodeFinder::getAllNodesByTagName(deviceListNode, "device", 1);
 			LOOP_VEC(deviceNodes, i) {
-				UPnPDevice embeddedDevice = makeDeviceWithDeviceNode(deviceNodes[i]);
+				UPnPDevice embeddedDevice = makeDeviceFromDeviceNode(baseUrl, deviceNodes[i]);
 				device.addEmbeddedDevice(embeddedDevice);
 			}
 		}
@@ -55,7 +57,7 @@ namespace UPNP {
 		return device;
 	}
 
-	vector<UPnPService> UPnPDeviceMaker::makeServiceListFromXmlNode(const XmlNode & deviceNode) {
+	vector<UPnPService> UPnPDeviceMaker::makeServiceListFromXmlNode(const string & baseUrl, const XmlNode & deviceNode) {
 		vector<UPnPService> services;
 		XmlNode serviceListNode = XmlNodeFinder::getNodeByTagName(deviceNode, "serviceList", 1);
         if (!serviceListNode.empty()) {
@@ -63,7 +65,7 @@ namespace UPNP {
             LOOP_VEC(serviceNodes, i) {
                 XmlNode & serviceNode = serviceNodes[i];
                 UPnPServiceMaker serviceMaker;
-                UPnPService service = serviceMaker.makeServiceWithXmlNode(serviceNode);
+                UPnPService service = serviceMaker.makeServiceFromXmlNode(baseUrl, serviceNode);
                 services.push_back(service);
             }
         }

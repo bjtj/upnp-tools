@@ -125,6 +125,14 @@ namespace UPNP {
     vector<UPnPService> & UPnPDevice::getServices() const {
         return services;
     }
+    
+    void UPnPDevice::setBaseUrl(const string & baseUrl) {
+        this->baseUrl = baseUrl;
+    }
+    
+    string UPnPDevice::getBaseUrl() {
+        return baseUrl;
+    }
 
 	string & UPnPDevice::operator[] (const string & name){
 		return properties[name];

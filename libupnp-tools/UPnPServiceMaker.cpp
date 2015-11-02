@@ -13,8 +13,9 @@ namespace UPNP {
 	UPnPServiceMaker::~UPnPServiceMaker() {
 	}
 
-	UPnPService UPnPServiceMaker::makeServiceWithXmlNode(const XmlNode & serviceNode) {
+	UPnPService UPnPServiceMaker::makeServiceFromXmlNode(const string & baseUrl, const XmlNode & serviceNode) {
 		UPnPService service;
+        service.setBaseUrl(baseUrl);
 		const vector<XmlNode> & nodes = serviceNode.getChildren();
 		LOOP_VEC(nodes, i) {
 			const XmlNode & node = nodes[i];
@@ -27,7 +28,7 @@ namespace UPNP {
 		return service;
 	}
 
-	Scpd UPnPServiceMaker::makeScpdWithXmlDocument(const string & serviceType, const XmlDocument & doc) {
+	Scpd UPnPServiceMaker::makeScpdFromXmlDocument(const string & serviceType, const XmlDocument & doc) {
 
 		Scpd scpd;
 		XmlNodeFinder finder(doc);

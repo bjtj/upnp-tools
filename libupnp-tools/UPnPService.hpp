@@ -14,7 +14,6 @@ namespace UPNP {
 	private:
 		std::vector<UPnPAction> actions;
 		std::vector<UPnPStateVariable> stateVariables;
-
 		std::map<std::string, std::string> properties;
 
 	public:
@@ -36,9 +35,9 @@ namespace UPNP {
 	 */
 	class UPnPService {
 	private:
-		std::map<std::string, std::string> properties;
-
+		mutable std::map<std::string, std::string> properties;
 		Scpd scpd;
+        std::string baseUrl;
 
 	public:
 		static UPnPService EMPTY;
@@ -47,14 +46,15 @@ namespace UPNP {
 		UPnPService();
 		virtual ~UPnPService();
 
-		std::string getServiceType();
 		bool empty();
 		void setServiceType(const std::string & serviceType);
-
+        std::string getServiceType() const;
 		void setScpd(const Scpd & scpd);
 		Scpd & getScpd();
+        void setBaseUrl(const std::string & baseUrl);
+        std::string getBaseUrl() const;
 
-		std::string & operator[](const std::string & name);
+		std::string & operator[](const std::string & name) const;
 	};
 }
 

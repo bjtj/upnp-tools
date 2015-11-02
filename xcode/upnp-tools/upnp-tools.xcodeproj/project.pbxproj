@@ -23,6 +23,12 @@
 		E857BB161BE60BBA00D2022F /* Uuid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E857BB131BE60BBA00D2022F /* Uuid.cpp */; };
 		E857BB1D1BE6D30400D2022F /* UPnPServicePosition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E857BB1B1BE6D30400D2022F /* UPnPServicePosition.cpp */; };
 		E857BB1E1BE6D30400D2022F /* UPnPServicePosition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E857BB1B1BE6D30400D2022F /* UPnPServicePosition.cpp */; };
+		E857BB281BE77A9F00D2022F /* UPnPDeviceDetection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E857BB261BE77A9F00D2022F /* UPnPDeviceDetection.cpp */; };
+		E857BB291BE77AC500D2022F /* UPnPDeviceDetection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E857BB261BE77A9F00D2022F /* UPnPDeviceDetection.cpp */; };
+		E857BB2C1BE78B1C00D2022F /* SoapWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E857BB2A1BE78B1C00D2022F /* SoapWriter.cpp */; };
+		E857BB2D1BE78B1C00D2022F /* SoapWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E857BB2A1BE78B1C00D2022F /* SoapWriter.cpp */; };
+		E857BB301BE7A51D00D2022F /* UniqueIdGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E857BB2E1BE7A51D00D2022F /* UniqueIdGenerator.cpp */; };
+		E857BB311BE7A51D00D2022F /* UniqueIdGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E857BB2E1BE7A51D00D2022F /* UniqueIdGenerator.cpp */; };
 		E8C743C31BDEC82000101962 /* UPnPDeviceMaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8C743BF1BDEC82000101962 /* UPnPDeviceMaker.cpp */; };
 		E8C743C41BDEC82000101962 /* UPnPServiceMaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8C743C11BDEC82000101962 /* UPnPServiceMaker.cpp */; };
 		E8C743C51BDEC83100101962 /* UPnPDeviceMaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8C743BF1BDEC82000101962 /* UPnPDeviceMaker.cpp */; };
@@ -154,6 +160,13 @@
 		E857BB141BE60BBA00D2022F /* Uuid.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Uuid.hpp; path = "../../libupnp-tools/Uuid.hpp"; sourceTree = "<group>"; };
 		E857BB1B1BE6D30400D2022F /* UPnPServicePosition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UPnPServicePosition.cpp; path = "../../libupnp-tools/UPnPServicePosition.cpp"; sourceTree = "<group>"; };
 		E857BB1C1BE6D30400D2022F /* UPnPServicePosition.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UPnPServicePosition.hpp; path = "../../libupnp-tools/UPnPServicePosition.hpp"; sourceTree = "<group>"; };
+		E857BB251BE77A9F00D2022F /* macros.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = macros.hpp; path = "../../libupnp-tools/macros.hpp"; sourceTree = "<group>"; };
+		E857BB261BE77A9F00D2022F /* UPnPDeviceDetection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UPnPDeviceDetection.cpp; path = "../../libupnp-tools/UPnPDeviceDetection.cpp"; sourceTree = "<group>"; };
+		E857BB271BE77A9F00D2022F /* UPnPDeviceDetection.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UPnPDeviceDetection.hpp; path = "../../libupnp-tools/UPnPDeviceDetection.hpp"; sourceTree = "<group>"; };
+		E857BB2A1BE78B1C00D2022F /* SoapWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SoapWriter.cpp; path = "../../libupnp-tools/SoapWriter.cpp"; sourceTree = "<group>"; };
+		E857BB2B1BE78B1C00D2022F /* SoapWriter.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SoapWriter.hpp; path = "../../libupnp-tools/SoapWriter.hpp"; sourceTree = "<group>"; };
+		E857BB2E1BE7A51D00D2022F /* UniqueIdGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UniqueIdGenerator.cpp; path = "../../libupnp-tools/UniqueIdGenerator.cpp"; sourceTree = "<group>"; };
+		E857BB2F1BE7A51D00D2022F /* UniqueIdGenerator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UniqueIdGenerator.hpp; path = "../../libupnp-tools/UniqueIdGenerator.hpp"; sourceTree = "<group>"; };
 		E8C743BF1BDEC82000101962 /* UPnPDeviceMaker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UPnPDeviceMaker.cpp; path = "../../libupnp-tools/UPnPDeviceMaker.cpp"; sourceTree = "<group>"; };
 		E8C743C01BDEC82000101962 /* UPnPDeviceMaker.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UPnPDeviceMaker.hpp; path = "../../libupnp-tools/UPnPDeviceMaker.hpp"; sourceTree = "<group>"; };
 		E8C743C11BDEC82000101962 /* UPnPServiceMaker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UPnPServiceMaker.cpp; path = "../../libupnp-tools/UPnPServiceMaker.cpp"; sourceTree = "<group>"; };
@@ -240,25 +253,16 @@
 		E8FAB2B11BD7D8E200E89DC5 /* upnp-tools-c++ */ = {
 			isa = PBXGroup;
 			children = (
-				E857BAE71BE03C6300D2022F /* Timer.cpp */,
-				E857BAE81BE03C6300D2022F /* Timer.hpp */,
+				E857BB251BE77A9F00D2022F /* macros.hpp */,
+				E8FAB2B21BD7D8FE00E89DC5 /* SSDPServer.cpp */,
+				E8FAB2B31BD7D8FE00E89DC5 /* SSDPServer.hpp */,
+				E82788FF1BDCDBDD0009E46A /* StringReader.cpp */,
+				E82789001BDCDBDD0009E46A /* StringReader.hpp */,
+				E8FAB2B41BD7D8FE00E89DC5 /* UPnP.hpp */,
 				E8C743BF1BDEC82000101962 /* UPnPDeviceMaker.cpp */,
 				E8C743C01BDEC82000101962 /* UPnPDeviceMaker.hpp */,
 				E8C743C11BDEC82000101962 /* UPnPServiceMaker.cpp */,
 				E8C743C21BDEC82000101962 /* UPnPServiceMaker.hpp */,
-				E82788FF1BDCDBDD0009E46A /* StringReader.cpp */,
-				E82789001BDCDBDD0009E46A /* StringReader.hpp */,
-				E82789011BDCDBDD0009E46A /* XmlDocument.cpp */,
-				E82789021BDCDBDD0009E46A /* XmlDocument.hpp */,
-				E82789031BDCDBDD0009E46A /* XmlDocumentPrinter.cpp */,
-				E82789041BDCDBDD0009E46A /* XmlDocumentPrinter.hpp */,
-				E82789051BDCDBDD0009E46A /* XmlDomParser.cpp */,
-				E82789061BDCDBDD0009E46A /* XmlDomParser.hpp */,
-				E82789071BDCDBDD0009E46A /* XmlNodeFinder.cpp */,
-				E82789081BDCDBDD0009E46A /* XmlNodeFinder.hpp */,
-				E8FAB2B21BD7D8FE00E89DC5 /* SSDPServer.cpp */,
-				E8FAB2B31BD7D8FE00E89DC5 /* SSDPServer.hpp */,
-				E8FAB2B41BD7D8FE00E89DC5 /* UPnP.hpp */,
 				E8FAB2B51BD7D8FE00E89DC5 /* UPnPAction.cpp */,
 				E8FAB2B61BD7D8FE00E89DC5 /* UPnPAction.hpp */,
 				E8FAB2B71BD7D8FE00E89DC5 /* UPnPActionArgument.cpp */,
@@ -268,6 +272,8 @@
 				E8FAB2BB1BD7D8FE00E89DC5 /* UPnPControlPoint.hpp */,
 				E8FAB2BC1BD7D8FE00E89DC5 /* UPnPDevice.cpp */,
 				E8FAB2BD1BD7D8FE00E89DC5 /* UPnPDevice.hpp */,
+				E857BB261BE77A9F00D2022F /* UPnPDeviceDetection.cpp */,
+				E857BB271BE77A9F00D2022F /* UPnPDeviceDetection.hpp */,
 				E8FAB2BE1BD7D8FE00E89DC5 /* UPnPDevicePool.cpp */,
 				E8FAB2BF1BD7D8FE00E89DC5 /* UPnPDevicePool.hpp */,
 				E8FAB2C01BD7D8FE00E89DC5 /* UPnPServer.cpp */,
@@ -280,6 +286,20 @@
 				E857BB141BE60BBA00D2022F /* Uuid.hpp */,
 				E857BB1B1BE6D30400D2022F /* UPnPServicePosition.cpp */,
 				E857BB1C1BE6D30400D2022F /* UPnPServicePosition.hpp */,
+				E82789011BDCDBDD0009E46A /* XmlDocument.cpp */,
+				E82789021BDCDBDD0009E46A /* XmlDocument.hpp */,
+				E82789031BDCDBDD0009E46A /* XmlDocumentPrinter.cpp */,
+				E82789041BDCDBDD0009E46A /* XmlDocumentPrinter.hpp */,
+				E82789051BDCDBDD0009E46A /* XmlDomParser.cpp */,
+				E82789061BDCDBDD0009E46A /* XmlDomParser.hpp */,
+				E82789071BDCDBDD0009E46A /* XmlNodeFinder.cpp */,
+				E82789081BDCDBDD0009E46A /* XmlNodeFinder.hpp */,
+				E857BAE71BE03C6300D2022F /* Timer.cpp */,
+				E857BAE81BE03C6300D2022F /* Timer.hpp */,
+				E857BB2A1BE78B1C00D2022F /* SoapWriter.cpp */,
+				E857BB2B1BE78B1C00D2022F /* SoapWriter.hpp */,
+				E857BB2E1BE7A51D00D2022F /* UniqueIdGenerator.cpp */,
+				E857BB2F1BE7A51D00D2022F /* UniqueIdGenerator.hpp */,
 			);
 			name = "upnp-tools-c++";
 			sourceTree = "<group>";
@@ -421,6 +441,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E857BB291BE77AC500D2022F /* UPnPDeviceDetection.cpp in Sources */,
+				E857BB2D1BE78B1C00D2022F /* SoapWriter.cpp in Sources */,
 				E857BAEA1BE03D3300D2022F /* Timer.cpp in Sources */,
 				E8C743C51BDEC83100101962 /* UPnPDeviceMaker.cpp in Sources */,
 				E8C743C61BDEC83100101962 /* UPnPServiceMaker.cpp in Sources */,
@@ -440,6 +462,7 @@
 				E8E0FED21BD8492300292C54 /* UPnPDevice.cpp in Sources */,
 				E8E0FED31BD8492300292C54 /* UPnPAction.cpp in Sources */,
 				E8E0FED41BD8492300292C54 /* UPnPActionArgument.cpp in Sources */,
+				E857BB311BE7A51D00D2022F /* UniqueIdGenerator.cpp in Sources */,
 				E8E0FED51BD8492300292C54 /* UPnPControlPoint.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -449,11 +472,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				E8FAB2CB1BD7D8FE00E89DC5 /* UPnPDevicePool.cpp in Sources */,
+				E857BB2C1BE78B1C00D2022F /* SoapWriter.cpp in Sources */,
 				E8FAB2CC1BD7D8FE00E89DC5 /* UPnPServer.cpp in Sources */,
 				E827890D1BDCDBDD0009E46A /* XmlNodeFinder.cpp in Sources */,
 				E8FAB2CE1BD7D8FE00E89DC5 /* UPnPStateVariable.cpp in Sources */,
 				E8FAB2C61BD7D8FE00E89DC5 /* SSDPServer.cpp in Sources */,
 				E8FAB2AB1BD7D8BB00E89DC5 /* upnp_tools.m in Sources */,
+				E857BB281BE77A9F00D2022F /* UPnPDeviceDetection.cpp in Sources */,
 				E827890C1BDCDBDD0009E46A /* XmlDomParser.cpp in Sources */,
 				E8C743C31BDEC82000101962 /* UPnPDeviceMaker.cpp in Sources */,
 				E8FAB2CD1BD7D8FE00E89DC5 /* UPnPService.cpp in Sources */,
@@ -467,6 +492,7 @@
 				E827890B1BDCDBDD0009E46A /* XmlDocumentPrinter.cpp in Sources */,
 				E857BAE91BE03C6300D2022F /* Timer.cpp in Sources */,
 				E8C743C41BDEC82000101962 /* UPnPServiceMaker.cpp in Sources */,
+				E857BB301BE7A51D00D2022F /* UniqueIdGenerator.cpp in Sources */,
 				E8FAB2C91BD7D8FE00E89DC5 /* UPnPControlPoint.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

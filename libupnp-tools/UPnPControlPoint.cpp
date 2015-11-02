@@ -7,6 +7,7 @@
 #include "UPnPServiceMaker.hpp"
 #include "Uuid.hpp"
 #include "macros.hpp"
+#include "SoapWriter.hpp"
 
 namespace UPNP {
 
@@ -15,6 +16,7 @@ namespace UPNP {
     using namespace OS;
 	using namespace UTIL;
     using namespace XML;
+    using namespace SOAP;
 
 	/**
 	 *
@@ -23,10 +25,12 @@ namespace UPNP {
 	const int UPnPHttpRequestType::UNKNOWN = 0;
 	const int UPnPHttpRequestType::DEVICE_DESCRIPTION = 1;
 	const int UPnPHttpRequestType::SCPD = 2;
+    const int UPnPHttpRequestType::ACTION_INVOKE = 3;
 
 	const UPnPHttpRequestType UPnPHttpRequestType::UNKNOWN_TYPE(UPnPHttpRequestType::UNKNOWN);
 	const UPnPHttpRequestType UPnPHttpRequestType::DEVICE_DESCRIPTION_TYPE(UPnPHttpRequestType::DEVICE_DESCRIPTION);
 	const UPnPHttpRequestType UPnPHttpRequestType::SCPD_TYPE(UPnPHttpRequestType::SCPD);
+    const UPnPHttpRequestType UPnPHttpRequestType::ACTION_INVOKE_TYPE(UPnPHttpRequestType::ACTION_INVOKE);
 
 	UPnPHttpRequestType::UPnPHttpRequestType() : type(UNKNOWN) {
 	}
@@ -50,7 +54,7 @@ namespace UPNP {
 	 *
 	 */
 
-	UPnPHttpRequestSession::UPnPHttpRequestSession() : deviceDetection(NULL) {
+	UPnPHttpRequestSession::UPnPHttpRequestSession() : id(0), deviceDetection(NULL) {
 	}
 
 	UPnPHttpRequestSession::UPnPHttpRequestSession(const UPnPHttpRequestType & type) : deviceDetection(NULL), type(type) {
@@ -58,6 +62,14 @@ namespace UPNP {
 
 	UPnPHttpRequestSession::~UPnPHttpRequestSession() {
 	}
+    
+    void UPnPHttpRequestSession::setId(ID_TYPE id) {
+        this->id = id;
+    }
+    
+    ID_TYPE UPnPHttpRequestSession::getId() {
+        return id;
+    }
 
 	void UPnPHttpRequestSession::setServicePosition(const UPnPServicePosition & servicePosition) {
 		this->servicePosition = servicePosition;
@@ -99,7 +111,20 @@ namespace UPNP {
 		return false;
 	}
 
-
+    
+    /**
+     * @brief invoek action response listener
+     */
+    
+    ActionParameters::ActionParameters() {
+    }
+    ActionParameters::~ActionParameters() {
+        
+    }
+    std::string & ActionParameters::operator[] (const std::string & name) const {
+        return params[name];
+    }
+    
 
 	/**
 	 *
@@ -140,7 +165,7 @@ namespace UPNP {
 	 *
 	 */
 
-	UPnPControlPoint::UPnPControlPoint() : httpClientThreadPool(10), deviceListener(NULL) {
+	UPnPControlPoint::UPnPControlPoint() : httpClientThreadPool(10), deviceListener(NULL), invokeActionResponseListener(NULL) {
 		ssdpHandler.setDeviceDetection(this);
 		ssdp.addHttpResponseHandler(&ssdpHandler);
 		ssdp.addNotifyHandler(&ssdpHandler);
@@ -188,12 +213,12 @@ namespace UPNP {
 		UPnPDevice device;
 		device.setUdn(uuid.getUuid());
 		devicePool.addDevice(device);
-		httpClientThreadPool.request(Url(url), "GET", NULL, 0, UPnPHttpRequestSession(UPnPHttpRequestType::DEVICE_DESCRIPTION_TYPE));
+		httpClientThreadPool.request(Url(url), "GET", StringMap(), NULL, 0, UPnPHttpRequestSession(UPnPHttpRequestType::DEVICE_DESCRIPTION_TYPE));
 	}
 
 	void UPnPControlPoint::onDeviceDescriptionInXml(string baseUrl, string xmlDoc) {
 		XmlDomParser parser;
-		UPnPDevice device = UPnPDeviceMaker::makeDeviceWithDeviceDescription(parser.parse(xmlDoc));
+		UPnPDevice device = UPnPDeviceMaker::makeDeviceFromDeviceDescription(baseUrl, parser.parse(xmlDoc));
     
 		devicePool.updateDevice(device);
 		if (deviceListener) {
@@ -210,14 +235,14 @@ namespace UPNP {
 			url.setPath(scpdurl);
 			UPnPHttpRequestSession session(UPnPHttpRequestType::SCPD_TYPE);
 			session.setServicePosition(sp);
-			httpClientThreadPool.request(url, "GET", NULL, 0, session);
+			httpClientThreadPool.request(url, "GET", StringMap(), NULL, 0, session);
 		}
 	}
 
 	void UPnPControlPoint::onScpdInXml(const UPnPServicePosition & servicePosition, string xmlDoc) {
 		// TODO: bind scpd to device
 		XmlDomParser parser;
-		Scpd scpd = UPnPServiceMaker::makeScpdWithXmlDocument("", parser.parse(xmlDoc));
+		Scpd scpd = UPnPServiceMaker::makeScpdFromXmlDocument("", parser.parse(xmlDoc));
     
 		devicePool.bindScpd(servicePosition, scpd);
 	}
@@ -233,16 +258,6 @@ namespace UPNP {
 		devicePool.removeDevice(udn);
 	}
 
-	UPnPDevice UPnPControlPoint::makeDeviceFromXml(XmlNode & xmlNode) {
-		return UPnPDeviceMaker::makeDeviceWithDeviceNode(xmlNode);
-	}
-	UPnPService UPnPControlPoint::makeServiceFromXml(XmlNode & xmlNode) {
-		return UPnPServiceMaker::makeServiceWithXmlNode(xmlNode);
-	}
-	Scpd UPnPControlPoint::makeScpdFromXml(XmlNode & xmlNode) {
-		return UPnPServiceMaker::makeScpdFromXmlNode(xmlNode);
-	}
-
 	void UPnPControlPoint::onResponse(HttpClient<UPnPHttpRequestSession> & httpClient, HttpHeader & responseHeader, OS::Socket & socket, UPnPHttpRequestSession session) {
     
 		if (session.getRequestType() == UPnPHttpRequestType::DEVICE_DESCRIPTION) {
@@ -253,7 +268,9 @@ namespace UPNP {
 		} else if (session.getRequestType() == UPnPHttpRequestType::SCPD) {
 			string dump = HttpResponseDump::dump(responseHeader, socket);
 			this->onScpdInXml(session.getServicePosition(), dump);
-		}
+        } else if (session.getRequestType() == UPnPHttpRequestType::ACTION_INVOKE) {
+            
+        }
 	}
 
 	void UPnPControlPoint::setFilter(const UPnPControlPointSsdpNotifyFilter & filter) {
@@ -283,4 +300,22 @@ namespace UPNP {
 	void UPnPControlPoint::setDeviceAddRemoveListener(DeviceAddRemoveListener * deviceListener) {
 		this->deviceListener = deviceListener;
 	}
+    
+    void UPnPControlPoint::setInvokeActionResponseListener(InvokeActionResponseListener * invokeActionResponseListener) {
+        this->invokeActionResponseListener = invokeActionResponseListener;
+    }
+    
+    ID_TYPE UPnPControlPoint::invokeAction(const UPnPService & service, const std::string & actionName, const ActionParameters & in) {
+        Url url(service.getBaseUrl());
+        // TODO: set control url to url path
+        StringMap headerFields;
+        headerFields["SOAPACTION"] = service.getServiceType() + "#" + actionName;
+        SoapWriter writer;
+        writer.setSoapAction(service.getServiceType(), actionName);
+        string packet = writer.toString();
+        UPnPHttpRequestSession session;
+        session.setId(gen.generate());
+        httpClientThreadPool.request(url, "POST", headerFields, packet.c_str(), packet.length(), session);
+        return session.getId();
+    }
 }
