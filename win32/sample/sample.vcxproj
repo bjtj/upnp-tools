@@ -75,10 +75,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\examples\cp-dev.cpp" />
-    <ClCompile Include="..\..\examples\cp.cpp">
+    <ClCompile Include="..\..\examples\cp-dev.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\examples\cp.cpp" />
     <ClCompile Include="..\..\examples\ssdp-server.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -88,10 +88,10 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\http-server\win32\http-server.vcxproj">
-      <Project>{a8ae25bb-c71f-a261-60d4-5a82f496550a}</Project>
+      <Project>{a86aea6e-750b-7c94-4188-77b9d2fcd973}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\..\oslayer\win32\oslayer.vcxproj">
-      <Project>{2367396a-6d69-5e61-11dc-66efbb2456d0}</Project>
+      <Project>{62f62888-b617-d1c5-dd02-0cc27e78a455}</Project>
     </ProjectReference>
     <ProjectReference Include="..\upnp-tools.vcxproj">
       <Project>{a97bff5c-b08c-40bd-8243-d21270563918}</Project>

@@ -9,59 +9,59 @@ namespace UPNP {
     using namespace OS;
     using namespace UTIL;
     
-    ServicePosition::ServicePosition() : traverseDepth(0), serviceIndex(0) {
+    UPnPServicePosition::UPnPServicePosition() : traverseDepth(0), serviceIndex(0) {
     }
     
-    ServicePosition::~ServicePosition() {
+    UPnPServicePosition::~UPnPServicePosition() {
     }
     
-    void ServicePosition::setUdn(const string & udn) const {
+    void UPnPServicePosition::setUdn(const string & udn) const {
         this->udn = udn;
     }
-    string & ServicePosition::getUdn() const {
+    string & UPnPServicePosition::getUdn() const {
         return udn;
     }
     
-    void ServicePosition::enterDevice(size_t index) const {
+    void UPnPServicePosition::enterDevice(size_t index) const {
         deviceIndices.push_back(index);
     }
     
-    void ServicePosition::resetTraverse() const {
+    void UPnPServicePosition::resetTraverse() const {
         traverseDepth = 0;
     }
     
-    size_t ServicePosition::traverseDevice() const {
+    size_t UPnPServicePosition::traverseDevice() const {
         if (!hasNextDevice()) {
             throw Exception("no more index", -1, 0);
         }
         return deviceIndices[traverseDepth++];
     }
     
-    bool ServicePosition::hasNextDevice() const {
+    bool UPnPServicePosition::hasNextDevice() const {
         return traverseDepth < deviceIndices.size();
     }
     
-    size_t ServicePosition::getServiceIndex() const {
+    size_t UPnPServicePosition::getServiceIndex() const {
         return serviceIndex;
     }
     
-    void ServicePosition::setDeviceIndices(vector<size_t> & indices) {
+    void UPnPServicePosition::setDeviceIndices(vector<size_t> & indices) {
         this->deviceIndices = indices;
     }
     
-    void ServicePosition::setSerivceIndex(size_t index) {
+    void UPnPServicePosition::setSerivceIndex(size_t index) {
         this->serviceIndex = index;
     }
     
-    void ServicePosition::setScpdUrl(const string & scpdurl) {
+    void UPnPServicePosition::setScpdUrl(const string & scpdurl) {
         this->scpdurl = scpdurl;
     }
     
-    string ServicePosition::getScpdUrl() {
+    string UPnPServicePosition::getScpdUrl() {
         return scpdurl;
     }
     
-    string ServicePosition::toString() const {
+    string UPnPServicePosition::toString() const {
         string str;
         LOOP_VEC(deviceIndices, i) {
             size_t x = deviceIndices[i];
@@ -73,19 +73,19 @@ namespace UPNP {
         return str;
     }
     
-    void ServicePosition::setServiceType(string serviceType) {
+    void UPnPServicePosition::setServiceType(string serviceType) {
         this->serviceType = serviceType;
     }
     
  
-    ServicePositionMaker::ServicePositionMaker(string udn) : udn(udn), currentLevel(0) {
+    UPnPServicePositionMaker::UPnPServicePositionMaker(string udn) : udn(udn), currentLevel(0) {
     }
     
-    ServicePositionMaker::~ServicePositionMaker() {
+    UPnPServicePositionMaker::~UPnPServicePositionMaker() {
     }
     
-    ServicePosition ServicePositionMaker::makeServicePosition(size_t index, UPnPService & service) {
-        ServicePosition sp;
+    UPnPServicePosition UPnPServicePositionMaker::makeUPnPServicePosition(size_t index, UPnPService & service) {
+        UPnPServicePosition sp;
         sp.setUdn(udn);
         sp.setScpdUrl(service["SCPDURL"]);
         sp.setServiceType(service["serviceType"]);
@@ -97,18 +97,18 @@ namespace UPNP {
         return sp;
     }
     
-    void ServicePositionMaker::enter() {
+    void UPnPServicePositionMaker::enter() {
         currentLevel++;
         if (currentLevel >= deviceIndices.size()) {
             deviceIndices.push_back(0);
         }
     }
     
-    void ServicePositionMaker::setDeviceIndex(size_t index) {
+    void UPnPServicePositionMaker::setDeviceIndex(size_t index) {
         deviceIndices[currentLevel - 1] = index;
     }
     
-    void ServicePositionMaker::leave() {
+    void UPnPServicePositionMaker::leave() {
         currentLevel--;
     }
 }

@@ -7,7 +7,7 @@
 
 namespace UPNP {
     
-    class ServicePosition {
+    class UPnPServicePosition {
     private:
         mutable std::string udn;
         mutable std::vector<size_t> deviceIndices;
@@ -17,8 +17,8 @@ namespace UPNP {
         mutable std::string scpdurl;
         
     public:
-        ServicePosition();
-        virtual ~ServicePosition();
+        UPnPServicePosition();
+        virtual ~UPnPServicePosition();
         
         void setUdn(const std::string & udn) const;
         std::string & getUdn() const;
@@ -36,15 +36,15 @@ namespace UPNP {
     };
     
     
-    class ServicePositionMaker {
+    class UPnPServicePositionMaker {
     private:
         std::string udn;
         std::vector<size_t> deviceIndices;
         size_t currentLevel;
     public:
-        ServicePositionMaker(std::string udn);
-        virtual ~ServicePositionMaker();
-        ServicePosition makeServicePosition(size_t index, UPnPService & service);
+        UPnPServicePositionMaker(std::string udn);
+        virtual ~UPnPServicePositionMaker();
+        UPnPServicePosition makeUPnPServicePosition(size_t index, UPnPService & service);
         void enter();
         void setDeviceIndex(size_t index);
         void leave();

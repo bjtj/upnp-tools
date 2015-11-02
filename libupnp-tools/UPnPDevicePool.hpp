@@ -9,21 +9,21 @@
 
 namespace UPNP {
 
-    class DevicePool {
+    class UPnPDevicePool {
     private:
         OS::Semaphore deviceTableLock;
         std::map<std::string, UPnPDevice> deviceTable;
     public:
-        DevicePool();
-        virtual ~DevicePool();
+        UPnPDevicePool();
+        virtual ~UPnPDevicePool();
         void clear();
         UPnPDevice & getDevice(std::string udn);
         bool hasDevice(std::string udn);
         void addDevice(UPnPDevice & device);
         void updateDevice(UPnPDevice & device);
         void removeDevice(std::string udn);
-        UPnPService * traverseService(const UPnPDevice & device, const ServicePosition & servicePosition);
-        void bindScpd(const ServicePosition & servicePosition, const Scpd & scpd);
+        UPnPService * traverseService(const UPnPDevice & device, const UPnPServicePosition & servicePosition);
+        void bindScpd(const UPnPServicePosition & servicePosition, const Scpd & scpd);
     };
 
 }

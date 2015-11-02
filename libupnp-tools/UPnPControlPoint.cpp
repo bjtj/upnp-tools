@@ -5,6 +5,7 @@
 #include "XmlDomParser.hpp"
 #include "UPnPDeviceMaker.hpp"
 #include "UPnPServiceMaker.hpp"
+#include "Uuid.hpp"
 #include "macros.hpp"
 
 namespace UPNP {
@@ -16,375 +17,270 @@ namespace UPNP {
     using namespace XML;
 
 	/**
-	 * @brief ssdp handler
+	 *
 	 */
-    ControlPointSSDPHandler::ControlPointSSDPHandler(UPnPControlPoint & cp) : cp(cp) {
-	}
-	ControlPointSSDPHandler::~ControlPointSSDPHandler() {
-	}
-	void ControlPointSSDPHandler::onNotify(HttpHeader & header) {
-        
-        string nts = header["NTS"];
-		string nt = header["NT"];
-        
-		if (Text::equalsIgnoreCase(nts, "ssdp:alive") && cp.filter(nt)) {
-            string location = header["Location"];
-            if (!location.empty()) {
-                cp.ssdpDeviceFound(location);
-            }
-        }
-        
-        if (Text::equalsIgnoreCase(nts, "ssdp:byebye")) {
-            string usn = header["USN"];
-            if (!usn.empty()) {
-                cp.ssdpDeviceRemoved(usn);
-            }
-        }
+
+	const int UPnPHttpRequestType::UNKNOWN = 0;
+	const int UPnPHttpRequestType::DEVICE_DESCRIPTION = 1;
+	const int UPnPHttpRequestType::SCPD = 2;
+
+	const UPnPHttpRequestType UPnPHttpRequestType::UNKNOWN_TYPE(UPnPHttpRequestType::UNKNOWN);
+	const UPnPHttpRequestType UPnPHttpRequestType::DEVICE_DESCRIPTION_TYPE(UPnPHttpRequestType::DEVICE_DESCRIPTION);
+	const UPnPHttpRequestType UPnPHttpRequestType::SCPD_TYPE(UPnPHttpRequestType::SCPD);
+
+	UPnPHttpRequestType::UPnPHttpRequestType() : type(UNKNOWN) {
 	}
 
-	void ControlPointSSDPHandler::onHttpResponse(HttpHeader & header) {
-		string st = header["ST"];
-		if (cp.filter(st)) {
-            string location = header["Location"];
-            if (!location.empty()) {
-                cp.ssdpDeviceFound(location);
-            }
-        }
+	UPnPHttpRequestType::UPnPHttpRequestType(int type) : type(type) {
 	}
-        
+
+	UPnPHttpRequestType::~UPnPHttpRequestType() {
+	}
+
+	bool UPnPHttpRequestType::operator==(const int & type) {
+		return this->type == type;
+	}
+
+	bool UPnPHttpRequestType::operator==(const UPnPHttpRequestType & other) {
+		return this->type == other.type;
+	}
+
+
 	/**
 	 *
 	 */
-    BuildTarget::BuildTarget(UPnPControlPoint & cp) : cp(cp), device(NULL), targetService(NULL) {
-    }
-		
-    BuildTarget::~BuildTarget() {
-    }
-    
-    bool BuildTarget::hasTagetService() {
-        return targetService != NULL;
-    }
-	UPnPDevice * BuildTarget::getDevice() {
-		return device;
-	}
-	void BuildTarget::setDevice(UPnPDevice * device) {
-		this->device = device;
-	}
-    UPnPService * BuildTarget::getTargetService() {
-        return targetService;
-    }
-	void BuildTarget::setTargetService(UPnPService * targetService) {
-        this->targetService = targetService;
-    }
-	Url & BuildTarget::getUrl() {
-		return url;
-	}
-	void BuildTarget::setUrl(Url & url) {
-		this->url = url;
-	}
-    
-    void BuildTarget::setUdn(const string & udn) {
-        this->udn = udn;
-    }
-    
-    string BuildTarget::getUdn() {
-        return udn;
-    }
 
-	UPnPControlPoint & BuildTarget::getControlPoint() {
-		return cp;
+	UPnPHttpRequestSession::UPnPHttpRequestSession() : deviceDetection(NULL) {
 	}
-    
-    
+
+	UPnPHttpRequestSession::UPnPHttpRequestSession(const UPnPHttpRequestType & type) : deviceDetection(NULL), type(type) {
+	}
+
+	UPnPHttpRequestSession::~UPnPHttpRequestSession() {
+	}
+
+	void UPnPHttpRequestSession::setServicePosition(const UPnPServicePosition & servicePosition) {
+		this->servicePosition = servicePosition;
+	}
+
+	UPnPServicePosition & UPnPHttpRequestSession::getServicePosition() {
+		return servicePosition;
+	}
+
+	UPnPHttpRequestType UPnPHttpRequestSession::getRequestType() {
+		return type;
+	}
+
+	void UPnPHttpRequestSession::setDeviceDetection(UPnPDeviceDetection * deviceDetection) {
+		this->deviceDetection = deviceDetection;
+	}
+
+
 	/**
 	 *
 	 */
-    ControlPointHttpResponseHandler::ControlPointHttpResponseHandler(UPnPControlPoint & cp) : cp(cp) {
-        
-    }
-    ControlPointHttpResponseHandler::~ControlPointHttpResponseHandler() {
-        
-    }
-    
-    void ControlPointHttpResponseHandler::onResponse(HttpClient<BuildTarget*> & client,
-                                                     HttpHeader & responseHeader,
-                                                     Socket & socket,
-                                                     BuildTarget * buildTarget) {
 
+	UPnPControlPointSsdpNotifyFilter::UPnPControlPointSsdpNotifyFilter() {
+	}
 
-		HttpResponseDump dump;
-		string xmlDump = dump.dump(responseHeader, socket);
-		XmlDomParser parser;
-		XmlDocument xmlDoc = parser.parse(xmlDump);
-		UPnPControlPoint & cp = buildTarget->getControlPoint();
+	UPnPControlPointSsdpNotifyFilter::~UPnPControlPointSsdpNotifyFilter() {
+	}
 
-		if (buildTarget->getTargetService() == NULL) {
-			Url url(string("http://") + socket.getHost() + ":" + Text::toString(socket.getPort()));
-			cp.handleDeviceDescrition(xmlDoc, url);
-            delete buildTarget;
-		} else {
-			cp.handleScpd(buildTarget, xmlDoc);
+	void UPnPControlPointSsdpNotifyFilter::addFilterType(const string & type) {
+		filterTypes.push_back(type);
+	}
+
+	bool UPnPControlPointSsdpNotifyFilter::filter(const string & type) {
+		LOOP_VEC(filterTypes, i) {
+			if (!filterTypes[i].compare(type)) {
+				return true;
+			}
 		}
-    }
-    
+		return false;
+	}
+
+
+
 	/**
-	 * @brief upnp control point
+	 *
 	 */
 
-	UPnPControlPoint::UPnPControlPoint(int port, string searchTarget, vector<string> & searchTargetFilters) : 
-		httpClient(10), searchTarget(searchTarget), ssdpHandler(*this), httpServer(port), listener(NULL),
-			httpResponseHandler(*this), deviceListLock(1), buildTargetLock(1), searchTargetFilters(searchTargetFilters) {
+	UPnPSSDPMessageHandler::UPnPSSDPMessageHandler() : deviceDetection(NULL) {
+	}
+    
+	UPnPSSDPMessageHandler::~UPnPSSDPMessageHandler() {
+	}
+    
+	void UPnPSSDPMessageHandler::onNotify(HttpHeader & header) {
+		if (deviceDetection) {
+			string nts = header["NTS"];
+			if (Text::equalsIgnoreCase(nts, "ssdp:alive")) {
+				deviceDetection->onDeviceHelloWithUrl(header["Location"], header);
+			} else if (Text::equalsIgnoreCase(nts, "ssdp:byebye")) {
+				deviceDetection->onDeviceByeBye(header["USN"]);
+			}
             
-            httpClient.setHttpResponseHandler(&httpResponseHandler);
-            httpClient.setFollowRedirect(true);
+		}
+	}
+	void UPnPSSDPMessageHandler::onMsearch(HttpHeader & header) {
+	}
+	void UPnPSSDPMessageHandler::onHttpResponse(HttpHeader & header) {
+		if (deviceDetection) {
+			deviceDetection->onDeviceHelloWithUrl(header["Location"], header);
+		}
+	}
+    
+	void UPnPSSDPMessageHandler::setDeviceDetection(UPnPDeviceDetection * deviceDetection) {
+		this->deviceDetection = deviceDetection;
+	}
+
+
+
+	/**
+	 *
+	 */
+
+	UPnPControlPoint::UPnPControlPoint() : httpClientThreadPool(10), deviceListener(NULL) {
+		ssdpHandler.setDeviceDetection(this);
+		ssdp.addHttpResponseHandler(&ssdpHandler);
+		ssdp.addNotifyHandler(&ssdpHandler);
+		ssdp.addMsearchHandler(&ssdpHandler);
+    
+		httpClientThreadPool.setFollowRedirect(true);
+		httpClientThreadPool.setHttpResponseHandler(this);
 	}
 
 	UPnPControlPoint::~UPnPControlPoint() {
 	}
 
-	void UPnPControlPoint::startAsync() {
-        
-        httpClient.start();
+	void UPnPControlPoint::start() {
+		ssdp.start();
+		httpClientThreadPool.start();
+	}
 
-		ssdpServer.addNotifyHandler(&ssdpHandler);
-		ssdpServer.addHttpResponseHandler(&ssdpHandler);
-		
-		ssdpServer.startAsync();
-		httpServer.startAsync();
+	void UPnPControlPoint::startAsync() {
+		ssdp.startAsync();
+		httpClientThreadPool.start();
+	}
+
+	void UPnPControlPoint::poll(unsigned long timeout) {
+		ssdp.poll(timeout);
 	}
 
 	void UPnPControlPoint::stop() {
-        
-        httpClient.stop();
-
-		ssdpServer.removeNotifyHandler(&ssdpHandler);
-		ssdpServer.removeHttpResponseHandler(&ssdpHandler);
-        
-		ssdpServer.stop();
-		httpServer.stop();
-        
-        LOOP_MAP(buildTargetTable, string, vector<BuildTarget*>, iter) {
-            vector<BuildTarget*> targets = iter->second;
-            UPnPDevice * device = NULL;
-            LOOP_VEC(targets, i) {
-                device = targets[i]->getDevice();
-                delete targets[i];
-            }
-            if (device) {
-                delete device;
-            }
-        }
+		ssdp.stop();
+		httpClientThreadPool.stop();
 	}
 
-	bool UPnPControlPoint::isRunning() {
-		return false;
+	void UPnPControlPoint::sendMsearch(string searchType) {
+		ssdp.sendMsearch(searchType);
 	}
 
-	void UPnPControlPoint::sendMsearch() {
-		ssdpServer.sendMsearch(searchTarget);
-	}
-
-	vector<UPnPDevice> UPnPControlPoint::getDeviceList() {
-		vector<UPnPDevice> list;
-		deviceListLock.wait();
-		for (map<string, UPnPDevice>::iterator iter = devices.begin(); iter != devices.end(); iter++) {
-			list.push_back(iter->second);
+	void UPnPControlPoint::onDeviceHelloWithUrl(const string & url, const HttpHeader & header) {
+		string usn = header["USN"];
+		Uuid uuid(usn);
+		if (!filter.filter(uuid.getRest())) {
+			return;
 		}
-		deviceListLock.post();
-		return list;
+		if (devicePool.hasDevice(uuid.getUuid())) {
+			return;
+		}
+		UPnPDevice device;
+		device.setUdn(uuid.getUuid());
+		devicePool.addDevice(device);
+		httpClientThreadPool.request(Url(url), "GET", NULL, 0, UPnPHttpRequestSession(UPnPHttpRequestType::DEVICE_DESCRIPTION_TYPE));
 	}
 
-	UPnPDevice UPnPControlPoint::getDevice(string udn) {
-        UPnPDevice ret = devices[udn];
-		return ret;
-	}
-	
-	void UPnPControlPoint::removeAllDevices() {
-        deviceListLock.wait();
-		devices.clear();
-        deviceListLock.post();
-	}
-	
-	void UPnPControlPoint::setSearchTarget(string searchTarget) {
-		this->searchTarget = searchTarget;
-	}
-	
-	std::string UPnPControlPoint::getSearchTaget() {
-		return searchTarget;
-	}
-	
-	void UPnPControlPoint::setOnDeviceAddRemoveListener(OnDeviceAddRemoveListener * listener) {
-		this->listener = listener;
-	}
+	void UPnPControlPoint::onDeviceDescriptionInXml(string baseUrl, string xmlDoc) {
+		XmlDomParser parser;
+		UPnPDevice device = UPnPDeviceMaker::makeDeviceWithDeviceDescription(parser.parse(xmlDoc));
     
-    void UPnPControlPoint::ssdpDeviceFound(const string & urlString) {
-        
-        Url url(urlString);
-        string get = "GET";
-        httpClient.request(url, get, NULL, 0, new BuildTarget(*this));
-    }
+		devicePool.updateDevice(device);
+		if (deviceListener) {
+			deviceListener->onDeviceAdded(device);
+		}
     
-    void UPnPControlPoint::ssdpDeviceRemoved(const string & udn) {
-        removeDevice(udn);
-    }
+		UPnPServicePositionMaker maker(device.getUdn());
+		vector<UPnPServicePosition> servicePositions = makeServicePositions(maker, device);
+
+		LOOP_VEC(servicePositions, i) {
+			UPnPServicePosition & sp = servicePositions[i];
+			string scpdurl = sp.getScpdUrl();
+			Url url = Url(baseUrl);
+			url.setPath(scpdurl);
+			UPnPHttpRequestSession session(UPnPHttpRequestType::SCPD_TYPE);
+			session.setServicePosition(sp);
+			httpClientThreadPool.request(url, "GET", NULL, 0, session);
+		}
+	}
+
+	void UPnPControlPoint::onScpdInXml(const UPnPServicePosition & servicePosition, string xmlDoc) {
+		// TODO: bind scpd to device
+		XmlDomParser parser;
+		Scpd scpd = UPnPServiceMaker::makeScpdWithXmlDocument("", parser.parse(xmlDoc));
     
-    void UPnPControlPoint::addDevice(UPnPDevice & device) {
-        
-        deviceListLock.wait();
-        devices[device.getUdn()] = device;
-		if (listener) {
-			listener->onDeviceAdd(device);
+		devicePool.bindScpd(servicePosition, scpd);
+	}
+
+	void UPnPControlPoint::onDeviceByeBye(string udn) {
+		if (!devicePool.hasDevice(udn)) {
+			return;
 		}
-        deviceListLock.post();
-    }
     
-    void UPnPControlPoint::removeDevice(const string & udn) {
-        
-        deviceListLock.wait();
-        if (devices.find(udn) != devices.end()) {
-            if (listener) {
-                listener->onDeviceRemove(devices[udn]);
-            }
-            devices.erase(udn);
-        }
-        deviceListLock.post();
-    }
-
-	bool UPnPControlPoint::hasDevice(const std::string & udn) {
-		return devices.find(udn) != devices.end() || buildTargetTable.find(udn) != buildTargetTable.end();
+		if (deviceListener) {
+			deviceListener->onDeviceRemoved(devicePool.getDevice(udn));
+		}
+		devicePool.removeDevice(udn);
 	}
 
-	UPnPDevice & UPnPControlPoint::getDevice(const std::string & udn) {
-		return devices[udn];
+	UPnPDevice UPnPControlPoint::makeDeviceFromXml(XmlNode & xmlNode) {
+		return UPnPDeviceMaker::makeDeviceWithDeviceNode(xmlNode);
 	}
+	UPnPService UPnPControlPoint::makeServiceFromXml(XmlNode & xmlNode) {
+		return UPnPServiceMaker::makeServiceWithXmlNode(xmlNode);
+	}
+	Scpd UPnPControlPoint::makeScpdFromXml(XmlNode & xmlNode) {
+		return UPnPServiceMaker::makeScpdFromXmlNode(xmlNode);
+	}
+
+	void UPnPControlPoint::onResponse(HttpClient<UPnPHttpRequestSession> & httpClient, HttpHeader & responseHeader, OS::Socket & socket, UPnPHttpRequestSession session) {
     
-	UPnPDevice UPnPControlPoint::makeUPnPDeviceFrame(XmlDocument & doc) {
-		UPnPDeviceMaker maker;
-		return maker.makeDeviceWithDeviceDescription(doc);
+		if (session.getRequestType() == UPnPHttpRequestType::DEVICE_DESCRIPTION) {
+			string dump = HttpResponseDump::dump(responseHeader, socket);
+			char baseUrl[1024] = {0,};
+			snprintf(baseUrl, sizeof(baseUrl), "http://%s:%d", socket.getHost(), socket.getPort());
+			this->onDeviceDescriptionInXml(baseUrl, dump);
+		} else if (session.getRequestType() == UPnPHttpRequestType::SCPD) {
+			string dump = HttpResponseDump::dump(responseHeader, socket);
+			this->onScpdInXml(session.getServicePosition(), dump);
+		}
 	}
+
+	void UPnPControlPoint::setFilter(const UPnPControlPointSsdpNotifyFilter & filter) {
+		this->filter = filter;
+	}
+
+	vector<UPnPServicePosition> UPnPControlPoint::makeServicePositions(UPnPServicePositionMaker & maker, const UPnPDevice & device) {
     
-    BuildTarget * UPnPControlPoint::makeBuildTarget(UPnPDevice * device, UPnPService * service, Url & url) {
-        BuildTarget * target = new BuildTarget(*this);
-        target->setUdn(device->getUdn());
-        target->setDevice(device);
-        target->setTargetService(service);
-        Url scpdUrl = url;
-        scpdUrl.setPath((*service)["SCPDURL"]);
-        target->setUrl(scpdUrl);
-        return target;
-    }
-
-	vector<BuildTarget*> UPnPControlPoint::makeBuildTargets(UPnPDevice * device, Url & url) {
-
-		vector<BuildTarget*> buildTargets;
-		vector<UPnPService> & services = device->getServices();
-		for (size_t i = 0; i < services.size(); i++) {
-			UPnPService * service = &services[i];
-			buildTargets.push_back(makeBuildTarget(device, service, url));
+		vector<UPnPServicePosition> servicePositions;
+		vector<UPnPService> & services = device.getServices();
+		LOOP_VEC(services, i) {
+			servicePositions.push_back(maker.makeUPnPServicePosition(i, services[i]));
 		}
-
-		vector<UPnPDevice> & embeddedDevices = device->getEmbeddedDevices();
-		for (size_t i = 0; i < embeddedDevices.size(); i++) {
-			UPnPDevice * embeddedDevice = &embeddedDevices[i];
-			vector<BuildTarget*> append = makeBuildTargets(embeddedDevice, url);
-			buildTargets.insert(buildTargets.end(), append.begin(), append.end());
+    
+		vector<UPnPDevice> & embeddedDevices = device.getEmbeddedDevices();
+		LOOP_VEC(embeddedDevices, i) {
+			maker.enter();
+			maker.setDeviceIndex(i);
+			vector<UPnPServicePosition> append = makeServicePositions(maker, embeddedDevices[i]);
+			servicePositions.insert(servicePositions.end(), append.begin(), append.end());
+			maker.leave();
 		}
-		return buildTargets;
+    
+		return servicePositions;
 	}
 
-	void UPnPControlPoint::registerBuildTargets(const string & udn, vector<BuildTarget*> & buildTargets) {
-		LOOP_VEC(buildTargets, i) {
-			registerBuildTarget(udn, buildTargets[i]);
-		}
-	}
-
-	void UPnPControlPoint::registerBuildTarget(const string & udn, BuildTarget * buildTarget) {
-		string get = "GET";
-		buildTargetTable[udn].push_back(buildTarget);
-		httpClient.request(buildTarget->getUrl(), get, NULL, 0, buildTarget);
-	}
-
-	void UPnPControlPoint::unregisterBuildTarget(BuildTarget * buildTarget) {
-		string udn = buildTarget->getUdn();
-		vector<BuildTarget*> & targets = buildTargetTable[udn];
-        
-        targets.erase(std::remove(targets.begin(), targets.end(), buildTarget), targets.end());
-
-		if (targets.size() == 0) {
-			UPnPDevice * device = buildTarget->getDevice()->getRootDevice();
-            UPnPDevice copiedDevice = device->copy();
-			addDevice(copiedDevice);
-			buildTargetTable.erase(udn);
-            
-            delete device;
-		}
-        
-        delete buildTarget;
-	}
-
-	void UPnPControlPoint::setScpdToUPnPService(UPnPService * targetService, XmlDocument & doc) {
-        
-		UPnPServiceMaker maker;
-		Scpd scpd = maker.makeScpdWithXmlDocument(targetService->getServiceType(), doc);
-		targetService->setScpd(scpd);
-	}
-
-	void UPnPControlPoint::handleDeviceDescrition(XmlDocument & doc, Url & url) {
-
-        buildTargetLock.wait();
-
-		UPnPDevice device = makeUPnPDeviceFrame(doc);
-		if (!device.getUdn().empty() && !hasDevice(device.getUdn())) {
-            string udn = device.getUdn();
-            vector<BuildTarget*> buildTargets = makeBuildTargets(new UPnPDevice(device), url);
-            if (buildTargets.size() > 0) {
-                registerBuildTargets(udn, buildTargets);
-            } else {
-                addDevice(device);
-            }
-		}
-        buildTargetLock.post();
-	}
-
-	void UPnPControlPoint::handleScpd(BuildTarget * buildTarget, XML::XmlDocument & doc) {
-        
-        buildTargetLock.wait();
-        
-		UPnPService * service = buildTarget->getTargetService();
-		setScpdToUPnPService(service, doc);
-		unregisterBuildTarget(buildTarget);
-
-        buildTargetLock.post();
-	}
-
-	void UPnPControlPoint::addSearchTargetFilter(const string & type) {
-		FOREACH_VEC(searchTargetFilters, string, filter) {
-			if (!filter->compare(type)) {
-				return;
-			}
-		}
-		searchTargetFilters.push_back(type);
-	}
-
-	void UPnPControlPoint::removeSearchTargetFilter(const string & type) {
-		FOREACH_VEC(searchTargetFilters, string, filter) {
-			if (!filter->compare(type)) {
-				searchTargetFilters.erase(filter);
-				return;
-			}
-		}
-	}
-
-	vector<string> & UPnPControlPoint::getSearchTargetFilters() {
-		return searchTargetFilters;
-	}
-
-	bool UPnPControlPoint::filter(const std::string & target) {
-		FOREACH_VEC(searchTargetFilters, string, filter) {
-			if (!filter->compare(target)) {
-				return true;
-			}
-		}
-		return false;
+	void UPnPControlPoint::setDeviceAddRemoveListener(DeviceAddRemoveListener * deviceListener) {
+		this->deviceListener = deviceListener;
 	}
 }

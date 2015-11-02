@@ -7,135 +7,141 @@
 #include <vector>
 #include "SSDPServer.hpp"
 #include "UPnPDevice.hpp"
+#include "UPnPDevicePool.hpp"
+#include "UPnPDeviceDetection.hpp"
+#include "UPnPServicePosition.hpp"
 #include "XmlDocument.hpp"
 #include "Timer.hpp"
 
 namespace UPNP {
     
-    class UPnPControlPoint;
+	/**
+	 * @brief upnp http request types
+	 */
+    class UPnPHttpRequestType {
+	public:
+		static const int UNKNOWN;
+		static const int DEVICE_DESCRIPTION;
+		static const int SCPD;
+    
+		static const UPnPHttpRequestType UNKNOWN_TYPE;
+		static const UPnPHttpRequestType DEVICE_DESCRIPTION_TYPE;
+		static const UPnPHttpRequestType SCPD_TYPE;
+    
+	private:
+		int type;
+    
+	public:
+		UPnPHttpRequestType();
+		UPnPHttpRequestType(int type);
+		virtual ~UPnPHttpRequestType();
+    
+		bool operator==(const int & type);
+		bool operator==(const UPnPHttpRequestType & other);
+	};
 
+	
+	/**
+	 * @brief upnp http request session
+	 */
+	class UPnPHttpRequestSession {
+	private:
+		UPnPDeviceDetection * deviceDetection;
+		UPnPHttpRequestType type;
+		UPnPServicePosition servicePosition;
+    
+	public:
+		UPnPHttpRequestSession();
+		UPnPHttpRequestSession(const UPnPHttpRequestType & type);
+		virtual ~UPnPHttpRequestSession();
+		void setServicePosition(const UPnPServicePosition & servicePosition);
+		UPnPServicePosition & getServicePosition();
+		UPnPHttpRequestType getRequestType();
+		void setDeviceDetection(UPnPDeviceDetection * deviceDetection);
+	};
+
+	
+	/**
+	 * @brief upnp ssdp notify filter
+	 */
+	class UPnPControlPointSsdpNotifyFilter {
+	private:
+		std::vector<std::string> filterTypes;
+	public:
+		UPnPControlPointSsdpNotifyFilter();
+		virtual ~UPnPControlPointSsdpNotifyFilter();
+    
+		void addFilterType(const std::string & type);
+		bool filter(const std::string & type);
+	};
+
+	
 	/**
 	 * @brief device add remove listener
 	 */
-	class OnDeviceAddRemoveListener {
+	class DeviceAddRemoveListener {
+	private:
 	public:
-		OnDeviceAddRemoveListener() {}
-		virtual ~OnDeviceAddRemoveListener() {}
-
-		virtual void onDeviceAdd(UPnPDevice & device) = 0;
-		virtual void onDeviceRemove(UPnPDevice & device) = 0;
+		DeviceAddRemoveListener() {}
+		virtual ~DeviceAddRemoveListener() {}
+		virtual void onDeviceAdded(UPnPDevice & device) = 0;
+		virtual void onDeviceRemoved(UPnPDevice & device) = 0;
 	};
 
+	
 	/**
-	 * @brief ssdp handler
+	 * @brief upnp ssdp message handler
 	 */
-	class ControlPointSSDPHandler : public SSDP::OnNotifyHandler, public SSDP::OnHttpResponseHandler {
-    private:
-        UPnPControlPoint & cp;
+	class UPnPSSDPMessageHandler : public SSDP::OnNotifyHandler, public SSDP::OnMsearchHandler, public SSDP::OnHttpResponseHandler {
+	private:
+		UPnPDeviceDetection * deviceDetection;
 	public:
-		ControlPointSSDPHandler(UPnPControlPoint & cp);
-		virtual ~ControlPointSSDPHandler();
+		UPnPSSDPMessageHandler();
+		virtual ~UPnPSSDPMessageHandler();
 		virtual void onNotify(HTTP::HttpHeader & header);
+		virtual void onMsearch(HTTP::HttpHeader & header);
 		virtual void onHttpResponse(HTTP::HttpHeader & header);
+		void setDeviceDetection(UPnPDeviceDetection * deviceDetection);
 	};
-    
-    /**
-     * @brief build target
-     */
-    class BuildTarget {
-    private:
-        std::string udn;
-        UPnPControlPoint & cp;
-        UPnPDevice * device;
-        UPnPService * targetService;
-		HTTP::Url url;
-        
-    public:
-        BuildTarget(UPnPControlPoint & cp);
-        virtual ~BuildTarget();
-        
-        bool hasTagetService();
-        UPnPDevice * getDevice();
-        void setDevice(UPnPDevice * device);
-        UPnPService * getTargetService();
-        void setTargetService(UPnPService * targetService);
-		HTTP::Url & getUrl();
-		void setUrl(HTTP::Url & url);
-		UPnPControlPoint & getControlPoint();
-        void setUdn(const std::string & udn);
-        std::string getUdn();
-    };
-    
-    /**
-     * @brief http response handler
-     */
-    class ControlPointHttpResponseHandler : public HTTP::HttpResponseHandler<BuildTarget*> {
-    private:
-        UPnPControlPoint & cp;
-    public:
-        ControlPointHttpResponseHandler(UPnPControlPoint & cp);
-        virtual ~ControlPointHttpResponseHandler();
-        
-        virtual void onResponse(HTTP::HttpClient<BuildTarget*> & client,
-                                HTTP::HttpHeader & responseHeader,
-                                OS::Socket & socket,
-                                BuildTarget * buildTarget);
-    };
 
 	/**
 	 * @brief upnp control point
 	 */
-	class UPnPControlPoint {
+	class UPnPControlPoint : public UPnPDeviceDetection, public HTTP::HttpResponseHandler<UPnPHttpRequestSession> {
 	private:
-		std::string searchTarget;
-		SSDP::SSDPServer ssdpServer;
-		ControlPointSSDPHandler ssdpHandler;
-		HTTP::HttpServer httpServer;
-        std::map<std::string, std::vector<BuildTarget*> > buildTargetTable;
-		std::map<std::string, UPnPDevice> devices;
-		OnDeviceAddRemoveListener * listener;
-        HTTP::HttpClientThreadPool<BuildTarget*> httpClient;
-        ControlPointHttpResponseHandler httpResponseHandler;
-        OS::Semaphore deviceListLock;
-        OS::Semaphore buildTargetLock;
-        Timer timer;
-		std::vector<std::string> searchTargetFilters;
-		
+		UPnPDevicePool devicePool;
+		SSDP::SSDPServer ssdp;
+		UPnPSSDPMessageHandler ssdpHandler;
+		HTTP::HttpClientThreadPool<UPnPHttpRequestSession> httpClientThreadPool;
+		UPnPControlPointSsdpNotifyFilter filter;
+		DeviceAddRemoveListener * deviceListener;
+    
 	public:
-		UPnPControlPoint(int port, std::string searchTarget, std::vector<std::string> & searchTargetFilters);
+		UPnPControlPoint();
 		virtual ~UPnPControlPoint();
-
-		virtual void startAsync();
-		virtual void stop();
-		virtual bool isRunning();
-
-		virtual void sendMsearch();
-		virtual std::vector<UPnPDevice> getDeviceList();
-		virtual UPnPDevice getDevice(std::string udn);
-		virtual void removeAllDevices();
-		void setSearchTarget(std::string searchTarget);
-		std::string getSearchTaget();
-		void setOnDeviceAddRemoveListener(OnDeviceAddRemoveListener * listener);
-        void ssdpDeviceFound(const std::string & urlString);
-        void ssdpDeviceRemoved(const std::string & udn);
-        void addDevice(UPnPDevice & device);
-        void removeDevice(const std::string & udn);
-        bool hasDevice(const std::string & udn);
-		UPnPDevice & getDevice(const std::string & udn);
-		UPnPDevice makeUPnPDeviceFrame(XML::XmlDocument & doc);
-        BuildTarget * makeBuildTarget(UPnPDevice * device, UPnPService * service, HTTP::Url & url);
-		std::vector<BuildTarget*> makeBuildTargets(UPnPDevice * device, HTTP::Url & url);
-		void registerBuildTargets(const std::string & udn, std::vector<BuildTarget*> & buildTargets);
-		void registerBuildTarget(const std::string & udn, BuildTarget * buildTarget);
-		void unregisterBuildTarget(BuildTarget * buildTarget);
-		void setScpdToUPnPService(UPnPService * targetService, XML::XmlDocument & doc);
-		void handleDeviceDescrition(XML::XmlDocument & doc, HTTP::Url & url);
-		void handleScpd(BuildTarget * buildTarget, XML::XmlDocument & doc);
-		void addSearchTargetFilter(const std::string & type);
-		void removeSearchTargetFilter(const std::string & type);
-		std::vector<std::string> & getSearchTargetFilters();
-		bool filter(const std::string & target);
-    };
+    
+		void start();
+		void startAsync();
+		void poll(unsigned long timeout);
+		void stop();
+    
+		void sendMsearch(std::string searchType);
+    
+		virtual void onDeviceHelloWithUrl(const std::string & url, const HTTP::HttpHeader & header);
+		virtual void onDeviceDescriptionInXml(std::string baseUrl, std::string xmlDoc);
+		virtual void onScpdInXml(const UPnPServicePosition & servicePosition, std::string xmlDoc);
+		virtual void onDeviceByeBye(std::string udn);
+    
+		UPnPDevice makeDeviceFromXml(XML::XmlNode & xmlNode);
+		UPnPService makeServiceFromXml(XML::XmlNode & xmlNode);
+		Scpd makeScpdFromXml(XML::XmlNode & xmlNode);
+    
+		virtual void onResponse(HTTP::HttpClient<UPnPHttpRequestSession> & httpClient, HTTP::HttpHeader & responseHeader, OS::Socket & socket, UPnPHttpRequestSession userData);
+    
+		void setFilter(const UPnPControlPointSsdpNotifyFilter & filter);
+		std::vector<UPnPServicePosition> makeServicePositions(UPnPServicePositionMaker & maker, const UPnPDevice & device);
+		void setDeviceAddRemoveListener(DeviceAddRemoveListener * deviceListener);
+	};
 }
 
 #endif

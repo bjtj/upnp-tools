@@ -2,23 +2,22 @@
 #include <string>
 #include <map>
 #include <liboslayer/Text.hpp>
-
 #include <libupnp-tools/UPnPControlPoint.hpp>
 
 using namespace std;
 using namespace UTIL;
 using namespace UPNP;
 
-class MyDeviceAddRemoveHandle : public OnDeviceAddRemoveListener {
+class MyDeviceAddRemoveHandle : public DeviceAddRemoveListener {
 private:
 public:
 	MyDeviceAddRemoveHandle() {}
 	virtual ~MyDeviceAddRemoveHandle() {}
 
-	virtual void onDeviceAdd(UPnPDevice & device) {
+	virtual void onDeviceAdded(UPnPDevice & device) {
 		cout << "[Device Added] udn: " << device["UDN"] << " - " << device["friendlyName"] << endl;
 	}
-	virtual void onDeviceRemove(UPnPDevice & device) {
+	virtual void onDeviceRemoved(UPnPDevice & device) {
         cout << "[Device Removed] udn: " << device["UDN"] << " - " << device["friendlyName"] << endl;
 	}
 };
@@ -29,8 +28,8 @@ static int s_cmd_handler(const char * cmd, UPnPControlPoint & cp) {
 		return -1;
 	}
 
-	if (!strcmp(cmd, "msearch") || !strcmp(cmd, "scan")) {
-		cp.sendMsearch();
+	if (!strcmp(cmd, "m") || !strcmp(cmd, "scan")) {
+		cp.sendMsearch("upnp:rootdevice");
 		return 0;
 	}
 
@@ -48,12 +47,14 @@ static void s_test_cp() {
 	bool done = false;
 	char buffer[1024] = {0,};
 
-	vector<string> filter;
-	filter.push_back("upnp:rootdevice");
-    UPnPControlPoint cp(1900, "upnp:rootdevice", filter);
+	
+    UPnPControlPoint cp;
+	UPnPControlPointSsdpNotifyFilter filter;
+	filter.addFilterType("upnp:rootdevice");
+	cp.setFilter(filter);
 
 	MyDeviceAddRemoveHandle listener;
-	cp.setOnDeviceAddRemoveListener(&listener);
+	cp.setDeviceAddRemoveListener(&listener);
 
     cp.startAsync();
     

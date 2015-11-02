@@ -4,43 +4,43 @@ namespace UPNP {
     
     using namespace std;
 
-    DevicePool::DevicePool() : deviceTableLock(1) {
+    UPnPDevicePool::UPnPDevicePool() : deviceTableLock(1) {
     }
     
-    DevicePool::~DevicePool() {
+    UPnPDevicePool::~UPnPDevicePool() {
     }
     
-    void DevicePool::clear() {
+    void UPnPDevicePool::clear() {
         deviceTableLock.wait();
         deviceTable.clear();
         deviceTableLock.post();
     }
     
-    UPnPDevice & DevicePool::getDevice(string udn) {
+    UPnPDevice & UPnPDevicePool::getDevice(string udn) {
         return deviceTable[udn];
     }
     
-    bool DevicePool::hasDevice(string udn) {
+    bool UPnPDevicePool::hasDevice(string udn) {
         return deviceTable.find(udn) != deviceTable.end();
     }
-    void DevicePool::addDevice(UPnPDevice & device) {
+    void UPnPDevicePool::addDevice(UPnPDevice & device) {
         deviceTableLock.wait();
         deviceTable[device.getUdn()] = device;
         deviceTableLock.post();
     }
-    void DevicePool::updateDevice(UPnPDevice & device) {
+    void UPnPDevicePool::updateDevice(UPnPDevice & device) {
         deviceTableLock.wait();
         deviceTable[device.getUdn()] = device;
         deviceTableLock.post();
     }
     
-    void DevicePool::removeDevice(string udn) {
+    void UPnPDevicePool::removeDevice(string udn) {
         deviceTableLock.wait();
         deviceTable.erase(udn);
         deviceTableLock.post();
     }
     
-    UPnPService * DevicePool::traverseService(const UPnPDevice & device, const ServicePosition & servicePosition) {
+    UPnPService * UPnPDevicePool::traverseService(const UPnPDevice & device, const UPnPServicePosition & servicePosition) {
         servicePosition.resetTraverse();
         const UPnPDevice * currentDevice = &device;
         while (servicePosition.hasNextDevice()) {
@@ -62,7 +62,7 @@ namespace UPNP {
         return &(currentDevice->getService(servicePosition.getServiceIndex()));
     }
     
-    void DevicePool::bindScpd(const ServicePosition & servicePosition, const Scpd & scpd) {
+    void UPnPDevicePool::bindScpd(const UPnPServicePosition & servicePosition, const Scpd & scpd) {
         deviceTableLock.wait();
         string udn = servicePosition.getUdn();
         if (hasDevice(udn)) {

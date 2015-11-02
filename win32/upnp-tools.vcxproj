@@ -74,12 +74,15 @@
     <ClCompile Include="..\libupnp-tools\UPnPActionArgument.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPControlPoint.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPDevice.cpp" />
+    <ClCompile Include="..\libupnp-tools\UPnPDeviceDetection.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPDeviceMaker.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPDevicePool.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPServer.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPService.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPServiceMaker.cpp" />
+    <ClCompile Include="..\libupnp-tools\UPnPServicePosition.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPStateVariable.cpp" />
+    <ClCompile Include="..\libupnp-tools\Uuid.cpp" />
     <ClCompile Include="..\libupnp-tools\XmlDocument.cpp" />
     <ClCompile Include="..\libupnp-tools\XmlDocumentPrinter.cpp" />
     <ClCompile Include="..\libupnp-tools\XmlDomParser.cpp" />
@@ -96,12 +99,15 @@
     <ClInclude Include="..\libupnp-tools\UPnPActionArgumentDirection.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPControlPoint.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPDevice.hpp" />
+    <ClInclude Include="..\libupnp-tools\UPnPDeviceDetection.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPDeviceMaker.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPDevicePool.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPServer.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPService.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPServiceMaker.hpp" />
+    <ClInclude Include="..\libupnp-tools\UPnPServicePosition.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPStateVariable.hpp" />
+    <ClInclude Include="..\libupnp-tools\Uuid.hpp" />
     <ClInclude Include="..\libupnp-tools\XmlDocument.hpp" />
     <ClInclude Include="..\libupnp-tools\XmlDocumentPrinter.hpp" />
     <ClInclude Include="..\libupnp-tools\XmlDomParser.hpp" />
@@ -109,10 +115,10 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\http-server\win32\http-server.vcxproj">
-      <Project>{a8ae25bb-c71f-a261-60d4-5a82f496550a}</Project>
+      <Project>{a86aea6e-750b-7c94-4188-77b9d2fcd973}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\oslayer\win32\oslayer.vcxproj">
-      <Project>{2367396a-6d69-5e61-11dc-66efbb2456d0}</Project>
+      <Project>{62f62888-b617-d1c5-dd02-0cc27e78a455}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

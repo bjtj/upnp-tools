@@ -30,7 +30,7 @@ namespace SSDP {
 	SSDPConfig::SSDPConfig() :
 		userAgent("Linux/2.x UPnP/1.1 App/0.1"),
 		port(1900),
-		msearchPort(12345),
+		msearchPort(56789),
 		multicastGroup("239.255.255.250") {
 	}
 	
@@ -74,8 +74,10 @@ namespace SSDP {
 	 */
 	SSDPServer::SSDPServer() : mcastSocket(NULL), msearchSocket(NULL), pollingThread(NULL) {
 	}
+
 	SSDPServer::SSDPServer(SSDPConfig & config) : config(config), mcastSocket(NULL), msearchSocket(NULL), pollingThread(NULL) {
 	}
+
 	SSDPServer::~SSDPServer() {
 	}
 
@@ -95,7 +97,9 @@ namespace SSDP {
 
 			msearchSocket = new DatagramSocket(msearchPort);
 			msearchSocket->setReuseAddr();
-			msearchSocket->bind();
+			if (msearchSocket->bind() < 0) {
+				throw IOException("bind() error", -1, 0);
+			}
 			
 			msearchSocket->registerSelector(selector);
 		}
