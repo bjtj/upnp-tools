@@ -83,6 +83,7 @@ namespace XML {
 		bool isElementNode() const;
 		std::string getFirstContent() const;
 		int getChildrenElementNodeCount() const;
+        XmlNode getFirstElement() const;
 		const XmlNode & operator[](size_t index) const;
 	};
 

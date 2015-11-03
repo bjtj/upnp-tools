@@ -19,6 +19,42 @@ namespace UPNP {
 
 	class UPnPControlPoint;
     
+    /**
+     * @brief action parameters
+     */
+    class ActionParameters {
+    private:
+        UTIL::LinkedStringMap params;
+    public:
+        ActionParameters();
+        virtual ~ActionParameters();
+        size_t size() const;
+        const std::string & operator[] (const std::string & name) const;
+        std::string & operator[] (const std::string & name);
+        const UTIL::NameValue & operator[] (size_t index) const;
+        UTIL::NameValue & operator[] (size_t index);
+    };
+    
+    /**
+     * @brief invoke action session
+     */
+    class InvokeActionSession {
+    private:
+        UPnPService service;
+        std::string actionName;
+        ActionParameters inParameters;
+    public:
+        InvokeActionSession();
+        virtual ~InvokeActionSession();
+        UPnPService & getUPnPService();
+        std::string & getActionName();
+        ActionParameters & getInParameters();
+        
+        const UPnPService & getUPnPService() const;
+        const std::string & getActionName() const;
+        const ActionParameters & getInParameters() const;
+    };
+    
 	/**
 	 * @brief upnp http request types
 	 */
@@ -56,7 +92,9 @@ namespace UPNP {
 		UPnPDeviceDetection * deviceDetection;
 		UPnPHttpRequestType type;
 		UPnPServicePosition servicePosition;
-    
+        
+        InvokeActionSession invokeActionSession;
+        
 	public:
 		UPnPHttpRequestSession();
 		UPnPHttpRequestSession(const UPnPHttpRequestType & type);
@@ -67,6 +105,7 @@ namespace UPNP {
 		UPnPServicePosition & getServicePosition();
 		UPnPHttpRequestType getRequestType();
 		void setDeviceDetection(UPnPDeviceDetection * deviceDetection);
+        InvokeActionSession & getInvokeActionSession();
 	};
 
 	
@@ -96,22 +135,6 @@ namespace UPNP {
 		virtual void onDeviceAdded(UPnPControlPoint & cp, UPnPDevice & device) = 0;
 		virtual void onDeviceRemoved(UPnPControlPoint & cp, UPnPDevice & device) = 0;
 	};
-
-    /**
-     * @brief action parameters
-     */
-    class ActionParameters {
-    private:
-		UTIL::LinkedStringMap params;
-    public:
-        ActionParameters();
-        virtual ~ActionParameters();
-		size_t size() const;
-        const std::string & operator[] (const std::string & name) const;
-		std::string & operator[] (const std::string & name);
-		const UTIL::NameValue & operator[] (size_t index) const;
-		UTIL::NameValue & operator[] (size_t index);
-    };
     
     /**
      * @brief invoek action response listener
@@ -121,7 +144,7 @@ namespace UPNP {
     public:
         InvokeActionResponseListener() {}
         virtual ~InvokeActionResponseListener() {}
-        virtual void onActionResponse(const UPnPService & service, const std::string & actionName, const ActionParameters & in, const ActionParameters & out) = 0;
+        virtual void onActionResponse(ID_TYPE id, const InvokeActionSession & session, const ActionParameters & out) = 0;
     };
 	
 	/**

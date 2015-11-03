@@ -18,7 +18,7 @@ public:
 		cout << "[Device Added] udn: " << device["UDN"] << " - " << device["friendlyName"] << endl;
 		UPnPService service = device.getService("urn:schemas-upnp-org:service:ContentDirectory:1");
 		if (!service.empty()) {
-			cp.invokeAction(service, "GetCurrentConnectionInfo", ActionParameters());
+			cp.invokeAction(service, "GetSystemUpdateID", ActionParameters());
 		}
 	}
 	virtual void onDeviceRemoved(UPnPControlPoint & cp, UPnPDevice & device) {
@@ -27,7 +27,8 @@ public:
 };
 
 class MyInvokeActionResponseListener : public InvokeActionResponseListener {
-	virtual void onActionResponse(const UPnPService & service, const std::string & actionName, const ActionParameters & in, const ActionParameters & out) {
+	virtual void onActionResponse(ID_TYPE id, const InvokeActionSession & session, const ActionParameters & out) {
+        cout << "ActionResponse> Action name: " << session.getActionName() << endl;
 	}
 };
 
@@ -64,6 +65,9 @@ static void s_test_cp() {
 
 	MyDeviceAddRemoveHandle listener;
 	cp.setDeviceAddRemoveListener(&listener);
+    
+    MyInvokeActionResponseListener actionResponseListener;
+    cp.setInvokeActionResponseListener(&actionResponseListener);
 
     cp.startAsync();
     

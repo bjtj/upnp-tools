@@ -8,6 +8,7 @@
 #include "Uuid.hpp"
 #include "macros.hpp"
 #include "SoapWriter.hpp"
+#include "SoapReader.hpp"
 
 namespace UPNP {
 
@@ -17,7 +18,62 @@ namespace UPNP {
 	using namespace UTIL;
     using namespace XML;
     using namespace SOAP;
+    
+    
+    /**
+     * @brief invoek action response listener
+     */
+    
+    ActionParameters::ActionParameters() {
+    }
+    ActionParameters::~ActionParameters() {
+    }
+    size_t ActionParameters::size() const {
+        return params.size();
+    }
+    const string & ActionParameters::operator[] (const string & name) const {
+        return params[name];
+    }
+    string & ActionParameters::operator[] (const string & name) {
+        return params[name];
+    }
+    const NameValue & ActionParameters::operator[] (size_t index) const {
+        return params[index];
+    }
+    NameValue & ActionParameters::operator[] (size_t index) {
+        return params[index];
+    }
 
+    /**
+     * @brief invoek action session
+     */
+    
+    InvokeActionSession::InvokeActionSession() {
+        
+    }
+    InvokeActionSession::~InvokeActionSession() {
+        
+    }
+    UPnPService & InvokeActionSession::getUPnPService() {
+        return service;
+    }
+    std::string & InvokeActionSession::getActionName() {
+        return actionName;
+    }
+    ActionParameters & InvokeActionSession::getInParameters() {
+        return inParameters;
+    }
+    const UPnPService & InvokeActionSession::getUPnPService() const {
+        return service;
+    }
+    const std::string & InvokeActionSession::getActionName() const {
+        return actionName;
+    }
+    const ActionParameters & InvokeActionSession::getInParameters() const {
+        return inParameters;
+    }
+    
+    
 	/**
 	 *
 	 */
@@ -87,6 +143,9 @@ namespace UPNP {
 		this->deviceDetection = deviceDetection;
 	}
 
+    InvokeActionSession & UPnPHttpRequestSession::getInvokeActionSession() {
+        return invokeActionSession;
+    }
 
 	/**
 	 *
@@ -111,30 +170,6 @@ namespace UPNP {
 		return false;
 	}
 
-    
-    /**
-     * @brief invoek action response listener
-     */
-    
-    ActionParameters::ActionParameters() {
-    }
-    ActionParameters::~ActionParameters() {
-    }
-	size_t ActionParameters::size() const {
-		return params.size();
-	}
-	const string & ActionParameters::operator[] (const string & name) const {
-		return params[name];
-	}
-	string & ActionParameters::operator[] (const string & name) {
-		return params[name];
-	}
-	const NameValue & ActionParameters::operator[] (size_t index) const {
-		return params[index];
-	}
-	NameValue & ActionParameters::operator[] (size_t index) {
-		return params[index];
-	}
     
 	/**
 	 *
@@ -283,7 +318,15 @@ namespace UPNP {
 			this->onScpdInXml(session.getServicePosition(), dump);
         } else if (session.getRequestType() == UPnPHttpRequestType::ACTION_INVOKE) {
 			string dump = HttpResponseDump::dump(responseHeader, socket);
-			dump.size();
+            SoapReader reader;
+            XmlDomParser parser;
+            XmlDocument doc = parser.parse(dump);
+            XmlNode node = reader.getActionNode(doc.getRootNode());
+            string actionName = reader.getActionNameFromActionNode(node);
+            ActionParameters outParams = reader.getActionParametersFromActionNode(node);
+            if (invokeActionResponseListener) {
+                invokeActionResponseListener->onActionResponse(session.getId(), session.getInvokeActionSession(), outParams);
+            }
         }
 	}
 
@@ -332,6 +375,10 @@ namespace UPNP {
 		}
         string packet = writer.toString();
 		UPnPHttpRequestSession session(UPnPHttpRequestType::ACTION_INVOKE);
+        InvokeActionSession & as = session.getInvokeActionSession();
+        as.getUPnPService() = service;
+        as.getActionName() = actionName;
+        as.getInParameters() = in;
         session.setId(gen.generate());
         httpClientThreadPool.request(url, "POST", headerFields, packet.c_str(), packet.length(), session);
         return session.getId();

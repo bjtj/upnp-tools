@@ -175,6 +175,15 @@ namespace XML {
 		}
 		return cnt;
 	}
+    
+    XmlNode XmlNode::getFirstElement() const {
+        LOOP_VEC(children, i) {
+            if (children[i].isElementNode()) {
+                return children[i];
+            }
+        }
+        return XmlNode();
+    }
 	
 	const XmlNode& XmlNode::operator[](size_t index) const {
 		return getNode(index);
