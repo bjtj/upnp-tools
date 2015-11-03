@@ -134,6 +134,50 @@ namespace UPNP {
         return baseUrl;
     }
 
+	size_t UPnPDevice::getScpdBindCount() const {
+		size_t cnt = 0;
+		LOOP_VEC(services, i) {
+			if (services[i].isScpdBind()) {
+				cnt++;
+			}
+		}
+		return cnt;
+	}
+
+	bool UPnPDevice::checkAllScpdBind() const {
+		return getScpdBindCount() == services.size();
+	}
+
+	size_t UPnPDevice::getScpdBindCountRecursive() const {
+		size_t cnt = getScpdBindCount();
+		LOOP_VEC(embeddedDevices, i) {
+			cnt += embeddedDevices[i].getScpdBindCountRecursive();
+		}
+		return cnt;
+	}
+	size_t UPnPDevice::getServiceRecursive() const {
+		size_t cnt = services.size();
+		LOOP_VEC(embeddedDevices, i) {
+			cnt += embeddedDevices[i].getServiceRecursive();
+		}
+		return cnt;
+	}
+	bool UPnPDevice::checkAllScpdBindRecursive() const {
+		if (!checkAllScpdBind()) {
+			return false;
+		}
+		LOOP_VEC(embeddedDevices, i) {
+			if (!embeddedDevices[i].checkAllScpdBindRecursive()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	bool UPnPDevice::complete() const {
+		return checkAllScpdBindRecursive();
+	}
+
 	string & UPnPDevice::operator[] (const string & name){
 		return properties[name];
 	}

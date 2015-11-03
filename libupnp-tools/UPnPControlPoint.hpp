@@ -16,6 +16,8 @@
 #include "UniqueIdGenerator.hpp"
 
 namespace UPNP {
+
+	class UPnPControlPoint;
     
 	/**
 	 * @brief upnp http request types
@@ -91,8 +93,8 @@ namespace UPNP {
 	public:
 		DeviceAddRemoveListener() {}
 		virtual ~DeviceAddRemoveListener() {}
-		virtual void onDeviceAdded(UPnPDevice & device) = 0;
-		virtual void onDeviceRemoved(UPnPDevice & device) = 0;
+		virtual void onDeviceAdded(UPnPControlPoint & cp, UPnPDevice & device) = 0;
+		virtual void onDeviceRemoved(UPnPControlPoint & cp, UPnPDevice & device) = 0;
 	};
 
     /**
@@ -100,11 +102,15 @@ namespace UPNP {
      */
     class ActionParameters {
     private:
-        mutable std::map<std::string, std::string> params;
+		UTIL::LinkedStringMap params;
     public:
         ActionParameters();
         virtual ~ActionParameters();
-        std::string & operator[] (const std::string & name) const;
+		size_t size() const;
+        const std::string & operator[] (const std::string & name) const;
+		std::string & operator[] (const std::string & name);
+		const UTIL::NameValue & operator[] (size_t index) const;
+		UTIL::NameValue & operator[] (size_t index);
     };
     
     /**

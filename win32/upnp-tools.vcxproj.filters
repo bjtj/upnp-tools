@@ -75,6 +75,12 @@
     <ClCompile Include="..\libupnp-tools\UPnPDeviceDetection.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="..\libupnp-tools\SoapWriter.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libupnp-tools\UniqueIdGenerator.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\libupnp-tools\SSDPServer.hpp">
@@ -144,6 +150,12 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPDeviceDetection.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libupnp-tools\SoapWriter.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libupnp-tools\UniqueIdGenerator.hpp">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

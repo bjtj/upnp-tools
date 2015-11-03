@@ -119,13 +119,23 @@ namespace UPNP {
     ActionParameters::ActionParameters() {
     }
     ActionParameters::~ActionParameters() {
-        
     }
-    std::string & ActionParameters::operator[] (const std::string & name) const {
-        return params[name];
-    }
+	size_t ActionParameters::size() const {
+		return params.size();
+	}
+	const string & ActionParameters::operator[] (const string & name) const {
+		return params[name];
+	}
+	string & ActionParameters::operator[] (const string & name) {
+		return params[name];
+	}
+	const NameValue & ActionParameters::operator[] (size_t index) const {
+		return params[index];
+	}
+	NameValue & ActionParameters::operator[] (size_t index) {
+		return params[index];
+	}
     
-
 	/**
 	 *
 	 */
@@ -221,9 +231,6 @@ namespace UPNP {
 		UPnPDevice device = UPnPDeviceMaker::makeDeviceFromDeviceDescription(baseUrl, parser.parse(xmlDoc));
     
 		devicePool.updateDevice(device);
-		if (deviceListener) {
-			deviceListener->onDeviceAdded(device);
-		}
     
 		UPnPServicePositionMaker maker(device.getUdn());
 		vector<UPnPServicePosition> servicePositions = makeServicePositions(maker, device);
@@ -240,11 +247,17 @@ namespace UPNP {
 	}
 
 	void UPnPControlPoint::onScpdInXml(const UPnPServicePosition & servicePosition, string xmlDoc) {
-		// TODO: bind scpd to device
 		XmlDomParser parser;
 		Scpd scpd = UPnPServiceMaker::makeScpdFromXmlDocument("", parser.parse(xmlDoc));
     
 		devicePool.bindScpd(servicePosition, scpd);
+
+		if (deviceListener) {
+			UPnPDevice device = devicePool.getDevice(servicePosition.getUdn());
+			if (device.complete()) {
+				deviceListener->onDeviceAdded(*this, device);
+			}
+		}
 	}
 
 	void UPnPControlPoint::onDeviceByeBye(string udn) {
@@ -253,7 +266,7 @@ namespace UPNP {
 		}
     
 		if (deviceListener) {
-			deviceListener->onDeviceRemoved(devicePool.getDevice(udn));
+			deviceListener->onDeviceRemoved(*this, devicePool.getDevice(udn));
 		}
 		devicePool.removeDevice(udn);
 	}
@@ -269,7 +282,8 @@ namespace UPNP {
 			string dump = HttpResponseDump::dump(responseHeader, socket);
 			this->onScpdInXml(session.getServicePosition(), dump);
         } else if (session.getRequestType() == UPnPHttpRequestType::ACTION_INVOKE) {
-            
+			string dump = HttpResponseDump::dump(responseHeader, socket);
+			dump.size();
         }
 	}
 
@@ -307,13 +321,17 @@ namespace UPNP {
     
     ID_TYPE UPnPControlPoint::invokeAction(const UPnPService & service, const std::string & actionName, const ActionParameters & in) {
         Url url(service.getBaseUrl());
-        // TODO: set control url to url path
+		url.setPath(service["controlURL"]);
         StringMap headerFields;
         headerFields["SOAPACTION"] = service.getServiceType() + "#" + actionName;
         SoapWriter writer;
         writer.setSoapAction(service.getServiceType(), actionName);
+		LOOP_VEC(in, i) {
+			const NameValue & nv = in[i];
+			writer.setArgument(nv.getName(), nv.getValue());
+		}
         string packet = writer.toString();
-        UPnPHttpRequestSession session;
+		UPnPHttpRequestSession session(UPnPHttpRequestType::ACTION_INVOKE);
         session.setId(gen.generate());
         httpClientThreadPool.request(url, "POST", headerFields, packet.c_str(), packet.length(), session);
         return session.getId();

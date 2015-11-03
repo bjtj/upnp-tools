@@ -23,17 +23,19 @@ namespace UPNP {
     bool UPnPDevicePool::hasDevice(string udn) {
         return deviceTable.find(udn) != deviceTable.end();
     }
+
     void UPnPDevicePool::addDevice(UPnPDevice & device) {
         deviceTableLock.wait();
         deviceTable[device.getUdn()] = device;
         deviceTableLock.post();
     }
+
     void UPnPDevicePool::updateDevice(UPnPDevice & device) {
         deviceTableLock.wait();
         deviceTable[device.getUdn()] = device;
         deviceTableLock.post();
     }
-    
+
     void UPnPDevicePool::removeDevice(string udn) {
         deviceTableLock.wait();
         deviceTable.erase(udn);

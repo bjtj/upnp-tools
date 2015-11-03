@@ -21,6 +21,7 @@ namespace UPNP {
         bool hasDevice(std::string udn);
         void addDevice(UPnPDevice & device);
         void updateDevice(UPnPDevice & device);
+		
         void removeDevice(std::string udn);
         UPnPService * traverseService(const UPnPDevice & device, const UPnPServicePosition & servicePosition);
         void bindScpd(const UPnPServicePosition & servicePosition, const Scpd & scpd);

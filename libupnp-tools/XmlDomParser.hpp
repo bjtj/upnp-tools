@@ -51,10 +51,13 @@ namespace XML {
 		bool isBlocker(char ch);
 		bool isSpecial(char ch);
 
+		std::string quote(const std::string & str);
+
 		std::string readAttribute(XmlAttribute & attribute);
 		std::string readSymbol();
 		std::string readSpecial();
 		std::string readQuotedString();
+		std::string readQuotedStringWithoutQuote();
 		std::string readTag(XmlNode & node);
         std::string readText();
         std::string readPrologue();

@@ -14,11 +14,20 @@ public:
 	MyDeviceAddRemoveHandle() {}
 	virtual ~MyDeviceAddRemoveHandle() {}
 
-	virtual void onDeviceAdded(UPnPDevice & device) {
+	virtual void onDeviceAdded(UPnPControlPoint & cp, UPnPDevice & device) {
 		cout << "[Device Added] udn: " << device["UDN"] << " - " << device["friendlyName"] << endl;
+		UPnPService service = device.getService("urn:schemas-upnp-org:service:ContentDirectory:1");
+		if (!service.empty()) {
+			cp.invokeAction(service, "GetCurrentConnectionInfo", ActionParameters());
+		}
 	}
-	virtual void onDeviceRemoved(UPnPDevice & device) {
+	virtual void onDeviceRemoved(UPnPControlPoint & cp, UPnPDevice & device) {
         cout << "[Device Removed] udn: " << device["UDN"] << " - " << device["friendlyName"] << endl;
+	}
+};
+
+class MyInvokeActionResponseListener : public InvokeActionResponseListener {
+	virtual void onActionResponse(const UPnPService & service, const std::string & actionName, const ActionParameters & in, const ActionParameters & out) {
 	}
 };
 

@@ -43,7 +43,7 @@ namespace UPNP {
 
 
 
-	UPnPService::UPnPService() {
+	UPnPService::UPnPService() : scpdBind(false) {
 	}
 	
 	UPnPService::~UPnPService() {
@@ -62,6 +62,7 @@ namespace UPNP {
     }
 
 	void UPnPService::setScpd(const Scpd & scpd) {
+		scpdBind = true;
 		this->scpd = scpd;
 	}
 	Scpd & UPnPService::getScpd() {
@@ -74,6 +75,10 @@ namespace UPNP {
     string UPnPService::getBaseUrl() const {
         return baseUrl;
     }
+
+	bool UPnPService::isScpdBind() const {
+		return scpdBind;
+	}
 
 	string & UPnPService::operator[](const string & name) const {
 		return properties[name];

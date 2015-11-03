@@ -51,6 +51,12 @@ namespace UPNP {
         
         void setBaseUrl(const std::string & baseUrl);
         std::string getBaseUrl();
+		size_t getScpdBindCount() const;
+		bool checkAllScpdBind() const;
+		size_t getScpdBindCountRecursive() const;
+		size_t getServiceRecursive() const;
+		bool checkAllScpdBindRecursive() const;
+		bool complete() const;
 
 		std::string & operator[] (const std::string & name);
 	};

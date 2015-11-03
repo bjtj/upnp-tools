@@ -8,29 +8,7 @@ namespace SOAP {
     
     using namespace std;
     using namespace XML;
-    
-    NameValue::NameValue() {
-    }
-    
-    NameValue::NameValue(const string & name, const string & value) : name(name), value(value) {
-    }
-    
-    NameValue::~NameValue() {
-    }
-    
-    void NameValue::setName(const string & name) {
-        this->name = name;
-    }
-    void NameValue::setValue(const string & value) {
-        this->value = value;
-    }
-    string NameValue::getName() const {
-        return name;
-    }
-    string NameValue::getValue() const {
-        return value;
-    }
-    
+	using namespace UTIL;
     
     
     SoapWriter::SoapWriter() {
@@ -45,18 +23,11 @@ namespace SOAP {
     }
     
     void SoapWriter::setArgument(const string & name, const string & value) {
-        LOOP_VEC(arguments, i) {
-            NameValue & arg = arguments[i];
-            if (!arg.getName().compare(name)) {
-                arg.setValue(value);
-                return;
-            }
-        }
-        arguments.push_back(NameValue(name, value));
+		arguments[name] = value;
     }
     
-    string SoapWriter::writeArgument(const NameValue & nv) const {
-        return "<" + nv.getName() + ">" + nv.getValue() + "</" + nv.getName() + ">";
+    string SoapWriter::writeArgument(const string & name, const string & value) const {
+        return "<" + name + ">" + value + "</" + name + ">";
     }
     
     string SoapWriter::toString() const {
@@ -83,9 +54,18 @@ namespace SOAP {
         
         LOOP_VEC(arguments, i) {
             NameValue argument = arguments[i];
-            XmlNode argumentNode;
-            cursor.enter(argumentNode);
+            XmlNode argumentNameNode;
+			XmlNode argumentValueNode;
+			argumentNameNode.setTagName(argument.getName());
+			argumentValueNode.setData(argument.getValue());
+            cursor.enter(argumentNameNode);
+			cursor.append(argumentValueNode);
+			cursor.leave();
         }
+
+		cursor.leave();
+		cursor.leave();
+		cursor.leave();
         
         XmlDocument doc;
         doc.setPrologue("<?xml version=\"1.0\"?>");

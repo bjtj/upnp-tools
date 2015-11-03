@@ -47,7 +47,7 @@ namespace XML {
 		if (attribute.getName().empty()) {
 			return "";
 		}
-		return printNamespaceAndName(attribute.getNamespace(), attribute.getName()) + "=" + attribute.getValue();
+		return printNamespaceAndName(attribute.getNamespace(), attribute.getName()) + "=\"" + attribute.getValue() + "\"";
 	}
 
 	string XmlDocumentPrinter::printText(const string & text) {

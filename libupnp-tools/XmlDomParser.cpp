@@ -60,11 +60,17 @@ namespace XML {
 		return symbol.substr(f+1);
 	}
 
+
+
 	XmlStringReader::XmlStringReader(const string & data) : StringReader(data), specials("=") {
 		setSpaces(" \t\r\n");
 	}
 
 	XmlStringReader::~XmlStringReader() {
+	}
+
+	string XmlStringReader::quote(const string & str) {
+		return "\"" + str + "\"";
 	}
 
 	bool XmlStringReader::isBlocker(char ch) {
@@ -95,8 +101,8 @@ namespace XML {
 		
 		ret.append(special);
 		ret.append(readSpaces());
-		string value = readQuotedString();
-		ret.append(value);
+		string value = readQuotedStringWithoutQuote();
+		ret.append(quote(value));
 		attribute.setValue(value);
 		
 		return ret;
@@ -129,6 +135,30 @@ namespace XML {
 		
 		while (!endOfString() && (ch = read(1)).compare("\"")) {
 			text.append(ch);
+			if (!ch.compare("\\")) {
+				text.append(read(1));
+			}
+		}
+
+		if (!endOfString()) {
+			text.append(ch);
+		}
+		
+        return text;
+	}
+
+	string XmlStringReader::readQuotedStringWithoutQuote() {
+		
+		string text;
+		string ch;
+		if (readWithoutMove(1).compare("\"")) {
+			return "";
+		}
+
+		// text.append(read(1));
+		
+		while (!endOfString() && (ch = readWithoutMove(1)).compare("\"")) {
+			text.append(read(1));
 			if (!ch.compare("\\")) {
 				text.append(read(1));
 			}

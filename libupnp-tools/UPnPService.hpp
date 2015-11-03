@@ -36,6 +36,7 @@ namespace UPNP {
 	class UPnPService {
 	private:
 		mutable std::map<std::string, std::string> properties;
+		bool scpdBind;
 		Scpd scpd;
         std::string baseUrl;
 
@@ -53,6 +54,8 @@ namespace UPNP {
 		Scpd & getScpd();
         void setBaseUrl(const std::string & baseUrl);
         std::string getBaseUrl() const;
+
+		bool isScpdBind() const;
 
 		std::string & operator[](const std::string & name) const;
 	};
