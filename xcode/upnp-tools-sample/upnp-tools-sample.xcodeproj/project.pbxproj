@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E857BB241BE77A6500D2022F /* cp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8C743C71BDEC8B200101962 /* cp.cpp */; };
+		E857BB411BEA305700D2022F /* timerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E857BB401BEA305700D2022F /* timerTest.cpp */; };
 		E8E0FEE81BD849CF00292C54 /* libupnp-tools-cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8E0FEE71BD849CA00292C54 /* libupnp-tools-cocoa.a */; };
 /* End PBXBuildFile section */
 
@@ -50,6 +50,7 @@
 
 /* Begin PBXFileReference section */
 		E857BB0C1BE37CE700D2022F /* cp-dev.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "cp-dev.cpp"; path = "../../../examples/cp-dev.cpp"; sourceTree = "<group>"; };
+		E857BB401BEA305700D2022F /* timerTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = timerTest.cpp; path = ../../../examples/timerTest.cpp; sourceTree = "<group>"; };
 		E8C743C71BDEC8B200101962 /* cp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cp.cpp; path = ../../../examples/cp.cpp; sourceTree = "<group>"; };
 		E8E0FE6E1BD8480B00292C54 /* upnp-tools-sample */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "upnp-tools-sample"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8E0FE711BD8480B00292C54 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
@@ -91,6 +92,7 @@
 				E857BB0C1BE37CE700D2022F /* cp-dev.cpp */,
 				E8C743C71BDEC8B200101962 /* cp.cpp */,
 				E8E0FE711BD8480B00292C54 /* main.mm */,
+				E857BB401BEA305700D2022F /* timerTest.cpp */,
 			);
 			path = "upnp-tools-sample";
 			sourceTree = "<group>";
@@ -184,7 +186,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E857BB241BE77A6500D2022F /* cp.cpp in Sources */,
+				E857BB411BEA305700D2022F /* timerTest.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

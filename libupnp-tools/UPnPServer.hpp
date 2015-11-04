@@ -8,41 +8,50 @@
 
 #include "SSDPServer.hpp"
 #include "UPnPDevice.hpp"
+#include "UPnPService.hpp"
+#include "UPnPDevicePool.hpp"
 
 namespace UPNP {
 
-	/**
-	 * @brief device add remove listener
-	 */
-	class OnDeviceAddRemoveListener {
-	private:
-	public:
-		OnDeviceAddRemoveListener() {}
-		virtual ~OnDeviceAddRemoveListener() {}
-
-		virtual void onDeviceAdd(UPnPDevice & device) = 0;
-		virtual void onDeviceRemove(UPnPDevice & device) = 0;
-	};
+    class InvokeActionListener {
+    private:
+    public:
+        InvokeActionListener() {}
+        virtual ~InvokeActionListener() {}
+        
+        virtual void onActionRequest() = 0;
+    };
 
 	/**
 	 * @brief UPNP Server
 	 */
 	class UPnPServer {
 	private:
-		std::vector<UPnPDevice*> devices;
-		SSDP::SSDPServer * ssdpServer;
-		HTTP::HttpServer * httpServer;
-		OnDeviceAddRemoveListener * addRemoveListener;
+        UPnPDevicePool devices;
+		SSDP::SSDPServer ssdpServer;
+        InvokeActionListener * actionListener;
 		
 	public:
 		UPnPServer();
 		virtual ~UPnPServer();
 
-		virtual void start();
-		virtual void stop();
-		virtual bool isRunning();
-
-		void setOnDeviceAddRemoveListener(OnDeviceAddRemoveListener * addRemoveListener);
+		void start();
+        void startAsync();
+        void poll(unsigned long timeout);
+        void stop();
+		bool isRunning();
+        
+        void registerDevice(const UPnPDevice & device);
+        void unregisterDevice(const std::string & udn);
+        
+        void announceDevice(const UPnPDevice & device);
+        void announceDeviceRecursive(const UPnPDevice & device);
+        void announceService(const UPnPService & service);
+        void byebyeDevice(const UPnPDevice & device);
+        void byebyeDeviceRecursive(const UPnPDevice & device);
+        void byebyeService(const UPnPService & service);
+        
+        void setInvokeActionListener(InvokeActionListener * actionListener);
 	};
 	
 }
