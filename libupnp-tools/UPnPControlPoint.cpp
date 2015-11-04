@@ -299,10 +299,11 @@ namespace UPNP {
 		if (!devicePool.hasDevice(udn)) {
 			return;
 		}
-    
-		if (deviceListener) {
-			deviceListener->onDeviceRemoved(*this, devicePool.getDevice(udn));
-		}
+        
+        if (deviceListener && devicePool.getDevice(udn).complete()) {
+            deviceListener->onDeviceRemoved(*this, devicePool.getDevice(udn));
+        }
+        
 		devicePool.removeDevice(udn);
 	}
 
