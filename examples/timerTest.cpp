@@ -14,7 +14,7 @@ class MyTimerEvent : public TimerEvent {
 private:
     int idx;
 public:
-    MyTimerEvent() {}
+    MyTimerEvent() : idx(0) {}
     virtual ~MyTimerEvent() {}
     virtual void onFire() {
         cout << idx++ << "/fire!" << endl;

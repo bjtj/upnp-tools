@@ -84,6 +84,9 @@
     <ClCompile Include="..\libupnp-tools\SoapReader.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="..\libupnp-tools\CacheControl.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\libupnp-tools\SSDPServer.hpp">
@@ -162,6 +165,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\SoapReader.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libupnp-tools\CacheControl.hpp">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

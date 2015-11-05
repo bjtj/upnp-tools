@@ -1,4 +1,5 @@
 #include "Timer.hpp"
+#include <algorithm>
 
 namespace UPNP {
 
