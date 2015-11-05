@@ -187,6 +187,7 @@ namespace UPNP {
     
 		void sendMsearch(std::string searchType);
     
+		virtual void onDeviceCacheUpdate(const HTTP::HttpHeader & header);
 		virtual void onDeviceHelloWithUrl(const std::string & url, const HTTP::HttpHeader & header);
 		virtual void onDeviceDescriptionInXml(std::string baseUrl, std::string xmlDoc);
 		virtual void onScpdInXml(const UPnPServicePosition & servicePosition, std::string xmlDoc);

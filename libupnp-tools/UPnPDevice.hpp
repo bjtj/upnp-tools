@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 
+#include "CacheControl.hpp"
 #include "UPnPService.hpp"
 
 namespace UPNP {
@@ -19,6 +20,7 @@ namespace UPNP {
 		mutable std::vector<UPnPDevice> embeddedDevices;
 		mutable std::vector<UPnPService> services;
         std::string baseUrl;
+		CacheControl cacheControl;
 		
 	public:
 		UPnPDevice();
@@ -57,6 +59,10 @@ namespace UPNP {
 		size_t getServiceRecursive() const;
 		bool checkAllScpdBindRecursive() const;
 		bool complete() const;
+
+		void renew();
+		void setTimeout(unsigned long timeoutMilli);
+		bool outdated() const;
 
 		std::string & operator[] (const std::string & name);
 	};

@@ -67,6 +67,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\libupnp-tools\SoapReader.cpp" />
     <ClCompile Include="..\libupnp-tools\SoapWriter.cpp" />
     <ClCompile Include="..\libupnp-tools\SSDPServer.cpp" />
     <ClCompile Include="..\libupnp-tools\StringReader.cpp" />
@@ -92,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\libupnp-tools\macros.hpp" />
+    <ClInclude Include="..\libupnp-tools\SoapReader.hpp" />
     <ClInclude Include="..\libupnp-tools\SoapWriter.hpp" />
     <ClInclude Include="..\libupnp-tools\SSDPServer.hpp" />
     <ClInclude Include="..\libupnp-tools\StringReader.hpp" />

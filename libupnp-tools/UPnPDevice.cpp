@@ -178,6 +178,16 @@ namespace UPNP {
 		return checkAllScpdBindRecursive();
 	}
 
+	void UPnPDevice::renew() {
+		cacheControl.renew();
+	}
+	void UPnPDevice::setTimeout(unsigned long timeoutMilli) {
+		cacheControl.setTimeout(timeoutMilli);
+	}
+	bool UPnPDevice::outdated() const {
+		return cacheControl.outdated();
+	}
+
 	string & UPnPDevice::operator[] (const string & name){
 		return properties[name];
 	}

@@ -246,6 +246,15 @@ namespace UPNP {
 		ssdp.sendMsearch(searchType);
 	}
 
+	void UPnPControlPoint::onDeviceCacheUpdate(const HttpHeader & header) {
+		string usn = header["USN"];
+		Uuid uuid(usn);
+		if (!devicePool.hasDevice(uuid.getUuid())) {
+			return;
+		}
+		header["CACHE-CONTROL"];
+	}
+
 	void UPnPControlPoint::onDeviceHelloWithUrl(const string & url, const HttpHeader & header) {
 		string usn = header["USN"];
 		Uuid uuid(usn);
