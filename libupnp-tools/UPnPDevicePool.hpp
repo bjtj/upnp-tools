@@ -25,6 +25,7 @@ namespace UPNP {
         void removeDevice(std::string udn);
         UPnPService * traverseService(const UPnPDevice & device, const UPnPServicePosition & servicePosition);
         void bindScpd(const UPnPServicePosition & servicePosition, const Scpd & scpd);
+		void cacheUpdate(const std::string & udn, unsigned long timeoutMilli);
     };
 
 }

@@ -175,6 +175,9 @@ namespace UPNP {
 		UPnPControlPointSsdpNotifyFilter filter;
 		DeviceAddRemoveListener * deviceListener;
         InvokeActionResponseListener * invokeActionResponseListener;
+
+	private:
+		UPnPControlPoint(const UPnPControlPoint & other); // do not allow copy
     
 	public:
 		UPnPControlPoint();
@@ -186,14 +189,16 @@ namespace UPNP {
 		void stop();
     
 		void sendMsearch(std::string searchType);
+
+		virtual void onHttpResponse(HTTP::HttpClient<UPnPHttpRequestSession> & httpClient, HTTP::HttpHeader & responseHeader, OS::Socket & socket, UPnPHttpRequestSession userData);
+
+		int getMaxAgeInSecond(const std::string & phrase);
     
 		virtual void onDeviceCacheUpdate(const HTTP::HttpHeader & header);
 		virtual void onDeviceHelloWithUrl(const std::string & url, const HTTP::HttpHeader & header);
 		virtual void onDeviceDescriptionInXml(std::string baseUrl, std::string xmlDoc);
 		virtual void onScpdInXml(const UPnPServicePosition & servicePosition, std::string xmlDoc);
 		virtual void onDeviceByeBye(std::string udn);
-    
-		virtual void onResponse(HTTP::HttpClient<UPnPHttpRequestSession> & httpClient, HTTP::HttpHeader & responseHeader, OS::Socket & socket, UPnPHttpRequestSession userData);
     
 		void setFilter(const UPnPControlPointSsdpNotifyFilter & filter);
 		std::vector<UPnPServicePosition> makeServicePositions(UPnPServicePositionMaker & maker, const UPnPDevice & device);

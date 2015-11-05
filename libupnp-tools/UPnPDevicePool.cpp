@@ -75,5 +75,13 @@ namespace UPNP {
         }
         deviceTableLock.post();
     }
+
+	void UPnPDevicePool::cacheUpdate(const string & udn, unsigned long timeoutMilli) {
+		deviceTableLock.wait();
+		UPnPDevice & device = getDevice(udn);
+		device.renew();
+		device.setTimeout(timeoutMilli);
+		deviceTableLock.post();
+	}
 	
 }

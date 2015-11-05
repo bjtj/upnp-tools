@@ -246,13 +246,62 @@ namespace UPNP {
 		ssdp.sendMsearch(searchType);
 	}
 
+	int UPnPControlPoint::getMaxAgeInSecond(const string & phrase) {
+		if (phrase.empty()) {
+			return 0;
+		}
+		size_t f = phrase.find("=");
+		if (f == string::npos) {
+			return 0;
+		}
+		string name = Text::trim(phrase.substr(0, f));
+		string value = Text::trim(phrase.substr(f + 1));
+
+		if (!Text::equalsIgnoreCase(name, "max-age")) {
+			return 0;
+		}
+
+		return Text::toInt(value);
+	}
+
+	void UPnPControlPoint::onHttpResponse(HttpClient<UPnPHttpRequestSession> & httpClient, HttpHeader & responseHeader, OS::Socket & socket, UPnPHttpRequestSession session) {
+    
+		if (session.getRequestType() == UPnPHttpRequestType::DEVICE_DESCRIPTION) {
+			string dump = HttpResponseDump::dump(responseHeader, socket);
+			char baseUrl[1024] = {0,};
+			snprintf(baseUrl, sizeof(baseUrl), "http://%s:%d", socket.getHost(), socket.getPort());
+			this->onDeviceDescriptionInXml(baseUrl, dump);
+		} else if (session.getRequestType() == UPnPHttpRequestType::SCPD) {
+			string dump = HttpResponseDump::dump(responseHeader, socket);
+			this->onScpdInXml(session.getServicePosition(), dump);
+        } else if (session.getRequestType() == UPnPHttpRequestType::ACTION_INVOKE) {
+			string dump = HttpResponseDump::dump(responseHeader, socket);
+            SoapReader reader;
+            XmlDomParser parser;
+            XmlDocument doc = parser.parse(dump);
+            XmlNode node = reader.getActionNode(doc.getRootNode());
+            string actionName = reader.getActionNameFromActionNode(node);
+            ActionParameters outParams = reader.getActionParametersFromActionNode(node);
+            if (invokeActionResponseListener) {
+                invokeActionResponseListener->onActionResponse(session.getId(), session.getInvokeActionSession(), outParams);
+            }
+        }
+	}
+
 	void UPnPControlPoint::onDeviceCacheUpdate(const HttpHeader & header) {
 		string usn = header["USN"];
 		Uuid uuid(usn);
-		if (!devicePool.hasDevice(uuid.getUuid())) {
+		string udn = uuid.getUuid();
+		if (!devicePool.hasDevice(udn)) {
 			return;
 		}
-		header["CACHE-CONTROL"];
+		string cacheControl = header["CACHE-CONTROL"];
+		int maxAge = getMaxAgeInSecond(cacheControl);
+		// UPnP spec: minimum 1800 (30 seconds)
+		if (maxAge < 1800) {
+			maxAge = 1800;
+		}
+		devicePool.cacheUpdate(udn, maxAge * 1000);
 	}
 
 	void UPnPControlPoint::onDeviceHelloWithUrl(const string & url, const HttpHeader & header) {
@@ -314,30 +363,6 @@ namespace UPNP {
         }
         
 		devicePool.removeDevice(udn);
-	}
-
-	void UPnPControlPoint::onResponse(HttpClient<UPnPHttpRequestSession> & httpClient, HttpHeader & responseHeader, OS::Socket & socket, UPnPHttpRequestSession session) {
-    
-		if (session.getRequestType() == UPnPHttpRequestType::DEVICE_DESCRIPTION) {
-			string dump = HttpResponseDump::dump(responseHeader, socket);
-			char baseUrl[1024] = {0,};
-			snprintf(baseUrl, sizeof(baseUrl), "http://%s:%d", socket.getHost(), socket.getPort());
-			this->onDeviceDescriptionInXml(baseUrl, dump);
-		} else if (session.getRequestType() == UPnPHttpRequestType::SCPD) {
-			string dump = HttpResponseDump::dump(responseHeader, socket);
-			this->onScpdInXml(session.getServicePosition(), dump);
-        } else if (session.getRequestType() == UPnPHttpRequestType::ACTION_INVOKE) {
-			string dump = HttpResponseDump::dump(responseHeader, socket);
-            SoapReader reader;
-            XmlDomParser parser;
-            XmlDocument doc = parser.parse(dump);
-            XmlNode node = reader.getActionNode(doc.getRootNode());
-            string actionName = reader.getActionNameFromActionNode(node);
-            ActionParameters outParams = reader.getActionParametersFromActionNode(node);
-            if (invokeActionResponseListener) {
-                invokeActionResponseListener->onActionResponse(session.getId(), session.getInvokeActionSession(), outParams);
-            }
-        }
 	}
 
 	void UPnPControlPoint::setFilter(const UPnPControlPointSsdpNotifyFilter & filter) {

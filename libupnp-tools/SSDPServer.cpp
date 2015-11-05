@@ -99,8 +99,8 @@ namespace SSDP {
             int bindResult;
 			msearchSocket = new DatagramSocket(msearchPort);
             
-            // https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers
-            // any random port range : 49152–65535
+			// https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers
+			// any random port range : 49152~65535
             class MyRandomPortBinder : public RandomPortBinder {
             private:
                 int startPort;
@@ -124,9 +124,6 @@ namespace SSDP {
             };
             MyRandomPortBinder portBinder;
             bindResult = msearchSocket->randomBind(portBinder);
-
-//            msearchSocket->setReuseAddr();
-//            bindResult = msearchSocket->bind();
             
             if (bindResult) {
                 throw IOException("bind() error", -1, 0);
