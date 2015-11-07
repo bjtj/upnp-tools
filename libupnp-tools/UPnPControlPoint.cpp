@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <liboslayer/Text.hpp>
+#include <liboslayer/Logger.hpp>
 #include "UPnPControlPoint.hpp"
 #include <libhttp-server/Url.hpp>
 #include "XmlDomParser.hpp"
@@ -19,6 +20,7 @@ namespace UPNP {
     using namespace XML;
     using namespace SOAP;
     
+    static const Logger & logger = LoggerFactory::getDefaultLogger();
     
     /**
      * @brief invoek action response listener
@@ -210,14 +212,14 @@ namespace UPNP {
 	 *
 	 */
 
-	UPnPControlPoint::UPnPControlPoint() : httpClientThreadPool(10), deviceListener(NULL), invokeActionResponseListener(NULL) {
+	UPnPControlPoint::UPnPControlPoint() : httpClientThreadPool(1), deviceListener(NULL), invokeActionResponseListener(NULL) {
 		ssdpHandler.setDeviceDetection(this);
 		ssdp.addHttpResponseHandler(&ssdpHandler);
 		ssdp.addNotifyHandler(&ssdpHandler);
 		ssdp.addMsearchHandler(&ssdpHandler);
     
 		httpClientThreadPool.setFollowRedirect(true);
-		httpClientThreadPool.setHttpResponseHandler(this);
+		httpClientThreadPool.setHttpClientPollListener(this);
 	}
 
 	UPnPControlPoint::~UPnPControlPoint() {
@@ -264,21 +266,20 @@ namespace UPNP {
 		return Text::toInt(value);
 	}
 
-	void UPnPControlPoint::onHttpResponse(HttpClient<UPnPHttpRequestSession> & httpClient, HttpHeader & responseHeader, OS::Socket & socket, UPnPHttpRequestSession session) {
+	void UPnPControlPoint::onHttpResponse(HttpClient<UPnPHttpRequestSession> & httpClient, const HttpHeader & responseHeader, const string & content, UPnPHttpRequestSession session) {
+        logger.logd(content);
     
 		if (session.getRequestType() == UPnPHttpRequestType::DEVICE_DESCRIPTION) {
-			string dump = HttpResponseDump::dump(responseHeader, socket);
 			char baseUrl[1024] = {0,};
-			snprintf(baseUrl, sizeof(baseUrl), "http://%s:%d", socket.getHost(), socket.getPort());
-			this->onDeviceDescriptionInXml(baseUrl, dump);
+            Url & url = httpClient.getUrl();
+			snprintf(baseUrl, sizeof(baseUrl), "http://%s", url.getAddress().c_str());
+			this->onDeviceDescriptionInXml(baseUrl, content);
 		} else if (session.getRequestType() == UPnPHttpRequestType::SCPD) {
-			string dump = HttpResponseDump::dump(responseHeader, socket);
-			this->onScpdInXml(session.getServicePosition(), dump);
+			this->onScpdInXml(session.getServicePosition(), content);
         } else if (session.getRequestType() == UPnPHttpRequestType::ACTION_INVOKE) {
-			string dump = HttpResponseDump::dump(responseHeader, socket);
             SoapReader reader;
             XmlDomParser parser;
-            XmlDocument doc = parser.parse(dump);
+            XmlDocument doc = parser.parse(content);
             XmlNode node = reader.getActionNode(doc.getRootNode());
             string actionName = reader.getActionNameFromActionNode(node);
             ActionParameters outParams = reader.getActionParametersFromActionNode(node);
@@ -287,6 +288,10 @@ namespace UPNP {
             }
         }
 	}
+    
+    void UPnPControlPoint::onError(HttpClient<UPnPHttpRequestSession> &httpClient, UPnPHttpRequestSession session) {
+        logger.loge("onError()");
+    }
 
 	void UPnPControlPoint::onDeviceCacheUpdate(const HttpHeader & header) {
 		string usn = header["USN"];

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E857BB411BEA305700D2022F /* timerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E857BB401BEA305700D2022F /* timerTest.cpp */; };
+		E857BB7E1BED8BA300D2022F /* cp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8C743C71BDEC8B200101962 /* cp.cpp */; };
 		E8E0FEE81BD849CF00292C54 /* libupnp-tools-cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8E0FEE71BD849CA00292C54 /* libupnp-tools-cocoa.a */; };
 /* End PBXBuildFile section */
 
@@ -186,7 +186,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E857BB411BEA305700D2022F /* timerTest.cpp in Sources */,
+				E857BB7E1BED8BA300D2022F /* cp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

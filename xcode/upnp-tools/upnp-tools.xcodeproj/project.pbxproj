@@ -31,6 +31,8 @@
 		E857BB311BE7A51D00D2022F /* UniqueIdGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E857BB2E1BE7A51D00D2022F /* UniqueIdGenerator.cpp */; };
 		E857BB3A1BE900E700D2022F /* SoapReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E857BB381BE900E700D2022F /* SoapReader.cpp */; };
 		E857BB3B1BE900E700D2022F /* SoapReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E857BB381BE900E700D2022F /* SoapReader.cpp */; };
+		E857BB841BED8EDB00D2022F /* CacheControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E857BB821BED8EDB00D2022F /* CacheControl.cpp */; };
+		E857BB851BED8EDB00D2022F /* CacheControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E857BB821BED8EDB00D2022F /* CacheControl.cpp */; };
 		E8C743C31BDEC82000101962 /* UPnPDeviceMaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8C743BF1BDEC82000101962 /* UPnPDeviceMaker.cpp */; };
 		E8C743C41BDEC82000101962 /* UPnPServiceMaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8C743C11BDEC82000101962 /* UPnPServiceMaker.cpp */; };
 		E8C743C51BDEC83100101962 /* UPnPDeviceMaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8C743BF1BDEC82000101962 /* UPnPDeviceMaker.cpp */; };
@@ -171,6 +173,8 @@
 		E857BB2F1BE7A51D00D2022F /* UniqueIdGenerator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UniqueIdGenerator.hpp; path = "../../libupnp-tools/UniqueIdGenerator.hpp"; sourceTree = "<group>"; };
 		E857BB381BE900E700D2022F /* SoapReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SoapReader.cpp; path = "../../libupnp-tools/SoapReader.cpp"; sourceTree = "<group>"; };
 		E857BB391BE900E700D2022F /* SoapReader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SoapReader.hpp; path = "../../libupnp-tools/SoapReader.hpp"; sourceTree = "<group>"; };
+		E857BB821BED8EDB00D2022F /* CacheControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CacheControl.cpp; path = "../../libupnp-tools/CacheControl.cpp"; sourceTree = "<group>"; };
+		E857BB831BED8EDB00D2022F /* CacheControl.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CacheControl.hpp; path = "../../libupnp-tools/CacheControl.hpp"; sourceTree = "<group>"; };
 		E8C743BF1BDEC82000101962 /* UPnPDeviceMaker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UPnPDeviceMaker.cpp; path = "../../libupnp-tools/UPnPDeviceMaker.cpp"; sourceTree = "<group>"; };
 		E8C743C01BDEC82000101962 /* UPnPDeviceMaker.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UPnPDeviceMaker.hpp; path = "../../libupnp-tools/UPnPDeviceMaker.hpp"; sourceTree = "<group>"; };
 		E8C743C11BDEC82000101962 /* UPnPServiceMaker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UPnPServiceMaker.cpp; path = "../../libupnp-tools/UPnPServiceMaker.cpp"; sourceTree = "<group>"; };
@@ -257,6 +261,8 @@
 		E8FAB2B11BD7D8E200E89DC5 /* upnp-tools-c++ */ = {
 			isa = PBXGroup;
 			children = (
+				E857BB821BED8EDB00D2022F /* CacheControl.cpp */,
+				E857BB831BED8EDB00D2022F /* CacheControl.hpp */,
 				E857BB251BE77A9F00D2022F /* macros.hpp */,
 				E857BB2A1BE78B1C00D2022F /* SoapWriter.cpp */,
 				E857BB2B1BE78B1C00D2022F /* SoapWriter.hpp */,
@@ -448,6 +454,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E857BB291BE77AC500D2022F /* UPnPDeviceDetection.cpp in Sources */,
+				E857BB851BED8EDB00D2022F /* CacheControl.cpp in Sources */,
 				E857BB2D1BE78B1C00D2022F /* SoapWriter.cpp in Sources */,
 				E857BAEA1BE03D3300D2022F /* Timer.cpp in Sources */,
 				E8C743C51BDEC83100101962 /* UPnPDeviceMaker.cpp in Sources */,
@@ -479,6 +486,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E8FAB2CB1BD7D8FE00E89DC5 /* UPnPDevicePool.cpp in Sources */,
+				E857BB841BED8EDB00D2022F /* CacheControl.cpp in Sources */,
 				E857BB2C1BE78B1C00D2022F /* SoapWriter.cpp in Sources */,
 				E8FAB2CC1BD7D8FE00E89DC5 /* UPnPServer.cpp in Sources */,
 				E827890D1BDCDBDD0009E46A /* XmlNodeFinder.cpp in Sources */,

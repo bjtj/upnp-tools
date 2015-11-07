@@ -8,6 +8,8 @@ using namespace std;
 using namespace UTIL;
 using namespace UPNP;
 
+UPnPService targetService;
+
 class MyDeviceAddRemoveHandle : public DeviceAddRemoveListener {
 private:
 public:
@@ -17,7 +19,10 @@ public:
 	virtual void onDeviceAdded(UPnPControlPoint & cp, UPnPDevice & device) {
 		cout << "[Device Added] udn: " << device["UDN"] << " - " << device["friendlyName"] << endl;
 		UPnPService service = device.getService("urn:schemas-upnp-org:service:ContentDirectory:1");
+        
 		if (!service.empty()) {
+            targetService = service;
+            cout << "invoke action" << endl;
 			cp.invokeAction(service, "GetSystemUpdateID", ActionParameters());
 		}
 	}
@@ -42,6 +47,10 @@ static int s_cmd_handler(const char * cmd, UPnPControlPoint & cp) {
 		cp.sendMsearch("upnp:rootdevice");
 		return 0;
 	}
+    
+    if (!strcmp(cmd, "a") || !strcmp(cmd, "action")) {
+        cp.invokeAction(targetService, "GetSystemUpdateID", ActionParameters());
+    }
 
 	return 0;
 }

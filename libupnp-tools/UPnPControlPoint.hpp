@@ -190,7 +190,8 @@ namespace UPNP {
     
 		void sendMsearch(std::string searchType);
 
-		virtual void onHttpResponse(HTTP::HttpClient<UPnPHttpRequestSession> & httpClient, HTTP::HttpHeader & responseHeader, OS::Socket & socket, UPnPHttpRequestSession userData);
+        virtual void onHttpResponse(HTTP::HttpClient<UPnPHttpRequestSession> & httpClient, const HTTP::HttpHeader & responseHeader, const std::string & content, UPnPHttpRequestSession userData);
+        virtual void onError(HTTP::HttpClient<UPnPHttpRequestSession> & httpClient, UPnPHttpRequestSession userData);
 
 		int getMaxAgeInSecond(const std::string & phrase);
     
