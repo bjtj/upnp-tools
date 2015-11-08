@@ -19,13 +19,17 @@ namespace UPNP {
         void clear();
         UPnPDevice & getDevice(std::string udn);
         bool hasDevice(std::string udn);
-        void addDevice(UPnPDevice & device);
-        void updateDevice(UPnPDevice & device);
-		
-        void removeDevice(std::string udn);
-        UPnPService * traverseService(const UPnPDevice & device, const UPnPServicePosition & servicePosition);
+        void addDevice(const UPnPDevice & device);
+        void updateDevice(const UPnPDevice & device);
+        void removeDevice(const std::string & udn);
+        UPnPService * traverseService(UPnPDevice & device, const UPnPServicePosition & servicePosition);
         void bindScpd(const UPnPServicePosition & servicePosition, const Scpd & scpd);
 		void cacheUpdate(const std::string & udn, unsigned long timeoutMilli);
+        
+        std::vector<UPnPDevice> getRootDevices() const;
+        std::vector<UPnPDevice> getWholeDevices() const;
+        std::vector<UPnPDevice> getDevicesRecursive(const UPnPDevice & device) const;
+        std::vector<UPnPService> getWholeServices() const;
     };
 
 }

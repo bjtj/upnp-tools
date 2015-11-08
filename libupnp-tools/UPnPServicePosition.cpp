@@ -84,7 +84,7 @@ namespace UPNP {
     UPnPServicePositionMaker::~UPnPServicePositionMaker() {
     }
     
-    UPnPServicePosition UPnPServicePositionMaker::makeUPnPServicePosition(size_t index, UPnPService & service) {
+    UPnPServicePosition UPnPServicePositionMaker::makeUPnPServicePosition(size_t index, const UPnPService & service) {
         UPnPServicePosition sp;
         sp.setUdn(udn);
         sp.setScpdUrl(service["SCPDURL"]);

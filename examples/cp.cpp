@@ -23,7 +23,7 @@ public:
 		if (!service.empty()) {
             targetService = service;
             cout << "invoke action" << endl;
-			cp.invokeAction(service, "GetSystemUpdateID", ActionParameters());
+			cp.invokeAction(service, "GetSystemUpdateID", UPnPActionParameters());
 		}
 	}
 	virtual void onDeviceRemoved(UPnPControlPoint & cp, UPnPDevice & device) {
@@ -32,8 +32,8 @@ public:
 };
 
 class MyInvokeActionResponseListener : public InvokeActionResponseListener {
-	virtual void onActionResponse(ID_TYPE id, const InvokeActionSession & session, const ActionParameters & out) {
-        cout << "ActionResponse> Action name: " << session.getActionName() << endl;
+	virtual void onActionResponse(ID_TYPE id, const UPnPActionRequest & actionRequest, const UPnPActionParameters & out) {
+        cout << "ActionResponse> Action name: " << actionRequest.actionName << endl;
 	}
 };
 
@@ -49,7 +49,7 @@ static int s_cmd_handler(const char * cmd, UPnPControlPoint & cp) {
 	}
     
     if (!strcmp(cmd, "a") || !strcmp(cmd, "action")) {
-        cp.invokeAction(targetService, "GetSystemUpdateID", ActionParameters());
+        cp.invokeAction(targetService, "GetSystemUpdateID", UPnPActionParameters());
     }
 
 	return 0;

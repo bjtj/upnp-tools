@@ -3,7 +3,8 @@
 namespace UPNP {
 
 	using namespace std;
-
+    using namespace UTIL;
+    
 	Scpd::Scpd() {
 	}
 	Scpd::~Scpd() {
@@ -24,10 +25,18 @@ namespace UPNP {
 	vector<UPnPAction> & Scpd::getActions() {
 		return actions;
 	}
+    
+    const vector<UPnPAction> & Scpd::getActions() const {
+        return actions;
+    }
 
 	vector<UPnPStateVariable> & Scpd::getStateVariables() {
 		return stateVariables;
 	}
+    
+    const vector<UPnPStateVariable> & Scpd::getStateVariables() const {
+        return stateVariables;
+    }
 
 	void Scpd::setActions(vector<UPnPAction> & actions) {
 		this->actions = actions;
@@ -42,6 +51,9 @@ namespace UPNP {
 	}
 
 
+    /**
+     * @brief
+     */
 
 	UPnPService::UPnPService() : scpdBind(false) {
 	}
@@ -52,6 +64,10 @@ namespace UPNP {
 	bool UPnPService::empty() {
 		return getServiceType().empty();
 	}
+    
+    void UPnPService::clear() {
+        properties.clear();
+    }
 
 	void UPnPService::setServiceType(const std::string & serviceType) {
 		properties["serviceType"] = serviceType;
@@ -79,8 +95,19 @@ namespace UPNP {
 	bool UPnPService::isScpdBind() const {
 		return scpdBind;
 	}
+    
+    LinkedStringMap & UPnPService::getProperties() {
+        return properties;
+    }
+    const LinkedStringMap & UPnPService::getProperties() const {
+        return properties;
+    }
 
-	string & UPnPService::operator[](const string & name) const {
+    string & UPnPService::operator[](const string & name) {
+        return properties[name];
+    }
+    
+	const string & UPnPService::operator[](const string & name) const {
 		return properties[name];
 	}
 }

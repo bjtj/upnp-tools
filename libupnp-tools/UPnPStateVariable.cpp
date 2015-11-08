@@ -17,7 +17,7 @@ namespace UPNP {
 	void UPnPStateVariable::setDataType(const std::string & dataType) {
 		this->dataType = dataType;
 	}
-	string UPnPStateVariable::getDataType() {
+	string UPnPStateVariable::getDataType() const {
 		return dataType;
 	}
 	void UPnPStateVariable::setDefaultValue(const std::string & defValue) {
@@ -29,6 +29,10 @@ namespace UPNP {
 	vector<string> & UPnPStateVariable::getAllowedValueList() {
 		return allowedValueList;
 	}
+    
+    const vector<string> & UPnPStateVariable::getAllowedValueList() const {
+        return allowedValueList;
+    }
 
 	void UPnPStateVariable::setAllowedValueList(const vector<string> & list) {
 		this->allowedValueList = list;
@@ -37,6 +41,10 @@ namespace UPNP {
 	void UPnPStateVariable::addAllowedValue(const std::string & item) {
 		allowedValueList.push_back(item);
 	}
+    
+    string UPnPStateVariable::getProperty(const string & name) const {
+        return properties.get(name);
+    }
 	
 	string & UPnPStateVariable::operator[] (const string & name) {
 		return properties[name];

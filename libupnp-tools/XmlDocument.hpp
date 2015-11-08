@@ -67,7 +67,7 @@ namespace XML {
         void setParent(XmlNode * parent);
         XmlNode * getParent();
         
-        XmlNode * addNode(XmlNode & node);
+        void addNode(const XmlNode & node);
         const XmlNode & getNode(size_t index) const;
 		const std::vector<XmlNode> & getChildren() const;
 		bool empty();
@@ -83,7 +83,9 @@ namespace XML {
 		bool isElementNode() const;
 		std::string getFirstContent() const;
 		int getChildrenElementNodeCount() const;
-        XmlNode getFirstElement() const;
+        XmlNode & getFirstElement();
+        const XmlNode & getFirstElement() const;
+        XmlNode & getLastNode();
 		const XmlNode & operator[](size_t index) const;
 	};
 

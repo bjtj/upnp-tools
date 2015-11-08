@@ -21,10 +21,12 @@ namespace UPNP {
 		UPnPActionArgument();
 		virtual ~UPnPActionArgument();
 
-		bool inArgument();
-		bool outArgument();
-		std::string getName();
-		std::string getStateVariableName();
+		bool in() const;
+		bool out() const;
+		std::string getName() const;
+		std::string getStateVariableName() const;
+        const UPnPStateVariable & getStateVariable() const;
+        UPnPStateVariable & getStateVariable();
 
 		void setName(const std::string & name);
 		void setStateVariable(const UPnPStateVariable & stateVariable);

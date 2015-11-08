@@ -13,14 +13,18 @@ namespace UPNP {
         this->name = name;
     }
 	
-	string UPnPAction::getName() {
+	string UPnPAction::getName() const {
 		return name;
 	}
 	vector<UPnPActionArgument> & UPnPAction::getArguments() {
 		return arguments;
 	}
+    
+    const vector<UPnPActionArgument> & UPnPAction::getArguments() const {
+        return arguments;
+    }
 
-	void UPnPAction::setArguments(vector<UPnPActionArgument> & arguments) {
+	void UPnPAction::setArguments(const vector<UPnPActionArgument> & arguments) {
 		this->arguments = arguments;
 	}
 

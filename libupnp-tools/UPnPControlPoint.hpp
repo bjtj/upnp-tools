@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include "UPnPActionInvoke.hpp"
 #include "SSDPServer.hpp"
 #include "UPnPDevice.hpp"
 #include "UPnPDevicePool.hpp"
@@ -18,42 +19,6 @@
 namespace UPNP {
 
 	class UPnPControlPoint;
-    
-    /**
-     * @brief action parameters
-     */
-    class ActionParameters {
-    private:
-        UTIL::LinkedStringMap params;
-    public:
-        ActionParameters();
-        virtual ~ActionParameters();
-        size_t size() const;
-        const std::string & operator[] (const std::string & name) const;
-        std::string & operator[] (const std::string & name);
-        const UTIL::NameValue & operator[] (size_t index) const;
-        UTIL::NameValue & operator[] (size_t index);
-    };
-    
-    /**
-     * @brief invoke action session
-     */
-    class InvokeActionSession {
-    private:
-        UPnPService service;
-        std::string actionName;
-        ActionParameters inParameters;
-    public:
-        InvokeActionSession();
-        virtual ~InvokeActionSession();
-        UPnPService & getUPnPService();
-        std::string & getActionName();
-        ActionParameters & getInParameters();
-        
-        const UPnPService & getUPnPService() const;
-        const std::string & getActionName() const;
-        const ActionParameters & getInParameters() const;
-    };
     
 	/**
 	 * @brief upnp http request types
@@ -93,7 +58,7 @@ namespace UPNP {
 		UPnPHttpRequestType type;
 		UPnPServicePosition servicePosition;
         
-        InvokeActionSession invokeActionSession;
+        UPnPActionRequest actionRequest;
         
 	public:
 		UPnPHttpRequestSession();
@@ -105,7 +70,7 @@ namespace UPNP {
 		UPnPServicePosition & getServicePosition();
 		UPnPHttpRequestType getRequestType();
 		void setDeviceDetection(UPnPDeviceDetection * deviceDetection);
-        InvokeActionSession & getInvokeActionSession();
+        UPnPActionRequest & getUPnPActionRequest();
 	};
 
 	
@@ -144,7 +109,7 @@ namespace UPNP {
     public:
         InvokeActionResponseListener() {}
         virtual ~InvokeActionResponseListener() {}
-        virtual void onActionResponse(ID_TYPE id, const InvokeActionSession & session, const ActionParameters & out) = 0;
+        virtual void onActionResponse(ID_TYPE id, const UPnPActionRequest & actionRequest, const UPnPActionParameters & out) = 0;
     };
 	
 	/**
@@ -156,9 +121,9 @@ namespace UPNP {
 	public:
 		UPnPSSDPMessageHandler();
 		virtual ~UPnPSSDPMessageHandler();
-		virtual void onNotify(HTTP::HttpHeader & header);
-		virtual void onMsearch(HTTP::HttpHeader & header);
-		virtual void onHttpResponse(HTTP::HttpHeader & header);
+		virtual void onNotify(const HTTP::HttpHeader & header);
+        virtual void onMsearch(const HTTP::HttpHeader & header, const OS::InetAddress & remoteAddr);
+		virtual void onHttpResponse(const HTTP::HttpHeader & header);
 		void setDeviceDetection(UPnPDeviceDetection * deviceDetection);
 	};
 
@@ -206,7 +171,7 @@ namespace UPNP {
 		void setDeviceAddRemoveListener(DeviceAddRemoveListener * deviceListener);
         
         void setInvokeActionResponseListener(InvokeActionResponseListener * invokeActionResponseListener);
-        ID_TYPE invokeAction(const UPnPService & service, const std::string & actionName, const ActionParameters & in);
+        ID_TYPE invokeAction(const UPnPService & service, const std::string & actionName, const UPnPActionParameters & in);
 	};
 }
 

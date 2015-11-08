@@ -24,10 +24,11 @@ namespace UPNP {
 		virtual ~UPnPAction();
 
         void setName(const std::string & name);
-		std::string getName();
+		std::string getName() const;
 
 		std::vector<UPnPActionArgument> & getArguments();
-		void setArguments(std::vector<UPnPActionArgument> &);
+        const std::vector<UPnPActionArgument> & getArguments() const;
+		void setArguments(const std::vector<UPnPActionArgument> & arguments);
 
 		bool isEmpty();
 	};

@@ -23,8 +23,8 @@ namespace SOAP {
         return xmlNode.getTagName();
     }
     
-    ActionParameters SoapReader::getActionParametersFromActionNode(const XmlNode & xmlNode) {
-        ActionParameters params;
+    UPnPActionParameters SoapReader::getActionParametersFromActionNode(const XmlNode & xmlNode) {
+        UPnPActionParameters params;
         const vector<XmlNode> & children = xmlNode.getChildren();
         LOOP_VEC(children, i) {
             const XmlNode & node = children[i];

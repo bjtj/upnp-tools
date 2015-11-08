@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <liboslayer/StringElement.hpp>
 
 namespace UPNP {
 	
@@ -17,7 +18,7 @@ namespace UPNP {
 		std::string defValue;
 		std::vector<std::string> allowedValueList;
 
-		std::map<std::string, std::string> properties;
+        UTIL::StringMap properties;
 		
 	public:
 		UPnPStateVariable();
@@ -26,12 +27,15 @@ namespace UPNP {
 		void setName(const std::string & name);
 		std::string getName() const;
 		void setDataType(const std::string & dataType);
-		std::string getDataType();
+		std::string getDataType() const;
 		void setDefaultValue(const std::string & defValue);
 		std::string getDefaultValue();
 		std::vector<std::string> & getAllowedValueList();
+        const std::vector<std::string> & getAllowedValueList() const;
 		void setAllowedValueList(const std::vector<std::string> & list);
 		void addAllowedValue(const std::string & item);
+        
+        std::string getProperty(const std::string & name) const;
 
 		std::string & operator[] (const std::string & name);
 	};

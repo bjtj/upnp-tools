@@ -44,6 +44,14 @@ namespace UPNP {
         return rest;
     }
     
+    void Uuid::setUuid(const std::string & uuid) {
+        this->uuid = uuid;
+    }
+    
+    void Uuid::setRest(const std::string & rest) {
+        this->rest = rest;
+    }
+    
     string Uuid::toString() const {
         return uuid + (rest.empty() ? "" : "::" + rest);
     }

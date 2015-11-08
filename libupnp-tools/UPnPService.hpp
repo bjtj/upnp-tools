@@ -5,6 +5,8 @@
 #include <vector>
 #include <string>
 
+#include <liboslayer/StringElement.hpp>
+
 #include "UPnPStateVariable.hpp"
 #include "UPnPAction.hpp"
 
@@ -22,7 +24,9 @@ namespace UPNP {
 
 		UPnPAction getAction(std::string name);
 		std::vector<UPnPAction> & getActions();
+        const std::vector<UPnPAction> & getActions() const;
 		std::vector<UPnPStateVariable> & getStateVariables();
+        const std::vector<UPnPStateVariable> & getStateVariables() const;
 
 		void setActions(std::vector<UPnPAction> & actions);
 		void setStateVariables(std::vector<UPnPStateVariable> & stateVariables);
@@ -35,7 +39,8 @@ namespace UPNP {
 	 */
 	class UPnPService {
 	private:
-		mutable std::map<std::string, std::string> properties;
+//        UTIL::StringMap properties;
+        UTIL::LinkedStringMap properties;
 		bool scpdBind;
 		Scpd scpd;
         std::string baseUrl;
@@ -48,6 +53,7 @@ namespace UPNP {
 		virtual ~UPnPService();
 
 		bool empty();
+        void clear();
 		void setServiceType(const std::string & serviceType);
         std::string getServiceType() const;
 		void setScpd(const Scpd & scpd);
@@ -56,8 +62,12 @@ namespace UPNP {
         std::string getBaseUrl() const;
 
 		bool isScpdBind() const;
+        
+        UTIL::LinkedStringMap & getProperties();
+        const UTIL::LinkedStringMap & getProperties() const;
 
-		std::string & operator[](const std::string & name) const;
+        std::string & operator[](const std::string & name);
+		const std::string & operator[](const std::string & name) const;
 	};
 }
 

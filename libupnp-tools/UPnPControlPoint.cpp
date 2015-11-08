@@ -22,60 +22,6 @@ namespace UPNP {
     
     static const Logger & logger = LoggerFactory::getDefaultLogger();
     
-    /**
-     * @brief invoek action response listener
-     */
-    
-    ActionParameters::ActionParameters() {
-    }
-    ActionParameters::~ActionParameters() {
-    }
-    size_t ActionParameters::size() const {
-        return params.size();
-    }
-    const string & ActionParameters::operator[] (const string & name) const {
-        return params[name];
-    }
-    string & ActionParameters::operator[] (const string & name) {
-        return params[name];
-    }
-    const NameValue & ActionParameters::operator[] (size_t index) const {
-        return params[index];
-    }
-    NameValue & ActionParameters::operator[] (size_t index) {
-        return params[index];
-    }
-
-    /**
-     * @brief invoek action session
-     */
-    
-    InvokeActionSession::InvokeActionSession() {
-        
-    }
-    InvokeActionSession::~InvokeActionSession() {
-        
-    }
-    UPnPService & InvokeActionSession::getUPnPService() {
-        return service;
-    }
-    std::string & InvokeActionSession::getActionName() {
-        return actionName;
-    }
-    ActionParameters & InvokeActionSession::getInParameters() {
-        return inParameters;
-    }
-    const UPnPService & InvokeActionSession::getUPnPService() const {
-        return service;
-    }
-    const std::string & InvokeActionSession::getActionName() const {
-        return actionName;
-    }
-    const ActionParameters & InvokeActionSession::getInParameters() const {
-        return inParameters;
-    }
-    
-    
 	/**
 	 *
 	 */
@@ -145,8 +91,8 @@ namespace UPNP {
 		this->deviceDetection = deviceDetection;
 	}
 
-    InvokeActionSession & UPnPHttpRequestSession::getInvokeActionSession() {
-        return invokeActionSession;
+    UPnPActionRequest & UPnPHttpRequestSession::getUPnPActionRequest() {
+        return actionRequest;
     }
 
 	/**
@@ -183,7 +129,7 @@ namespace UPNP {
 	UPnPSSDPMessageHandler::~UPnPSSDPMessageHandler() {
 	}
     
-	void UPnPSSDPMessageHandler::onNotify(HttpHeader & header) {
+	void UPnPSSDPMessageHandler::onNotify(const HttpHeader & header) {
 		if (deviceDetection) {
 			string nts = header["NTS"];
 			if (Text::equalsIgnoreCase(nts, "ssdp:alive")) {
@@ -194,9 +140,10 @@ namespace UPNP {
             
 		}
 	}
-	void UPnPSSDPMessageHandler::onMsearch(HttpHeader & header) {
+	void UPnPSSDPMessageHandler::onMsearch(const HttpHeader & header, const InetAddress & remoteAddr) {
+        //
 	}
-	void UPnPSSDPMessageHandler::onHttpResponse(HttpHeader & header) {
+	void UPnPSSDPMessageHandler::onHttpResponse(const HttpHeader & header) {
 		if (deviceDetection) {
 			deviceDetection->onDeviceHelloWithUrl(header["Location"], header);
 		}
@@ -214,9 +161,10 @@ namespace UPNP {
 
 	UPnPControlPoint::UPnPControlPoint() : httpClientThreadPool(1), deviceListener(NULL), invokeActionResponseListener(NULL) {
 		ssdpHandler.setDeviceDetection(this);
-		ssdp.addHttpResponseHandler(&ssdpHandler);
-		ssdp.addNotifyHandler(&ssdpHandler);
+		
 		ssdp.addMsearchHandler(&ssdpHandler);
+        ssdp.addNotifyHandler(&ssdpHandler);
+        ssdp.addHttpResponseHandler(&ssdpHandler);
     
 		httpClientThreadPool.setFollowRedirect(true);
 		httpClientThreadPool.setHttpClientPollListener(this);
@@ -272,7 +220,8 @@ namespace UPNP {
 		if (session.getRequestType() == UPnPHttpRequestType::DEVICE_DESCRIPTION) {
 			char baseUrl[1024] = {0,};
             Url & url = httpClient.getUrl();
-			snprintf(baseUrl, sizeof(baseUrl), "http://%s", url.getAddress().c_str());
+//			snprintf(baseUrl, sizeof(baseUrl), "http://%s", url.getAddress().c_str());
+            snprintf(baseUrl, sizeof(baseUrl), "%s", url.toString().c_str());
 			this->onDeviceDescriptionInXml(baseUrl, content);
 		} else if (session.getRequestType() == UPnPHttpRequestType::SCPD) {
 			this->onScpdInXml(session.getServicePosition(), content);
@@ -282,9 +231,9 @@ namespace UPNP {
             XmlDocument doc = parser.parse(content);
             XmlNode node = reader.getActionNode(doc.getRootNode());
             string actionName = reader.getActionNameFromActionNode(node);
-            ActionParameters outParams = reader.getActionParametersFromActionNode(node);
+            UPnPActionParameters outParams = reader.getActionParametersFromActionNode(node);
             if (invokeActionResponseListener) {
-                invokeActionResponseListener->onActionResponse(session.getId(), session.getInvokeActionSession(), outParams);
+                invokeActionResponseListener->onActionResponse(session.getId(), session.getUPnPActionRequest(), outParams);
             }
         }
 	}
@@ -337,7 +286,8 @@ namespace UPNP {
 			UPnPServicePosition & sp = servicePositions[i];
 			string scpdurl = sp.getScpdUrl();
 			Url url = Url(baseUrl);
-			url.setPath(scpdurl);
+//			url.setPath(scpdurl);
+            url.setRelativePath(scpdurl);
 			UPnPHttpRequestSession session(UPnPHttpRequestType::SCPD_TYPE);
 			session.setServicePosition(sp);
 			httpClientThreadPool.request(url, "GET", StringMap(), NULL, 0, session);
@@ -377,12 +327,14 @@ namespace UPNP {
 	vector<UPnPServicePosition> UPnPControlPoint::makeServicePositions(UPnPServicePositionMaker & maker, const UPnPDevice & device) {
     
 		vector<UPnPServicePosition> servicePositions;
-		vector<UPnPService> & services = device.getServices();
-		LOOP_VEC(services, i) {
-			servicePositions.push_back(maker.makeUPnPServicePosition(i, services[i]));
-		}
+		const vector<UPnPService> & services = device.getServices();
+        
+        int i = 0;
+        FOREACH_CONST_VEC(services, UPnPService, iter) {
+            servicePositions.push_back(maker.makeUPnPServicePosition(i++, *iter));
+        }
     
-		vector<UPnPDevice> & embeddedDevices = device.getEmbeddedDevices();
+		const vector<UPnPDevice> & embeddedDevices = device.getEmbeddedDevices();
 		LOOP_VEC(embeddedDevices, i) {
 			maker.enter();
 			maker.setDeviceIndex(i);
@@ -402,7 +354,7 @@ namespace UPNP {
         this->invokeActionResponseListener = invokeActionResponseListener;
     }
     
-    ID_TYPE UPnPControlPoint::invokeAction(const UPnPService & service, const std::string & actionName, const ActionParameters & in) {
+    ID_TYPE UPnPControlPoint::invokeAction(const UPnPService & service, const std::string & actionName, const UPnPActionParameters & in) {
         Url url(service.getBaseUrl());
 		url.setPath(service["controlURL"]);
         StringMap headerFields;
@@ -415,10 +367,10 @@ namespace UPNP {
 		}
         string packet = writer.toString();
 		UPnPHttpRequestSession session(UPnPHttpRequestType::ACTION_INVOKE);
-        InvokeActionSession & as = session.getInvokeActionSession();
-        as.getUPnPService() = service;
-        as.getActionName() = actionName;
-        as.getInParameters() = in;
+        UPnPActionRequest & actionRequest = session.getUPnPActionRequest();
+        actionRequest.service = service;
+        actionRequest.actionName = actionName;
+        actionRequest.inParameters = in;
         session.setId(gen.generate());
         httpClientThreadPool.request(url, "POST", headerFields, packet.c_str(), packet.length(), session);
         return session.getId();

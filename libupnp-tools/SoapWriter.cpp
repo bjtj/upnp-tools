@@ -70,7 +70,7 @@ namespace SOAP {
         XmlDocument doc;
         doc.setPrologue("<?xml version=\"1.0\"?>");
         doc.setRootNode(cursor.getRootNode());
-        XmlDocumentPrinter printer(doc);
-        return printer.printDocument();
+        XmlPrinter printer;
+        return printer.printDocument(doc);
     }
 }

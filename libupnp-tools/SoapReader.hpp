@@ -15,7 +15,7 @@ namespace SOAP {
         
         XML::XmlNode getActionNode(const XML::XmlNode & xmlNode);
         std::string getActionNameFromActionNode(const XML::XmlNode & xmlNode);
-        UPNP::ActionParameters getActionParametersFromActionNode(const XML::XmlNode & xmlNode);
+        UPNP::UPnPActionParameters getActionParametersFromActionNode(const XML::XmlNode & xmlNode);
         
     };
 }

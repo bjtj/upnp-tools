@@ -1,11 +1,13 @@
 #include <algorithm>
 #include "UPnPDevice.hpp"
-
+#include <liboslayer/os.hpp>
 #include "macros.hpp"
 
 namespace UPNP {
 
 	using namespace std;
+    using namespace OS;
+    using namespace UTIL;
 
 	UPnPDevice::UPnPDevice() : parent(NULL) {
 	}
@@ -39,22 +41,38 @@ namespace UPNP {
             rebaseParents(&embeddedDevice);
         }
     }
+    
+    StringMap & UPnPDevice::getProperties() {
+        return properties;
+    }
+    
+    const StringMap & UPnPDevice::getProperties() const {
+        return properties;
+    }
 
-	void UPnPDevice::setUdn(std::string udn) {
+	void UPnPDevice::setUdn(const std::string & udn) {
 		properties["UDN"] = udn;
 	}
 
-	std::string UPnPDevice::getUdn() {
-		return properties["UDN"];
+	std::string UPnPDevice::getUdn() const {
+        return properties.get("UDN");
 	}
 
-	void UPnPDevice::setFriendlyName(std::string friendlyName) {
+	void UPnPDevice::setFriendlyName(const std::string & friendlyName) {
 		properties["friendlyName"] = friendlyName;
 	}
 
-	std::string UPnPDevice::getFriendlyName() {
-		return properties["friendlyName"];
+	std::string UPnPDevice::getFriendlyName() const {
+        return properties.get("friendlyName");
 	}
+    
+    void UPnPDevice::setDeviceType(const std::string & deviceType) {
+        properties["deviceType"] = deviceType;
+    }
+    
+    std::string UPnPDevice::getDeviceType() const {
+        return properties.get("deviceType");
+    }
 
 	void UPnPDevice::setParentDevice(UPnPDevice * parent) {
 		this->parent = parent;
@@ -72,7 +90,7 @@ namespace UPNP {
         return device;
     }
 
-	bool UPnPDevice::isRootDevice() {
+	bool UPnPDevice::isRootDevice() const {
 		return parent == NULL;
 	}
 
@@ -84,12 +102,20 @@ namespace UPNP {
 	void UPnPDevice::removeEmbeddedDevice(size_t index) {
 		embeddedDevices.erase(embeddedDevices.begin() + index);
 	}
+    
+    UPnPDevice & UPnPDevice::getEmbeddedDevice(size_t index) {
+        return embeddedDevices[index];
+    }
 
-	UPnPDevice & UPnPDevice::getEmbeddedDevice(size_t index) const {
+	const UPnPDevice & UPnPDevice::getEmbeddedDevice(size_t index) const {
 		return embeddedDevices[index];
 	}
+    
+    vector<UPnPDevice> & UPnPDevice::getEmbeddedDevices() {
+        return embeddedDevices;
+    }
 
-	vector<UPnPDevice> & UPnPDevice::getEmbeddedDevices() const {
+	const vector<UPnPDevice> & UPnPDevice::getEmbeddedDevices() const {
 		return embeddedDevices;
 	}
 
@@ -104,25 +130,40 @@ namespace UPNP {
 	void UPnPDevice::removeService(size_t index) {
 		services.erase(services.begin() + index);
 	}
+    
+    UPnPService & UPnPDevice::getService(std::string serviceType) {
+        for (vector<UPnPService>::iterator iter = services.begin();
+             iter != services.end(); iter++) {
+            
+            UPnPService & service = *iter;
+            if (!service.getServiceType().compare(serviceType)) {
+                return service;
+            }
+        }
+        throw Exception("service not found", -1, 0);
+    }
 
-	UPnPService UPnPDevice::getService(std::string serviceType) const {
-		for (
-			 vector<UPnPService>::iterator iter = services.begin();
+	const UPnPService & UPnPDevice::getService(std::string serviceType) const {
+		for (vector<UPnPService>::const_iterator iter = services.begin();
 			 iter != services.end(); iter++) {
 			
-			UPnPService & service = *iter;
+			const UPnPService & service = *iter;
 			if (!service.getServiceType().compare(serviceType)) {
 				return service;
 			}
 		}
-		return UPnPService();
+		throw Exception("service not found", -1, 0);
 	}
     
-    UPnPService & UPnPDevice::getService(size_t index) const {
+    UPnPService & UPnPDevice::getService(size_t index) {
         return services[index];
     }
     
-    vector<UPnPService> & UPnPDevice::getServices() const {
+    const UPnPService & UPnPDevice::getService(size_t index) const {
+        return services[index];
+    }
+    
+    const vector<UPnPService> & UPnPDevice::getServices() const {
         return services;
     }
     

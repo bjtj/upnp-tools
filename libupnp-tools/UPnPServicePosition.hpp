@@ -44,7 +44,7 @@ namespace UPNP {
     public:
         UPnPServicePositionMaker(std::string udn);
         virtual ~UPnPServicePositionMaker();
-        UPnPServicePosition makeUPnPServicePosition(size_t index, UPnPService & service);
+        UPnPServicePosition makeUPnPServicePosition(size_t index, const UPnPService & service);
         void enter();
         void setDeviceIndex(size_t index);
         void leave();

@@ -18,6 +18,8 @@ namespace UPNP {
         
         std::string getUuid() const;
         std::string getRest() const;
+        void setUuid(const std::string & uuid);
+        void setRest(const std::string & rest);
         
         std::string toString() const;
     };

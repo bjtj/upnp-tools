@@ -5,24 +5,29 @@
 #include "XmlDocument.hpp"
 
 namespace XML {
-	
-	class XmlDocumentPrinter {
-	private:
-		XmlDocument & doc;
-		
-	public:
-		XmlDocumentPrinter(XmlDocument & doc);
-		virtual ~XmlDocumentPrinter();
-
-		std::string printDocument();
-
-		virtual std::string printNodeTree(const XmlNode & node);
-		virtual std::string printStartTag(const XmlNode & node);
-		virtual std::string printEndTag(const XmlNode & node);
-		virtual std::string printAttribute(const XmlAttribute & attribute);
-		virtual std::string printText(const std::string & text);
+    
+    /**
+     *
+     */
+    class XmlPrinter {
+    private:
+        bool formatted;
+    public:
+        XmlPrinter();
+        virtual ~XmlPrinter();
+        
+        void setFormatted(bool formatted);
+        
+        std::string printDocument(const XmlDocument & doc);
+        
+        virtual std::string printNodeTree(const XmlNode & node);
+        virtual std::string printStartTag(const XmlNode & node);
+        virtual std::string printEndTag(const XmlNode & node);
+        virtual std::string printAttribute(const XmlAttribute & attribute);
+        virtual std::string printText(const std::string & text);
         virtual std::string printNamespaceAndName(const std::string & ns, const std::string & name);
-	};
+    };
+    
 }
 
 #endif

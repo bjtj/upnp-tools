@@ -2,6 +2,7 @@
 #define __SSDP_SERVER_HPP__
 
 #include <liboslayer/os.hpp>
+#include <liboslayer/PollablePool.hpp>
 #include <libhttp-server/HttpHeader.hpp>
 
 #include <string>
@@ -20,7 +21,7 @@ namespace SSDP {
 		OnNotifyHandler() {}
 		virtual ~OnNotifyHandler() {}
 
-		virtual void onNotify(HTTP::HttpHeader & header) = 0;
+		virtual void onNotify(const HTTP::HttpHeader & header) = 0;
 	};
 
 	/**
@@ -32,7 +33,7 @@ namespace SSDP {
 		OnMsearchHandler() {}
 		virtual ~OnMsearchHandler() {}
 
-		virtual void onMsearch(HTTP::HttpHeader & header) = 0;
+        virtual void onMsearch(const HTTP::HttpHeader & header, const OS::InetAddress & remoteAddr) = 0;
 	};
 
 	/**
@@ -44,21 +45,21 @@ namespace SSDP {
 		OnHttpResponseHandler() {}
 		virtual ~OnHttpResponseHandler() {}
 
-		virtual void onHttpResponse(HTTP::HttpHeader & header) = 0;
+		virtual void onHttpResponse(const HTTP::HttpHeader & header) = 0;
 	};
-
-	/**
-	 * @brief polling thread
-	 */
-	class PollingThread : public OS::Thread {
-	private:
-		SSDPServer & server;
-	public:
-		PollingThread(SSDPServer & server);
-		virtual ~PollingThread();
-
-		virtual void run();
-	};
+    
+    /**
+     * @brief Task
+     */
+    class Task {
+    public:
+        Task() {}
+        virtual ~Task() {}
+        virtual void start() = 0;
+        virtual void stop() = 0;
+        virtual bool isRunning() = 0;
+    };
+    
 
 	/**
 	 * @brief ssdp configuration
@@ -82,54 +83,123 @@ namespace SSDP {
 		void setMulticastGroup(std::string group);
 		std::string & getMulticastGroup();
 	};
+    
+    
+    /**
+     * @brief ssdp listener
+     */
+    class SSDPListener : public UTIL::Pollable, public Task {
+    private:
+        SSDPConfig config;
+        std::vector<OnNotifyHandler*> notifyHandlers;
+        std::vector<OnMsearchHandler*> msearchHandlers;
+        OS::Selector selector;
+        OS::DatagramSocket * mcastSocket;
+        
+    public:
+        SSDPListener();
+        SSDPListener(SSDPConfig & config);
+        virtual ~SSDPListener();
+        
+        virtual void start();
+        virtual void stop();
+        virtual bool isRunning();
+        
+        virtual void poll(unsigned long timeout);
+        virtual void listen();
+        
+        virtual void registerSelector(OS::Selector & selector);
+        virtual void unregisterSelector(OS::Selector & selector);
+        virtual bool isSelected(OS::Selector & selector);
+        
+        void handleMessage(const OS::DatagramPacket & packet);
+        
+        void onMsearch(const HTTP::HttpHeader & header, const OS::InetAddress & remoteAddr);
+        void onNotify(const HTTP::HttpHeader & header);
+        
+        void addNotifyHandler(OnNotifyHandler * handler);
+        void removeNotifyHandler(OnNotifyHandler * handler);
+        void addMsearchHandler(OnMsearchHandler * handler);
+        void removeMsearchHandler(OnMsearchHandler * handler);
+    };
+    
+    /**
+     * @brief MsearchSender
+     */
+    class MsearchSender : public UTIL::Pollable, public Task {
+    private:
+        SSDPConfig config;
+        std::vector<OnHttpResponseHandler*> httpResponseHandlers;
+        OS::Selector selector;
+        OS::DatagramSocket * msearchSocket;
+        
+    public:
+        MsearchSender();
+        MsearchSender(SSDPConfig & config);
+        virtual ~MsearchSender();
+        
+        virtual void start();
+        virtual void stop();
+        virtual bool isRunning();
+        
+        virtual void poll(unsigned long timeout);
+        virtual void listen();
+        
+        virtual void registerSelector(OS::Selector & selector);
+        virtual void unregisterSelector(OS::Selector & selector);
+        virtual bool isSelected(OS::Selector & selector);
+        
+        int sendMsearch(const std::string & type);
+        
+        void handleMessage(const OS::DatagramPacket & packet);
+        
+        void onHttpResponse(const HTTP::HttpHeader & header);
+        
+        void addHttpResponseHandler(OnHttpResponseHandler * handler);
+        void removeHttpResponseHandler(OnHttpResponseHandler * handler);
+    };
 
 	
 	/**
 	 * @brief ssdep server
 	 */
-	class SSDPServer {
+    class SSDPServer : public UTIL::PollablePool, public Task {
 	private:
 		SSDPConfig config;
-		std::vector<OnNotifyHandler*> notifyHandlers;
-		std::vector<OnMsearchHandler*> msearchHandlers;
-		std::vector<OnHttpResponseHandler*> httpResponseHandlers;
-		
-		OS::Selector selector;
-		OS::DatagramSocket * mcastSocket;
-		OS::DatagramSocket * msearchSocket;
-		PollingThread * pollingThread;
+
+        SSDPListener ssdpListener;
+        MsearchSender msearchSender;
+        
+        UTIL::PollingThread * pollingThread;
 
 	public:
 		SSDPServer();
 		SSDPServer(SSDPConfig & config);
 		virtual ~SSDPServer();
+        
+    private:
+        void init();
+        
+    public:
 
 		virtual void start();
 		virtual void startAsync();
 		virtual void stop();
 		virtual bool isRunning();
-		virtual void poll(unsigned long timeout);
-
-		void handleMessage(const char * buffer, size_t size);
-
-	private:
-		void startPollingThread();
-		void stopPollingThread();
-		void onMsearch(HTTP::HttpHeader & header);
-		void onNotify(HTTP::HttpHeader & header);
-		void onHttpResponse(HTTP::HttpHeader & header);
-
-	public:
-		virtual int sendMsearch(std::string type);
-
-		void addNotifyHandler(OnNotifyHandler * handler);
-		void removeNotifyHandler(OnNotifyHandler * handler);
-		void addMsearchHandler(OnMsearchHandler * handler);
-		void removeMsearchHandler(OnMsearchHandler * handler);
-		void addHttpResponseHandler(OnHttpResponseHandler * handler);
-		void removeHttpResponseHandler(OnHttpResponseHandler * handler);
+        
+        void startPollingThread();
+        void stopPollingThread();
 
 		SSDPConfig & getConfig();
+        
+        int sendMsearch(const std::string & type);
+        
+        void addMsearchHandler(OnMsearchHandler * handler);
+        void removeMsearchHandler(OnMsearchHandler * handler);
+        void addNotifyHandler(OnNotifyHandler * handler);
+        void removeNotifyHandler(OnNotifyHandler * handler);
+        void addHttpResponseHandler(OnHttpResponseHandler * handler);
+        void removeHttpResponseHandler(OnHttpResponseHandler * handler);
 	};
 	
 }

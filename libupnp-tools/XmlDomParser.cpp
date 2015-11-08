@@ -16,7 +16,8 @@ namespace XML {
     
     void XmlParseCursor::enter(XmlNode & node) {
         if (cursor) {
-            cursor = cursor->addNode(node);
+            cursor->addNode(node);
+            cursor = &cursor->getLastNode();
         } else {
 			rootNode = node;
 			cursor = &rootNode;

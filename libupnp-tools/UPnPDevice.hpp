@@ -5,6 +5,8 @@
 #include <vector>
 #include <string>
 
+#include <liboslayer/StringElement.hpp>
+
 #include "CacheControl.hpp"
 #include "UPnPService.hpp"
 
@@ -15,10 +17,10 @@ namespace UPNP {
 	 */
 	class UPnPDevice {
 	private:
-		std::map<std::string, std::string> properties;
+        UTIL::StringMap properties;
 		UPnPDevice * parent;
-		mutable std::vector<UPnPDevice> embeddedDevices;
-		mutable std::vector<UPnPService> services;
+		std::vector<UPnPDevice> embeddedDevices;
+		std::vector<UPnPService> services;
         std::string baseUrl;
 		CacheControl cacheControl;
 		
@@ -30,26 +32,35 @@ namespace UPNP {
         UPnPDevice copy();
         void rebaseParents();
         void rebaseParents(UPnPDevice * parent);
+        
+        UTIL::StringMap & getProperties();
+        const UTIL::StringMap & getProperties() const;
 
-		void setUdn(std::string udn);
-		std::string getUdn();
-		void setFriendlyName(std::string friendlyName);
-		std::string getFriendlyName();
+		void setUdn(const std::string & udn);
+		std::string getUdn() const;
+		void setFriendlyName(const std::string & friendlyName);
+		std::string getFriendlyName() const;
+        void setDeviceType(const std::string & deviceType);
+        std::string getDeviceType() const;
 		
 		void setParentDevice(UPnPDevice * parent);
 		UPnPDevice * getParentDevice();
         UPnPDevice * getRootDevice();
-		bool isRootDevice();
+		bool isRootDevice() const;
 		void addEmbeddedDevice(UPnPDevice & embeddedDevice);
 		void removeEmbeddedDevice(size_t index);
-		UPnPDevice & getEmbeddedDevice(size_t index) const;
-		std::vector<UPnPDevice> & getEmbeddedDevices() const;
+        UPnPDevice & getEmbeddedDevice(size_t index);
+		const UPnPDevice & getEmbeddedDevice(size_t index) const;
+        std::vector<UPnPDevice> & getEmbeddedDevices();
+		const std::vector<UPnPDevice> & getEmbeddedDevices() const;
 		void setServices(const std::vector<UPnPService> & services);
 		void addService(UPnPService & service);
 		void removeService(size_t index);
-		UPnPService getService(std::string serviceType) const;
-        UPnPService & getService(size_t index) const;
-        std::vector<UPnPService> & getServices() const;
+        UPnPService & getService(std::string serviceType);
+		const UPnPService & getService(std::string serviceType) const;
+        UPnPService & getService(size_t index);
+        const UPnPService & getService(size_t index) const;
+        const std::vector<UPnPService> & getServices() const;
         
         void setBaseUrl(const std::string & baseUrl);
         std::string getBaseUrl();

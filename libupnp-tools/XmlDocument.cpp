@@ -1,8 +1,10 @@
 #include "XmlDocument.hpp"
 #include "macros.hpp"
+#include <liboslayer/os.hpp>
 
 namespace XML {
 
+    using namespace OS;
 	using namespace std;
 
 	static XmlAttribute EMPTY_ATTRIBUTE;
@@ -89,10 +91,9 @@ namespace XML {
         return parent;
     }
     
-    XmlNode * XmlNode::addNode(XmlNode & node) {
-        node.setParent(this);
+    void XmlNode::addNode(const XmlNode & node) {
         children.push_back(node);
-        return &(children[children.size() - 1]);
+        (*children.rbegin()).setParent(this);
     }
     
     const XmlNode & XmlNode::getNode(size_t index) const {
@@ -176,13 +177,26 @@ namespace XML {
 		return cnt;
 	}
     
-    XmlNode XmlNode::getFirstElement() const {
+    XmlNode & XmlNode::getFirstElement() {
         LOOP_VEC(children, i) {
             if (children[i].isElementNode()) {
                 return children[i];
             }
         }
-        return XmlNode();
+        throw Exception("no first element", -1, 0);
+    }
+    
+    const XmlNode & XmlNode::getFirstElement() const {
+        LOOP_VEC(children, i) {
+            if (children[i].isElementNode()) {
+                return children[i];
+            }
+        }
+        throw Exception("no first element", -1, 0);
+    }
+    
+    XmlNode & XmlNode::getLastNode() {
+        return *children.rbegin();
     }
 	
 	const XmlNode& XmlNode::operator[](size_t index) const {
