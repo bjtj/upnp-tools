@@ -88,12 +88,11 @@ namespace SSDP {
     /**
      * @brief ssdp listener
      */
-    class SSDPListener : public UTIL::Pollable, public Task {
+    class SSDPListener : public UTIL::SelectablePollee, public Task {
     private:
         SSDPConfig config;
         std::vector<OnNotifyHandler*> notifyHandlers;
         std::vector<OnMsearchHandler*> msearchHandlers;
-        OS::Selector selector;
         OS::DatagramSocket * mcastSocket;
         
     public:
@@ -106,7 +105,7 @@ namespace SSDP {
         virtual bool isRunning();
         
         virtual void poll(unsigned long timeout);
-        virtual void listen();
+        virtual void listen(UTIL::SelectorPoller & poller);
         
         virtual void registerSelector(OS::Selector & selector);
         virtual void unregisterSelector(OS::Selector & selector);
@@ -126,11 +125,10 @@ namespace SSDP {
     /**
      * @brief MsearchSender
      */
-    class MsearchSender : public UTIL::Pollable, public Task {
+    class MsearchSender : public UTIL::SelectablePollee, public Task {
     private:
         SSDPConfig config;
         std::vector<OnHttpResponseHandler*> httpResponseHandlers;
-        OS::Selector selector;
         OS::DatagramSocket * msearchSocket;
         
     public:
@@ -143,7 +141,7 @@ namespace SSDP {
         virtual bool isRunning();
         
         virtual void poll(unsigned long timeout);
-        virtual void listen();
+        virtual void listen(UTIL::SelectorPoller & poller);
         
         virtual void registerSelector(OS::Selector & selector);
         virtual void unregisterSelector(OS::Selector & selector);
@@ -163,7 +161,7 @@ namespace SSDP {
 	/**
 	 * @brief ssdep server
 	 */
-    class SSDPServer : public UTIL::PollablePool, public Task {
+    class SSDPServer : public UTIL::SelectorPoller, public Task {
 	private:
 		SSDPConfig config;
 

@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <libhttp-server/HttpHeaderParser.hpp>
 #include "macros.hpp"
+#include <liboslayer/Logger.hpp>
 
 namespace SSDP {
 
@@ -11,6 +12,7 @@ namespace SSDP {
 	using namespace HTTP;
 	using namespace UTIL;
 
+    static const Logger & logger = LoggerFactory::getDefaultLogger();
 
 	/**
 	 * @brief ssdp config
@@ -81,7 +83,7 @@ namespace SSDP {
             mcastSocket->setReuseAddr();
             mcastSocket->joinGroup(group);
             
-            mcastSocket->registerSelector(selector);
+            UTIL::SelectablePollee::registerSelector(mcastSocket->getFd());
         }
     }
     void SSDPListener::stop() {
@@ -96,19 +98,18 @@ namespace SSDP {
         return mcastSocket != NULL;
     }
     void SSDPListener::poll(unsigned long timeout) {
-        if (selector.select(timeout) > 0) {
-            if (selector.isSelected(mcastSocket->getFd())) {
-                listen();
-            }
-        }
+        getSelfSelectorPoller().poll(timeout);
     }
     
-    void SSDPListener::listen() {
-        char buffer[4096] = {0,};
-        DatagramPacket packet(buffer, sizeof(buffer));
-        int len;
-        if ((len = mcastSocket->recv(packet)) > 0) {
-            handleMessage(packet);
+    void SSDPListener::listen(SelectorPoller & poller) {
+        
+        if (poller.isSelected(mcastSocket->getFd())) {
+            char buffer[4096] = {0,};
+            DatagramPacket packet(buffer, sizeof(buffer));
+            int len;
+            if ((len = mcastSocket->recv(packet)) > 0) {
+                handleMessage(packet);
+            }
         }
     }
     
@@ -238,7 +239,7 @@ namespace SSDP {
                 throw IOException("bind() error", -1, 0);
             }
             
-            msearchSocket->registerSelector(selector);
+            UTIL::SelectablePollee::registerSelector(msearchSocket->getFd());
         }
 
     }
@@ -252,19 +253,18 @@ namespace SSDP {
         return msearchSocket != NULL;
     }
     void MsearchSender::poll(unsigned long timeout) {
-        if (selector.select(timeout) > 0) {
-            if (selector.isSelected(msearchSocket->getFd())) {
-                listen();
-            }
-        }
+        getSelfSelectorPoller().poll(timeout);
     }
     
-    void MsearchSender::listen() {
-        char buffer[4096] = {0,};
-        DatagramPacket packet(buffer, sizeof(buffer));
-        int len;
-        if ((len = msearchSocket->recv(packet)) > 0) {
-            handleMessage(packet);
+    void MsearchSender::listen(SelectorPoller & poller) {
+        
+        if (poller.isSelected(msearchSocket->getFd())) {
+            char buffer[4096] = {0,};
+            DatagramPacket packet(buffer, sizeof(buffer));
+            int len;
+            if ((len = msearchSocket->recv(packet)) > 0) {
+                handleMessage(packet);
+            }
         }
     }
     
@@ -346,6 +346,8 @@ namespace SSDP {
 	}
 
 	SSDPServer::SSDPServer(SSDPConfig & config) : config(config), ssdpListener(config), msearchSender(config), pollingThread(NULL) {
+        registerSelectablePollee(&ssdpListener);
+        registerSelectablePollee(&msearchSender);
 	}
 
 	SSDPServer::~SSDPServer() {
@@ -363,9 +365,6 @@ namespace SSDP {
         
         ssdpListener.start();
         msearchSender.start();
-        
-        this->registerPollable(&ssdpListener);
-        this->registerPollable(&msearchSender);
 	}
 	void SSDPServer::startAsync() {
         
@@ -384,9 +383,6 @@ namespace SSDP {
         }
 
 		stopPollingThread();
-        
-        this->unregisterPollable(&ssdpListener);
-        this->unregisterPollable(&msearchSender);
         
         ssdpListener.stop();
         msearchSender.stop();

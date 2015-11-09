@@ -76,7 +76,7 @@ namespace UPNP {
         httpServer.startAsync();
         
         if (!pollingThread) {
-            pollingThread = new PollingThread(ssdpListener, 1000);
+            pollingThread = new PollingThread(ssdpListener.getSelfSelectorPoller(), 1000);
             pollingThread->start();
         }
     }
