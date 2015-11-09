@@ -81,6 +81,7 @@
     <ClCompile Include="..\libupnp-tools\UPnPDeviceDetection.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPDeviceMaker.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPDevicePool.cpp" />
+    <ClCompile Include="..\libupnp-tools\UPnPDeviceXmlWriter.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPServer.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPService.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPServiceMaker.cpp" />
@@ -110,6 +111,7 @@
     <ClInclude Include="..\libupnp-tools\UPnPDeviceDetection.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPDeviceMaker.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPDevicePool.hpp" />
+    <ClInclude Include="..\libupnp-tools\UPnPDeviceXmlWriter.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPServer.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPService.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPServiceMaker.hpp" />

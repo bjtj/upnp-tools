@@ -159,9 +159,9 @@ namespace UPNP {
             for (size_t i = 0; i < roots.size(); i++) {
                 UPnPDevice device = roots[i];
                 DatagramSocket socket(remoteAddr.getAddress().c_str(), remoteAddr.getPort());
-                InetAddress address("127.0.0.1", 8080);
                 HttpHeader responseHeader = makeMsearchResponse(st, device);
                 string packet = responseHeader.toString();
+				// logger.logd(packet);
                 socket.send(remoteAddr.getAddress().c_str(), remoteAddr.getPort(), packet.c_str(), packet.length());
             }
         }
@@ -235,8 +235,9 @@ namespace UPNP {
             if (!iface.isLoopBack()) {
                 vector<InetAddress> addrs = iface.getInetAddresses();
                 for (size_t i = 0; i < addrs.size(); i++) {
-                    if (addrs[i].inet4()) {
-                        return addrs[i];
+					InetAddress & addr = addrs[i];
+					if (addr.inet4() && addr.getAddress().compare("0.0.0.0")) {
+                        return addr;
                     }
                 }
             }

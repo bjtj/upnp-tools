@@ -41,12 +41,26 @@ namespace UPNP {
             rebaseParents(&embeddedDevice);
         }
     }
+
+	NameProperty & UPnPDevice::getProperty(const std::string & name) {
+		return properties.get(name);
+	}
     
-    StringMap & UPnPDevice::getProperties() {
+	string & UPnPDevice::getPropertyValue(const string & name) {
+		return properties[name].getValue();
+	}
+	string UPnPDevice::getConstPropertyValue(const string & name) const {
+		if (!properties.has(name)) {
+			return "";
+		}
+		return properties.const_get(name).getValue();
+	}
+
+    LinkedStringProperties & UPnPDevice::getProperties() {
         return properties;
     }
     
-    const StringMap & UPnPDevice::getProperties() const {
+    const LinkedStringProperties & UPnPDevice::getProperties() const {
         return properties;
     }
 
@@ -55,7 +69,7 @@ namespace UPNP {
 	}
 
 	std::string UPnPDevice::getUdn() const {
-        return properties.get("UDN");
+		return getConstPropertyValue("UDN");
 	}
 
 	void UPnPDevice::setFriendlyName(const std::string & friendlyName) {
@@ -63,7 +77,7 @@ namespace UPNP {
 	}
 
 	std::string UPnPDevice::getFriendlyName() const {
-        return properties.get("friendlyName");
+		return getConstPropertyValue("friendlyName");
 	}
     
     void UPnPDevice::setDeviceType(const std::string & deviceType) {
@@ -71,7 +85,7 @@ namespace UPNP {
     }
     
     std::string UPnPDevice::getDeviceType() const {
-        return properties.get("deviceType");
+		return getConstPropertyValue("deviceType");
     }
 
 	void UPnPDevice::setParentDevice(UPnPDevice * parent) {
@@ -229,7 +243,7 @@ namespace UPNP {
 		return cacheControl.outdated();
 	}
 
-	string & UPnPDevice::operator[] (const string & name){
+	NameProperty & UPnPDevice::operator[] (const string & name){
 		return properties[name];
 	}
 }

@@ -17,7 +17,7 @@ namespace UPNP {
 	 */
 	class UPnPDevice {
 	private:
-        UTIL::StringMap properties;
+		UTIL::LinkedStringProperties properties;
 		UPnPDevice * parent;
 		std::vector<UPnPDevice> embeddedDevices;
 		std::vector<UPnPService> services;
@@ -33,8 +33,11 @@ namespace UPNP {
         void rebaseParents();
         void rebaseParents(UPnPDevice * parent);
         
-        UTIL::StringMap & getProperties();
-        const UTIL::StringMap & getProperties() const;
+		UTIL::NameProperty & getProperty(const std::string & name);
+		std::string & getPropertyValue(const std::string & name);
+		std::string getConstPropertyValue(const std::string & name) const;
+        UTIL::LinkedStringProperties & getProperties();
+        const UTIL::LinkedStringProperties & getProperties() const;
 
 		void setUdn(const std::string & udn);
 		std::string getUdn() const;
@@ -75,7 +78,7 @@ namespace UPNP {
 		void setTimeout(unsigned long timeoutMilli);
 		bool outdated() const;
 
-		std::string & operator[] (const std::string & name);
+		UTIL::NameProperty & operator[] (const std::string & name);
 	};
 }
 

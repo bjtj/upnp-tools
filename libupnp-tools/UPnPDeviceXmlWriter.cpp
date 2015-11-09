@@ -35,9 +35,16 @@ namespace UPNP {
     XmlNode UPnPDeviceXmlWriter::makeDeviceXmlNode(const UPnPDevice & device) {
         XmlNode deviceNode;
         deviceNode.setTagName("device");
-        const StringMap props = device.getProperties();
-        for (StringMap::const_iterator iter = props.begin(); iter != props.end(); iter++) {
-            deviceNode.addNode(nameValueXml(iter->first, iter->second));
+        const LinkedStringProperties props = device.getProperties();
+		for (size_t i = 0; i < props.size(); i++) {
+			const NameProperty & prop = props[i];
+			XmlNode node = nameValueXml(prop.getName(), prop.getValue());
+			const LinkedStringMap attrs = prop.getProperties();
+			for (size_t j = 0; j < attrs.size(); j++) {
+				const NameValue & attr = attrs[j];
+				node.setAttribute(attr.getName(), attr.getValue());
+			}
+            deviceNode.addNode(node);
         }
         
         if (device.getServices().size() > 0) {

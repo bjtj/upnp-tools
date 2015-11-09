@@ -23,6 +23,19 @@ int main(int argc, char * args[]) {
     UPnPDevice device;
     device.setUdn("uuid:fc4ec57e-b051-11db-88f8-006008abcdef");
     device.setFriendlyName("Dummy Device");
+	device["deviceType"] = "urn:schemas-upnp-org:device:MediaServer:1";
+    device["manufacturer"] = "Plex, Inc.";
+    device["manufacturerURL"] = "http://www.plexapp.com/";
+    device["modelDescription"] = "Plex Media Server";
+    device["modelName"] = "Plex Media Server";
+    device["modelURL"] = "http://www.plexapp.com/";
+    device["modelNumber"] = "0.9.12.8";
+    device["serialNumber"] = "";
+    device["dlna:X_DLNADOC"] = "DMS-1.50";
+	device["dlna:X_DLNADOC"].setProperty("xmlns:dlna", "urn:schemas-dlna-org:device-1-0");
+
+	// xmlns:dlna="urn:schemas-dlna-org:device-1-0"
+
     server.registerDevice(device);
     
     server.startAsync();
