@@ -144,31 +144,79 @@ namespace UPNP {
 	void UPnPDevice::removeService(size_t index) {
 		services.erase(services.begin() + index);
 	}
-    
-    UPnPService & UPnPDevice::getService(std::string serviceType) {
-        for (vector<UPnPService>::iterator iter = services.begin();
-             iter != services.end(); iter++) {
-            
-            UPnPService & service = *iter;
-            if (!service.getServiceType().compare(serviceType)) {
-                return service;
-            }
-        }
-        throw Exception("service not found", -1, 0);
-    }
 
-	const UPnPService & UPnPDevice::getService(std::string serviceType) const {
-		for (vector<UPnPService>::const_iterator iter = services.begin();
-			 iter != services.end(); iter++) {
-			
-			const UPnPService & service = *iter;
-			if (!service.getServiceType().compare(serviceType)) {
+
+	bool UPnPDevice::hasServiceWithProperty(const string & name, const string & value) const {
+		for (size_t i = 0; i < services.size(); i++) {
+			const UPnPService & service = services[i];
+			if (!service[name].compare(value)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	bool UPnPDevice::hasServiceWithPropertyRecursive(const string & name, const string & value) const {
+
+		if (hasServiceWithProperty(name, value)) {
+			return true;
+		}
+
+		for (size_t i = 0; i < embeddedDevices.size(); i++) {
+			const UPnPDevice & embed = embeddedDevices[i];
+			if (embed.hasServiceWithPropertyRecursive(name, value)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	UPnPService & UPnPDevice::getServiceWithProperty(const string & name, const string & value) {
+		for (size_t i = 0; i < services.size(); i++) {
+			UPnPService & service = services[i];
+			if (!service[name].compare(value)) {
 				return service;
 			}
 		}
-		throw Exception("service not found", -1, 0);
+		throw Exception("no service found/property name: " + name + ", value: " + value, -1, 0);
 	}
-    
+
+	const UPnPService & UPnPDevice::getServiceWithProperty(const string & name, const string & value) const {
+		for (size_t i = 0; i < services.size(); i++) {
+			const UPnPService & service = services[i];
+			if (!service[name].compare(value)) {
+				return service;
+			}
+		}
+		throw Exception("no service found/property name: " + name + ", value: " + value, -1, 0);
+	}
+	UPnPService & UPnPDevice::getServiceWithPropertyRecursive(const string & name, const string & value) {
+		if (hasServiceWithProperty(name, value)) {
+			return getServiceWithProperty(name, value);
+		}
+
+		for (size_t i = 0; i < embeddedDevices.size(); i++) {
+			UPnPDevice & embed = embeddedDevices[i];
+			if (embed.hasServiceWithPropertyRecursive(name, value)) {
+				return getServiceWithPropertyRecursive(name, value);
+			}
+		}
+		throw Exception("no service found/property name: " + name + ", value: " + value, -1, 0);
+	}
+	const UPnPService & UPnPDevice::getServiceWithPropertyRecursive(const string & name, const string & value) const {
+		if (hasServiceWithProperty(name, value)) {
+			return getServiceWithProperty(name, value);
+		}
+
+		for (size_t i = 0; i < embeddedDevices.size(); i++) {
+			const UPnPDevice & embed = embeddedDevices[i];
+			if (embed.hasServiceWithPropertyRecursive(name, value)) {
+				return getServiceWithPropertyRecursive(name, value);
+			}
+		}
+		throw Exception("no service found/property name: " + name + ", value: " + value, -1, 0);
+	}
+	
     UPnPService & UPnPDevice::getService(size_t index) {
         return services[index];
     }

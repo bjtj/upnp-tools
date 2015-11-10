@@ -59,8 +59,15 @@ namespace UPNP {
 		void setServices(const std::vector<UPnPService> & services);
 		void addService(UPnPService & service);
 		void removeService(size_t index);
-        UPnPService & getService(std::string serviceType);
-		const UPnPService & getService(std::string serviceType) const;
+
+		bool hasServiceWithProperty(const std::string & name, const std::string & value) const;
+		bool hasServiceWithPropertyRecursive(const std::string & name, const std::string & value) const;
+
+		UPnPService & getServiceWithProperty(const std::string & name, const std::string & value);
+		const UPnPService & getServiceWithProperty(const std::string & name, const std::string & value) const;
+		UPnPService & getServiceWithPropertyRecursive(const std::string & name, const std::string & value);
+		const UPnPService & getServiceWithPropertyRecursive(const std::string & name, const std::string & value) const;
+
         UPnPService & getService(size_t index);
         const UPnPService & getService(size_t index) const;
         const std::vector<UPnPService> & getServices() const;

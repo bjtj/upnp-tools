@@ -104,9 +104,8 @@ namespace UPNP {
     
     XmlDocument ScpdXmlWriter::makeScpdXmlDocument(const Scpd & scpd) {
         XmlNode rootNode;
-        rootNode.setTagName("root");
-        rootNode.setAttribute("xmlns", "urn:schemas-upnp-org:device-1-0");
-        rootNode.setAttribute("xmlns:dlna", "urn:schemas-dlna-org:device-1-0");
+        rootNode.setTagName("scpd");
+        rootNode.setAttribute("xmlns", "urn:schemas-upnp-org:service-1-0");
         
         XmlNode specVersionNode;
         specVersionNode.setTagName("specVersion");

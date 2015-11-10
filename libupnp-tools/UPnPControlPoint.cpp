@@ -131,11 +131,11 @@ namespace UPNP {
     
 	void UPnPSSDPMessageHandler::onNotify(const HttpHeader & header) {
 		if (deviceDetection) {
-			string nts = header["NTS"];
+			string nts = header.getHeaderFieldIgnoreCase("NTS");
 			if (Text::equalsIgnoreCase(nts, "ssdp:alive")) {
-				deviceDetection->onDeviceHelloWithUrl(header["Location"], header);
+				deviceDetection->onDeviceHelloWithUrl(header.getHeaderFieldIgnoreCase("Location"), header);
 			} else if (Text::equalsIgnoreCase(nts, "ssdp:byebye")) {
-				deviceDetection->onDeviceByeBye(header["USN"]);
+				deviceDetection->onDeviceByeBye(header.getHeaderFieldIgnoreCase("USN"));
 			}
             
 		}
@@ -145,7 +145,7 @@ namespace UPNP {
 	}
 	void UPnPSSDPMessageHandler::onHttpResponse(const HttpHeader & header) {
 		if (deviceDetection) {
-			deviceDetection->onDeviceHelloWithUrl(header["Location"], header);
+			deviceDetection->onDeviceHelloWithUrl(header.getHeaderFieldIgnoreCase("Location"), header);
 		}
 	}
     
@@ -243,13 +243,13 @@ namespace UPNP {
     }
 
 	void UPnPControlPoint::onDeviceCacheUpdate(const HttpHeader & header) {
-		string usn = header["USN"];
+		string usn = header.getHeaderFieldIgnoreCase("USN");
 		Uuid uuid(usn);
 		string udn = uuid.getUuid();
 		if (!devicePool.hasDevice(udn)) {
 			return;
 		}
-		string cacheControl = header["CACHE-CONTROL"];
+		string cacheControl = header.getHeaderFieldIgnoreCase("CACHE-CONTROL");
 		int maxAge = getMaxAgeInSecond(cacheControl);
 		// UPnP spec: minimum 1800 (30 seconds)
 		if (maxAge < 1800) {
@@ -259,7 +259,7 @@ namespace UPNP {
 	}
 
 	void UPnPControlPoint::onDeviceHelloWithUrl(const string & url, const HttpHeader & header) {
-		string usn = header["USN"];
+		string usn = header.getHeaderFieldIgnoreCase("USN");
 		Uuid uuid(usn);
 		if (!filter.filter(uuid.getRest())) {
 			return;

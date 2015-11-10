@@ -22,7 +22,7 @@ namespace UPNP {
      *
      */
     
-    UrlSerializer::UrlSerializer() {
+    UrlSerializer::UrlSerializer(const string & prefix) : prefix(prefix) {
         
     }
     UrlSerializer::~UrlSerializer() {
@@ -50,12 +50,32 @@ namespace UPNP {
         
         return urlPath.substr(f, e - f);
     }
-    
+
+	bool UrlSerializer::isDeviceDescriptionRequest(const string & urlPath) {
+		return Text::endsWith(urlPath, "/device.xml");
+	}
+
+	string UrlSerializer::makeUrlPathPrefix(const string & udn) {
+		string udnWithoutUuidPart = udn;
+		if (Text::startsWith(udnWithoutUuidPart, "uuid:")) {
+			udnWithoutUuidPart = udnWithoutUuidPart.substr(5);
+		}
+		return prefix + (!Text::endsWith(prefix, "/") ? "/" : "") + udnWithoutUuidPart + "/";
+	}
+
+	string UrlSerializer::makeUrlPath(const string & udn, const string & append) {
+		string prefix = makeUrlPathPrefix(udn);
+		string appendWithoutSlash = append;
+		if (Text::startsWith(appendWithoutSlash, "/")) {
+			appendWithoutSlash = appendWithoutSlash.substr(1);
+		}
+		return prefix + (!Text::endsWith(prefix, "/") ? "/" : "") + appendWithoutSlash;
+	}
     /**
      *
      */
 
-	UPnPServer::UPnPServer(int port) : actionRequestHandler(NULL), httpServer(port), pollingThread(NULL) {
+	UPnPServer::UPnPServer(int port) : actionRequestHandler(NULL), httpServer(port), pollingThread(NULL), urlSerializer("") {
         httpServer.vpath("/*", this);
         ssdpListener.addMsearchHandler(this);
 	}
@@ -151,7 +171,7 @@ namespace UPNP {
     
     void UPnPServer::onMsearch(const HttpHeader & header, const InetAddress & remoteAddr) {
         
-        string st = header["ST"];
+        string st = header.getHeaderFieldIgnoreCase("ST");
         if (Text::equalsIgnoreCase(st, "upnp:rootdevice")) {
             
             vector<UPnPDevice> roots = devices.getRootDevices();
@@ -251,45 +271,125 @@ namespace UPNP {
         
         if (!request.remaining()) {
             string path = request.getPath();
-            if (Text::endsWith(path, "/device.xml")) {
-                response.setContentType("text/xml");
-                
-                string udn = urlSerializer.getUdnFromUrlPath(path);
-                udn = "uuid:" + udn;
-                
-                if (!udn.empty() && devices.hasDevice(udn)) {
-                    string xml = getDeviceDescription(udn);
-                    logger.logd(xml);
-                    response.setContentLength((int)xml.length());
-                    response.write(xml);
-                } else {
-                    response.setStatusCode(404, "No device found");
-                    response.write("No device found...");
-                }
+
+            if (urlSerializer.isDeviceDescriptionRequest(path)) {
+                onDeviceDescriptionRequest(request, response);
             } else {
-                response.setStatusCode(404);
+
+				string udn = urlSerializer.getUdnFromUrlPath(path);
+				if (!udn.empty()) {
+
+					udn = "uuid:" + udn;
+					if (devices.hasDevice(udn)) {
+						UPnPDevice device = devices.getDevice(udn);
+						if (device.hasServiceWithPropertyRecursive("SCPDURL", path)) {
+							onScpdRequest(request, response, device.getServiceWithPropertyRecursive("SCPDURL", path));
+						} else if (device.hasServiceWithPropertyRecursive("controlURL", path)) {
+							onControlRequest(request, response, device.getServiceWithPropertyRecursive("controlURL", path));
+						} else if (device.hasServiceWithPropertyRecursive("eventSubURL", path)) {
+							onEventSubRequest(request, response, device.getServiceWithPropertyRecursive("eventSubURL", path));
+						} else {
+							response.setStatusCode(404);
+						}
+
+					} else {
+						response.setStatusCode(404);
+					}
+
+				} else {
+					response.setStatusCode(404);
+				}
             }
             
             response.setComplete();
         }
     }
+
+	void UPnPServer::onDeviceDescriptionRequest(HttpRequest & request, HttpResponse & response) {
+
+        string udn = getUdnFromHttpRequest(request);
+                
+        if (devices.hasDevice(udn)) {
+            string xml = getDeviceDescription(udn);
+
+            logger.logd(xml);
+
+			response.setStatusCode(200);
+			response.setContentType("text/xml");
+            response.setContentLength((int)xml.length());
+            response.write(xml);
+
+        } else {
+            response.setStatusCode(404, "No device found");
+            response.write("No device found...");
+        }
+
+	}
+	void UPnPServer::onScpdRequest(HttpRequest & request, HttpResponse & response, const UPnPService & service) {
+
+		string xml = getScpd(service.getScpd());
+
+		logger.logd(xml);
+
+		response.setStatusCode(200);
+		response.setContentType("text/xml");
+        response.setContentLength((int)xml.length());
+        response.write(xml);
+	}
+	void UPnPServer::onControlRequest(HttpRequest & request, HttpResponse & response, const UPnPService & service) {
+		
+		int len = request.getContentLength();
+		string content = request.getContent();
+
+		logger.logd("(" + Text::toString(len) + ")" + content);
+		
+		response.setStatusCode(500, "Not supported yet");
+
+		if (actionRequestHandler) {
+			//actionRequestHandler->onActionRequest(actionRequest, actionResponse);
+		}
+	}
+	void UPnPServer::onEventSubRequest(HttpRequest & request, HttpResponse & response, const UPnPService & service) {
+		response.setStatusCode(500, "Not supported yet");
+	}
     
+	string UPnPServer::getUdnFromHttpRequest(HttpRequest & request) {
+		string path = request.getPath();
+        string udn = urlSerializer.getUdnFromUrlPath(path);
+        udn = "uuid:" + udn;
+		return udn;
+	}
+
+	string UPnPServer::getActionNameFromHttpRequest(HttpRequest & request) {
+		return "";
+	}
+
     string UPnPServer::getDeviceDescription(const string & udn) {
         UPnPDeviceXmlWriter writer;
         UPnPDevice & device = devices.getDevice(udn);
         XmlDocument doc = writer.makeDeviceDescriptionXmlDocument(device);
-        doc.setPrologue("?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        doc.setPrologue("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         XmlPrinter printer;
+		printer.setShowPrologue(true);
         printer.setFormatted(true);
         return printer.printDocument(doc);
     }
     
-    string UPnPServer::getScpd(const std::string & udn, const std::string scpdPath) {
-        return "";
+    string UPnPServer::getScpd(const Scpd & scpd) {
+		ScpdXmlWriter writer;
+		XmlDocument doc = writer.makeScpdXmlDocument(scpd);
+		doc.setPrologue("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        XmlPrinter printer;
+		printer.setShowPrologue(true);
+        printer.setFormatted(true);
+        return printer.printDocument(doc);
     }
     
     void UPnPServer::setActionRequestHandler(UPnPActionRequestHandler * actionRequestHandler) {
         this->actionRequestHandler = actionRequestHandler;
     }
 	
+	UrlSerializer & UPnPServer::getUrlSerializer() {
+		return urlSerializer;
+	}
 }

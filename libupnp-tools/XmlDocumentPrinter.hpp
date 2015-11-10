@@ -11,15 +11,18 @@ namespace XML {
      */
     class XmlPrinter {
     private:
+		bool showPrologue;
         bool formatted;
     public:
         XmlPrinter();
         virtual ~XmlPrinter();
         
+		void setShowPrologue(bool showPrologue);
         void setFormatted(bool formatted);
         
+		std::string printPrologue(const XmlDocument & doc);
         std::string printDocument(const XmlDocument & doc);
-        
+
         virtual std::string printNodeTree(const XmlNode & node);
         virtual std::string printStartTag(const XmlNode & node);
         virtual std::string printEndTag(const XmlNode & node);

@@ -235,4 +235,11 @@ namespace XML {
     void XmlDocument::setPrologue(const string & prologue) {
         this->prologue = prologue;
     }
+
+	string & XmlDocument::getPrologue() {
+		return prologue;
+	}
+	const string & XmlDocument::getPrologue() const {
+		return prologue;
+	}
 }

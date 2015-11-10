@@ -107,6 +107,8 @@ namespace XML {
         const XmlNode & getRootNode() const;
 		void setRootNode(XmlNode & rootNode);
         void setPrologue(const std::string & prologue);
+		std::string & getPrologue();
+		const std::string & getPrologue() const;
 	};
 
 }

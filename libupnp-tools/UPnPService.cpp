@@ -10,6 +10,12 @@ namespace UPNP {
 	Scpd::~Scpd() {
 	}
 
+	void Scpd::clear() {
+		actions.clear();
+		stateVariables.clear();
+		properties.clear();
+	}
+
 	UPnPAction Scpd::getAction(string name) {
 		for (vector<UPnPAction>::iterator iter = actions.begin();
 			 iter != actions.end(); iter++) {
@@ -67,6 +73,7 @@ namespace UPNP {
     
     void UPnPService::clear() {
         properties.clear();
+		scpd.clear();
     }
 
 	void UPnPService::setServiceType(const std::string & serviceType) {
@@ -82,6 +89,10 @@ namespace UPNP {
 		this->scpd = scpd;
 	}
 	Scpd & UPnPService::getScpd() {
+		return scpd;
+	}
+
+	const Scpd & UPnPService::getScpd() const {
 		return scpd;
 	}
     

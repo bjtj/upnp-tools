@@ -32,12 +32,16 @@ namespace UPNP {
      */
     class UrlSerializer {
     private:
+		std::string prefix;
     public:
-        UrlSerializer();
+        UrlSerializer(const std::string & prefix);
         virtual ~UrlSerializer();
         
         virtual std::string makeDeviceDescriptionUrlPath(const UPnPDevice & device);
         virtual std::string getUdnFromUrlPath(const std::string & urlPath);
+		virtual bool isDeviceDescriptionRequest(const std::string & urlPath);
+		virtual std::string makeUrlPathPrefix(const std::string & udn);
+		virtual std::string makeUrlPath(const std::string & udn, const std::string & append);
     };
     
 	/**
@@ -82,9 +86,19 @@ namespace UPNP {
         OS::InetAddress selectDefaultAddress();
         
         virtual void onHttpRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response);
+		void onDeviceDescriptionRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response);
+		void onScpdRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response, const UPnPService & service);
+		void onControlRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response, const UPnPService & service);
+		void onEventSubRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response, const UPnPService & service);
+
+		std::string getUdnFromHttpRequest(HTTP::HttpRequest & request);
+		std::string getActionNameFromHttpRequest(HTTP::HttpRequest & request);
+
         std::string getDeviceDescription(const std::string & udn);
-        std::string getScpd(const std::string & udn, const std::string scpdPath);
+        std::string getScpd(const Scpd & scpd);
         void setActionRequestHandler(UPnPActionRequestHandler * actionRequestHandler);
+
+		UrlSerializer & getUrlSerializer();
 	};
 	
 }

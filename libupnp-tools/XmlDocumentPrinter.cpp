@@ -9,18 +9,31 @@ namespace XML {
      *
      */
     
-    XmlPrinter::XmlPrinter() : formatted(false) {
+    XmlPrinter::XmlPrinter() : showPrologue(false), formatted(false) {
     }
     
     XmlPrinter::~XmlPrinter() {
     }
-    
+    void XmlPrinter::setShowPrologue(bool showPrologue) {
+		this->showPrologue = showPrologue;
+	}
     void XmlPrinter::setFormatted(bool formatted) {
         this->formatted = formatted;
     }
+
+	string XmlPrinter::printPrologue(const XmlDocument & doc) {
+		string ret = doc.getPrologue();
+		ret.append("\r\n");
+		return ret;
+	}
     
     string XmlPrinter::printDocument(const XmlDocument & doc) {
-        return printNodeTree(doc.getRootNode());
+		string ret;
+		if (showPrologue) {
+			ret.append(printPrologue(doc));
+		}
+        ret.append(printNodeTree(doc.getRootNode()));
+		return ret;
     }
     
     string XmlPrinter::printNodeTree(const XmlNode & node) {
@@ -46,8 +59,9 @@ namespace XML {
         }
         string ret = "<" + tagName + attributes + ">";
         if (formatted) {
-            if (node.getChildren().size() > 0 && node.getFirstContent().empty()) {
-                ret.append("\n");
+            if ((node.getChildren().size() > 1 && node.getFirstContent().empty()) ||
+				(node.getChildren().size() == 1 && node.getChildren()[0].isElementNode())) {
+                ret.append("\r\n");
             }
             
         }
@@ -57,7 +71,7 @@ namespace XML {
     string XmlPrinter::printEndTag(const XmlNode & node) {
         string ret = "</" + printNamespaceAndName(node.getNamespace(), node.getTagName()) + ">";
         if (formatted) {
-            ret.append("\n");
+            ret.append("\r\n");
         }
         return ret;
     }

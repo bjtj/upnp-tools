@@ -22,6 +22,8 @@ namespace UPNP {
 		Scpd();
 		virtual ~Scpd();
 
+		void clear();
+
 		UPnPAction getAction(std::string name);
 		std::vector<UPnPAction> & getActions();
         const std::vector<UPnPAction> & getActions() const;
@@ -58,6 +60,7 @@ namespace UPNP {
         std::string getServiceType() const;
 		void setScpd(const Scpd & scpd);
 		Scpd & getScpd();
+		const Scpd & getScpd() const;
         void setBaseUrl(const std::string & baseUrl);
         std::string getBaseUrl() const;
 
