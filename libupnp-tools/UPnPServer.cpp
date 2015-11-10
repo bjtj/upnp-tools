@@ -267,9 +267,25 @@ namespace UPNP {
 
     void UPnPServer::onHttpRequest(HttpRequest & request, HttpResponse & response) {
         
-        logger.logd("onHttpRequest/path: " + request.getPath());
         
-        if (!request.remaining()) {
+        // TODO: make clean this
+        int len = request.getContentLength();
+        ChunkedBuffer & buffer = request.getChunkedBuffer();
+        if (len > 0) {
+            
+            if (len != buffer.getChunkSize()) {
+                buffer.setChunkSize(len);
+            }
+            
+            char readBuffer[1024] = {0,};
+            int readLen = request.getSocket().recv(readBuffer, buffer.getReadSize(sizeof(readBuffer)));
+            buffer.readChunkData(readBuffer, readLen);
+        }
+        
+        if (buffer.remainingDataBuffer() == 0) {
+            
+            logger.logd("onHttpRequest/path: " + request.getPath());
+            
             string path = request.getPath();
 
             if (urlSerializer.isDeviceDescriptionRequest(path)) {
@@ -339,7 +355,8 @@ namespace UPNP {
 	void UPnPServer::onControlRequest(HttpRequest & request, HttpResponse & response, const UPnPService & service) {
 		
 		int len = request.getContentLength();
-		string content = request.getContent();
+        ChunkedBuffer buffer = request.getChunkedBuffer();
+        string content(buffer.getChunkData(), buffer.getChunkSize());
 
 		logger.logd("(" + Text::toString(len) + ")" + content);
 		
