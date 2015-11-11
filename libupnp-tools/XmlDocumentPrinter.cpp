@@ -1,5 +1,5 @@
 #include "XmlDocumentPrinter.hpp"
-#include <iostream>
+#include "XmlEncoderDecoder.hpp"
 
 namespace XML {
 
@@ -21,13 +21,13 @@ namespace XML {
         this->formatted = formatted;
     }
 
-	string XmlPrinter::printPrologue(const XmlDocument & doc) {
+	string XmlPrinter::printPrologue(const XmlDocument & doc) const {
 		string ret = doc.getPrologue();
 		ret.append("\r\n");
 		return ret;
 	}
     
-    string XmlPrinter::printDocument(const XmlDocument & doc) {
+    string XmlPrinter::printDocument(const XmlDocument & doc) const {
 		string ret;
 		if (showPrologue) {
 			ret.append(printPrologue(doc));
@@ -36,7 +36,7 @@ namespace XML {
 		return ret;
     }
     
-    string XmlPrinter::printNodeTree(const XmlNode & node) {
+    string XmlPrinter::printNodeTree(const XmlNode & node) const {
         string ret;
         if (node.isElementNode()) {
             ret.append(printStartTag(node));
@@ -45,13 +45,13 @@ namespace XML {
             }
             ret.append(printEndTag(node));
         } else if (node.isTextNode()) {
-            ret.append(printText(node.getData()));
+            ret.append(printText(node.getText()));
         }
         
         return ret;
     }
     
-    string XmlPrinter::printStartTag(const XmlNode & node) {
+    string XmlPrinter::printStartTag(const XmlNode & node) const {
         string tagName = printNamespaceAndName(node.getNamespace(), node.getTagName());
         string attributes;
         for (size_t i = 0; i < node.getAttributes().size(); i++) {
@@ -68,7 +68,7 @@ namespace XML {
         return ret;
     }
     
-    string XmlPrinter::printEndTag(const XmlNode & node) {
+    string XmlPrinter::printEndTag(const XmlNode & node) const {
         string ret = "</" + printNamespaceAndName(node.getNamespace(), node.getTagName()) + ">";
         if (formatted) {
             ret.append("\r\n");
@@ -76,7 +76,7 @@ namespace XML {
         return ret;
     }
     
-    string XmlPrinter::printAttribute(const XmlAttribute & attribute) {
+    string XmlPrinter::printAttribute(const XmlAttribute & attribute) const {
         if (attribute.getName().empty()) {
             return "";
         }
@@ -84,11 +84,11 @@ namespace XML {
         return ret;
     }
     
-    string XmlPrinter::printText(const string & text) {
-        return text;
+    string XmlPrinter::printText(const string & text) const {
+        return XmlEncoder::encode(text);
     }
     
-    string XmlPrinter::printNamespaceAndName(const string & ns, const string & name) {
+    string XmlPrinter::printNamespaceAndName(const string & ns, const string & name) const {
         string ret = name;
         if (!ns.empty()) {
             ret = ns + ":" + name;

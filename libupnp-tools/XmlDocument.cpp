@@ -59,12 +59,12 @@ namespace XML {
     XmlNode::~XmlNode() {
     }
 
-	const string & XmlNode::getData() const {
-        return data;
+	const string & XmlNode::getText() const {
+        return text;
     }
 	
-    void XmlNode::setData(const string & data) {
-        this->data = data;
+    void XmlNode::setText(const string & text) {
+        this->text = text;
     }
 
 	const string & XmlNode::getNamespace() const {
@@ -105,7 +105,7 @@ namespace XML {
 	}
 
 	bool XmlNode::empty() {
-		return data.empty() && tagName.empty();
+		return text.empty() && tagName.empty();
 	}
 
 	size_t XmlNode::size() {
@@ -155,11 +155,11 @@ namespace XML {
 	}
 
 	string XmlNode::getFirstContent() const {
-		return children.size() > 0 ? children[0].getData() : "";
+		return children.size() > 0 ? children[0].getText() : "";
 	}
 
 	bool XmlNode::isTextNode() const {
-		return !data.empty();
+		return !text.empty();
 	}
 	
 	bool XmlNode::isElementNode() const {

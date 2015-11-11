@@ -67,7 +67,7 @@ namespace SSDP {
 	class SSDPConfig {
 	private:
 		std::string userAgent;
-		int port;
+		int multicastPort;
 		int msearchPort;
 		std::string multicastGroup;
 	public:
@@ -76,8 +76,8 @@ namespace SSDP {
 
 		void setUserAgent(std::string userAgent);
 		std::string & getUserAgent();
-		void setPort(int port);
-		int getPort();
+		void setMulticastPort(int port);
+		int getMulticastPort();
 		void setMsearchPort(int msearchPort);
 		int getMsearchPort();
 		void setMulticastGroup(std::string group);
@@ -120,6 +120,8 @@ namespace SSDP {
         void removeNotifyHandler(OnNotifyHandler * handler);
         void addMsearchHandler(OnMsearchHandler * handler);
         void removeMsearchHandler(OnMsearchHandler * handler);
+        
+        int sendMulticast(const char * data, size_t len);
     };
     
     /**

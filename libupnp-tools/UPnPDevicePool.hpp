@@ -13,6 +13,7 @@ namespace UPNP {
     private:
         OS::Semaphore deviceTableLock;
         std::map<std::string, UPnPDevice> deviceTable;
+        
     public:
         UPnPDevicePool();
         virtual ~UPnPDevicePool();
@@ -30,6 +31,9 @@ namespace UPNP {
         std::vector<UPnPDevice> getWholeDevices() const;
         std::vector<UPnPDevice> getDevicesRecursive(const UPnPDevice & device) const;
         std::vector<UPnPService> getWholeServices() const;
+        
+        void lock();
+        void unlock();
     };
 
 }

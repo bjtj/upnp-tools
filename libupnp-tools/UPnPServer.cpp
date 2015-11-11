@@ -6,6 +6,7 @@
 #include "UPnPDeviceMaker.hpp"
 #include "UPnPDeviceXmlWriter.hpp"
 #include "XmlDocumentPrinter.hpp"
+#include "SoapWriter.hpp"
 #include "SoapReader.hpp"
 
 namespace UPNP {
@@ -137,38 +138,92 @@ namespace UPNP {
     }
     
     void UPnPServer::registerDevice(const UPnPDevice & device) {
-        announceDeviceRecursive(device);
-        devices.addDevice(device);
+        if (!devices.hasDevice(device.getUdn())) {
+            devices.addDevice(device);
+            announceDeviceRecursive(device);
+        }
     }
     void UPnPServer::unregisterDevice(const std::string & udn) {
         if (devices.hasDevice(udn)) {
             UPnPDevice & device = devices.getDevice(udn);
             byebyeDeviceRecursive(device);
+            devices.removeDevice(udn);
         }
     }
-    
-    void UPnPServer::announceDevice(const UPnPDevice & device) {
-        DatagramSocket socket("239.255.255.250", 1900);
-        InetAddress address("127.0.0.1", 8080);
-        HttpHeader responseHeader = makeNofityAlive(device);
-        string packet = responseHeader.toString();
-        socket.send("239.255.255.250", 1900, packet.c_str(), packet.length());
-    }
     void UPnPServer::announceDeviceRecursive(const UPnPDevice & device) {
-        
+        announceDevice(device);
+        const vector<UPnPDevice> & embeds = device.getEmbeddedDevices();
+        for (size_t i = 0; i < embeds.size(); i++) {
+            const UPnPDevice & embed = embeds[i];
+            announceDevice(embed);
+        }
+        const vector<UPnPService> & services = device.getServices();
+        for (size_t i = 0; i < services.size(); i++) {
+            const UPnPService & service = services[i];
+            announceService(device, service);
+        }
     }
-    void UPnPServer::announceService(const UPnPService & service) {
+    void UPnPServer::announceDevice(const UPnPDevice & device) {
+        HttpHeader notifyHeader = makeNotifyAlive(device);
+        string packet = notifyHeader.toString();
+        ssdpListener.sendMulticast(packet.c_str(), packet.length());
         
+        if (device.isRootDevice()) {
+            notifyHeader = makeNotifyAlive(device.getUdn(), device.getUdn(), device);
+            packet = notifyHeader.toString();
+            ssdpListener.sendMulticast(packet.c_str(), packet.length());
+            
+            Uuid uuid(device.getUdn());
+            string nt = device.getDeviceType();
+            uuid.setRest(nt);
+            
+            notifyHeader = makeNotifyAlive(nt, uuid.toString(), device);
+            packet = notifyHeader.toString();
+            ssdpListener.sendMulticast(packet.c_str(), packet.length());
+        }
+    }
+    void UPnPServer::announceService(const UPnPDevice & device, const UPnPService & service) {
+        HttpHeader notifyHeader = makeNotifyAlive(device, service);
+        string packet = notifyHeader.toString();
+        ssdpListener.sendMulticast(packet.c_str(), packet.length());
     }
     
-    void UPnPServer::byebyeDevice(const UPnPDevice & device) {
-        
-    }
     void UPnPServer::byebyeDeviceRecursive(const UPnPDevice & device) {
-        
+        byebyeDevice(device);
+        const vector<UPnPDevice> & embeds = device.getEmbeddedDevices();
+        for (size_t i = 0; i < embeds.size(); i++) {
+            const UPnPDevice & embed = embeds[i];
+            byebyeDevice(embed);
+        }
+        const vector<UPnPService> & services = device.getServices();
+        for (size_t i = 0; i < services.size(); i++) {
+            const UPnPService & service = services[i];
+            byebyeService(device, service);
+        }
     }
-    void UPnPServer::byebyeService(const UPnPService & service) {
+    void UPnPServer::byebyeDevice(const UPnPDevice & device) {
+        HttpHeader notifyHeader = makeNotifyByebye(device);
+        string packet = notifyHeader.toString();
+        ssdpListener.sendMulticast(packet.c_str(), packet.length());
         
+        if (device.isRootDevice()) {
+            notifyHeader = makeNotifyByebye(device.getUdn(), device.getUdn(), device);
+            packet = notifyHeader.toString();
+            ssdpListener.sendMulticast(packet.c_str(), packet.length());
+            
+            Uuid uuid(device.getUdn());
+            string nt = device.getDeviceType();
+            uuid.setRest(nt);
+            
+            notifyHeader = makeNotifyByebye(nt, uuid.toString(), device);
+            packet = notifyHeader.toString();
+            ssdpListener.sendMulticast(packet.c_str(), packet.length());
+        }
+    }
+    void UPnPServer::byebyeService(const UPnPDevice & device, const UPnPService & service) {
+        HttpHeader notifyHeader = makeNotifyByebye(device, service);
+        string packet = notifyHeader.toString();
+        ssdpListener.sendMulticast(packet.c_str(), packet.length());
     }
     
     void UPnPServer::onMsearch(const HttpHeader & header, const InetAddress & remoteAddr) {
@@ -181,7 +236,7 @@ namespace UPNP {
             for (size_t i = 0; i < roots.size(); i++) {
                 UPnPDevice device = roots[i];
                 DatagramSocket socket(remoteAddr.getAddress().c_str(), remoteAddr.getPort());
-                HttpHeader responseHeader = makeMsearchResponse(st, device);
+                HttpHeader responseHeader = makeMsearchResponse(device);
                 string packet = responseHeader.toString();
 				// logger.logd(packet);
                 socket.send(remoteAddr.getAddress().c_str(), remoteAddr.getPort(), packet.c_str(), packet.length());
@@ -189,13 +244,14 @@ namespace UPNP {
         }
     }
     
-    HttpHeader UPnPServer::makeMsearchResponse(const string & st, const UPnPDevice & device) {
+    HttpHeader UPnPServer::makeMsearchResponse(const UPnPDevice & device) {
+        
         Uuid uuid(device.getUdn());
+        string st = device.getDeviceType();
         if (device.isRootDevice()) {
-            uuid.setRest("upnp:rootdevice");
-        } else {
-            uuid.setRest(device.getDeviceType());
+            st = "upnp:rootdevice";
         }
+        uuid.setRest(st);
         
         string deviceDescriptionLocation = makeDeviceDescriptionUrl(device);
         
@@ -211,15 +267,28 @@ namespace UPNP {
         return responseHeader;
     }
     
-    HttpHeader UPnPServer::makeNofityAlive(const UPnPDevice & device) {
+    HttpHeader UPnPServer::makeNotifyAlive(const UPnPDevice & device) {
         
         Uuid uuid(device.getUdn());
+        string nt = device.getDeviceType();
         if (device.isRootDevice()) {
-            uuid.setRest("upnp:rootdevice");
-        } else {
-            uuid.setRest(device.getDeviceType());
+            nt = "upnp:rootdevice";
         }
+        uuid.setRest(nt);
         
+        return makeNotifyAlive(nt, uuid.toString(), device);
+    }
+    HttpHeader UPnPServer::makeNotifyAlive(const UPnPDevice & device, const UPnPService & service) {
+        
+        Uuid uuid(device.getUdn());
+        string nt = service.getServiceType();
+        uuid.setRest(nt);
+        
+        string deviceDescriptionLocation = makeDeviceDescriptionUrl(device);
+        
+        return makeNotifyAlive(nt, uuid.toString(), device);
+    }
+    HttpHeader UPnPServer::makeNotifyAlive(const string & nt, const string usn, const UPnPDevice & device) {
         string deviceDescriptionLocation = makeDeviceDescriptionUrl(device);
         
         HttpHeader responseHeader;
@@ -227,14 +296,43 @@ namespace UPNP {
         responseHeader.setParts("NOTIFY", "*", "HTTP/1.1");
         responseHeader.setHeaderField("HOST", "239.255.255.250:1900");
         responseHeader.setHeaderField("CACHE-CONTROL", "max-age=1800");
-        responseHeader.setHeaderField("NT", "upnp:rootdevice");
-        responseHeader.setHeaderField("USN", uuid.toString());
+        responseHeader.setHeaderField("NT", nt);
+        responseHeader.setHeaderField("USN", usn);
         responseHeader.setHeaderField("NTS", "ssdp:alive");
         responseHeader.setHeaderField("SERVER", "Platform/0.1 UPnP/0.1 App/0.1");
         responseHeader.setHeaderField("LOCATION", deviceDescriptionLocation);
         return responseHeader;
     }
-    
+    HttpHeader UPnPServer::makeNotifyByebye(const UPnPDevice & device) {
+        
+        Uuid uuid(device.getUdn());
+        string nt = device.getDeviceType();
+        if (device.isRootDevice()) {
+            nt = "upnp:rootdevice";
+        }
+        uuid.setRest(nt);
+        
+        return makeNotifyByebye(nt, uuid.toString(), device);
+    }
+    HttpHeader UPnPServer::makeNotifyByebye(const UPnPDevice & device, const UPnPService & service) {
+        Uuid uuid(device.getUdn());
+        string nt = service.getServiceType();
+        uuid.setRest(nt);
+        
+        return makeNotifyByebye(nt, uuid.toString(), device);
+    }
+    HttpHeader UPnPServer::makeNotifyByebye(const std::string & nt, const std::string usn, const UPnPDevice & device) {
+        
+        HttpHeader responseHeader;
+        responseHeader.setContentLength(0);
+        responseHeader.setParts("NOTIFY", "*", "HTTP/1.1");
+        responseHeader.setHeaderField("HOST", "239.255.255.250:1900");
+        responseHeader.setHeaderField("NT", nt);
+        responseHeader.setHeaderField("USN", usn);
+        responseHeader.setHeaderField("NTS", "ssdp:byebye");
+        responseHeader.setHeaderField("SERVER", "Platform/0.1 UPnP/0.1 App/0.1");
+        return responseHeader;
+    }
     string UPnPServer::makeDeviceDescriptionUrl(const UPnPDevice & device) {
         
         InetAddress addr = getHttpServerAddress();
@@ -274,7 +372,7 @@ namespace UPNP {
         
         if (!buffer.remain()) {
             
-            logger.logd("onHttpRequest/path: " + request.getPath());
+//            logger.logd("onHttpRequest/path: " + request.getPath());
             
             string path = request.getPath();
 
@@ -318,8 +416,6 @@ namespace UPNP {
         if (devices.hasDevice(udn)) {
             string xml = getDeviceDescription(udn);
 
-            logger.logd(xml);
-
 			response.setStatusCode(200);
 			response.setContentType("text/xml");
             response.setContentLength((int)xml.length());
@@ -334,8 +430,6 @@ namespace UPNP {
 	void UPnPServer::onScpdRequest(HttpRequest & request, HttpResponse & response, const UPnPService & service) {
 
 		string xml = getScpd(service.getScpd());
-
-		logger.logd(xml);
 
 		response.setStatusCode(200);
 		response.setContentType("text/xml");
@@ -356,7 +450,6 @@ namespace UPNP {
 		}
 
 		string actionName = getActionNameFromHttpRequest(request);
-		logger.logd("Action Name: " + actionName);
 
 		XmlDomParser parser;
 		XmlDocument doc = parser.parse(content);
@@ -364,18 +457,33 @@ namespace UPNP {
 		SoapReader reader;
 		XmlNode actionNode = reader.getActionNode(doc.getRootNode());
 		UPnPActionParameters params = reader.getActionParametersFromActionNode(actionNode);
-
-		vector<string> names = params.getParameterNames();
-		for (size_t i = 0; i < names.size(); i++) {
-			string & name = names[i];
-			logger.logd("argument: " + name);
-		}
+        
+        UPnPActionRequest actionRequest(service, actionName);
+        actionRequest = params;
+        
+        UPnPActionResponse actionResponse;
 		
+        actionResponse.setResult(UPnPActionResult(false, 500, "Not supported"));
 		if (actionRequestHandler) {
-			//actionRequestHandler->onActionRequest(actionRequest, actionResponse);
+			actionRequestHandler->onActionRequest(actionRequest, actionResponse);
 		}
-
-		response.setStatusCode(500, "Not supported yet");
+        
+        if (actionResponse.getResult().isSuccess()) {
+            SoapResponseWriter writer;
+            writer.setSoapAction(service.getServiceType(), actionName);
+            vector<string> names = actionResponse.getParameterNames();
+            for (size_t i = 0; i < names.size(); i++) {
+                string & name = names[i];
+                string value = actionResponse[name];
+                writer.setArgument(name, value);
+            }
+            writer.setPrologue("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+            writer.setShowPrologue(true);
+            response.setContentType("");
+            response.write(writer.toString());
+        }
+        
+        response.setStatusCode(actionResponse.getResult().getErrorCode(), actionResponse.getResult().getErrorMessage());
 	}
 	void UPnPServer::onEventSubRequest(HttpRequest & request, HttpResponse & response, const UPnPService & service) {
 		response.setStatusCode(500, "Not supported yet");
@@ -412,7 +520,6 @@ namespace UPNP {
         doc.setPrologue("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         XmlPrinter printer;
 		printer.setShowPrologue(true);
-        printer.setFormatted(true);
         return printer.printDocument(doc);
     }
     
@@ -422,7 +529,6 @@ namespace UPNP {
 		doc.setPrologue("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         XmlPrinter printer;
 		printer.setShowPrologue(true);
-        printer.setFormatted(true);
         return printer.printDocument(doc);
     }
     

@@ -47,7 +47,7 @@ namespace XML {
      */
 	class XmlNode {
 	private:
-        std::string data;
+        std::string text;
 		std::string ns;
 		std::string tagName;
 		std::vector<XmlAttribute> attributes;
@@ -57,8 +57,8 @@ namespace XML {
 	public:
         XmlNode();
         virtual ~XmlNode();
-        const std::string & getData() const;
-        void setData(const std::string & data);
+        const std::string & getText() const;
+        void setText(const std::string & data);
 		const std::string & getNamespace() const;
 		void setNamespace(const std::string & ns);
 		const std::string & getTagName() const;

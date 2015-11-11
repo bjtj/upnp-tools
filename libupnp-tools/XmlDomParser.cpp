@@ -1,8 +1,6 @@
 #include <liboslayer/Text.hpp>
-
 #include "XmlDomParser.hpp"
-
-#include <iostream>
+#include "XmlEncoderDecoder.hpp"
 
 namespace XML {
 
@@ -282,7 +280,7 @@ namespace XML {
 
 			string text = reader.readText();
 			XmlNode textNode;
-			textNode.setData(text);
+            textNode.setText(XmlDecoder::decode(text));
 			cursor.append(textNode);
 		}
 

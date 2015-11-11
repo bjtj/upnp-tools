@@ -7,18 +7,38 @@
 
 namespace UPNP {
     
+    class UPnPActionResult {
+    private:
+        bool success;
+        int errorCode;
+        std::string errorMessage;
+        
+    public:
+        UPnPActionResult();
+        UPnPActionResult(bool success, int errorCode, const std::string & errorMessage);
+        virtual ~UPnPActionResult();
+        
+        bool isSuccess();
+        void setSuccess(bool success);
+        int getErrorCode() const;
+        void setErrorCode(int errorCode);
+        std::string getErrorMessage() const;
+        void setErrorMessage(const std::string & errorMessage);
+    };
+    
     /**
      * @brief action parameters
      */
     class UPnPActionParameters {
     private:
-        UTIL::LinkedStringMap params;
+        UTIL::LinkedStringMap parameters;
         
     public:
         UPnPActionParameters();
         virtual ~UPnPActionParameters();
         size_t size() const;
 
+        void setParameters(const UTIL::LinkedStringMap & parameters);
 		std::vector<std::string> getParameterNames() const;
 		std::string & getParameter(const std::string & name);
 		std::string getParameter(const std::string & name) const;
@@ -30,27 +50,36 @@ namespace UPNP {
     /**
      * @brief
      */
-    class UPnPActionRequest {
-    public:
+    class UPnPActionRequest : public UPnPActionParameters {
+    private:
         UPnPService service;
         std::string actionName;
-        UPnPActionParameters inParameters;
         
     public:
         UPnPActionRequest();
+        UPnPActionRequest(const UPnPService & service, const std::string & actionName);
+        UPnPActionRequest(const UPnPActionParameters & other);
         virtual ~UPnPActionRequest();
+        
+        void setService(const UPnPService & service);
+        UPnPService & getService();
+        void setActionName(const std::string & actionName);
+        std::string getActionName();
     };
     
     /**
      * @brief
      */
-    class UPnPActionResponse {
-    public:
-        UPnPActionParameters outParameters;
+    class UPnPActionResponse : public UPnPActionParameters {
+    private:
+        UPnPActionResult result;
         
     public:
         UPnPActionResponse();
         virtual ~UPnPActionResponse();
+        
+        void setResult(const UPnPActionResult & result);
+        UPnPActionResult & getResult();
     };
 }
 

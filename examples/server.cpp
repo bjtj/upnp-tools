@@ -121,7 +121,12 @@ public:
 	}
 	virtual ~ActionHandler() {
 	}
-	void onActionRequest(const UPnPActionRequest & request, const UPnPActionResponse & response) {
+	void onActionRequest(const UPnPActionRequest & request, UPnPActionResponse & response) {
+        cout << "onActionRequest" << endl;
+        response["Source"] = "source";
+        response["Sink"] = "<&test xml decode&>";
+        
+        response.setResult(UPnPActionResult(true, 200, "OK"));
 	}
 };
 
@@ -132,11 +137,10 @@ int main(int argc, char * args[]) {
     UPnPServer server(8083);
 
 	ActionHandler actionHandler;
-    
-	server.setActionRequestHandler(&actionHandler);
-	UPnPDevice device = makeDevice(server.getUrlSerializer());
+    server.setActionRequestHandler(&actionHandler);
 
-    server.registerDevice(device);
+	UPnPDevice device = makeDevice(server.getUrlSerializer());
+//    server.registerDevice(device);
     
     server.startAsync();
     
@@ -147,7 +151,12 @@ int main(int argc, char * args[]) {
             break;
         }
         if (!strcmp(buffer, "a")) {
-            server.announceDevice(server.getDevice("uuid:fc4ec57e-b051-11db-88f8-006008abcdef"));
+            server.registerDevice(device);
+//            server.announceDevice(server.getDevice("uuid:fc4ec57e-b051-11db-88f8-006008abcdef"));
+        }
+        if (!strcmp(buffer, "b")) {
+//            server.announceDevice(server.getDevice("uuid:fc4ec57e-b051-11db-88f8-006008abcdef"));
+            server.unregisterDevice(device.getUdn());
         }
     }
     

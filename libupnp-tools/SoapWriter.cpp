@@ -26,8 +26,8 @@ namespace SOAP {
 		arguments[name] = value;
     }
     
-    string SoapWriter::writeArgument(const string & name, const string & value) const {
-        return "<" + name + ">" + value + "</" + name + ">";
+    void SoapWriter::setPrologue(const string & prologue) {
+        this->prologue = prologue;
     }
     
     string SoapWriter::toString() const {
@@ -54,11 +54,10 @@ namespace SOAP {
         
         LOOP_VEC(arguments, i) {
 			const NameValue & argument = arguments.const_getByIndex(i);
-            //NameValue argument = arguments[i];
             XmlNode argumentNameNode;
 			XmlNode argumentValueNode;
 			argumentNameNode.setTagName(argument.getName());
-			argumentValueNode.setData(argument.getValue());
+			argumentValueNode.setText(argument.getValue());
             cursor.enter(argumentNameNode);
 			cursor.append(argumentValueNode);
 			cursor.leave();
@@ -69,9 +68,22 @@ namespace SOAP {
 		cursor.leave();
         
         XmlDocument doc;
-        doc.setPrologue("<?xml version=\"1.0\"?>");
+        doc.setPrologue(prologue);
         doc.setRootNode(cursor.getRootNode());
-        XmlPrinter printer;
-        return printer.printDocument(doc);
+        
+        return printDocument(doc);
+    }
+    
+    
+    
+    
+    SoapResponseWriter::SoapResponseWriter() {
+        
+    }
+    SoapResponseWriter::~SoapResponseWriter() {
+    }
+    
+    void SoapResponseWriter::setSoapAction(const string & urn, const string & actionName) {
+        SoapWriter::setSoapAction(urn, actionName + "Response");
     }
 }

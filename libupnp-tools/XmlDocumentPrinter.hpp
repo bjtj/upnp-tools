@@ -20,15 +20,15 @@ namespace XML {
 		void setShowPrologue(bool showPrologue);
         void setFormatted(bool formatted);
         
-		std::string printPrologue(const XmlDocument & doc);
-        std::string printDocument(const XmlDocument & doc);
+		std::string printPrologue(const XmlDocument & doc) const;
+        std::string printDocument(const XmlDocument & doc) const;
 
-        virtual std::string printNodeTree(const XmlNode & node);
-        virtual std::string printStartTag(const XmlNode & node);
-        virtual std::string printEndTag(const XmlNode & node);
-        virtual std::string printAttribute(const XmlAttribute & attribute);
-        virtual std::string printText(const std::string & text);
-        virtual std::string printNamespaceAndName(const std::string & ns, const std::string & name);
+        virtual std::string printNodeTree(const XmlNode & node) const;
+        virtual std::string printStartTag(const XmlNode & node) const;
+        virtual std::string printEndTag(const XmlNode & node) const;
+        virtual std::string printAttribute(const XmlAttribute & attribute) const;
+        virtual std::string printText(const std::string & text) const;
+        virtual std::string printNamespaceAndName(const std::string & ns, const std::string & name) const;
     };
     
 }

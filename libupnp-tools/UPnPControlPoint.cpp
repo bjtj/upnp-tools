@@ -371,9 +371,9 @@ namespace UPNP {
         string packet = writer.toString();
 		UPnPHttpRequestSession session(UPnPHttpRequestType::ACTION_INVOKE);
         UPnPActionRequest & actionRequest = session.getUPnPActionRequest();
-        actionRequest.service = service;
-        actionRequest.actionName = actionName;
-        actionRequest.inParameters = in;
+        actionRequest.setService(service);
+        actionRequest.setActionName(actionName);
+        actionRequest = in;
         session.setId(gen.generate());
         httpClientThreadPool.request(url, "POST", headerFields, packet.c_str(), packet.length(), session);
         return session.getId();

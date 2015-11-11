@@ -130,4 +130,12 @@ namespace UPNP {
         deviceTableLock.post();
         return ret;
     }
+    
+    void UPnPDevicePool::lock() {
+        deviceTableLock.wait();
+    }
+    
+    void UPnPDevicePool::unlock() {
+        deviceTableLock.post();
+    }
 }

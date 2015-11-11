@@ -86,7 +86,7 @@ namespace UPNP {
         XmlNode node;
         node.setTagName(name);
         XmlNode contentNode;
-        contentNode.setData(value);
+        contentNode.setText(value);
         node.addNode(contentNode);
         return node;
     }
@@ -184,7 +184,7 @@ namespace UPNP {
         XmlNode node;
         node.setTagName(name);
         XmlNode contentNode;
-        contentNode.setData(value);
+        contentNode.setText(value);
         node.addNode(contentNode);
         return node;
     }

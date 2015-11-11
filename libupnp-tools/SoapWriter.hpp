@@ -4,25 +4,36 @@
 #include <string>
 #include <vector>
 #include <liboslayer/StringElement.hpp>
+#include "XmlDocumentPrinter.hpp"
 
 namespace SOAP {
     
-    class SoapWriter {
+    class SoapWriter : public XML::XmlPrinter {
     private:
         std::string urn;
         std::string actionName;
         UTIL::LinkedStringMap arguments;
+        std::string prologue;
         
     public:
         SoapWriter();
         virtual ~SoapWriter();
         
-        void setSoapAction(const std::string & urn, const std::string & actionName);
-        void setArgument(const std::string & name, const std::string & value);
+        virtual void setSoapAction(const std::string & urn, const std::string & actionName);
+        virtual void setArgument(const std::string & name, const std::string & value);
+        void setPrologue(const std::string & prologue);
         
-        std::string writeArgument(const std::string & name, const std::string & value) const;
+        virtual std::string toString() const;
+    };
+    
+    
+    class SoapResponseWriter : public SoapWriter {
+    private:
+    public:
+        SoapResponseWriter();
+        virtual ~SoapResponseWriter();
         
-        std::string toString() const;
+        virtual void setSoapAction(const std::string & urn, const std::string & actionName);
     };
 }
 

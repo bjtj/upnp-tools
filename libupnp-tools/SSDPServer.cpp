@@ -19,7 +19,7 @@ namespace SSDP {
 	 */
 	SSDPConfig::SSDPConfig() :
 		userAgent("Linux/2.x UPnP/1.1 App/0.1"),
-		port(1900),
+		multicastPort(1900),
 		msearchPort(56789),
 		multicastGroup("239.255.255.250") {
 	}
@@ -35,16 +35,16 @@ namespace SSDP {
 		return userAgent;
 	}
 
-	void SSDPConfig::setPort(int port) {
-		this->port = port;
+	void SSDPConfig::setMulticastPort(int multicastPort) {
+		this->multicastPort = multicastPort;
 	}
 
-	int SSDPConfig::getPort() {
-		return port;
+	int SSDPConfig::getMulticastPort() {
+		return multicastPort;
 	}
 
 	void SSDPConfig::setMsearchPort(int msearchPort) {
-		this->msearchPort = port;
+		this->msearchPort = msearchPort;
 	}
 
 	int SSDPConfig::getMsearchPort() {
@@ -76,10 +76,10 @@ namespace SSDP {
         
     }
     void SSDPListener::start() {
-        int port = config.getPort();
+        int multicastPort = config.getMulticastPort();
         string & group = config.getMulticastGroup();
         if (!mcastSocket) {
-            mcastSocket = new DatagramSocket(port);
+            mcastSocket = new DatagramSocket(multicastPort);
             mcastSocket->setReuseAddr();
             mcastSocket->joinGroup(group);
             
@@ -185,6 +185,14 @@ namespace SSDP {
                                          handler), notifyHandlers.end());
     }
     
+    int SSDPListener::sendMulticast(const char * data, size_t len) {
+        if (mcastSocket) {
+            string groupAddr = config.getMulticastGroup();
+            int groupPort = config.getMulticastPort();
+            return mcastSocket->send(groupAddr.c_str(), groupPort, data, len);
+        }
+        return -1;
+    }
     
     /**
      * @brief MsearchSender
@@ -289,12 +297,12 @@ namespace SSDP {
     
     int MsearchSender::sendMsearch(const string & type) {
         
-        int port = config.getPort();
+        int multicastPort = config.getMulticastPort();
         string & group = config.getMulticastGroup();
         string & userAgent = config.getUserAgent();
         
         string packet = "M-SEARCH * HTTP/1.1\r\n"
-        "HOST: " + group +  ":" +  Text::toString(port) + "\r\n"
+        "HOST: " + group +  ":" +  Text::toString(multicastPort) + "\r\n"
         "MAN: \"ssdp:discover\"\r\n"
         "MX: 10\r\n"
         "ST: " + type + "\r\n"
@@ -302,7 +310,7 @@ namespace SSDP {
         "Content-Length: 0\r\n"
         "\r\n";
         
-        return  msearchSocket->send(group.c_str(), port, (char*)packet.c_str(), packet.length());
+        return  msearchSocket->send(group.c_str(), multicastPort, (char*)packet.c_str(), packet.length());
     }
     
     void MsearchSender::handleMessage(const DatagramPacket & packet) {
@@ -336,7 +344,6 @@ namespace SSDP {
                                                httpResponseHandlers.end(),
                                                handler), httpResponseHandlers.end());
     }
-    
     
 
 	/**

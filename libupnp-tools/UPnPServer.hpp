@@ -24,7 +24,7 @@ namespace UPNP {
         UPnPActionRequestHandler() {}
         virtual ~UPnPActionRequestHandler() {}
         
-        virtual void onActionRequest(const UPnPActionRequest & request, const UPnPActionResponse & response) = 0;
+        virtual void onActionRequest(const UPnPActionRequest & request, UPnPActionResponse & response) = 0;
     };
     
     /**
@@ -71,16 +71,21 @@ namespace UPNP {
         void registerDevice(const UPnPDevice & device);
         void unregisterDevice(const std::string & udn);
         
-        void announceDevice(const UPnPDevice & device);
         void announceDeviceRecursive(const UPnPDevice & device);
-        void announceService(const UPnPService & service);
-        void byebyeDevice(const UPnPDevice & device);
+        void announceDevice(const UPnPDevice & device);
+        void announceService(const UPnPDevice & device, const UPnPService & service);
         void byebyeDeviceRecursive(const UPnPDevice & device);
-        void byebyeService(const UPnPService & service);
+        void byebyeDevice(const UPnPDevice & device);
+        void byebyeService(const UPnPDevice & device, const UPnPService & service);
         
         virtual void onMsearch(const HTTP::HttpHeader & header, const OS::InetAddress & remoteAddr);
-        HTTP::HttpHeader makeMsearchResponse(const std::string & st, const UPnPDevice & device);
-        HTTP::HttpHeader makeNofityAlive(const UPnPDevice & device);
+        HTTP::HttpHeader makeMsearchResponse(const UPnPDevice & device);
+        HTTP::HttpHeader makeNotifyAlive(const UPnPDevice & device);
+        HTTP::HttpHeader makeNotifyAlive(const UPnPDevice & device, const UPnPService & service);
+        HTTP::HttpHeader makeNotifyAlive(const std::string & nt, const std::string usn, const UPnPDevice & device);
+        HTTP::HttpHeader makeNotifyByebye(const UPnPDevice & device);
+        HTTP::HttpHeader makeNotifyByebye(const UPnPDevice & device, const UPnPService & service);
+        HTTP::HttpHeader makeNotifyByebye(const std::string & nt, const std::string usn, const UPnPDevice & device);
         std::string makeDeviceDescriptionUrl(const UPnPDevice & device);
         OS::InetAddress getHttpServerAddress();
         OS::InetAddress selectDefaultAddress();
