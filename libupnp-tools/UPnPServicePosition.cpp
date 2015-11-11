@@ -87,8 +87,8 @@ namespace UPNP {
     UPnPServicePosition UPnPServicePositionMaker::makeUPnPServicePosition(size_t index, const UPnPService & service) {
         UPnPServicePosition sp;
         sp.setUdn(udn);
-        sp.setScpdUrl(service["SCPDURL"]);
-        sp.setServiceType(service["serviceType"]);
+        sp.setScpdUrl(service.getProperty("SCPDURL"));
+		sp.setServiceType(service.getProperty("serviceType"));
         if (currentLevel > 0) {
             vector<size_t> indices(deviceIndices.begin(), deviceIndices.begin() + currentLevel);
             sp.setDeviceIndices(indices);

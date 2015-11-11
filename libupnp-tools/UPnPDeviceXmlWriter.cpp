@@ -41,7 +41,7 @@ namespace UPNP {
 			XmlNode node = nameValueXml(prop.getName(), prop.getValue());
 			const LinkedStringMap attrs = prop.getProperties();
 			for (size_t j = 0; j < attrs.size(); j++) {
-				const NameValue & attr = attrs[j];
+				const NameValue & attr = attrs.const_getByIndex(j);
 				node.setAttribute(attr.getName(), attr.getValue());
 			}
             deviceNode.addNode(node);
@@ -75,7 +75,7 @@ namespace UPNP {
         serviceNode.setTagName("service");
         
         for (size_t i = 0; i < props.size(); i++) {
-            const NameValue & nv = props[i];
+			const NameValue & nv = props.const_getByIndex(i);
             serviceNode.addNode(nameValueXml(nv.getName(), nv.getValue()));
         }
         

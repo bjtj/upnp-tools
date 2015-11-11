@@ -41,7 +41,6 @@ namespace UPNP {
 	 */
 	class UPnPService {
 	private:
-//        UTIL::StringMap properties;
         UTIL::LinkedStringMap properties;
 		bool scpdBind;
 		Scpd scpd;
@@ -66,11 +65,11 @@ namespace UPNP {
 
 		bool isScpdBind() const;
         
+		std::string getProperty(const std::string & name) const;
         UTIL::LinkedStringMap & getProperties();
         const UTIL::LinkedStringMap & getProperties() const;
 
         std::string & operator[](const std::string & name);
-		const std::string & operator[](const std::string & name) const;
 	};
 }
 

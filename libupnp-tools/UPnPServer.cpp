@@ -6,6 +6,7 @@
 #include "UPnPDeviceMaker.hpp"
 #include "UPnPDeviceXmlWriter.hpp"
 #include "XmlDocumentPrinter.hpp"
+#include "SoapReader.hpp"
 
 namespace UPNP {
 
@@ -15,6 +16,7 @@ namespace UPNP {
     using namespace HTTP;
     using namespace OS;
     using namespace XML;
+	using namespace SOAP;
     
     static const Logger & logger = LoggerFactory::getDefaultLogger();
     
@@ -267,22 +269,10 @@ namespace UPNP {
 
     void UPnPServer::onHttpRequest(HttpRequest & request, HttpResponse & response) {
         
-        
-        // TODO: make clean this
-        int len = request.getContentLength();
         ChunkedBuffer & buffer = request.getChunkedBuffer();
-        if (len > 0) {
-            
-            if (len != buffer.getChunkSize()) {
-                buffer.setChunkSize(len);
-            }
-            
-            char readBuffer[1024] = {0,};
-            int readLen = request.getSocket().recv(readBuffer, buffer.getReadSize(sizeof(readBuffer)));
-            buffer.readChunkData(readBuffer, readLen);
-        }
+		request.readChunkedBuffer(buffer);
         
-        if (buffer.remainingDataBuffer() == 0) {
+        if (!buffer.remain()) {
             
             logger.logd("onHttpRequest/path: " + request.getPath());
             
@@ -354,17 +344,38 @@ namespace UPNP {
 	}
 	void UPnPServer::onControlRequest(HttpRequest & request, HttpResponse & response, const UPnPService & service) {
 		
-		int len = request.getContentLength();
+		string content;
         ChunkedBuffer buffer = request.getChunkedBuffer();
-        string content(buffer.getChunkData(), buffer.getChunkSize());
+		if (buffer.getChunkSize() > 0) {
+			content = string(buffer.getChunkData(), buffer.getChunkSize());
+		}
 
-		logger.logd("(" + Text::toString(len) + ")" + content);
+		if (content.empty()) {
+			response.setStatusCode(404, "wrong request");
+			return;
+		}
+
+		string actionName = getActionNameFromHttpRequest(request);
+		logger.logd("Action Name: " + actionName);
+
+		XmlDomParser parser;
+		XmlDocument doc = parser.parse(content);
+
+		SoapReader reader;
+		XmlNode actionNode = reader.getActionNode(doc.getRootNode());
+		UPnPActionParameters params = reader.getActionParametersFromActionNode(actionNode);
+
+		vector<string> names = params.getParameterNames();
+		for (size_t i = 0; i < names.size(); i++) {
+			string & name = names[i];
+			logger.logd("argument: " + name);
+		}
 		
-		response.setStatusCode(500, "Not supported yet");
-
 		if (actionRequestHandler) {
 			//actionRequestHandler->onActionRequest(actionRequest, actionResponse);
 		}
+
+		response.setStatusCode(500, "Not supported yet");
 	}
 	void UPnPServer::onEventSubRequest(HttpRequest & request, HttpResponse & response, const UPnPService & service) {
 		response.setStatusCode(500, "Not supported yet");
@@ -378,6 +389,19 @@ namespace UPNP {
 	}
 
 	string UPnPServer::getActionNameFromHttpRequest(HttpRequest & request) {
+
+		string soapAction = request.getHeaderFieldIgnoreCase("SOAPACTION");
+		size_t sep = soapAction.find_last_of("#");
+		if (sep != string::npos) {
+			size_t f = sep + 1;
+			size_t end = soapAction.find("\"", f);
+			if (end != string::npos) {
+				return soapAction.substr(f, end - f);
+			} else {
+				return soapAction.substr(f);
+			}
+		}
+
 		return "";
 	}
 

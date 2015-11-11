@@ -76,6 +76,7 @@
     <ClCompile Include="..\libupnp-tools\UniqueIdGenerator.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPAction.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPActionArgument.cpp" />
+    <ClCompile Include="..\libupnp-tools\UPnPActionInvoke.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPControlPoint.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPDevice.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPDeviceDetection.cpp" />
@@ -106,6 +107,7 @@
     <ClInclude Include="..\libupnp-tools\UPnPAction.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPActionArgument.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPActionArgumentDirection.hpp" />
+    <ClInclude Include="..\libupnp-tools\UPnPActionInvoke.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPControlPoint.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPDevice.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPDeviceDetection.hpp" />

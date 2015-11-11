@@ -81,7 +81,7 @@ namespace UPNP {
 	}
     
     string UPnPService::getServiceType() const {
-        return properties["serviceType"];
+		return properties.const_get("serviceType").getValue();
     }
 
 	void UPnPService::setScpd(const Scpd & scpd) {
@@ -107,6 +107,9 @@ namespace UPNP {
 		return scpdBind;
 	}
     
+	string UPnPService::getProperty(const string & name) const {
+		return properties.const_get(name).getValue();
+	}
     LinkedStringMap & UPnPService::getProperties() {
         return properties;
     }
@@ -117,8 +120,4 @@ namespace UPNP {
     string & UPnPService::operator[](const string & name) {
         return properties[name];
     }
-    
-	const string & UPnPService::operator[](const string & name) const {
-		return properties[name];
-	}
 }

@@ -149,7 +149,7 @@ namespace UPNP {
 	bool UPnPDevice::hasServiceWithProperty(const string & name, const string & value) const {
 		for (size_t i = 0; i < services.size(); i++) {
 			const UPnPService & service = services[i];
-			if (!service[name].compare(value)) {
+			if (!service.getProperty(name).compare(value)) {
 				return true;
 			}
 		}
@@ -184,7 +184,7 @@ namespace UPNP {
 	const UPnPService & UPnPDevice::getServiceWithProperty(const string & name, const string & value) const {
 		for (size_t i = 0; i < services.size(); i++) {
 			const UPnPService & service = services[i];
-			if (!service[name].compare(value)) {
+			if (!service.getProperty(name).compare(value)) {
 				return service;
 			}
 		}

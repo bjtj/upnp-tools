@@ -18,10 +18,12 @@ namespace UPNP {
         UPnPActionParameters();
         virtual ~UPnPActionParameters();
         size_t size() const;
-        const std::string & operator[] (const std::string & name) const;
+
+		std::vector<std::string> getParameterNames() const;
+		std::string & getParameter(const std::string & name);
+		std::string getParameter(const std::string & name) const;
+        
         std::string & operator[] (const std::string & name);
-        const UTIL::NameValue & operator[] (size_t index) const;
-        UTIL::NameValue & operator[] (size_t index);
     };
     
     

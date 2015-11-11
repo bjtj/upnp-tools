@@ -356,14 +356,17 @@ namespace UPNP {
     
     ID_TYPE UPnPControlPoint::invokeAction(const UPnPService & service, const std::string & actionName, const UPnPActionParameters & in) {
         Url url(service.getBaseUrl());
-		url.setPath(service["controlURL"]);
+		url.setPath(service.getProperty("controlURL"));
         StringMap headerFields;
         headerFields["SOAPACTION"] = service.getServiceType() + "#" + actionName;
         SoapWriter writer;
         writer.setSoapAction(service.getServiceType(), actionName);
-		LOOP_VEC(in, i) {
-			const NameValue & nv = in[i];
-			writer.setArgument(nv.getName(), nv.getValue());
+
+		vector<string> names = in.getParameterNames();
+		LOOP_VEC(names, i) {
+			string & name = names[i];
+			string value = in.getParameter(name);
+			writer.setArgument(name, value);
 		}
         string packet = writer.toString();
 		UPnPHttpRequestSession session(UPnPHttpRequestType::ACTION_INVOKE);

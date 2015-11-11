@@ -53,7 +53,8 @@ namespace SOAP {
         cursor.enter(actionNode);
         
         LOOP_VEC(arguments, i) {
-            NameValue argument = arguments[i];
+			const NameValue & argument = arguments.const_getByIndex(i);
+            //NameValue argument = arguments[i];
             XmlNode argumentNameNode;
 			XmlNode argumentValueNode;
 			argumentNameNode.setTagName(argument.getName());
