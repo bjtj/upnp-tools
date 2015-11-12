@@ -10,4 +10,9 @@
 
 @interface upnp_tools : NSObject
 
+- (void)hello;
+
+- (void)startServer;
+- (void)stopServer;
+
 @end

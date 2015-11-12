@@ -8,6 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		E8447C681BF0FA89000E2903 /* server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E857BB8E1BEDE3C900D2022F /* server.cpp */; };
+		E8447CB01BF4B054000E2903 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E8447CAF1BF4B054000E2903 /* AppDelegate.m */; };
+		E8447CB31BF4B054000E2903 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E8447CB21BF4B054000E2903 /* main.m */; };
+		E8447CB51BF4B054000E2903 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E8447CB41BF4B054000E2903 /* Assets.xcassets */; };
+		E8447CB81BF4B054000E2903 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = E8447CB61BF4B054000E2903 /* MainMenu.xib */; };
+		E8447CC31BF4B054000E2903 /* UPnPToolsOSXTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E8447CC21BF4B054000E2903 /* UPnPToolsOSXTests.m */; };
+		E8447CCE1BF4B054000E2903 /* UPnPToolsOSXUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = E8447CCD1BF4B054000E2903 /* UPnPToolsOSXUITests.m */; };
+		E8447CEE1BF4BAF1000E2903 /* libupnp-tools-cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8E0FEE71BD849CA00292C54 /* libupnp-tools-cocoa.a */; };
 		E8E0FEE81BD849CF00292C54 /* libupnp-tools-cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8E0FEE71BD849CA00292C54 /* libupnp-tools-cocoa.a */; };
 /* End PBXBuildFile section */
 
@@ -18,6 +25,27 @@
 			proxyType = 1;
 			remoteGlobalIDString = E8E0FEC61BD8492300292C54;
 			remoteInfo = "upnp-tools cocoa";
+		};
+		E8447CBF1BF4B054000E2903 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E8E0FE661BD8480B00292C54 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E8447CAB1BF4B054000E2903;
+			remoteInfo = UPnPToolsOSX;
+		};
+		E8447CCA1BF4B054000E2903 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E8E0FE661BD8480B00292C54 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E8447CAB1BF4B054000E2903;
+			remoteInfo = UPnPToolsOSX;
+		};
+		E8447CEC1BF4BAE3000E2903 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E8E0FE781BD8482A00292C54 /* upnp-tools.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = E8E0FEC61BD8492300292C54;
+			remoteInfo = "upnp-tools-cocoa";
 		};
 		E8E0FE7F1BD8482A00292C54 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -49,6 +77,19 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		E8447CAC1BF4B054000E2903 /* UPnPToolsOSX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UPnPToolsOSX.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E8447CAE1BF4B054000E2903 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		E8447CAF1BF4B054000E2903 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		E8447CB21BF4B054000E2903 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		E8447CB41BF4B054000E2903 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		E8447CB71BF4B054000E2903 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		E8447CB91BF4B054000E2903 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E8447CBE1BF4B054000E2903 /* UPnPToolsOSXTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UPnPToolsOSXTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E8447CC21BF4B054000E2903 /* UPnPToolsOSXTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UPnPToolsOSXTests.m; sourceTree = "<group>"; };
+		E8447CC41BF4B054000E2903 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E8447CC91BF4B054000E2903 /* UPnPToolsOSXUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UPnPToolsOSXUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E8447CCD1BF4B054000E2903 /* UPnPToolsOSXUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UPnPToolsOSXUITests.m; sourceTree = "<group>"; };
+		E8447CCF1BF4B054000E2903 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E857BB401BEA305700D2022F /* timerTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = timerTest.cpp; path = ../../../examples/timerTest.cpp; sourceTree = "<group>"; };
 		E857BB8E1BEDE3C900D2022F /* server.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = server.cpp; path = ../../../examples/server.cpp; sourceTree = "<group>"; };
 		E857BB961BEE45A400D2022F /* socketTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = socketTest.cpp; path = ../../../examples/socketTest.cpp; sourceTree = "<group>"; };
@@ -60,6 +101,28 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		E8447CA91BF4B054000E2903 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E8447CEE1BF4BAF1000E2903 /* libupnp-tools-cocoa.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E8447CBB1BF4B054000E2903 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E8447CC61BF4B054000E2903 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E8E0FE6B1BD8480B00292C54 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -71,11 +134,53 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E8447CAD1BF4B054000E2903 /* UPnPToolsOSX */ = {
+			isa = PBXGroup;
+			children = (
+				E8447CAE1BF4B054000E2903 /* AppDelegate.h */,
+				E8447CAF1BF4B054000E2903 /* AppDelegate.m */,
+				E8447CB41BF4B054000E2903 /* Assets.xcassets */,
+				E8447CB61BF4B054000E2903 /* MainMenu.xib */,
+				E8447CB91BF4B054000E2903 /* Info.plist */,
+				E8447CB11BF4B054000E2903 /* Supporting Files */,
+			);
+			path = UPnPToolsOSX;
+			sourceTree = "<group>";
+		};
+		E8447CB11BF4B054000E2903 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				E8447CB21BF4B054000E2903 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		E8447CC11BF4B054000E2903 /* UPnPToolsOSXTests */ = {
+			isa = PBXGroup;
+			children = (
+				E8447CC21BF4B054000E2903 /* UPnPToolsOSXTests.m */,
+				E8447CC41BF4B054000E2903 /* Info.plist */,
+			);
+			path = UPnPToolsOSXTests;
+			sourceTree = "<group>";
+		};
+		E8447CCC1BF4B054000E2903 /* UPnPToolsOSXUITests */ = {
+			isa = PBXGroup;
+			children = (
+				E8447CCD1BF4B054000E2903 /* UPnPToolsOSXUITests.m */,
+				E8447CCF1BF4B054000E2903 /* Info.plist */,
+			);
+			path = UPnPToolsOSXUITests;
+			sourceTree = "<group>";
+		};
 		E8E0FE651BD8480B00292C54 = {
 			isa = PBXGroup;
 			children = (
 				E8E0FE781BD8482A00292C54 /* upnp-tools.xcodeproj */,
 				E8E0FE701BD8480B00292C54 /* upnp-tools-sample */,
+				E8447CAD1BF4B054000E2903 /* UPnPToolsOSX */,
+				E8447CC11BF4B054000E2903 /* UPnPToolsOSXTests */,
+				E8447CCC1BF4B054000E2903 /* UPnPToolsOSXUITests */,
 				E8E0FE6F1BD8480B00292C54 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -84,6 +189,9 @@
 			isa = PBXGroup;
 			children = (
 				E8E0FE6E1BD8480B00292C54 /* upnp-tools-sample */,
+				E8447CAC1BF4B054000E2903 /* UPnPToolsOSX.app */,
+				E8447CBE1BF4B054000E2903 /* UPnPToolsOSXTests.xctest */,
+				E8447CC91BF4B054000E2903 /* UPnPToolsOSXUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -113,6 +221,60 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		E8447CAB1BF4B054000E2903 /* UPnPToolsOSX */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E8447CD71BF4B054000E2903 /* Build configuration list for PBXNativeTarget "UPnPToolsOSX" */;
+			buildPhases = (
+				E8447CA81BF4B054000E2903 /* Sources */,
+				E8447CA91BF4B054000E2903 /* Frameworks */,
+				E8447CAA1BF4B054000E2903 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E8447CED1BF4BAE3000E2903 /* PBXTargetDependency */,
+			);
+			name = UPnPToolsOSX;
+			productName = UPnPToolsOSX;
+			productReference = E8447CAC1BF4B054000E2903 /* UPnPToolsOSX.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E8447CBD1BF4B054000E2903 /* UPnPToolsOSXTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E8447CD81BF4B054000E2903 /* Build configuration list for PBXNativeTarget "UPnPToolsOSXTests" */;
+			buildPhases = (
+				E8447CBA1BF4B054000E2903 /* Sources */,
+				E8447CBB1BF4B054000E2903 /* Frameworks */,
+				E8447CBC1BF4B054000E2903 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E8447CC01BF4B054000E2903 /* PBXTargetDependency */,
+			);
+			name = UPnPToolsOSXTests;
+			productName = UPnPToolsOSXTests;
+			productReference = E8447CBE1BF4B054000E2903 /* UPnPToolsOSXTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		E8447CC81BF4B054000E2903 /* UPnPToolsOSXUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E8447CD91BF4B054000E2903 /* Build configuration list for PBXNativeTarget "UPnPToolsOSXUITests" */;
+			buildPhases = (
+				E8447CC51BF4B054000E2903 /* Sources */,
+				E8447CC61BF4B054000E2903 /* Frameworks */,
+				E8447CC71BF4B054000E2903 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E8447CCB1BF4B054000E2903 /* PBXTargetDependency */,
+			);
+			name = UPnPToolsOSXUITests;
+			productName = UPnPToolsOSXUITests;
+			productReference = E8447CC91BF4B054000E2903 /* UPnPToolsOSXUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		E8E0FE6D1BD8480B00292C54 /* upnp-tools-sample */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = E8E0FE751BD8480B00292C54 /* Build configuration list for PBXNativeTarget "upnp-tools-sample" */;
@@ -140,6 +302,17 @@
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = TJ;
 				TargetAttributes = {
+					E8447CAB1BF4B054000E2903 = {
+						CreatedOnToolsVersion = 7.1;
+					};
+					E8447CBD1BF4B054000E2903 = {
+						CreatedOnToolsVersion = 7.1;
+						TestTargetID = E8447CAB1BF4B054000E2903;
+					};
+					E8447CC81BF4B054000E2903 = {
+						CreatedOnToolsVersion = 7.1;
+						TestTargetID = E8447CAB1BF4B054000E2903;
+					};
 					E8E0FE6D1BD8480B00292C54 = {
 						CreatedOnToolsVersion = 7.0.1;
 					};
@@ -151,6 +324,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = E8E0FE651BD8480B00292C54;
 			productRefGroup = E8E0FE6F1BD8480B00292C54 /* Products */;
@@ -164,6 +338,9 @@
 			projectRoot = "";
 			targets = (
 				E8E0FE6D1BD8480B00292C54 /* upnp-tools-sample */,
+				E8447CAB1BF4B054000E2903 /* UPnPToolsOSX */,
+				E8447CBD1BF4B054000E2903 /* UPnPToolsOSXTests */,
+				E8447CC81BF4B054000E2903 /* UPnPToolsOSXUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -185,7 +362,58 @@
 		};
 /* End PBXReferenceProxy section */
 
+/* Begin PBXResourcesBuildPhase section */
+		E8447CAA1BF4B054000E2903 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E8447CB51BF4B054000E2903 /* Assets.xcassets in Resources */,
+				E8447CB81BF4B054000E2903 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E8447CBC1BF4B054000E2903 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E8447CC71BF4B054000E2903 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		E8447CA81BF4B054000E2903 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E8447CB31BF4B054000E2903 /* main.m in Sources */,
+				E8447CB01BF4B054000E2903 /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E8447CBA1BF4B054000E2903 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E8447CC31BF4B054000E2903 /* UPnPToolsOSXTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E8447CC51BF4B054000E2903 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E8447CCE1BF4B054000E2903 /* UPnPToolsOSXUITests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E8E0FE6A1BD8480B00292C54 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -202,9 +430,119 @@
 			name = "upnp-tools cocoa";
 			targetProxy = E82789831BDD943A0009E46A /* PBXContainerItemProxy */;
 		};
+		E8447CC01BF4B054000E2903 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E8447CAB1BF4B054000E2903 /* UPnPToolsOSX */;
+			targetProxy = E8447CBF1BF4B054000E2903 /* PBXContainerItemProxy */;
+		};
+		E8447CCB1BF4B054000E2903 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E8447CAB1BF4B054000E2903 /* UPnPToolsOSX */;
+			targetProxy = E8447CCA1BF4B054000E2903 /* PBXContainerItemProxy */;
+		};
+		E8447CED1BF4BAE3000E2903 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "upnp-tools-cocoa";
+			targetProxy = E8447CEC1BF4BAE3000E2903 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
+/* Begin PBXVariantGroup section */
+		E8447CB61BF4B054000E2903 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E8447CB71BF4B054000E2903 /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
+		E8447CD01BF4B054000E2903 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = UPnPToolsOSX/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.tj.UPnPToolsOSX;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		E8447CD11BF4B054000E2903 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = UPnPToolsOSX/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.tj.UPnPToolsOSX;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		E8447CD21BF4B054000E2903 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = UPnPToolsOSXTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.tj.UPnPToolsOSXTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/UPnPToolsOSX.app/Contents/MacOS/UPnPToolsOSX";
+			};
+			name = Debug;
+		};
+		E8447CD31BF4B054000E2903 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = UPnPToolsOSXTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.tj.UPnPToolsOSXTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/UPnPToolsOSX.app/Contents/MacOS/UPnPToolsOSX";
+			};
+			name = Release;
+		};
+		E8447CD41BF4B054000E2903 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = UPnPToolsOSXUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.tj.UPnPToolsOSXUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = UPnPToolsOSX;
+				USES_XCTRUNNER = YES;
+			};
+			name = Debug;
+		};
+		E8447CD51BF4B054000E2903 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = UPnPToolsOSXUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.tj.UPnPToolsOSXUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = UPnPToolsOSX;
+				USES_XCTRUNNER = YES;
+			};
+			name = Release;
+		};
 		E8E0FE731BD8480B00292C54 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -309,6 +647,30 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		E8447CD71BF4B054000E2903 /* Build configuration list for PBXNativeTarget "UPnPToolsOSX" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E8447CD01BF4B054000E2903 /* Debug */,
+				E8447CD11BF4B054000E2903 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		E8447CD81BF4B054000E2903 /* Build configuration list for PBXNativeTarget "UPnPToolsOSXTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E8447CD21BF4B054000E2903 /* Debug */,
+				E8447CD31BF4B054000E2903 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		E8447CD91BF4B054000E2903 /* Build configuration list for PBXNativeTarget "UPnPToolsOSXUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E8447CD41BF4B054000E2903 /* Debug */,
+				E8447CD51BF4B054000E2903 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		E8E0FE691BD8480B00292C54 /* Build configuration list for PBXProject "upnp-tools-sample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
