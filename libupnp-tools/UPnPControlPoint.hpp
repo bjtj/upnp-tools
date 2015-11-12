@@ -109,7 +109,7 @@ namespace UPNP {
     public:
         InvokeActionResponseListener() {}
         virtual ~InvokeActionResponseListener() {}
-        virtual void onActionResponse(ID_TYPE id, const UPnPActionRequest & actionRequest, const UPnPActionParameters & out) = 0;
+        virtual void onActionResponse(ID_TYPE id, const UPnPActionRequest & actionRequest, const UPnPActionResponse & response) = 0;
     };
 	
 	/**

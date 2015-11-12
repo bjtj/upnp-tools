@@ -459,7 +459,7 @@ namespace UPNP {
 		UPnPActionParameters params = reader.getActionParametersFromActionNode(actionNode);
         
         UPnPActionRequest actionRequest(service, actionName);
-        actionRequest = params;
+		actionRequest.setParameters(params);
         
         UPnPActionResponse actionResponse;
 		

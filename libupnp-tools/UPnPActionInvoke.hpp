@@ -39,6 +39,7 @@ namespace UPNP {
         size_t size() const;
 
         void setParameters(const UTIL::LinkedStringMap & parameters);
+		void setParameters(const UPnPActionParameters & parameters);
 		std::vector<std::string> getParameterNames() const;
 		std::string & getParameter(const std::string & name);
 		std::string getParameter(const std::string & name) const;
@@ -58,7 +59,6 @@ namespace UPNP {
     public:
         UPnPActionRequest();
         UPnPActionRequest(const UPnPService & service, const std::string & actionName);
-        UPnPActionRequest(const UPnPActionParameters & other);
         virtual ~UPnPActionRequest();
         
         void setService(const UPnPService & service);

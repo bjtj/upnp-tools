@@ -54,6 +54,9 @@ namespace UPNP {
     void UPnPActionParameters::setParameters(const UTIL::LinkedStringMap & parameters) {
         this->parameters = parameters;
     }
+	void UPnPActionParameters::setParameters(const UPnPActionParameters & parameters) {
+		this->parameters = parameters.parameters;
+	}
 	vector<string> UPnPActionParameters::getParameterNames() const {
 		vector<string> names;
 		for (size_t i = 0; i < parameters.size(); i++) {
@@ -80,10 +83,6 @@ namespace UPNP {
     }
     UPnPActionRequest::UPnPActionRequest(const UPnPService & service, const string & actionName)
     : service(service), actionName(actionName) {
-    }
-    
-    UPnPActionRequest::UPnPActionRequest(const UPnPActionParameters & other) {
-        
     }
     
     UPnPActionRequest::~UPnPActionRequest() {

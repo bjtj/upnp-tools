@@ -229,11 +229,24 @@ namespace UPNP {
             SoapReader reader;
             XmlDomParser parser;
             XmlDocument doc = parser.parse(content);
-            XmlNode node = reader.getActionNode(doc.getRootNode());
-            string actionName = reader.getActionNameFromActionNode(node);
-            UPnPActionParameters outParams = reader.getActionParametersFromActionNode(node);
+
+			UPnPActionResponse actionResponse;
+			HttpResponseHeader header = responseHeader;
+			actionResponse.setResult(UPnPActionResult(true, header.getStatusCode(), header.getMessage()));
+
+			try {
+
+				XmlNode node = reader.getActionNode(doc.getRootNode());
+				string actionName = reader.getActionNameFromActionNode(node);
+				UPnPActionParameters outParams = reader.getActionParametersFromActionNode(node);
+				actionResponse.setParameters(outParams);
+
+			} catch (Exception e) {
+				logger.loge(e.getMessage());
+			}
+
             if (invokeActionResponseListener) {
-                invokeActionResponseListener->onActionResponse(session.getId(), session.getUPnPActionRequest(), outParams);
+                invokeActionResponseListener->onActionResponse(session.getId(), session.getUPnPActionRequest(), actionResponse);
             }
         }
 	}
@@ -372,7 +385,7 @@ namespace UPNP {
         UPnPActionRequest & actionRequest = session.getUPnPActionRequest();
         actionRequest.setService(service);
         actionRequest.setActionName(actionName);
-        actionRequest = in;
+		actionRequest.setParameters(in);
         session.setId(gen.generate());
         httpClientThreadPool.request(url, "POST", headerFields, packet.c_str(), packet.length(), session);
         return session.getId();
