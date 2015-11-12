@@ -69,7 +69,9 @@ namespace SSDP {
 		std::string userAgent;
 		int multicastPort;
 		int msearchPort;
+		OS::RandomPortBinder * msearchPortBinder;
 		std::string multicastGroup;
+
 	public:
 		SSDPConfig();
 		virtual ~SSDPConfig();
@@ -80,6 +82,8 @@ namespace SSDP {
 		int getMulticastPort();
 		void setMsearchPort(int msearchPort);
 		int getMsearchPort();
+		void setMsearchPortBinder(OS::RandomPortBinder * msearchPortBinder);
+		OS::RandomPortBinder * getMsearchPortBinder();
 		void setMulticastGroup(std::string group);
 		std::string & getMulticastGroup();
 	};
@@ -106,10 +110,6 @@ namespace SSDP {
         
         virtual void poll(unsigned long timeout);
         virtual void listen(UTIL::SelectorPoller & poller);
-        
-        virtual void registerSelector(OS::Selector & selector);
-        virtual void unregisterSelector(OS::Selector & selector);
-        virtual bool isSelected(OS::Selector & selector);
         
         void handleMessage(const OS::DatagramPacket & packet);
         
@@ -144,11 +144,7 @@ namespace SSDP {
         
         virtual void poll(unsigned long timeout);
         virtual void listen(UTIL::SelectorPoller & poller);
-        
-        virtual void registerSelector(OS::Selector & selector);
-        virtual void unregisterSelector(OS::Selector & selector);
-        virtual bool isSelected(OS::Selector & selector);
-        
+                
         int sendMsearch(const std::string & type);
         
         void handleMessage(const OS::DatagramPacket & packet);

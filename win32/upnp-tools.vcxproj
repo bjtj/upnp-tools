@@ -92,6 +92,7 @@
     <ClCompile Include="..\libupnp-tools\XmlDocument.cpp" />
     <ClCompile Include="..\libupnp-tools\XmlDocumentPrinter.cpp" />
     <ClCompile Include="..\libupnp-tools\XmlDomParser.cpp" />
+    <ClCompile Include="..\libupnp-tools\XmlEncoderDecoder.cpp" />
     <ClCompile Include="..\libupnp-tools\XmlNodeFinder.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -123,6 +124,7 @@
     <ClInclude Include="..\libupnp-tools\XmlDocument.hpp" />
     <ClInclude Include="..\libupnp-tools\XmlDocumentPrinter.hpp" />
     <ClInclude Include="..\libupnp-tools\XmlDomParser.hpp" />
+    <ClInclude Include="..\libupnp-tools\XmlEncoderDecoder.hpp" />
     <ClInclude Include="..\libupnp-tools\XmlNodeFinder.hpp" />
   </ItemGroup>
   <ItemGroup>

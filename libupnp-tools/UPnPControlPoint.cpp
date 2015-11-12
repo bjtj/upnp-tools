@@ -215,12 +215,12 @@ namespace UPNP {
 	}
 
 	void UPnPControlPoint::onHttpResponse(HttpClient<UPnPHttpRequestSession> & httpClient, const HttpHeader & responseHeader, const string & content, UPnPHttpRequestSession session) {
-        logger.logd(content);
+
+        // logger.logd(content);
     
 		if (session.getRequestType() == UPnPHttpRequestType::DEVICE_DESCRIPTION) {
 			char baseUrl[1024] = {0,};
             Url & url = httpClient.getUrl();
-//			snprintf(baseUrl, sizeof(baseUrl), "http://%s", url.getAddress().c_str());
             snprintf(baseUrl, sizeof(baseUrl), "%s", url.toString().c_str());
 			this->onDeviceDescriptionInXml(baseUrl, content);
 		} else if (session.getRequestType() == UPnPHttpRequestType::SCPD) {
@@ -286,7 +286,6 @@ namespace UPNP {
 			UPnPServicePosition & sp = servicePositions[i];
 			string scpdurl = sp.getScpdUrl();
 			Url url = Url(baseUrl);
-//			url.setPath(scpdurl);
             url.setRelativePath(scpdurl);
 			UPnPHttpRequestSession session(UPnPHttpRequestType::SCPD_TYPE);
 			session.setServicePosition(sp);

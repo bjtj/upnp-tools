@@ -17,23 +17,23 @@ public:
 	virtual ~MyDeviceAddRemoveHandle() {}
 
 	virtual void onDeviceAdded(UPnPControlPoint & cp, UPnPDevice & device) {
-		cout << "[Device Added] udn: " << device["UDN"] << " - " << device["friendlyName"] << endl;
-		UPnPService service = device.getService("urn:schemas-upnp-org:service:ContentDirectory:1");
-        
-		if (!service.empty()) {
-            targetService = service;
-            cout << "invoke action" << endl;
+		cout << "[Device Added] udn: " << device.getUdn() << " - " << device.getFriendlyName() << endl;
+
+		if (device.hasServiceWithProperty("serviceType", "urn:schemas-upnp-org:service:ContentDirectory:1")) {
+			UPnPService service = device.getServiceWithServiceType("urn:schemas-upnp-org:service:ContentDirectory:1");
+			targetService = service;
+			cout << "invoke action" << endl;
 			cp.invokeAction(service, "GetSystemUpdateID", UPnPActionParameters());
 		}
 	}
 	virtual void onDeviceRemoved(UPnPControlPoint & cp, UPnPDevice & device) {
-        cout << "[Device Removed] udn: " << device["UDN"] << " - " << device["friendlyName"] << endl;
+		cout << "[Device Removed] udn: " << device.getUdn() << " - " << device.getFriendlyName() << endl;
 	}
 };
 
 class MyInvokeActionResponseListener : public InvokeActionResponseListener {
 	virtual void onActionResponse(ID_TYPE id, const UPnPActionRequest & actionRequest, const UPnPActionParameters & out) {
-        cout << "ActionResponse> Action name: " << actionRequest.actionName << endl;
+		cout << "ActionResponse> Action name: " << actionRequest.getActionName() << endl;
 	}
 };
 

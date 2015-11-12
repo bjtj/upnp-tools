@@ -1,5 +1,6 @@
 #include "SSDPServer.hpp"
 #include <liboslayer/Text.hpp>
+#include <liboslayer/RandomPortBinders.hpp>
 #include <algorithm>
 #include <libhttp-server/HttpHeaderParser.hpp>
 #include "macros.hpp"
@@ -21,6 +22,7 @@ namespace SSDP {
 		userAgent("Linux/2.x UPnP/1.1 App/0.1"),
 		multicastPort(1900),
 		msearchPort(56789),
+		msearchPortBinder(NULL),
 		multicastGroup("239.255.255.250") {
 	}
 	
@@ -49,6 +51,14 @@ namespace SSDP {
 
 	int SSDPConfig::getMsearchPort() {
 		return msearchPort;
+	}
+
+	void SSDPConfig::setMsearchPortBinder(RandomPortBinder * msearchPortBinder) {
+		this->msearchPortBinder = msearchPortBinder;
+	}
+
+	RandomPortBinder * SSDPConfig::getMsearchPortBinder() {
+		return msearchPortBinder;
 	}
 	
 	void SSDPConfig::setMulticastGroup(std::string group) {
@@ -83,13 +93,16 @@ namespace SSDP {
             mcastSocket->setReuseAddr();
             mcastSocket->joinGroup(group);
             
-            UTIL::SelectablePollee::registerSelector(mcastSocket->getFd());
+            registerSelector(mcastSocket->getFd());
         }
     }
     void SSDPListener::stop() {
         notifyHandlers.clear();
         msearchHandlers.clear();
         if (mcastSocket) {
+
+			unregisterSelector(mcastSocket->getFd());
+
             delete mcastSocket;
             mcastSocket = NULL;
         }
@@ -111,25 +124,6 @@ namespace SSDP {
                 handleMessage(packet);
             }
         }
-    }
-    
-    void SSDPListener::registerSelector(Selector & selector) {
-        if (mcastSocket) {
-            mcastSocket->registerSelector(selector);
-        }
-    }
-    
-    void SSDPListener::unregisterSelector(Selector & selector) {
-        if (mcastSocket) {
-            mcastSocket->unregisterSelector(selector);
-        }
-    }
-    
-    bool SSDPListener::isSelected(Selector & selector) {
-        if (mcastSocket) {
-            return mcastSocket->isSelected(selector);
-        }
-        return false;
     }
     
     void SSDPListener::handleMessage(const DatagramPacket & packet) {
@@ -219,7 +213,7 @@ namespace SSDP {
             
             // https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers
             // any random port range : 49152~65535
-            class MyRandomPortBinder : public RandomPortBinder {
+            /*class MyRandomPortBinder : public RandomPortBinder {
             private:
                 int startPort;
                 int currentPort;
@@ -241,18 +235,24 @@ namespace SSDP {
                 }
             };
             MyRandomPortBinder portBinder;
-            bindResult = msearchSocket->randomBind(portBinder);
+            bindResult = msearchSocket->randomBind(portBinder);*/
+
+			RangeRandomPortBinder binder(49152, 65535);
+			bindResult = msearchSocket->randomBind(binder);
             
-            if (bindResult) {
+            if (bindResult < 0) {
                 throw IOException("bind() error", -1, 0);
             }
             
-            UTIL::SelectablePollee::registerSelector(msearchSocket->getFd());
+            registerSelector(msearchSocket->getFd());
         }
 
     }
     void MsearchSender::stop() {
         if (msearchSocket) {
+
+			unregisterSelector(msearchSocket->getFd());
+
             delete msearchSocket;
             msearchSocket = NULL;
         }
@@ -274,25 +274,6 @@ namespace SSDP {
                 handleMessage(packet);
             }
         }
-    }
-    
-    void MsearchSender::registerSelector(Selector & selector) {
-        if (msearchSocket) {
-            msearchSocket->registerSelector(selector);
-        }
-    }
-    
-    void MsearchSender::unregisterSelector(Selector & selector) {
-        if (msearchSocket) {
-            msearchSocket->unregisterSelector(selector);
-        }
-    }
-    
-    bool MsearchSender::isSelected(Selector & selector) {
-        if (msearchSocket) {
-            return msearchSocket->isSelected(selector);
-        }
-        return false;
     }
     
     int MsearchSender::sendMsearch(const string & type) {
@@ -350,11 +331,11 @@ namespace SSDP {
 	 * @brief sddp server
 	 */
 	SSDPServer::SSDPServer() : pollingThread(NULL) {
+		init();
 	}
 
 	SSDPServer::SSDPServer(SSDPConfig & config) : config(config), ssdpListener(config), msearchSender(config), pollingThread(NULL) {
-        registerSelectablePollee(&ssdpListener);
-        registerSelectablePollee(&msearchSender);
+        init();
 	}
 
 	SSDPServer::~SSDPServer() {
@@ -362,6 +343,8 @@ namespace SSDP {
 	}
     
     void SSDPServer::init() {
+		registerSelectablePollee(&ssdpListener);
+        registerSelectablePollee(&msearchSender);
     }
 
 	void SSDPServer::start() {

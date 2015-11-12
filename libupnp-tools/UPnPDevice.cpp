@@ -216,6 +216,21 @@ namespace UPNP {
 		}
 		throw Exception("no service found/property name: " + name + ", value: " + value, -1, 0);
 	}
+
+
+	UPnPService & UPnPDevice::getServiceWithServiceType(const std::string & value) {
+		return getServiceWithProperty("serviceType", value);
+	}
+	const UPnPService & UPnPDevice::getServiceWithServiceType(const std::string & value) const {
+		return getServiceWithProperty("serviceType", value);
+	}
+	UPnPService & UPnPDevice::getServiceWithServiceTypeRecursive(const std::string & value) {
+		return getServiceWithPropertyRecursive("serviceType", value);
+	}
+	const UPnPService & UPnPDevice::getServiceWithServiceTypeRecursive(const std::string & value) const {
+		return getServiceWithPropertyRecursive("serviceType", value);
+	}
+
 	
     UPnPService & UPnPDevice::getService(size_t index) {
         return services[index];

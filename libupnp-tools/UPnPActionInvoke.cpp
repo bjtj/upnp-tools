@@ -95,10 +95,13 @@ namespace UPNP {
     UPnPService & UPnPActionRequest::getService() {
         return service;
     }
+	const UPnPService & UPnPActionRequest::getService() const {
+        return service;
+    }
     void UPnPActionRequest::setActionName(const std::string & actionName) {
         this->actionName = actionName;
     }
-    string UPnPActionRequest::getActionName() {
+    string UPnPActionRequest::getActionName() const {
         return actionName;
     }
     

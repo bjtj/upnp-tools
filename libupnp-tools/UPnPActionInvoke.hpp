@@ -63,8 +63,9 @@ namespace UPNP {
         
         void setService(const UPnPService & service);
         UPnPService & getService();
+		const UPnPService & getService() const;
         void setActionName(const std::string & actionName);
-        std::string getActionName();
+        std::string getActionName() const;
     };
     
     /**
