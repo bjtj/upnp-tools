@@ -147,9 +147,20 @@ public:
 	virtual ~ActionHandler() {
 	}
 	void onActionRequest(const UPnPActionRequest & request, UPnPActionResponse & response) {
-        cout << "onActionRequest" << endl;
-        response["Source"] = "source";
-        response["Sink"] = "<&test xml decode&>";
+
+		string actionName = request.getActionName();
+
+		//cout << " >> " << actionName << endl;
+
+		Scpd scpd = request.getService().getScpd();
+		UPnPAction action = scpd.getAction(actionName);
+		vector<UPnPActionArgument> & arguments = action.getArguments();
+		for (size_t i = 0; i < arguments.size(); i++) {
+			UPnPActionArgument & argument = arguments[i];
+			response[argument.getName()] = "sample text";
+
+			//cout << " >> >> " << argument.getName() << endl;
+		}
         
         response.setResult(UPnPActionResult(true, 200, "OK"));
 	}
@@ -185,6 +196,8 @@ int main(int argc, char * args[]) {
         }
     }
     
+	server.unregisterDevice(device.getUdn());
+
     server.stop();
     
     return 0;

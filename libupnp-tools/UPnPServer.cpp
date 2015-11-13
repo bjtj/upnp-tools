@@ -369,10 +369,8 @@ namespace UPNP {
         
         ChunkedBuffer & buffer = request.getChunkedBuffer();
 		request.readChunkedBuffer(buffer);
-        
-        if (!buffer.remain()) {
-            
-//            logger.logd("onHttpRequest/path: " + request.getPath());
+		
+		if (request.completeContentRead()) {
             
             string path = request.getPath();
 
@@ -404,7 +402,7 @@ namespace UPNP {
 					response.setStatusCode(404);
 				}
             }
-            
+
             response.setComplete();
         }
     }
