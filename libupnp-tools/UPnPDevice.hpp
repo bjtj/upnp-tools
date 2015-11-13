@@ -75,7 +75,10 @@ namespace UPNP {
 
         UPnPService & getService(size_t index);
         const UPnPService & getService(size_t index) const;
+		std::vector<UPnPService> & getServices();
         const std::vector<UPnPService> & getServices() const;
+		std::vector<UPnPService> getServicesRecursive();
+		const std::vector<UPnPService> getServicesRecursive() const;
         
         void setBaseUrl(const std::string & baseUrl);
         std::string getBaseUrl();

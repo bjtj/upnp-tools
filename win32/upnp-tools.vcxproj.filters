@@ -96,6 +96,9 @@
     <ClCompile Include="..\libupnp-tools\XmlEncoderDecoder.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="..\libupnp-tools\UPnPDeviceIterator.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\libupnp-tools\SSDPServer.hpp">
@@ -186,6 +189,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\XmlEncoderDecoder.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libupnp-tools\UPnPDeviceIterator.hpp">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

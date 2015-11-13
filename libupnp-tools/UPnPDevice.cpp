@@ -240,9 +240,32 @@ namespace UPNP {
         return services[index];
     }
     
+	vector<UPnPService> & UPnPDevice::getServices() {
+		return services;
+	}
+
     const vector<UPnPService> & UPnPDevice::getServices() const {
         return services;
     }
+
+	vector<UPnPService> UPnPDevice::getServicesRecursive() {
+		vector<UPnPService> ret;
+		for (size_t i = 0; i < embeddedDevices.size(); i++) {
+			UPnPDevice & embed = embeddedDevices[i];
+			vector<UPnPService> append = embed.getServicesRecursive();
+			ret.insert(ret.end(), append.begin(), append.end());
+		}
+		return ret;
+	}
+	const vector<UPnPService> UPnPDevice::getServicesRecursive() const {
+		vector<UPnPService> ret;
+		for (size_t i = 0; i < embeddedDevices.size(); i++) {
+			const UPnPDevice & embed = embeddedDevices[i];
+			vector<UPnPService> append = embed.getServicesRecursive();
+			ret.insert(ret.end(), append.begin(), append.end());
+		}
+		return ret;
+	}
     
     void UPnPDevice::setBaseUrl(const string & baseUrl) {
         this->baseUrl = baseUrl;

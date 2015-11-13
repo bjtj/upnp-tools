@@ -1,12 +1,20 @@
 #include "UPnPDeviceMaker.hpp"
+#include "UPnPDeviceIterator.hpp"
 #include "UPnPServiceMaker.hpp"
 #include "XmlNodeFinder.hpp"
 #include "macros.hpp"
+
+#include "XmlDomParser.hpp"
+#include <liboslayer/os.hpp>
+#include <liboslayer/Text.hpp>
+#include <liboslayer/FileReaderWriter.hpp>
 
 namespace UPNP {
 
 	using namespace std;
 	using namespace XML;
+	using namespace OS;
+	using namespace UTIL;
 
 	UPnPDeviceMaker::UPnPDeviceMaker() {
 	}
@@ -15,6 +23,7 @@ namespace UPNP {
 	}
 
 	UPnPDevice UPnPDeviceMaker::makeDeviceFromDeviceDescription(const string & baseUrl, const XmlDocument & doc) {
+
 		UPnPDevice device;
         device.setBaseUrl(baseUrl);
 
@@ -31,6 +40,7 @@ namespace UPNP {
 	}
 
 	UPnPDevice UPnPDeviceMaker::makeDeviceFromDeviceNode(const string & baseUrl, const XmlNode & deviceNode) {
+
 		UPnPDevice device;
         device.setBaseUrl(baseUrl);
 		const vector<XmlNode> & children = deviceNode.getChildren();
@@ -58,6 +68,7 @@ namespace UPNP {
 	}
 
 	vector<UPnPService> UPnPDeviceMaker::makeServiceListFromXmlNode(const string & baseUrl, const XmlNode & deviceNode) {
+
 		vector<UPnPService> services;
 		XmlNode serviceListNode = XmlNodeFinder::getNodeByTagName(deviceNode, "serviceList", 1);
         if (!serviceListNode.empty()) {
@@ -71,6 +82,73 @@ namespace UPNP {
         }
 		return services;
 	}
+	
 
+	/**
+	 * @brief UPnPDeviceMakerFromFile
+	 */
 
+	UPnPDeviceMakerFromFile::UPnPDeviceMakerFromFile(LinkedStringMap & replacements) : replacements(replacements) {
+	}
+	UPnPDeviceMakerFromFile::~UPnPDeviceMakerFromFile() {
+	}
+
+	UPnPDevice UPnPDeviceMakerFromFile::makeDeviceFromXmlFile(const string & deviceDescriptionPath, StringMap & scpdPathTable) {
+		
+		XmlDocument doc = parseXmlFile(deviceDescriptionPath);
+
+		UPnPDevice device = UPnPDeviceMaker::makeDeviceFromDeviceDescription("file:://" + deviceDescriptionPath, doc);
+		
+		class ScpdBinderIteratorHandler : public IteratorHandler<UPnPService> {
+		private:
+			UPnPDeviceMakerFromFile & maker;
+			StringMap & scpdPathTable;
+
+		public:
+			ScpdBinderIteratorHandler(UPnPDeviceMakerFromFile & maker, StringMap & scpdPathTable)
+				: maker(maker), scpdPathTable(scpdPathTable) {}
+			virtual ~ScpdBinderIteratorHandler() {}
+			virtual void onItem(UPnPService & service) {
+				string serviceType = service.getServiceType();
+				string scpdPath = scpdPathTable[serviceType];
+				Scpd scpd = maker.makeScpdFromXmlFile(serviceType, scpdPath);
+				service.setScpd(scpd);
+			}
+		};
+
+		ScpdBinderIteratorHandler handler(*this, scpdPathTable);
+		UPnPDeviceIterator::iterateServicesRecursive(device, handler);
+
+		return device;
+	}
+
+	Scpd UPnPDeviceMakerFromFile::makeScpdFromXmlFile(const string & serviceType, const string & scpdPath) {
+
+		XmlDocument doc = parseXmlFile(scpdPath);
+		return UPnPServiceMaker::makeScpdFromXmlDocument(serviceType, doc);
+	}
+
+	XmlDocument UPnPDeviceMakerFromFile::parseXmlFile(const std::string & filePath) {
+		XmlDomParser parser;
+		return parser.parse(dumpFile(filePath));
+	}
+
+	string UPnPDeviceMakerFromFile::dumpFile(const string & filePath) {
+		File file(filePath);
+		if (!file.exists() || !file.isFile()) {
+			throw Exception("invalid file/path: " + filePath, -1, 0);
+		}
+
+		FileReader reader(file);
+		return replaceAll(reader.dumpAsString());
+	}
+
+	string UPnPDeviceMakerFromFile::replaceAll(const string & text) {
+		string ret = text;
+		for (size_t i = 0; i < replacements.size(); i++) {
+			NameValue & nv = replacements[i];
+			ret = Text::replaceAll(ret, nv.getName(), nv.getValue());
+		}
+		return ret;
+	}
 }
