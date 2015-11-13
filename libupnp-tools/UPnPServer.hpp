@@ -12,6 +12,7 @@
 #include "UPnPDevice.hpp"
 #include "UPnPService.hpp"
 #include "UPnPDevicePool.hpp"
+#include "Timer.hpp"
 
 namespace UPNP {
 
@@ -47,7 +48,7 @@ namespace UPNP {
 	/**
 	 * @brief UPNP Server
 	 */
-    class UPnPServer : public SSDP::OnMsearchHandler, public HTTP::OnHttpRequestHandler {
+    class UPnPServer : public SSDP::OnMsearchHandler, public HTTP::OnHttpRequestHandler, public UTIL::SelectorPoller, public TimerEvent {
 	private:
         UPnPDevicePool devices;
         UPnPActionRequestHandler * actionRequestHandler;
@@ -55,14 +56,16 @@ namespace UPNP {
         HTTP::HttpServer httpServer;
         UTIL::PollingThread * pollingThread;
         UrlSerializer urlSerializer;
+        Timer timer;
 		
 	public:
 		UPnPServer(int port);
 		virtual ~UPnPServer();
+        
+        virtual void onFire();
 
 		void start();
         void startAsync();
-        void poll(unsigned long timeout);
         void stop();
 		bool isRunning();
         

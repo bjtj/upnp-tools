@@ -109,6 +109,7 @@ namespace SSDP {
         virtual bool isRunning();
         
         virtual void poll(unsigned long timeout);
+        virtual void onIdle();
         virtual void listen(UTIL::SelectorPoller & poller);
         
         void handleMessage(const OS::DatagramPacket & packet);
@@ -143,6 +144,7 @@ namespace SSDP {
         virtual bool isRunning();
         
         virtual void poll(unsigned long timeout);
+        virtual void onIdle();
         virtual void listen(UTIL::SelectorPoller & poller);
                 
         int sendMsearch(const std::string & type);

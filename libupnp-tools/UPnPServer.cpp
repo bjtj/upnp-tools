@@ -74,11 +74,17 @@ namespace UPNP {
 		}
 		return prefix + (!Text::endsWith(prefix, "/") ? "/" : "") + appendWithoutSlash;
 	}
+    
+    
     /**
-     *
+     * @brief UPnPServer
      */
 
-	UPnPServer::UPnPServer(int port) : actionRequestHandler(NULL), httpServer(port), pollingThread(NULL), urlSerializer("") {
+	UPnPServer::UPnPServer(int port) : TimerEvent(false), actionRequestHandler(NULL), httpServer(port), pollingThread(NULL), urlSerializer("") {
+        
+        registerPollee(&timer);
+        registerSelectablePollee(&ssdpListener);
+        
         httpServer.vpath("/*", this);
         ssdpListener.addMsearchHandler(this);
 	}
@@ -86,10 +92,18 @@ namespace UPNP {
 	UPnPServer::~UPnPServer() {
         stop();
 	}
+    
+    void UPnPServer::onFire() {
+//        logger.logd("fire!!");
+    }
 	
 	void UPnPServer::start() {
         ssdpListener.start();
         httpServer.start();
+        timer.start();
+        
+        scheduleRepeatableRelativeTimer(0, -1, Timer::SECOND);
+        timer.setTimerEvent(this);
 	}
     
     void UPnPServer::startAsync() {
@@ -99,17 +113,14 @@ namespace UPNP {
         httpServer.startAsync();
         
         if (!pollingThread) {
-            pollingThread = new PollingThread(ssdpListener.getSelfSelectorPoller(), 1000);
+            pollingThread = new PollingThread(this, 1000);
             pollingThread->start();
         }
-    }
-    
-    void UPnPServer::poll(unsigned long timeout) {
-        ssdpListener.poll(timeout);
     }
 	
 	void UPnPServer::stop() {
         
+        timer.stop();
         httpServer.stop();
         
         if (pollingThread) {

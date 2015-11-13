@@ -5,22 +5,32 @@ namespace UPNP {
 
     using namespace std;
 	using namespace OS;
+    using namespace UTIL;
 
-	TimerEvent::TimerEvent()
-		: fireTick(0), repeatCount(0), repeatInterval(0), repeatIndex(0), done(false) {
+	TimerEvent::TimerEvent(bool heap)
+		: heap(heap), fireTick(0), repeatCount(0), repeatInterval(0), repeatIndex(0), done(false) {
 	}
 	
 	TimerEvent::~TimerEvent() {
 	}
-
-	void TimerEvent::scheduleTimer(unsigned long fireTick, int repeatCount,
-							  unsigned long repeatInterval) {
-		this->fireTick = fireTick;
-		this->repeatCount = repeatCount;
-		this->repeatInterval = repeatInterval;
-
-		repeatIndex = 0;
-	}
+    
+    void TimerEvent::scheduleFixedTimer(unsigned long fireTick) {
+        scheduleRepeatableFixedTimer(fireTick, 1, 0);
+    }
+    void TimerEvent::scheduleRelativeTimer(unsigned long after) {
+        scheduleRepeatableRelativeTimer(after, 1, 0);
+    }
+    void TimerEvent::scheduleRepeatableFixedTimer(unsigned long fireTick, int repeatCount, unsigned long repeatInterval) {
+        this->fireTick = fireTick;
+        this->repeatCount = repeatCount;
+        this->repeatInterval = repeatInterval;
+        
+        repeatIndex = 0;
+        
+    }
+    void TimerEvent::scheduleRepeatableRelativeTimer(unsigned long after, int repeatCount, unsigned long repeatInterval) {
+        scheduleRepeatableFixedTimer(tick_milli() + after, repeatCount, repeatIndex);
+    }
 
 	bool TimerEvent::isFireTime(unsigned long currentTick) {
         return (currentTick >= fireTick);
@@ -39,18 +49,44 @@ namespace UPNP {
     bool TimerEvent::isDone() {
         return done;
     }
+    
+    bool TimerEvent::isHeap() {
+        return heap;
+    }
 
+    /**
+     * @brief Timer
+     */
 
-
-	Timer::Timer() : sem(1), listener(NULL) {
+	Timer::Timer() : eventsLock(1), listener(NULL), started(false) {
 	}
 	
 	Timer::~Timer() {
 	}
     
     void Timer::start() {
+        started = true;
     }
     void Timer::stop() {
+        started = false;
+        
+        clearEvents();
+    }
+    
+    void Timer::clearEvents() {
+        eventsLock.wait();
+        for (vector<TimerEvent*>::iterator iter = events.begin(); iter != events.end();) {
+            TimerEvent * event = *iter;
+            removeEvent(event);
+            iter = events.erase(iter);
+        }
+        eventsLock.post();
+    }
+    
+    void Timer::removeEvent(TimerEvent * event) {
+        if (event->isHeap()) {
+            delete event;
+        }
     }
 
 	unsigned long Timer::getCurrentTick() {
@@ -64,29 +100,37 @@ namespace UPNP {
     void Timer::removeTimerEvent(TimerEvent * event) {
         events.erase(std::remove(events.begin(), events.end(), event), events.end());
     }
-
-	void Timer::poll() {
-		sem.wait();
-		for (size_t i = 0; i < events.size(); i++) {
-			TimerEvent * event = events[i];
-			if (event->isFireTime(getCurrentTick())) {
-				event->fire();
-			}
-		}
+    
+    void Timer::onIdle() {
+        eventsLock.wait();
         for (vector<TimerEvent*>::iterator iter = events.begin(); iter != events.end();) {
-            if ((*iter)->isDone()) {
-                if (listener) {
-                    listener->onTimerEventDone(*iter);
-                }
+            
+            TimerEvent * event = *iter;
+            if (event->isFireTime(getCurrentTick())) {
+                event->fire();
+            }
+            
+            if (event->isDone()) {
+                onTimerEventDone(event);
+                removeEvent(event);
                 iter = events.erase(iter);
             } else {
                 iter++;
             }
         }
-		sem.post();
-	}
+        eventsLock.post();
+    }
+    
+    void Timer::listen(Poller & poller) {
+    }
     
     void Timer::setTimerListener(TimerListener * listener) {
         this->listener = listener;
+    }
+    
+    void Timer::onTimerEventDone(TimerEvent * event) {
+        if (listener) {
+            listener->onTimerEventDone(event);
+        }
     }
 }

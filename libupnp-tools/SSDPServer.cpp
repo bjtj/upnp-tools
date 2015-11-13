@@ -111,7 +111,11 @@ namespace SSDP {
         return mcastSocket != NULL;
     }
     void SSDPListener::poll(unsigned long timeout) {
-        getSelfSelectorPoller().poll(timeout);
+        getSelfPoller()->poll(timeout);
+    }
+    
+    void SSDPListener::onIdle() {
+        
     }
     
     void SSDPListener::listen(SelectorPoller & poller) {
@@ -213,30 +217,6 @@ namespace SSDP {
             
             // https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers
             // any random port range : 49152~65535
-            /*class MyRandomPortBinder : public RandomPortBinder {
-            private:
-                int startPort;
-                int currentPort;
-                int endPort;
-            public:
-                MyRandomPortBinder() : startPort(49152), currentPort(0), endPort(65535) {}
-                virtual ~MyRandomPortBinder() {}
-                virtual void start() {
-                    currentPort = startPort;
-                }
-                virtual int getNextPort() {
-                    return currentPort++;
-                }
-                virtual bool wantFinish() {
-                    return currentPort > endPort;
-                }
-                virtual int getSelectedPort() {
-                    return currentPort;
-                }
-            };
-            MyRandomPortBinder portBinder;
-            bindResult = msearchSocket->randomBind(portBinder);*/
-
 			RangeRandomPortBinder binder(49152, 65535);
 			bindResult = msearchSocket->randomBind(binder);
             
@@ -261,9 +241,11 @@ namespace SSDP {
         return msearchSocket != NULL;
     }
     void MsearchSender::poll(unsigned long timeout) {
-        getSelfSelectorPoller().poll(timeout);
+        getSelfPoller()->poll(timeout);
     }
-    
+    void MsearchSender::onIdle() {
+        
+    }
     void MsearchSender::listen(SelectorPoller & poller) {
         
         if (poller.isSelected(msearchSocket->getFd())) {
@@ -384,7 +366,7 @@ namespace SSDP {
 
 	void SSDPServer::startPollingThread() {
 		if (!pollingThread) {
-			pollingThread = new PollingThread(*this, 1000);
+			pollingThread = new PollingThread(this, 1000);
 			pollingThread->start();
 		}
 	}

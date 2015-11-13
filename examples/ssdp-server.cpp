@@ -14,16 +14,16 @@ public:
     virtual ~SSDPHandler() {
 	}
 
-	virtual void onMsearch(HttpHeader & header) {
-		std::cout << "msearch - " << header["ST"] << std::endl;
+	virtual void onMsearch(const HttpHeader & header, const OS::InetAddress & remoteAddr) {
+		std::cout << "msearch - " << header.getHeaderFieldIgnoreCase("ST") << std::endl;
 	}
 
-	virtual void onNotify(HttpHeader & header) {
-		std::cout << "notify - " << header["NTS"] << " . " << header["Location"] << std::endl;
+	virtual void onNotify(const HttpHeader & header) {
+		std::cout << "notify - " << header.getHeaderFieldIgnoreCase("NTS") << " . " << header.getHeaderFieldIgnoreCase("Location") << std::endl;
 	}
 
-	virtual void onHttpResponse(HttpHeader & header) {
-		std::cout << "response - " << header["Location"] << std::endl;
+	virtual void onHttpResponse(const HttpHeader & header) {
+		std::cout << "response - " << header.getHeaderFieldIgnoreCase("Location") << std::endl;
 	}
 };
 

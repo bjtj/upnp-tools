@@ -178,7 +178,7 @@ int main(int argc, char * args[]) {
 	cout << File::getCwd() << endl;
 
 	//UPnPDevice device = makeDevice(server.getUrlSerializer());
-	UPnPDevice device = makeDeviceFromXml("../../examples/res/", server.getUrlSerializer());
+	UPnPDevice device = makeDeviceFromXml("res/", server.getUrlSerializer());
     
     server.startAsync();
     

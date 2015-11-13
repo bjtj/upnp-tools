@@ -13,6 +13,7 @@ namespace UPNP {
         OS::Semaphore sem;
     public:
         UniqueIdGenerator();
+        UniqueIdGenerator(ID_TYPE initial);
         virtual ~UniqueIdGenerator();
         ID_TYPE generate();
     };

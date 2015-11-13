@@ -1,6 +1,7 @@
 #ifndef __UPNP_CONTROL_POINT_HPP__
 #define __UPNP_CONTROL_POINT_HPP__
 
+#include <liboslayer/PollablePool.hpp>
 #include <libhttp-server/HttpServer.hpp>
 #include <libhttp-server/HttpClientThreadPool.hpp>
 #include <string>
@@ -130,7 +131,7 @@ namespace UPNP {
 	/**
 	 * @brief upnp control point
 	 */
-	class UPnPControlPoint : public UPnPDeviceDetection, public HTTP::HttpResponseHandler<UPnPHttpRequestSession> {
+    class UPnPControlPoint : public UPnPDeviceDetection, public HTTP::HttpResponseHandler<UPnPHttpRequestSession>, public UTIL::SelectorPoller, public TimerEvent {
 	private:
         UniqueIdGenerator gen;
 		UPnPDevicePool devicePool;
@@ -140,6 +141,8 @@ namespace UPNP {
 		UPnPControlPointSsdpNotifyFilter filter;
 		DeviceAddRemoveListener * deviceListener;
         InvokeActionResponseListener * invokeActionResponseListener;
+        UTIL::PollingThread * pollingThread;
+        Timer timer;
 
 	private:
 		UPnPControlPoint(const UPnPControlPoint & other); // do not allow copy
@@ -147,10 +150,12 @@ namespace UPNP {
 	public:
 		UPnPControlPoint();
 		virtual ~UPnPControlPoint();
+        
+        virtual void onFire();
     
 		void start();
 		void startAsync();
-		void poll(unsigned long timeout);
+//		void poll(unsigned long timeout);
 		void stop();
     
 		void sendMsearch(std::string searchType);

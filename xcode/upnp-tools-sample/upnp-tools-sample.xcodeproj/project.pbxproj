@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E8447C681BF0FA89000E2903 /* server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E857BB8E1BEDE3C900D2022F /* server.cpp */; };
 		E8447CB01BF4B054000E2903 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E8447CAF1BF4B054000E2903 /* AppDelegate.m */; };
 		E8447CB31BF4B054000E2903 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E8447CB21BF4B054000E2903 /* main.m */; };
 		E8447CB51BF4B054000E2903 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E8447CB41BF4B054000E2903 /* Assets.xcassets */; };
@@ -15,6 +14,8 @@
 		E8447CC31BF4B054000E2903 /* UPnPToolsOSXTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E8447CC21BF4B054000E2903 /* UPnPToolsOSXTests.m */; };
 		E8447CCE1BF4B054000E2903 /* UPnPToolsOSXUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = E8447CCD1BF4B054000E2903 /* UPnPToolsOSXUITests.m */; };
 		E8447CEE1BF4BAF1000E2903 /* libupnp-tools-cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8E0FEE71BD849CA00292C54 /* libupnp-tools-cocoa.a */; };
+		E8447D171BF5F8E9000E2903 /* res in Copy Files */ = {isa = PBXBuildFile; fileRef = E8447D151BF5F8C7000E2903 /* res */; };
+		E8447D221BF63428000E2903 /* cp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8C743C71BDEC8B200101962 /* cp.cpp */; };
 		E8E0FEE81BD849CF00292C54 /* libupnp-tools-cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8E0FEE71BD849CA00292C54 /* libupnp-tools-cocoa.a */; };
 /* End PBXBuildFile section */
 
@@ -66,13 +67,14 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		E8E0FE6C1BD8480B00292C54 /* Copy Files */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 16;
 			files = (
+				E8447D171BF5F8E9000E2903 /* res in Copy Files */,
 			);
 			name = "Copy Files";
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -90,6 +92,9 @@
 		E8447CC91BF4B054000E2903 /* UPnPToolsOSXUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UPnPToolsOSXUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8447CCD1BF4B054000E2903 /* UPnPToolsOSXUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UPnPToolsOSXUITests.m; sourceTree = "<group>"; };
 		E8447CCF1BF4B054000E2903 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E8447D151BF5F8C7000E2903 /* res */ = {isa = PBXFileReference; lastKnownFileType = folder; name = res; path = ../../examples/res; sourceTree = "<group>"; };
+		E8447D181BF6034B000E2903 /* ServiceFindTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ServiceFindTest.cpp; path = ../../../examples/ServiceFindTest.cpp; sourceTree = "<group>"; };
+		E8447D191BF6034B000E2903 /* ssdp-server.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "ssdp-server.cpp"; path = "../../../examples/ssdp-server.cpp"; sourceTree = "<group>"; };
 		E857BB401BEA305700D2022F /* timerTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = timerTest.cpp; path = ../../../examples/timerTest.cpp; sourceTree = "<group>"; };
 		E857BB8E1BEDE3C900D2022F /* server.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = server.cpp; path = ../../../examples/server.cpp; sourceTree = "<group>"; };
 		E857BB961BEE45A400D2022F /* socketTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = socketTest.cpp; path = ../../../examples/socketTest.cpp; sourceTree = "<group>"; };
@@ -176,6 +181,7 @@
 		E8E0FE651BD8480B00292C54 = {
 			isa = PBXGroup;
 			children = (
+				E8447D151BF5F8C7000E2903 /* res */,
 				E8E0FE781BD8482A00292C54 /* upnp-tools.xcodeproj */,
 				E8E0FE701BD8480B00292C54 /* upnp-tools-sample */,
 				E8447CAD1BF4B054000E2903 /* UPnPToolsOSX */,
@@ -199,6 +205,8 @@
 		E8E0FE701BD8480B00292C54 /* upnp-tools-sample */ = {
 			isa = PBXGroup;
 			children = (
+				E8447D181BF6034B000E2903 /* ServiceFindTest.cpp */,
+				E8447D191BF6034B000E2903 /* ssdp-server.cpp */,
 				E8C743C71BDEC8B200101962 /* cp.cpp */,
 				E8E0FE711BD8480B00292C54 /* main.mm */,
 				E857BB401BEA305700D2022F /* timerTest.cpp */,
@@ -418,7 +426,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E8447C681BF0FA89000E2903 /* server.cpp in Sources */,
+				E8447D221BF63428000E2903 /* cp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -654,6 +662,7 @@
 				E8447CD11BF4B054000E2903 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		E8447CD81BF4B054000E2903 /* Build configuration list for PBXNativeTarget "UPnPToolsOSXTests" */ = {
 			isa = XCConfigurationList;
@@ -662,6 +671,7 @@
 				E8447CD31BF4B054000E2903 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		E8447CD91BF4B054000E2903 /* Build configuration list for PBXNativeTarget "UPnPToolsOSXUITests" */ = {
 			isa = XCConfigurationList;
@@ -670,6 +680,7 @@
 				E8447CD51BF4B054000E2903 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		E8E0FE691BD8480B00292C54 /* Build configuration list for PBXProject "upnp-tools-sample" */ = {
 			isa = XCConfigurationList;

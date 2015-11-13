@@ -159,7 +159,8 @@ namespace UPNP {
 	 *
 	 */
 
-	UPnPControlPoint::UPnPControlPoint() : httpClientThreadPool(1), deviceListener(NULL), invokeActionResponseListener(NULL) {
+	UPnPControlPoint::UPnPControlPoint() : TimerEvent(false), httpClientThreadPool(1), deviceListener(NULL), invokeActionResponseListener(NULL), pollingThread(NULL) {
+        
 		ssdpHandler.setDeviceDetection(this);
 		
 		ssdp.addMsearchHandler(&ssdpHandler);
@@ -168,26 +169,48 @@ namespace UPNP {
     
 		httpClientThreadPool.setFollowRedirect(true);
 		httpClientThreadPool.setHttpClientPollListener(this);
+        
+        registerSelectorPoller(&ssdp);
+        registerPollee(&timer);
+        
+        scheduleRepeatableRelativeTimer(0, -1, Timer::SECOND);
 	}
 
 	UPnPControlPoint::~UPnPControlPoint() {
+        unregisterSelectorPoller(&ssdp);
 	}
+    
+    void UPnPControlPoint::onFire() {
+        // logger.logd("fire");
+    }
 
 	void UPnPControlPoint::start() {
 		ssdp.start();
 		httpClientThreadPool.start();
+        timer.start();
+        timer.setTimerEvent(this);
 	}
 
 	void UPnPControlPoint::startAsync() {
-		ssdp.startAsync();
-		httpClientThreadPool.start();
-	}
-
-	void UPnPControlPoint::poll(unsigned long timeout) {
-		ssdp.poll(timeout);
+        
+        start();
+        
+        if (!pollingThread) {
+            pollingThread = new PollingThread(this, 1000);
+            pollingThread->start();
+        }
 	}
 
 	void UPnPControlPoint::stop() {
+        
+        if (pollingThread) {
+            pollingThread->interrupt();
+            pollingThread->join();
+            delete pollingThread;
+            pollingThread = NULL;
+        }
+        
+        timer.stop();
 		ssdp.stop();
 		httpClientThreadPool.stop();
 	}
