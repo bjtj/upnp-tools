@@ -104,9 +104,6 @@
     <ClInclude Include="..\libupnp-tools\SSDPServer.hpp">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\libupnp-tools\UPnP.hpp">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPAction.hpp">
       <Filter>헤더 파일</Filter>
     </ClInclude>
