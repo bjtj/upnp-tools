@@ -57,6 +57,7 @@ namespace UPNP {
         UTIL::PollingThread * pollingThread;
         UrlSerializer urlSerializer;
         Timer timer;
+        int idx;
 		
 	public:
 		UPnPServer(int port);

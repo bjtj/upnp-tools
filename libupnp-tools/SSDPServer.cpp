@@ -75,11 +75,9 @@ namespace SSDP {
      */
     
     SSDPListener::SSDPListener() : mcastSocket(NULL) {
-        
     }
     
     SSDPListener::SSDPListener(SSDPConfig & config) : config(config), mcastSocket(NULL) {
-        
     }
     
     SSDPListener::~SSDPListener() {
@@ -110,17 +108,14 @@ namespace SSDP {
     bool SSDPListener::isRunning() {
         return mcastSocket != NULL;
     }
-    void SSDPListener::poll(unsigned long timeout) {
-        getSelfPoller()->poll(timeout);
-    }
     
     void SSDPListener::onIdle() {
-        
     }
     
     void SSDPListener::listen(SelectorPoller & poller) {
         
-        if (poller.isSelected(mcastSocket->getFd())) {
+        if (poller.isReadableSelected(mcastSocket->getFd())) {
+            
             char buffer[4096] = {0,};
             DatagramPacket packet(buffer, sizeof(buffer));
             int len;
@@ -248,7 +243,7 @@ namespace SSDP {
     }
     void MsearchSender::listen(SelectorPoller & poller) {
         
-        if (poller.isSelected(msearchSocket->getFd())) {
+        if (poller.isReadableSelected(msearchSocket->getFd())) {
             char buffer[4096] = {0,};
             DatagramPacket packet(buffer, sizeof(buffer));
             int len;

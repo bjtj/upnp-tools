@@ -80,7 +80,7 @@ namespace UPNP {
      * @brief UPnPServer
      */
 
-	UPnPServer::UPnPServer(int port) : TimerEvent(false), actionRequestHandler(NULL), httpServer(port), pollingThread(NULL), urlSerializer("") {
+	UPnPServer::UPnPServer(int port) : TimerEvent(false), actionRequestHandler(NULL), httpServer(port), pollingThread(NULL), urlSerializer(""), idx(0) {
         
         registerPollee(&timer);
         registerSelectablePollee(&ssdpListener);
@@ -94,7 +94,7 @@ namespace UPNP {
 	}
     
     void UPnPServer::onFire() {
-//        logger.logd("fire!!");
+//        logger.logd("..." + Text::toString(idx++));
     }
 	
 	void UPnPServer::start() {

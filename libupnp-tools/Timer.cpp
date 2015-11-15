@@ -1,11 +1,14 @@
 #include "Timer.hpp"
 #include <algorithm>
+#include <liboslayer/Logger.hpp>
 
 namespace UPNP {
 
     using namespace std;
 	using namespace OS;
     using namespace UTIL;
+    
+    static const Logger & logger = LoggerFactory::getDefaultLogger();
 
 	TimerEvent::TimerEvent(bool heap)
 		: heap(heap), fireTick(0), repeatCount(0), repeatInterval(0), repeatIndex(0), done(false) {
@@ -29,7 +32,7 @@ namespace UPNP {
         
     }
     void TimerEvent::scheduleRepeatableRelativeTimer(unsigned long after, int repeatCount, unsigned long repeatInterval) {
-        scheduleRepeatableFixedTimer(tick_milli() + after, repeatCount, repeatIndex);
+        scheduleRepeatableFixedTimer(tick_milli() + after, repeatCount, repeatInterval);
     }
 
 	bool TimerEvent::isFireTime(unsigned long currentTick) {
@@ -102,6 +105,7 @@ namespace UPNP {
     }
     
     void Timer::onIdle() {
+        
         eventsLock.wait();
         for (vector<TimerEvent*>::iterator iter = events.begin(); iter != events.end();) {
             

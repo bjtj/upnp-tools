@@ -108,7 +108,6 @@ namespace SSDP {
         virtual void stop();
         virtual bool isRunning();
         
-        virtual void poll(unsigned long timeout);
         virtual void onIdle();
         virtual void listen(UTIL::SelectorPoller & poller);
         

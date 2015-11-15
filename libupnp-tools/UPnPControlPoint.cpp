@@ -242,13 +242,18 @@ namespace UPNP {
         // logger.logd(content);
     
 		if (session.getRequestType() == UPnPHttpRequestType::DEVICE_DESCRIPTION) {
+            
 			char baseUrl[1024] = {0,};
             Url & url = httpClient.getUrl();
             snprintf(baseUrl, sizeof(baseUrl), "%s", url.toString().c_str());
 			this->onDeviceDescriptionInXml(baseUrl, content);
+            
 		} else if (session.getRequestType() == UPnPHttpRequestType::SCPD) {
+            
 			this->onScpdInXml(session.getServicePosition(), content);
+            
         } else if (session.getRequestType() == UPnPHttpRequestType::ACTION_INVOKE) {
+            
             SoapReader reader;
             XmlDomParser parser;
             XmlDocument doc = parser.parse(content);
@@ -276,6 +281,11 @@ namespace UPNP {
     
     void UPnPControlPoint::onError(HttpClient<UPnPHttpRequestSession> &httpClient, UPnPHttpRequestSession session) {
         logger.loge("onError()");
+        
+        if (session.getRequestType() == UPnPHttpRequestType::DEVICE_DESCRIPTION) {
+        } else if (session.getRequestType() == UPnPHttpRequestType::SCPD) {
+        } else if (session.getRequestType() == UPnPHttpRequestType::ACTION_INVOKE) {
+        }
     }
 
 	void UPnPControlPoint::onDeviceCacheUpdate(const HttpHeader & header) {
