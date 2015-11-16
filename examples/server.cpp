@@ -150,7 +150,7 @@ public:
 
 		string actionName = request.getActionName();
 
-		//cout << " >> " << actionName << endl;
+		cout << " >> " << actionName << endl;
 
 		Scpd scpd = request.getService().getScpd();
 		UPnPAction action = scpd.getAction(actionName);
@@ -159,7 +159,7 @@ public:
 			UPnPActionArgument & argument = arguments[i];
 			response[argument.getName()] = "sample text";
 
-			//cout << " >> >> " << argument.getName() << endl;
+			cout << " >> >> " << argument.getName() << endl;
 		}
         
         response.setResult(UPnPActionResult(true, 200, "OK"));

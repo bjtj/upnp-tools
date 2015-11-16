@@ -448,7 +448,7 @@ namespace UPNP {
 	void UPnPServer::onControlRequest(HttpRequest & request, HttpResponse & response, const UPnPService & service) {
 		
 		string content;
-        ChunkedBuffer buffer = request.getChunkedBuffer();
+        ChunkedBuffer & buffer = request.getChunkedBuffer();
 		if (buffer.getChunkSize() > 0) {
 			content = string(buffer.getChunkData(), buffer.getChunkSize());
 		}

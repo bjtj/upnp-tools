@@ -1,195 +1,195 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="소스 파일">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="헤더 파일">
+    <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="리소스 파일">
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\libupnp-tools\SSDPServer.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libupnp-tools\UPnPAction.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libupnp-tools\UPnPActionArgument.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libupnp-tools\UPnPControlPoint.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libupnp-tools\UPnPDevice.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libupnp-tools\UPnPDevicePool.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libupnp-tools\UPnPServer.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libupnp-tools\UPnPService.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libupnp-tools\UPnPStateVariable.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libupnp-tools\StringReader.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libupnp-tools\XmlDocument.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libupnp-tools\XmlDocumentPrinter.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libupnp-tools\XmlDomParser.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libupnp-tools\XmlNodeFinder.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libupnp-tools\UPnPDeviceMaker.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libupnp-tools\UPnPServiceMaker.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libupnp-tools\Timer.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libupnp-tools\UPnPServicePosition.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libupnp-tools\Uuid.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libupnp-tools\UPnPDeviceDetection.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libupnp-tools\SoapWriter.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libupnp-tools\UniqueIdGenerator.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libupnp-tools\SoapReader.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libupnp-tools\CacheControl.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libupnp-tools\UPnPDeviceXmlWriter.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libupnp-tools\UPnPActionInvoke.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libupnp-tools\XmlEncoderDecoder.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libupnp-tools\UPnPDeviceIterator.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\libupnp-tools\SSDPServer.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPAction.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPActionArgument.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPActionArgumentDirection.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPControlPoint.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPDevice.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPDevicePool.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPServer.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPService.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPStateVariable.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\XmlNodeFinder.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\XmlDomParser.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\XmlDocumentPrinter.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\XmlDocument.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\StringReader.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPDeviceMaker.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPServiceMaker.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\macros.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\Timer.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPServicePosition.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\Uuid.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPDeviceDetection.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\SoapWriter.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\UniqueIdGenerator.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\SoapReader.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\CacheControl.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPDeviceXmlWriter.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPActionInvoke.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\XmlEncoderDecoder.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPDeviceIterator.hpp">
-      <Filter>헤더 파일</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
