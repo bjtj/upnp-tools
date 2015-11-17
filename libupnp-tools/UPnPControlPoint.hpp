@@ -2,7 +2,6 @@
 #define __UPNP_CONTROL_POINT_HPP__
 
 #include <liboslayer/PollablePool.hpp>
-#include <libhttp-server/HttpServer.hpp>
 #include <libhttp-server/HttpClientThreadPool.hpp>
 #include <string>
 #include <vector>

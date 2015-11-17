@@ -85,7 +85,9 @@ namespace UPNP {
         registerPollee(&timer);
         registerSelectablePollee(&ssdpListener);
         
-        httpServer.vpath("/*", this);
+        // httpServer.vpath("/*", this);
+		httpServer.registerRequestHandler("/*", this);
+
         ssdpListener.addMsearchHandler(this);
 	}
 	
@@ -417,6 +419,16 @@ namespace UPNP {
             response.setComplete();
         }
     }
+
+	void UPnPServer::onHttpRequestContent(HttpRequest & request, Packet & packet) {
+
+		DataTransfer * transfer = request.getTransfer();
+
+		if (transfer) {
+			if (transfer->isCompleted()) {
+			}
+		}
+	}
 
 	void UPnPServer::onDeviceDescriptionRequest(HttpRequest & request, HttpResponse & response) {
 

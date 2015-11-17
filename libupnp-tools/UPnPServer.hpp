@@ -5,7 +5,9 @@
 #include <vector>
 
 #include <liboslayer/PollablePool.hpp>
-#include <libhttp-server/HttpServer.hpp>
+//#include <libhttp-server/HttpServer.hpp>
+#include <libhttp-server/AnotherHttpServer.hpp>
+
 
 #include "UPnPActionInvoke.hpp"
 #include "SSDPServer.hpp"
@@ -48,12 +50,13 @@ namespace UPNP {
 	/**
 	 * @brief UPNP Server
 	 */
-    class UPnPServer : public SSDP::OnMsearchHandler, public HTTP::OnHttpRequestHandler, public UTIL::SelectorPoller, public TimerEvent {
+    class UPnPServer : public SSDP::OnMsearchHandler, public HTTP::HttpRequestHandler, public UTIL::SelectorPoller, public TimerEvent {
 	private:
         UPnPDevicePool devices;
         UPnPActionRequestHandler * actionRequestHandler;
         SSDP::SSDPListener ssdpListener;
-        HTTP::HttpServer httpServer;
+        //HTTP::HttpServer httpServer;
+		HTTP::AnotherHttpServer httpServer;
         UTIL::PollingThread * pollingThread;
         UrlSerializer urlSerializer;
         Timer timer;
@@ -95,6 +98,7 @@ namespace UPNP {
         OS::InetAddress selectDefaultAddress();
         
         virtual void onHttpRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response);
+		virtual void onHttpRequestContent(HTTP::HttpRequest & request, HTTP::Packet & packet);
 		void onDeviceDescriptionRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response);
 		void onScpdRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response, const UPnPService & service);
 		void onControlRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response, const UPnPService & service);
