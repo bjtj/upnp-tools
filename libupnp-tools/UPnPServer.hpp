@@ -98,7 +98,8 @@ namespace UPNP {
         OS::InetAddress selectDefaultAddress();
         
         virtual void onHttpRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response);
-		virtual void onHttpRequestContent(HTTP::HttpRequest & request, HTTP::Packet & packet);
+		virtual void onHttpRequestContent(HTTP::HttpRequest & request, HTTP::HttpResponse &response, HTTP::Packet & packet);
+        virtual void onHttpRequestContentCompleted(HTTP::HttpRequest &request, HTTP::HttpResponse &response);
 		void onDeviceDescriptionRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response);
 		void onScpdRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response, const UPnPService & service);
 		void onControlRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response, const UPnPService & service);

@@ -380,54 +380,39 @@ namespace UPNP {
 
     void UPnPServer::onHttpRequest(HttpRequest & request, HttpResponse & response) {
         
-        ChunkedBuffer & buffer = request.getChunkedBuffer();
-		request.readChunkedBuffer(buffer);
-		
-		if (request.completeContentRead()) {
-            
-            string path = request.getPath();
-
-            if (urlSerializer.isDeviceDescriptionRequest(path)) {
-                onDeviceDescriptionRequest(request, response);
-            } else {
-
-				string udn = urlSerializer.getUdnFromUrlPath(path);
-				if (!udn.empty()) {
-
-					udn = "uuid:" + udn;
-					if (devices.hasDevice(udn)) {
-						UPnPDevice device = devices.getDevice(udn);
-						if (device.hasServiceWithPropertyRecursive("SCPDURL", path)) {
-							onScpdRequest(request, response, device.getServiceWithPropertyRecursive("SCPDURL", path));
-						} else if (device.hasServiceWithPropertyRecursive("controlURL", path)) {
-							onControlRequest(request, response, device.getServiceWithPropertyRecursive("controlURL", path));
-						} else if (device.hasServiceWithPropertyRecursive("eventSubURL", path)) {
-							onEventSubRequest(request, response, device.getServiceWithPropertyRecursive("eventSubURL", path));
-						} else {
-							response.setStatusCode(404);
-						}
-
-					} else {
-						response.setStatusCode(404);
-					}
-
-				} else {
-					response.setStatusCode(404);
-				}
-            }
-
-            response.setComplete();
-        }
+        response.setStatusCode(404);
+        response.getHeader().setConnection("close");
+        
+        logger.logv(request.getPath());
     }
 
-	void UPnPServer::onHttpRequestContent(HttpRequest & request, Packet & packet) {
-
-		DataTransfer * transfer = request.getTransfer();
-
-		if (transfer) {
-			if (transfer->isCompleted()) {
-			}
-		}
+	void UPnPServer::onHttpRequestContent(HttpRequest & request, HttpResponse & response, Packet & packet) {
+    }
+    
+    void UPnPServer::onHttpRequestContentCompleted(HttpRequest &request, HttpResponse &response) {
+        
+        string path = request.getPath();
+        
+        if (urlSerializer.isDeviceDescriptionRequest(path)) {
+            onDeviceDescriptionRequest(request, response);
+        } else {
+            
+            string udn = urlSerializer.getUdnFromUrlPath(path);
+            if (!udn.empty()) {
+                
+                udn = "uuid:" + udn;
+                if (devices.hasDevice(udn)) {
+                    UPnPDevice device = devices.getDevice(udn);
+                    if (device.hasServiceWithPropertyRecursive("SCPDURL", path)) {
+                        onScpdRequest(request, response, device.getServiceWithPropertyRecursive("SCPDURL", path));
+                    } else if (device.hasServiceWithPropertyRecursive("controlURL", path)) {
+                        onControlRequest(request, response, device.getServiceWithPropertyRecursive("controlURL", path));
+                    } else if (device.hasServiceWithPropertyRecursive("eventSubURL", path)) {
+                        onEventSubRequest(request, response, device.getServiceWithPropertyRecursive("eventSubURL", path));
+                    }
+                }
+            }
+        }
 	}
 
 	void UPnPServer::onDeviceDescriptionRequest(HttpRequest & request, HttpResponse & response) {
@@ -439,12 +424,11 @@ namespace UPNP {
 
 			response.setStatusCode(200);
 			response.setContentType("text/xml");
-            response.setContentLength((int)xml.length());
-            response.write(xml);
+            setFixedTransfer(response, xml);
 
         } else {
             response.setStatusCode(404, "No device found");
-            response.write("No device found...");
+            setFixedTransfer(response, "No device found...");
         }
 
 	}
@@ -454,57 +438,57 @@ namespace UPNP {
 
 		response.setStatusCode(200);
 		response.setContentType("text/xml");
-        response.setContentLength((int)xml.length());
-        response.write(xml);
+        setFixedTransfer(response, xml);
 	}
 	void UPnPServer::onControlRequest(HttpRequest & request, HttpResponse & response, const UPnPService & service) {
 		
-		string content;
-        ChunkedBuffer & buffer = request.getChunkedBuffer();
-		if (buffer.getChunkSize() > 0) {
-			content = string(buffer.getChunkData(), buffer.getChunkSize());
-		}
-
-		if (content.empty()) {
-			response.setStatusCode(404, "wrong request");
-			return;
-		}
-
-		string actionName = getActionNameFromHttpRequest(request);
-
-		XmlDomParser parser;
-		XmlDocument doc = parser.parse(content);
-
-		SoapReader reader;
-		XmlNode actionNode = reader.getActionNode(doc.getRootNode());
-		UPnPActionParameters params = reader.getActionParametersFromActionNode(actionNode);
+        DataTransfer * transfer = request.getTransfer();
         
-        UPnPActionRequest actionRequest(service, actionName);
-		actionRequest.setParameters(params);
-        
-        UPnPActionResponse actionResponse;
-		
-        actionResponse.setResult(UPnPActionResult(false, 500, "Not supported"));
-		if (actionRequestHandler) {
-			actionRequestHandler->onActionRequest(actionRequest, actionResponse);
-		}
-        
-        if (actionResponse.getResult().isSuccess()) {
-            SoapResponseWriter writer;
-            writer.setSoapAction(service.getServiceType(), actionName);
-            vector<string> names = actionResponse.getParameterNames();
-            for (size_t i = 0; i < names.size(); i++) {
-                string & name = names[i];
-                string value = actionResponse[name];
-                writer.setArgument(name, value);
+        if (transfer) {
+            string content = transfer->getString();
+            
+            if (content.empty()) {
+                response.setStatusCode(404, "wrong request");
+                return;
             }
-            writer.setPrologue("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-            writer.setShowPrologue(true);
-            response.setContentType("");
-            response.write(writer.toString());
+            
+            string actionName = getActionNameFromHttpRequest(request);
+            
+            XmlDomParser parser;
+            XmlDocument doc = parser.parse(content);
+            
+            SoapReader reader;
+            XmlNode actionNode = reader.getActionNode(doc.getRootNode());
+            UPnPActionParameters params = reader.getActionParametersFromActionNode(actionNode);
+            
+            UPnPActionRequest actionRequest(service, actionName);
+            actionRequest.setParameters(params);
+            
+            UPnPActionResponse actionResponse;
+            
+            actionResponse.setResult(UPnPActionResult(false, 500, "Not supported"));
+            if (actionRequestHandler) {
+                actionRequestHandler->onActionRequest(actionRequest, actionResponse);
+            }
+            
+            if (actionResponse.getResult().isSuccess()) {
+                SoapResponseWriter writer;
+                writer.setSoapAction(service.getServiceType(), actionName);
+                vector<string> names = actionResponse.getParameterNames();
+                for (size_t i = 0; i < names.size(); i++) {
+                    string & name = names[i];
+                    string value = actionResponse[name];
+                    writer.setArgument(name, value);
+                }
+                writer.setPrologue("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+                writer.setShowPrologue(true);
+                response.setContentType("");
+                setFixedTransfer(response, writer.toString());
+            }
+            
+            response.setStatusCode(actionResponse.getResult().getErrorCode(), actionResponse.getResult().getErrorMessage());
+            
         }
-        
-        response.setStatusCode(actionResponse.getResult().getErrorCode(), actionResponse.getResult().getErrorMessage());
 	}
 	void UPnPServer::onEventSubRequest(HttpRequest & request, HttpResponse & response, const UPnPService & service) {
 		response.setStatusCode(500, "Not supported yet");
