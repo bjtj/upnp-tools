@@ -149,20 +149,37 @@ public:
 	void onActionRequest(const UPnPActionRequest & request, UPnPActionResponse & response) {
 
 		string actionName = request.getActionName();
-
 		cout << " >> " << actionName << endl;
 
-		Scpd scpd = request.getService().getScpd();
-		UPnPAction action = scpd.getAction(actionName);
-		vector<UPnPActionArgument> & arguments = action.getArguments();
-		for (size_t i = 0; i < arguments.size(); i++) {
-			UPnPActionArgument & argument = arguments[i];
-			response[argument.getName()] = "sample text";
+		if (Text::equalsIgnoreCase(actionName, "Browse")) {
 
-			cout << " >> >> " << argument.getName() << endl;
-		}
+			response["Result"] = "<DIDL-Lite xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\" xmlns:dlna=\"urn:schemas-dlna-org:metadata-1-0/\"><container id=\"94467912-bd40-4d2f-ad25-7b8423f7b05a\" parentID=\"0\" restricted=\"1\" searchable=\"0\"><dc:title>Video</dc:title><dc:creator>Unknown</dc:creator><upnp:genre>Unknown</upnp:genre><dc:description>Video</dc:description><upnp:class>object.container.storageFolder</upnp:class></container><container id=\"abe6121c-1731-4683-815c-89e1dcd2bf11\" parentID=\"0\" restricted=\"1\" searchable=\"0\"><dc:title>Music</dc:title><dc:creator>Unknown</dc:creator><upnp:genre>Unknown</upnp:genre><dc:description>Music</dc:description><upnp:class>object.container.storageFolder</upnp:class></container><container id=\"b0184133-f840-4a4f-a583-45f99645edcd\" parentID=\"0\" restricted=\"1\" searchable=\"0\"><dc:title>Photos</dc:title><dc:creator>Unknown</dc:creator><upnp:genre>Unknown</upnp:genre><dc:description>Photos</dc:description><upnp:class>object.container.storageFolder</upnp:class></container></DIDL-Lite>";
+			response["NumberReturned"] = "3";
+			response["TotalMatches"] = "3";
+			response["UpdateID"] = "72390486";
+
+			response.setResult(UPnPActionResult(true, 200, "OK"));
+
+		} else {
+
+			Scpd scpd = request.getService().getScpd();
+			UPnPAction action = scpd.getAction(actionName);
+			vector<UPnPActionArgument> & arguments = action.getArguments();
+			for (size_t i = 0; i < arguments.size(); i++) {
+				UPnPActionArgument & argument = arguments[i];
+
+				if (Text::equalsIgnoreCase(argument.getStateVariable().getDataType(), "string")) {
+					response[argument.getName()] = "sample text";
+				} else {
+					response[argument.getName()] = "0";
+				}
+
+				cout << " >> >> " << argument.getName() << endl;
+			}
         
-        response.setResult(UPnPActionResult(true, 200, "OK"));
+			response.setResult(UPnPActionResult(true, 200, "OK"));
+
+		}
 	}
 };
 
