@@ -16,7 +16,7 @@ private:
 public:
     MyTimerEvent(bool heap) : TimerEvent(heap), idx(0) {}
     virtual ~MyTimerEvent() {}
-    virtual void onFire() {
+    virtual void onTimerTriggered() {
         cout << idx++ << "/fire!" << endl;
     }
 };
@@ -28,7 +28,7 @@ public:
     ToastTimerEvent(bool heap, const string & message) : TimerEvent(heap), message(message) {}
     virtual ~ToastTimerEvent() {}
     
-    virtual void onFire() {
+    virtual void onTimerTriggered() {
         cout << " > msg : " << message << endl;
     }
 };
@@ -40,7 +40,7 @@ public:
     QuitTimerEvent(bool heap, bool * done) : TimerEvent(heap), done(done) {}
     virtual ~QuitTimerEvent() {}
     
-    virtual void onFire() {
+    virtual void onTimerTriggered() {
         cout << "quit" << endl;
         *done = true;
     }

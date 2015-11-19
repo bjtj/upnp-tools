@@ -40,7 +40,7 @@ namespace UPNP {
 	}
 
 	void TimerEvent::fire() {
-		onFire();
+		onTimerTriggered();
 		repeatIndex++;
 		if (repeatCount < 0 || repeatCount > repeatIndex) {
 			fireTick += repeatInterval;

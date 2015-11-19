@@ -84,8 +84,7 @@ namespace UPNP {
         
         registerPollee(&timer);
         registerSelectablePollee(&ssdpListener);
-        
-        // httpServer.vpath("/*", this);
+
 		httpServer.registerRequestHandler("/*", this);
 
         ssdpListener.addMsearchHandler(this);
@@ -95,8 +94,7 @@ namespace UPNP {
         stop();
 	}
     
-    void UPnPServer::onFire() {
-//        logger.logd("..." + Text::toString(idx++));
+    void UPnPServer::onTimerTriggered() {
     }
 	
 	void UPnPServer::start() {
@@ -491,6 +489,9 @@ namespace UPNP {
         }
 	}
 	void UPnPServer::onEventSubRequest(HttpRequest & request, HttpResponse & response, const UPnPService & service) {
+
+		// TODO: implement it
+
 		response.setStatusCode(500, "Not supported yet");
 	}
     

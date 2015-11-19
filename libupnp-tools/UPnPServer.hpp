@@ -66,7 +66,7 @@ namespace UPNP {
 		UPnPServer(int port);
 		virtual ~UPnPServer();
         
-        virtual void onFire();
+        virtual void onTimerTriggered();
 
 		void start();
         void startAsync();

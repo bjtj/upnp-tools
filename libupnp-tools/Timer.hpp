@@ -33,7 +33,7 @@ namespace UPNP {
 		bool isFireTime(unsigned long currentTick);
 		void fire();
         bool isDone();
-		virtual void onFire() = 0;
+		virtual void onTimerTriggered() = 0;
         
         bool isHeap();
 	};

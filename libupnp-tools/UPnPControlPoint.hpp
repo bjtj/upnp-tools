@@ -150,7 +150,7 @@ namespace UPNP {
 		UPnPControlPoint();
 		virtual ~UPnPControlPoint();
         
-        virtual void onFire();
+        virtual void onTimerTriggered();
     
 		void start();
 		void startAsync();

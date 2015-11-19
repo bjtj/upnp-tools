@@ -180,8 +180,8 @@ namespace UPNP {
         unregisterSelectorPoller(&ssdp);
 	}
     
-    void UPnPControlPoint::onFire() {
-        // logger.logd("fire");
+    void UPnPControlPoint::onTimerTriggered() {
+		// TODO: Check UPnPDevice cache and remove outdated devices
     }
 
 	void UPnPControlPoint::start() {
@@ -239,8 +239,6 @@ namespace UPNP {
 
 	void UPnPControlPoint::onHttpResponse(HttpClient<UPnPHttpRequestSession> & httpClient, const HttpHeader & responseHeader, const string & content, UPnPHttpRequestSession session) {
 
-        // logger.logd(content);
-    
 		if (session.getRequestType() == UPnPHttpRequestType::DEVICE_DESCRIPTION) {
             
 			char baseUrl[1024] = {0,};
@@ -280,11 +278,15 @@ namespace UPNP {
 	}
     
     void UPnPControlPoint::onError(HttpClient<UPnPHttpRequestSession> &httpClient, UPnPHttpRequestSession session) {
+
         logger.loge("onError()");
         
         if (session.getRequestType() == UPnPHttpRequestType::DEVICE_DESCRIPTION) {
+			// TODO: 
         } else if (session.getRequestType() == UPnPHttpRequestType::SCPD) {
+			// TODO: 
         } else if (session.getRequestType() == UPnPHttpRequestType::ACTION_INVOKE) {
+			// TODO: 
         }
     }
 
@@ -297,7 +299,8 @@ namespace UPNP {
 		}
 		string cacheControl = header.getHeaderFieldIgnoreCase("CACHE-CONTROL");
 		int maxAge = getMaxAgeInSecond(cacheControl);
-		// UPnP spec: minimum 1800 (30 seconds)
+
+		/* UPnP spec: minimum 1800 (30 seconds) */
 		if (maxAge < 1800) {
 			maxAge = 1800;
 		}
