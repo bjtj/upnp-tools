@@ -40,13 +40,14 @@ static void s_test_ssdp_server() {
 
 	while (1) {
 		char buffer[1024] = {0,};
-		fgets(buffer, sizeof(buffer) - 1, stdin);
-		buffer[strlen(buffer) - 1] = 0;
-		if (!strcmp(buffer, "q")) {
-			break;
-		}
-		if (!strcmp(buffer, "m")) {
-			server.sendMsearch("upnp:rootdevice");
+		if (fgets(buffer, sizeof(buffer) - 1, stdin)) {
+			buffer[strlen(buffer) - 1] = 0;
+			if (!strcmp(buffer, "q")) {
+				break;
+			}
+			if (!strcmp(buffer, "m")) {
+				server.sendMsearch("upnp:rootdevice");
+			}
 		}
 	}
 

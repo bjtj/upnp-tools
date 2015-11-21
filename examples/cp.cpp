@@ -63,9 +63,11 @@ static int s_cmd_handler(const char * cmd, UPnPControlPoint & cp) {
 }
 
 size_t readline(char * buffer, size_t max) {
-	fgets(buffer, (int)max - 1, stdin);
-	buffer[strlen(buffer) - 1] = 0;
-	return strlen(buffer);
+	if (fgets(buffer, (int)max - 1, stdin)) {
+		buffer[strlen(buffer) - 1] = 0;
+		return strlen(buffer);
+	}
+	return 0;
 }
 
 static void s_test_cp() {
