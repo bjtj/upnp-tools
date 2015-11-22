@@ -2,7 +2,10 @@
 #define __UPNP_CONTROL_POINT_HPP__
 
 #include <liboslayer/PollablePool.hpp>
+#include <libhttp-server/AnotherHttpClientThreadPool.hpp>
 #include <libhttp-server/HttpClientThreadPool.hpp>
+#include <libhttp-server/HttpResponse.hpp>
+#include <libhttp-server/HttpRequest.hpp>
 #include <string>
 #include <vector>
 #include <map>
@@ -130,7 +133,7 @@ namespace UPNP {
 	/**
 	 * @brief upnp control point
 	 */
-    class UPnPControlPoint : public UPnPDeviceDetection, public HTTP::HttpResponseHandler<UPnPHttpRequestSession>, public UTIL::SelectorPoller, public TimerEvent {
+    class UPnPControlPoint : public UPnPDeviceDetection, public HTTP::HttpResponseHandler<UPnPHttpRequestSession>, public UTIL::SelectorPoller, public TimerEvent, public HTTP::OnRequestCompleteListener {
 	private:
         UniqueIdGenerator gen;
 		UPnPDevicePool devicePool;
@@ -142,6 +145,8 @@ namespace UPNP {
         InvokeActionResponseListener * invokeActionResponseListener;
         UTIL::PollingThread * pollingThread;
         Timer timer;
+        
+        HTTP::AnotherHttpClientThreadPool anotherHttpClientThreadPool;
 
 	private:
 		UPnPControlPoint(const UPnPControlPoint & other); // do not allow copy
@@ -154,7 +159,6 @@ namespace UPNP {
     
 		void start();
 		void startAsync();
-//		void poll(unsigned long timeout);
 		void stop();
     
 		void sendMsearch(std::string searchType);
@@ -164,6 +168,8 @@ namespace UPNP {
 
 		int getMaxAgeInSecond(const std::string & phrase);
     
+        void handleHttpResponse(HTTP::HttpRequest & request, HTTP::HttpResponse & response, const std::string & content, UPnPHttpRequestSession & session);
+        
 		virtual void onDeviceCacheUpdate(const HTTP::HttpHeader & header);
 		virtual void onDeviceHelloWithUrl(const std::string & url, const HTTP::HttpHeader & header);
 		virtual void onDeviceDescriptionInXml(std::string baseUrl, std::string xmlDoc);
@@ -176,6 +182,11 @@ namespace UPNP {
         
         void setInvokeActionResponseListener(InvokeActionResponseListener * invokeActionResponseListener);
         ID_TYPE invokeAction(const UPnPService & service, const std::string & actionName, const UPnPActionParameters & in);
+        
+        void sendHttpRequest(HTTP::Url & url, const std::string & method, const std::string & content);
+        
+        virtual void onRequestComplete(HTTP::Url & url, HTTP::HttpResponse & response, const std::string & content, HTTP::UserData * userData);
+        virtual void onRequestError(HTTP::Url & url, HTTP::UserData * userData);
 	};
 }
 

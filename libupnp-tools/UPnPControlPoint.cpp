@@ -3,6 +3,7 @@
 #include <liboslayer/Logger.hpp>
 #include "UPnPControlPoint.hpp"
 #include <libhttp-server/Url.hpp>
+#include <libhttp-server/FixedTransfer.hpp>
 #include "XmlDomParser.hpp"
 #include "UPnPDeviceMaker.hpp"
 #include "UPnPServiceMaker.hpp"
@@ -159,7 +160,7 @@ namespace UPNP {
 	 *
 	 */
 
-	UPnPControlPoint::UPnPControlPoint() : TimerEvent(false), httpClientThreadPool(1), deviceListener(NULL), invokeActionResponseListener(NULL), pollingThread(NULL) {
+	UPnPControlPoint::UPnPControlPoint() : TimerEvent(false), httpClientThreadPool(1), deviceListener(NULL), invokeActionResponseListener(NULL), pollingThread(NULL), anotherHttpClientThreadPool(5) {
         
 		ssdpHandler.setDeviceDetection(this);
 		
@@ -174,6 +175,8 @@ namespace UPNP {
         registerPollee(&timer);
         
         scheduleRepeatableRelativeTimer(0, -1, Timer::SECOND);
+        
+//        anotherHttpClientThreadPool.setOnRequestCompleteListener(this);
 	}
 
 	UPnPControlPoint::~UPnPControlPoint() {
@@ -189,6 +192,7 @@ namespace UPNP {
 		httpClientThreadPool.start();
         timer.start();
         timer.setTimerEvent(this);
+//        anotherHttpClientThreadPool.start();
 	}
 
 	void UPnPControlPoint::startAsync() {
@@ -213,6 +217,7 @@ namespace UPNP {
         timer.stop();
 		ssdp.stop();
 		httpClientThreadPool.stop();
+//        anotherHttpClientThreadPool.stop();
 	}
 
 	void UPnPControlPoint::sendMsearch(string searchType) {
@@ -244,11 +249,11 @@ namespace UPNP {
 			char baseUrl[1024] = {0,};
             Url & url = httpClient.getUrl();
             snprintf(baseUrl, sizeof(baseUrl), "%s", url.toString().c_str());
-			this->onDeviceDescriptionInXml(baseUrl, content);
+			onDeviceDescriptionInXml(baseUrl, content);
             
 		} else if (session.getRequestType() == UPnPHttpRequestType::SCPD) {
             
-			this->onScpdInXml(session.getServicePosition(), content);
+			onScpdInXml(session.getServicePosition(), content);
             
         } else if (session.getRequestType() == UPnPHttpRequestType::ACTION_INVOKE) {
             
@@ -339,6 +344,8 @@ namespace UPNP {
 			UPnPHttpRequestSession session(UPnPHttpRequestType::SCPD_TYPE);
 			session.setServicePosition(sp);
 			httpClientThreadPool.request(url, "GET", StringMap(), NULL, 0, session);
+            
+//            anotherHttpClientThreadPool.setRequest(url, "GET", NULL, NULL);
 		}
 	}
 
@@ -424,6 +431,25 @@ namespace UPNP {
 		actionRequest.setParameters(in);
         session.setId(gen.generate());
         httpClientThreadPool.request(url, "POST", headerFields, packet.c_str(), packet.length(), session);
+        
+//        FixedTransfer * transfer = new FixedTransfer(packet.length());
+//        transfer->
+//        anotherHttpClientThreadPool.setRequest(url, "POST", headerFields, AutoRef<DataTransfer>(transfer), NULL);
+        
         return session.getId();
+    }
+    
+    void UPnPControlPoint::sendHttpRequest(Url & url, const string & method, const string & content) {
+//        AnotherHttpClient client(url);
+//        client.setFollowRedirect(true);
+//        client.setRequest(method, LinkedStringMap(), NULL);
+//        client.execute();
+    }
+    
+    void UPnPControlPoint::onRequestComplete(Url & url, HttpResponse & response, const string & content, UserData * userData) {
+        
+    }
+    void UPnPControlPoint::onRequestError(Url & url, UserData * userData) {
+        
     }
 }

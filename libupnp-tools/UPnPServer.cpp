@@ -440,9 +440,9 @@ namespace UPNP {
 	}
 	void UPnPServer::onControlRequest(HttpRequest & request, HttpResponse & response, const UPnPService & service) {
 		
-        DataTransfer * transfer = request.getTransfer();
+        AutoRef<DataTransfer> transfer = request.getTransfer();
         
-        if (transfer) {
+        if (!transfer.empty()) {
             string content = transfer->getString();
             
             if (content.empty()) {
