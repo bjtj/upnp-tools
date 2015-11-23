@@ -163,9 +163,9 @@ namespace UPNP {
     
 		void sendMsearch(std::string searchType);
 
-		void sendHttpRequest(HTTP::Url & url, const std::string & method, const UTIL::StringMap & additionalFields, const std::string & content, HTTP::UserData * userData);
+		void sendHttpRequest(const HTTP::Url & url, const std::string & method, const UTIL::StringMap & additionalFields, const std::string & content, HTTP::UserData * userData);
         virtual void onRequestComplete(HTTP::Url & url, HTTP::HttpResponse & response, const std::string & content, HTTP::UserData * userData);
-        virtual void onRequestError(HTTP::Url & url, HTTP::UserData * userData);
+        virtual void onRequestError(OS::Exception & e, HTTP::Url & url, HTTP::UserData * userData);
 
 		int getMaxAgeInSecond(const std::string & phrase);
     

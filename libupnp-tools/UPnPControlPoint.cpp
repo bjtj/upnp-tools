@@ -243,7 +243,7 @@ namespace UPNP {
 	}
 
 
-	void UPnPControlPoint::sendHttpRequest(Url & url, const string & method, const StringMap & additionalFields, const string & content, UserData * userData) {
+	void UPnPControlPoint::sendHttpRequest(const Url & url, const string & method, const StringMap & additionalFields, const string & content, UserData * userData) {
 		anotherHttpClientThreadPool.collectUnflaggedThreads();
 		anotherHttpClientThreadPool.setRequest(url, method, additionalFields, new FixedTransfer(content.c_str(), content.length()), userData);
     }
@@ -287,8 +287,8 @@ namespace UPNP {
         }
 
     }
-    void UPnPControlPoint::onRequestError(Url & url, UserData * userData) {
-		logger.loge("Http Request Error/url: " + url.toString());
+    void UPnPControlPoint::onRequestError(Exception & e, Url & url, UserData * userData) {
+		logger.loge("Http Request Error/url: " + url.toString() + "/e: " + e.getMessage());
     }
 
 	void UPnPControlPoint::onDeviceCacheUpdate(const HttpHeader & header) {
