@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <liboslayer/Text.hpp>
+#include <liboslayer/Measurement.hpp>
 #include <liboslayer/Logger.hpp>
 #include "UPnPControlPoint.hpp"
 #include <libhttp-server/Url.hpp>
@@ -343,10 +344,21 @@ namespace UPNP {
 	}
 
 	void UPnPControlPoint::onScpdInXml(const UPnPServicePosition & servicePosition, string xmlDoc) {
+
+		Measurement m;
+
+		m.pin();
+
 		XmlDomParser parser;
 		Scpd scpd = UPnPServiceMaker::makeScpdFromXmlDocument("", parser.parse(xmlDoc));
+
+		logger.logv("@parse xml: " + Text::toString(m.collect())); // TODO: fix bad performance (about 1 sec)
+		m.pin();
     
 		devicePool.bindScpd(servicePosition, scpd);
+
+		logger.logv("@bind: " + Text::toString(m.collect()));
+		m.pin();
 
 		if (deviceListener) {
 			UPnPDevice device = devicePool.getDevice(servicePosition.getUdn());
@@ -354,6 +366,8 @@ namespace UPNP {
 				deviceListener->onDeviceAdded(*this, device);
 			}
 		}
+
+		logger.logv("@scpd handling: " + Text::toString(m.collect()));
 	}
 
 	void UPnPControlPoint::onDeviceByeBye(string udn) {
@@ -361,7 +375,9 @@ namespace UPNP {
 			return;
 		}
         
-        if (deviceListener && devicePool.getDevice(udn).complete()) {
+		UPnPDevice & device = devicePool.getDevice(udn);
+
+		if (deviceListener && !device.getUdn().empty() && device.complete()) {
             deviceListener->onDeviceRemoved(*this, devicePool.getDevice(udn));
         }
         

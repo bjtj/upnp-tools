@@ -5,6 +5,11 @@
 
 namespace UPNP {
     
+	/**
+	 * @brief uuid
+	 * @ref https://tools.ietf.org/html/rfc4122 (there's sample source)
+	 * TODO: implement spec.
+	 */
     class Uuid {
     private:
         std::string uuid;
