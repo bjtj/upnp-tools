@@ -15,7 +15,7 @@
 		E8447CCE1BF4B054000E2903 /* UPnPToolsOSXUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = E8447CCD1BF4B054000E2903 /* UPnPToolsOSXUITests.m */; };
 		E8447CEE1BF4BAF1000E2903 /* libupnp-tools-cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8E0FEE71BD849CA00292C54 /* libupnp-tools-cocoa.a */; };
 		E8447D171BF5F8E9000E2903 /* res in Copy Files */ = {isa = PBXBuildFile; fileRef = E8447D151BF5F8C7000E2903 /* res */; };
-		E8B161251BFB669F002D68C7 /* cp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8C743C71BDEC8B200101962 /* cp.cpp */; };
+		E86ED63C1C03D0F6000CD79F /* uuidTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E86ED63B1C03D0F6000CD79F /* uuidTest.cpp */; };
 		E8E0FEE81BD849CF00292C54 /* libupnp-tools-cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8E0FEE71BD849CA00292C54 /* libupnp-tools-cocoa.a */; };
 /* End PBXBuildFile section */
 
@@ -99,6 +99,7 @@
 		E857BB8E1BEDE3C900D2022F /* server.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = server.cpp; path = ../../../examples/server.cpp; sourceTree = "<group>"; };
 		E857BB961BEE45A400D2022F /* socketTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = socketTest.cpp; path = ../../../examples/socketTest.cpp; sourceTree = "<group>"; };
 		E857BBB31BEF10ED00D2022F /* deviceDescriptionTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = deviceDescriptionTest.cpp; path = ../../../examples/deviceDescriptionTest.cpp; sourceTree = "<group>"; };
+		E86ED63B1C03D0F6000CD79F /* uuidTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = uuidTest.cpp; path = ../../../examples/uuidTest.cpp; sourceTree = "<group>"; };
 		E8C743C71BDEC8B200101962 /* cp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cp.cpp; path = ../../../examples/cp.cpp; sourceTree = "<group>"; };
 		E8E0FE6E1BD8480B00292C54 /* upnp-tools-sample */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "upnp-tools-sample"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8E0FE711BD8480B00292C54 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
@@ -213,6 +214,7 @@
 				E857BB8E1BEDE3C900D2022F /* server.cpp */,
 				E857BB961BEE45A400D2022F /* socketTest.cpp */,
 				E857BBB31BEF10ED00D2022F /* deviceDescriptionTest.cpp */,
+				E86ED63B1C03D0F6000CD79F /* uuidTest.cpp */,
 			);
 			path = "upnp-tools-sample";
 			sourceTree = "<group>";
@@ -426,7 +428,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E8B161251BFB669F002D68C7 /* cp.cpp in Sources */,
+				E86ED63C1C03D0F6000CD79F /* uuidTest.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

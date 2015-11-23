@@ -26,6 +26,9 @@ namespace UPNP {
         void setUuid(const std::string & uuid);
         void setRest(const std::string & rest);
         
+        static void validFormat(const std::string & uuid);
+        static std::string generateUuid();
+        
         std::string toString() const;
     };
 }
