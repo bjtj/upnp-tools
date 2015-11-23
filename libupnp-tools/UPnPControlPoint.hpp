@@ -54,7 +54,7 @@ namespace UPNP {
 	/**
 	 * @brief upnp http request session
 	 */
-	class UPnPHttpRequestSession {
+	class UPnPHttpRequestSession : public HTTP::UserData {
 	private:
         ID_TYPE id;
 		UPnPDeviceDetection * deviceDetection;
@@ -133,20 +133,19 @@ namespace UPNP {
 	/**
 	 * @brief upnp control point
 	 */
-    class UPnPControlPoint : public UPnPDeviceDetection, public HTTP::HttpResponseHandler<UPnPHttpRequestSession>, public UTIL::SelectorPoller, public TimerEvent, public HTTP::OnRequestCompleteListener {
+    class UPnPControlPoint : public UPnPDeviceDetection, public UTIL::SelectorPoller, public TimerEvent, public HTTP::OnRequestCompleteListener {
 	private:
         UniqueIdGenerator gen;
 		UPnPDevicePool devicePool;
 		SSDP::SSDPServer ssdp;
 		UPnPSSDPMessageHandler ssdpHandler;
-		HTTP::HttpClientThreadPool<UPnPHttpRequestSession> httpClientThreadPool;
 		UPnPControlPointSsdpNotifyFilter filter;
 		DeviceAddRemoveListener * deviceListener;
         InvokeActionResponseListener * invokeActionResponseListener;
         UTIL::PollingThread * pollingThread;
         Timer timer;
         
-        HTTP::AnotherHttpClientThreadPool anotherHttpClientThreadPool;
+		HTTP::AnotherHttpClientThreadPool anotherHttpClientThreadPool;
 
 	private:
 		UPnPControlPoint(const UPnPControlPoint & other); // do not allow copy
@@ -160,11 +159,13 @@ namespace UPNP {
 		void start();
 		void startAsync();
 		void stop();
+		virtual void poll(unsigned long timeout);
     
 		void sendMsearch(std::string searchType);
 
-        virtual void onHttpResponse(HTTP::HttpClient<UPnPHttpRequestSession> & httpClient, const HTTP::HttpHeader & responseHeader, const std::string & content, UPnPHttpRequestSession userData);
-        virtual void onError(HTTP::HttpClient<UPnPHttpRequestSession> & httpClient, UPnPHttpRequestSession userData);
+		void sendHttpRequest(HTTP::Url & url, const std::string & method, const UTIL::StringMap & additionalFields, const std::string & content, HTTP::UserData * userData);
+        virtual void onRequestComplete(HTTP::Url & url, HTTP::HttpResponse & response, const std::string & content, HTTP::UserData * userData);
+        virtual void onRequestError(HTTP::Url & url, HTTP::UserData * userData);
 
 		int getMaxAgeInSecond(const std::string & phrase);
     
@@ -182,11 +183,6 @@ namespace UPNP {
         
         void setInvokeActionResponseListener(InvokeActionResponseListener * invokeActionResponseListener);
         ID_TYPE invokeAction(const UPnPService & service, const std::string & actionName, const UPnPActionParameters & in);
-        
-        void sendHttpRequest(HTTP::Url & url, const std::string & method, const std::string & content);
-        
-        virtual void onRequestComplete(HTTP::Url & url, HTTP::HttpResponse & response, const std::string & content, HTTP::UserData * userData);
-        virtual void onRequestError(HTTP::Url & url, HTTP::UserData * userData);
 	};
 }
 

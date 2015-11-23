@@ -155,12 +155,11 @@ namespace UPNP {
 	}
 
 
-
 	/**
 	 *
 	 */
 
-	UPnPControlPoint::UPnPControlPoint() : TimerEvent(false), httpClientThreadPool(1), deviceListener(NULL), invokeActionResponseListener(NULL), pollingThread(NULL), anotherHttpClientThreadPool(5) {
+	UPnPControlPoint::UPnPControlPoint() : TimerEvent(false), deviceListener(NULL), invokeActionResponseListener(NULL), pollingThread(NULL), anotherHttpClientThreadPool(5) {
         
 		ssdpHandler.setDeviceDetection(this);
 		
@@ -168,15 +167,12 @@ namespace UPNP {
         ssdp.addNotifyHandler(&ssdpHandler);
         ssdp.addHttpResponseHandler(&ssdpHandler);
     
-		httpClientThreadPool.setFollowRedirect(true);
-		httpClientThreadPool.setHttpClientPollListener(this);
-        
         registerSelectorPoller(&ssdp);
         registerPollee(&timer);
         
         scheduleRepeatableRelativeTimer(0, -1, Timer::SECOND);
         
-//        anotherHttpClientThreadPool.setOnRequestCompleteListener(this);
+        anotherHttpClientThreadPool.setOnRequestCompleteListener(this);
 	}
 
 	UPnPControlPoint::~UPnPControlPoint() {
@@ -189,10 +185,9 @@ namespace UPNP {
 
 	void UPnPControlPoint::start() {
 		ssdp.start();
-		httpClientThreadPool.start();
         timer.start();
         timer.setTimerEvent(this);
-//        anotherHttpClientThreadPool.start();
+        anotherHttpClientThreadPool.start();
 	}
 
 	void UPnPControlPoint::startAsync() {
@@ -216,8 +211,12 @@ namespace UPNP {
         
         timer.stop();
 		ssdp.stop();
-		httpClientThreadPool.stop();
-//        anotherHttpClientThreadPool.stop();
+        anotherHttpClientThreadPool.stop();
+	}
+
+	void UPnPControlPoint::poll(unsigned long timeout) {
+		SelectorPoller::poll(timeout);
+		anotherHttpClientThreadPool.collectUnflaggedThreads();
 	}
 
 	void UPnPControlPoint::sendMsearch(string searchType) {
@@ -242,14 +241,19 @@ namespace UPNP {
 		return Text::toInt(value);
 	}
 
-	void UPnPControlPoint::onHttpResponse(HttpClient<UPnPHttpRequestSession> & httpClient, const HttpHeader & responseHeader, const string & content, UPnPHttpRequestSession session) {
 
+	void UPnPControlPoint::sendHttpRequest(Url & url, const string & method, const StringMap & additionalFields, const string & content, UserData * userData) {
+		anotherHttpClientThreadPool.collectUnflaggedThreads();
+		anotherHttpClientThreadPool.setRequest(url, method, additionalFields, new FixedTransfer(content.c_str(), content.length()), userData);
+    }
+    
+    void UPnPControlPoint::onRequestComplete(Url & url, HttpResponse & response, const string & content, UserData * userData) {
+
+		UPnPHttpRequestSession & session = (UPnPHttpRequestSession &)*userData;
+        
 		if (session.getRequestType() == UPnPHttpRequestType::DEVICE_DESCRIPTION) {
             
-			char baseUrl[1024] = {0,};
-            Url & url = httpClient.getUrl();
-            snprintf(baseUrl, sizeof(baseUrl), "%s", url.toString().c_str());
-			onDeviceDescriptionInXml(baseUrl, content);
+			onDeviceDescriptionInXml(url.toString(), content);
             
 		} else if (session.getRequestType() == UPnPHttpRequestType::SCPD) {
             
@@ -262,7 +266,7 @@ namespace UPNP {
             XmlDocument doc = parser.parse(content);
 
 			UPnPActionResponse actionResponse;
-			HttpResponseHeader header = responseHeader;
+			HttpResponseHeader header = response.getHeader();
 			actionResponse.setResult(UPnPActionResult(true, header.getStatusCode(), header.getMessage()));
 
 			try {
@@ -280,19 +284,10 @@ namespace UPNP {
                 invokeActionResponseListener->onActionResponse(session.getId(), session.getUPnPActionRequest(), actionResponse);
             }
         }
-	}
-    
-    void UPnPControlPoint::onError(HttpClient<UPnPHttpRequestSession> &httpClient, UPnPHttpRequestSession session) {
 
-        logger.loge("onError()");
-        
-        if (session.getRequestType() == UPnPHttpRequestType::DEVICE_DESCRIPTION) {
-			// TODO: 
-        } else if (session.getRequestType() == UPnPHttpRequestType::SCPD) {
-			// TODO: 
-        } else if (session.getRequestType() == UPnPHttpRequestType::ACTION_INVOKE) {
-			// TODO: 
-        }
+    }
+    void UPnPControlPoint::onRequestError(Url & url, UserData * userData) {
+		logger.loge("Http Request Error/url: " + url.toString());
     }
 
 	void UPnPControlPoint::onDeviceCacheUpdate(const HttpHeader & header) {
@@ -324,7 +319,7 @@ namespace UPNP {
 		UPnPDevice device;
 		device.setUdn(uuid.getUuid());
 		devicePool.addDevice(device);
-		httpClientThreadPool.request(Url(url), "GET", StringMap(), NULL, 0, UPnPHttpRequestSession(UPnPHttpRequestType::DEVICE_DESCRIPTION_TYPE));
+		sendHttpRequest(Url(url), "GET", StringMap(), "", new UPnPHttpRequestSession(UPnPHttpRequestType::DEVICE_DESCRIPTION_TYPE));
 	}
 
 	void UPnPControlPoint::onDeviceDescriptionInXml(string baseUrl, string xmlDoc) {
@@ -341,11 +336,9 @@ namespace UPNP {
 			string scpdurl = sp.getScpdUrl();
 			Url url = Url(baseUrl);
             url.setRelativePath(scpdurl);
-			UPnPHttpRequestSession session(UPnPHttpRequestType::SCPD_TYPE);
-			session.setServicePosition(sp);
-			httpClientThreadPool.request(url, "GET", StringMap(), NULL, 0, session);
-            
-//            anotherHttpClientThreadPool.setRequest(url, "GET", NULL, NULL);
+			UPnPHttpRequestSession * session = new UPnPHttpRequestSession(UPnPHttpRequestType::SCPD_TYPE);
+			session->setServicePosition(sp);
+			sendHttpRequest(url, "GET", StringMap(), "", session);
 		}
 	}
 
@@ -380,7 +373,7 @@ namespace UPNP {
 	}
 
 	vector<UPnPServicePosition> UPnPControlPoint::makeServicePositions(UPnPServicePositionMaker & maker, const UPnPDevice & device) {
-    
+
 		vector<UPnPServicePosition> servicePositions;
 		const vector<UPnPService> & services = device.getServices();
         
@@ -388,7 +381,7 @@ namespace UPNP {
         FOREACH_CONST_VEC(services, UPnPService, iter) {
             servicePositions.push_back(maker.makeUPnPServicePosition(i++, *iter));
         }
-    
+
 		const vector<UPnPDevice> & embeddedDevices = device.getEmbeddedDevices();
 		LOOP_VEC(embeddedDevices, i) {
 			maker.enter();
@@ -424,32 +417,14 @@ namespace UPNP {
 			writer.setArgument(name, value);
 		}
         string packet = writer.toString();
-		UPnPHttpRequestSession session(UPnPHttpRequestType::ACTION_INVOKE);
-        UPnPActionRequest & actionRequest = session.getUPnPActionRequest();
+		UPnPHttpRequestSession * session = new UPnPHttpRequestSession(UPnPHttpRequestType::ACTION_INVOKE);
+        UPnPActionRequest & actionRequest = session->getUPnPActionRequest();
         actionRequest.setService(service);
         actionRequest.setActionName(actionName);
 		actionRequest.setParameters(in);
-        session.setId(gen.generate());
-        httpClientThreadPool.request(url, "POST", headerFields, packet.c_str(), packet.length(), session);
-        
-//        FixedTransfer * transfer = new FixedTransfer(packet.length());
-//        transfer->
-//        anotherHttpClientThreadPool.setRequest(url, "POST", headerFields, AutoRef<DataTransfer>(transfer), NULL);
-        
-        return session.getId();
-    }
-    
-    void UPnPControlPoint::sendHttpRequest(Url & url, const string & method, const string & content) {
-//        AnotherHttpClient client(url);
-//        client.setFollowRedirect(true);
-//        client.setRequest(method, LinkedStringMap(), NULL);
-//        client.execute();
-    }
-    
-    void UPnPControlPoint::onRequestComplete(Url & url, HttpResponse & response, const string & content, UserData * userData) {
-        
-    }
-    void UPnPControlPoint::onRequestError(Url & url, UserData * userData) {
-        
+        session->setId(gen.generate());
+		sendHttpRequest(url, "POST", headerFields, packet, session);
+
+        return session->getId();
     }
 }
