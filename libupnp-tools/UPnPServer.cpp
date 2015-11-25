@@ -75,6 +75,58 @@ namespace UPNP {
 		return prefix + (!Text::endsWith(prefix, "/") ? "/" : "") + appendWithoutSlash;
 	}
     
+    /**
+     *
+     */
+    
+    UPnPEventSubsribeInfo::UPnPEventSubsribeInfo() {
+    }
+    
+    UPnPEventSubsribeInfo::UPnPEventSubsribeInfo(const string & sid, UPnPService & service, vector<string> & callbacks) : sid(sid), service(service), callbacks(callbacks) {
+        
+    }
+    UPnPEventSubsribeInfo::~UPnPEventSubsribeInfo() {
+        
+    }
+    
+    
+    /**
+     *
+     */
+    
+    UPnPEventSubscriberPool::UPnPEventSubscriberPool() {
+        
+    }
+    UPnPEventSubscriberPool::~UPnPEventSubscriberPool() {
+        
+    }
+    
+    string UPnPEventSubscriberPool::registerSubscriber(UPnPService & service, vector<string> & callbackUrls) {
+        string sid = generateSid();
+        subscribers[sid] = UPnPEventSubsribeInfo(sid, service, callbackUrls);
+        return sid;
+    }
+    void UPnPEventSubscriberPool::unregisterSubscriber(const string & sid) {
+        subscribers.erase(sid);
+    }
+    
+    UPnPEventSubsribeInfo UPnPEventSubscriberPool::getSubscriberInfo(const string & sid) {
+        return subscribers[sid];
+    }
+    
+    UPnPEventSubsribeInfo UPnPEventSubscriberPool::getSubscriberInfo(UPnPService & service) {
+        for (map<string, UPnPEventSubsribeInfo>::iterator iter = subscribers.begin(); iter != subscribers.end(); iter++) {
+            
+            // TODO: implement it
+        }
+        
+        return UPnPEventSubsribeInfo();
+    }
+    
+    string UPnPEventSubscriberPool::generateSid() {
+        return "";
+    }
+    
     
     /**
      * @brief UPnPServer
@@ -491,9 +543,15 @@ namespace UPNP {
 	void UPnPServer::onEventSubRequest(HttpRequest & request, HttpResponse & response, const UPnPService & service) {
 
 		// TODO: implement it
-
 		response.setStatusCode(500, "Not supported yet");
+        
+//        vector<string> callbacks;
+//        subsriberPool.registerSubscriber(service, callbacks);
 	}
+    
+    void UPnPServer::noitfy(UPnPService & service, UTIL::LinkedStringMap & values) {
+        // TODO: implement it
+    }
     
 	string UPnPServer::getUdnFromHttpRequest(HttpRequest & request) {
 		string path = request.getPath();

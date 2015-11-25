@@ -47,6 +47,38 @@ namespace UPNP {
 		virtual std::string makeUrlPath(const std::string & udn, const std::string & append);
     };
     
+    /**
+     * @brief
+     */
+    class UPnPEventSubsribeInfo {
+    private:
+        std::string sid;
+        UPnPService service;
+        std::vector<std::string> callbacks;
+    public:
+        UPnPEventSubsribeInfo();
+        UPnPEventSubsribeInfo(const std::string & sid, UPnPService & service, std::vector<std::string> & callbacks);
+        virtual ~UPnPEventSubsribeInfo();
+    };
+    
+    /**
+     * @brief
+     */
+    class UPnPEventSubscriberPool {
+    private:
+        std::map<std::string, UPnPEventSubsribeInfo> subscribers;
+    public:
+        UPnPEventSubscriberPool();
+        virtual ~UPnPEventSubscriberPool();
+        
+        std::string registerSubscriber(UPnPService & service, std::vector<std::string> & callbackUrls);
+        void unregisterSubscriber(const std::string & sid);
+        UPnPEventSubsribeInfo getSubscriberInfo(const std::string & sid);
+        UPnPEventSubsribeInfo getSubscriberInfo(UPnPService & service);
+        
+        std::string generateSid();
+    };
+    
 	/**
 	 * @brief UPNP Server
 	 */
@@ -61,6 +93,8 @@ namespace UPNP {
         UrlSerializer urlSerializer;
         Timer timer;
         int idx;
+        
+        UPnPEventSubscriberPool subsriberPool;
 		
 	public:
 		UPnPServer(int port);
@@ -104,6 +138,8 @@ namespace UPNP {
 		void onScpdRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response, const UPnPService & service);
 		void onControlRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response, const UPnPService & service);
 		void onEventSubRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response, const UPnPService & service);
+        
+        void noitfy(UPnPService & service, UTIL::LinkedStringMap & values);
 
 		std::string getUdnFromHttpRequest(HTTP::HttpRequest & request);
 		std::string getActionNameFromHttpRequest(HTTP::HttpRequest & request);
