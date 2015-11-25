@@ -54,8 +54,8 @@ static int s_cmd_handler(const char * cmd, UPnPControlPoint & cp) {
 		cout << "== DEVICE LIST (count: " << devices.size() << ") ==" << endl;
 		for (size_t i = 0; i < devices.size(); i++) {
 			UPnPDevice & device = devices[i];
-			cout << " - UDN: " << device.getUdn() << endl;
-			cout << "  > Friendly Name: " << device.getFriendlyName() << endl;
+			cout << "UDN: " << device.getUdn() << endl;
+			cout << " > Friendly Name: " << device.getFriendlyName() << endl;
 		}
 		cout << endl;
 

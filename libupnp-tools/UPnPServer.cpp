@@ -113,7 +113,7 @@ namespace UPNP {
         httpServer.startAsync();
         
         if (!pollingThread) {
-            pollingThread = new PollingThread(this, 1000);
+            pollingThread = new PollingThread(this, 100);
             pollingThread->start();
         }
     }
