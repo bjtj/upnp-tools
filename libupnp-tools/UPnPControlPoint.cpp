@@ -347,18 +347,18 @@ namespace UPNP {
 
 		Measurement m;
 
-		m.pin();
+		//m.pin();
 
 		XmlDomParser parser;
 		Scpd scpd = UPnPServiceMaker::makeScpdFromXmlDocument("", parser.parse(xmlDoc));
 
-		logger.logv("@parse xml: " + Text::toString(m.collect())); // TODO: fix bad performance (about 1 sec)
-		m.pin();
+		//logger.logv("@parse xml: " + Text::toString(m.collect())); // TODO: fix bad performance (about 1 sec)
+		//m.pin();
     
 		devicePool.bindScpd(servicePosition, scpd);
 
-		logger.logv("@bind: " + Text::toString(m.collect()));
-		m.pin();
+		//logger.logv("@bind: " + Text::toString(m.collect()));
+		//m.pin();
 
 		if (deviceListener) {
 			UPnPDevice device = devicePool.getDevice(servicePosition.getUdn());
@@ -367,7 +367,7 @@ namespace UPNP {
 			}
 		}
 
-		logger.logv("@scpd handling: " + Text::toString(m.collect()));
+		//logger.logv("@scpd handling: " + Text::toString(m.collect()));
 	}
 
 	void UPnPControlPoint::onDeviceByeBye(string udn) {

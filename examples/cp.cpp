@@ -8,7 +8,7 @@ using namespace std;
 using namespace UTIL;
 using namespace UPNP;
 
-UPnPService targetService;
+vector<UPnPDevice> devices;
 
 class MyDeviceAddRemoveHandle : public DeviceAddRemoveListener {
 private:
@@ -17,18 +17,17 @@ public:
 	virtual ~MyDeviceAddRemoveHandle() {}
 
 	virtual void onDeviceAdded(UPnPControlPoint & cp, UPnPDevice & device) {
-		cout << " ++ " << device.getUdn() << " ** " << device.getFriendlyName() << endl;
-
-		if (device.hasServiceWithProperty("serviceType", "urn:schemas-upnp-org:service:ContentDirectory:1")) {
-			UPnPService service = device.getServiceWithServiceType("urn:schemas-upnp-org:service:ContentDirectory:1");
-			targetService = service;
-			string actionName = "GetSystemUpdateID";
-			cout << "#REQ : " << actionName << endl;
-			cp.invokeAction(service, actionName, UPnPActionParameters());
-		}
+		// cout << " ++ " << device.getUdn() << " ** " << device.getFriendlyName() << endl;
+		devices.push_back(device);
 	}
 	virtual void onDeviceRemoved(UPnPControlPoint & cp, UPnPDevice & device) {
-		cout << " -- " << device.getUdn() << " ** " << device.getFriendlyName() << endl;
+		// cout << " -- " << device.getUdn() << " ** " << device.getFriendlyName() << endl;
+		for (vector<UPnPDevice>::iterator iter = devices.begin(); iter != devices.end(); iter++) {
+			if (!iter->getUdn().compare(device.getUdn())) {
+				devices.erase(iter);
+				return;
+			}
+		}
 	}
 };
 
@@ -50,13 +49,26 @@ static int s_cmd_handler(const char * cmd, UPnPControlPoint & cp) {
 		return -1;
 	}
 
+	if (!strcmp(cmd, "l") || !strcmp(cmd, "list")) {
+
+		cout << "== DEVICE LIST (count: " << devices.size() << ") ==" << endl;
+		for (size_t i = 0; i < devices.size(); i++) {
+			UPnPDevice & device = devices[i];
+			cout << " - UDN: " << device.getUdn() << endl;
+			cout << "  > Friendly Name: " << device.getFriendlyName() << endl;
+		}
+		cout << endl;
+
+		return 0;
+	}
+
 	if (!strcmp(cmd, "m") || !strcmp(cmd, "scan")) {
 		cp.sendMsearch("upnp:rootdevice");
 		return 0;
 	}
     
     if (!strcmp(cmd, "a") || !strcmp(cmd, "action")) {
-        cp.invokeAction(targetService, "GetSystemUpdateID", UPnPActionParameters());
+        // cp.invokeAction(targetService, "GetSystemUpdateID", UPnPActionParameters());
     }
 
 	return 0;
