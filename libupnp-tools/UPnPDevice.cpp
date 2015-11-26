@@ -41,6 +41,10 @@ namespace UPNP {
             rebaseParents(&embeddedDevice);
         }
     }
+    
+    bool UPnPDevice::valid() {
+        return !getUdn().empty() && complete();
+    }
 
 	NameProperty & UPnPDevice::getProperty(const std::string & name) {
 		return properties.get(name);
@@ -249,7 +253,7 @@ namespace UPNP {
     }
 
 	vector<UPnPService> UPnPDevice::getServicesRecursive() {
-		vector<UPnPService> ret;
+		vector<UPnPService> ret = getServices();
 		for (size_t i = 0; i < embeddedDevices.size(); i++) {
 			UPnPDevice & embed = embeddedDevices[i];
 			vector<UPnPService> append = embed.getServicesRecursive();
@@ -258,7 +262,7 @@ namespace UPNP {
 		return ret;
 	}
 	const vector<UPnPService> UPnPDevice::getServicesRecursive() const {
-		vector<UPnPService> ret;
+		vector<UPnPService> ret = getServices();
 		for (size_t i = 0; i < embeddedDevices.size(); i++) {
 			const UPnPDevice & embed = embeddedDevices[i];
 			vector<UPnPService> append = embed.getServicesRecursive();

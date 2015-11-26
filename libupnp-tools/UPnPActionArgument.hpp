@@ -31,6 +31,9 @@ namespace UPNP {
 		void setName(const std::string & name);
 		void setStateVariable(const UPnPStateVariable & stateVariable);
 		void setDirection(const std::string & direction);
+        
+        bool hasAllowedValueList();
+        std::vector<std::string> getAllowedValueList();
 	};
 	
 }

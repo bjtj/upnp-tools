@@ -10,6 +10,21 @@ using namespace UPNP;
 
 vector<UPnPDevice> devices;
 
+class Selection {
+private:
+    UPnPDevice device;
+    UPnPService service;
+public:
+    void select(UPnPDevice & device) {
+        this->device = device;
+    }
+    void select(UPnPService & service) {
+        this->service = service;
+    }
+};
+
+Selection selection;
+
 class MyDeviceAddRemoveHandle : public DeviceAddRemoveListener {
 private:
 public:
@@ -33,7 +48,7 @@ public:
 
 class MyInvokeActionResponseListener : public InvokeActionResponseListener {
 	virtual void onActionResponse(ID_TYPE id, const UPnPActionRequest & actionRequest, const UPnPActionResponse & response) {
-		cout << "#RES : " << actionRequest.getActionName() << endl;
+		cout << "# Action Result : " << actionRequest.getActionName() << endl;
 		vector<string> names = response.getParameterNames();
 		for (size_t i = 0; i < names.size(); i++) {
 			string & name = names[i];
@@ -43,7 +58,98 @@ class MyInvokeActionResponseListener : public InvokeActionResponseListener {
 	}
 };
 
+size_t readline(char * buffer, size_t max) {
+    if (fgets(buffer, (int)max - 1, stdin)) {
+        buffer[strlen(buffer) - 1] = 0;
+        return strlen(buffer);
+    }
+    return 0;
+}
+
+static void s_show_device_list_with_selection_number() {
+    
+    cout << "== DEVICE LIST (count: " << devices.size() << ") ==" << endl;
+    for (size_t i = 0; i < devices.size(); i++) {
+        UPnPDevice & device = devices[i];
+        cout << "[" << i << "] UDN: " << device.getUdn() << endl;
+        cout << " > Friendly Name: " << device.getFriendlyName() << endl;
+    }
+    cout << endl;
+}
+
+static void s_send_action(UPnPControlPoint & cp) {
+    
+    bool done = false;
+    
+    while (!done) {
+        s_show_device_list_with_selection_number();
+        
+        char buffer[1024] = {0,};
+        if (cout << "device # ", readline(buffer, sizeof(buffer)) > 0) {
+            
+            if (!strcmp(buffer, "q")) {
+                return;
+            }
+            
+            int selection = Text::toInt(buffer);
+            UPnPDevice & device = devices[selection];
+            vector<UPnPService> services = device.getServicesRecursive();
+            cout << "service - " << services.size() << endl;
+            for (size_t i = 0; i < services.size(); i++) {
+                UPnPService & service = services[i];
+                cout << "[" << i << "] type: " << service.getServiceType() << endl;
+            }
+            if (cout << "service # ", readline(buffer, sizeof(buffer)) > 0) {
+                
+                if (!strcmp(buffer, "q")) {
+                    return;
+                }
+                
+                UPnPService & service = services[Text::toInt(buffer)];
+                
+                vector<UPnPAction> actions = service.getScpd().getActions();
+                for (vector<UPnPAction>::iterator iter = actions.begin(); iter != actions.end(); iter++) {
+                    cout << " - " << iter->getName() << endl;
+                }
+                
+                if (cout << "action: ", readline(buffer, sizeof(buffer)) > 0) {
+                    
+                    if (!strcmp(buffer, "q")) {
+                        return;
+                    }
+                    
+                    string actionName = buffer;
+                    
+                    UPnPActionParameters in;
+                    UPnPAction action = service.getScpd().getAction(buffer);
+                    vector<UPnPActionArgument> arguments = action.getArguments();
+                    for (vector<UPnPActionArgument>::iterator iter = arguments.begin(); iter != arguments.end(); iter++) {
+                        if (iter->in()) {
+                            cout << iter->getName();
+                            
+                            if (iter->hasAllowedValueList()) {
+                                cout << "(Allowed: " << Text::join(iter->getAllowedValueList(), ", ") << ")";
+                            }
+                            cout << " : ";
+                            
+                            readline(buffer, sizeof(buffer));
+                            in[iter->getName()] = buffer;
+                        }
+                    }
+                    cp.invokeAction(service, actionName, in);
+                    
+                    getchar();
+                }
+            }
+        }
+    }
+}
+
 static int s_cmd_handler(const char * cmd, UPnPControlPoint & cp) {
+    
+    if (!*cmd) {
+        return 0;
+    }
 
 	if (!strcmp(cmd, "quit") || !strcmp(cmd, "q")) {
 		return -1;
@@ -68,17 +174,9 @@ static int s_cmd_handler(const char * cmd, UPnPControlPoint & cp) {
 	}
     
     if (!strcmp(cmd, "a") || !strcmp(cmd, "action")) {
-        // cp.invokeAction(targetService, "GetSystemUpdateID", UPnPActionParameters());
+        s_send_action(cp);
     }
 
-	return 0;
-}
-
-size_t readline(char * buffer, size_t max) {
-	if (fgets(buffer, (int)max - 1, stdin)) {
-		buffer[strlen(buffer) - 1] = 0;
-		return strlen(buffer);
-	}
 	return 0;
 }
 
@@ -104,7 +202,11 @@ static void s_test_cp() {
     cout << "cp - start" << endl;
     
 	while (!done) {
-		readline(buffer, sizeof(buffer));
+        
+        if (cout << "CMD> ", readline(buffer, sizeof(buffer)) <= 0) {
+            continue;
+        }
+        
 		if (s_cmd_handler(buffer, cp) < 0) {
 			done = true;
 			break;

@@ -33,6 +33,8 @@ namespace UPNP {
         void rebaseParents();
         void rebaseParents(UPnPDevice * parent);
         
+        bool valid();
+        
 		UTIL::NameProperty & getProperty(const std::string & name);
 		std::string & getPropertyValue(const std::string & name);
 		std::string getConstPropertyValue(const std::string & name) const;

@@ -377,7 +377,7 @@ namespace UPNP {
         
 		UPnPDevice & device = devicePool.getDevice(udn);
 
-		if (deviceListener && !device.getUdn().empty() && device.complete()) {
+		if (deviceListener && device.valid()) {
             deviceListener->onDeviceRemoved(*this, devicePool.getDevice(udn));
         }
         

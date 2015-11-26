@@ -41,4 +41,12 @@ namespace UPNP {
 	void UPnPActionArgument::setDirection(const string & direction) {
 		this->direction = direction;
 	}
+    
+    bool UPnPActionArgument::hasAllowedValueList() {
+        return getStateVariable().getAllowedValueList().size() > 0;
+    }
+    
+    vector<string> UPnPActionArgument::getAllowedValueList() {
+        return getStateVariable().getAllowedValueList();
+    }
 }
