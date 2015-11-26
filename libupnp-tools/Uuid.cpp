@@ -11,6 +11,8 @@ namespace UPNP {
     
     DECL_NAMED_ONLY_EXCEPTION(WrongFormatException);
     
+    unsigned long Uuid::nonce = 0;
+    
     Uuid::Uuid(const string & uuid) {
         parse(uuid);
         
@@ -92,7 +94,25 @@ namespace UPNP {
     }
     
     string Uuid::generateUuid() {
-        return "";
+        
+        unsigned long num = nonce++;
+        
+        string part1(8, 'a');
+        string part2 = Text::toHexString(num);
+        if (part2.length() < 4) {
+            part2 = string(4 - part2.length(), '0') + part2;
+        } else if (part2.length() > 4) {
+            part2 = part2.substr(part2.length() - 4);
+        }
+        string part3(4, 'c');
+        string part4(4, 'd');
+        string part5 = Text::toHexString(tick_milli());
+        if (part5.length() < 12) {
+            part5 = string(12 - part5.length(), '0') + part5;
+        }
+        
+        string uuid = part1 + "-" + part2 + "-" + part3 + "-" + part4 + "-" + part5;
+        return uuid;
     }
     
     string Uuid::toString() const {

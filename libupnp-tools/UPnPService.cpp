@@ -116,6 +116,16 @@ namespace UPNP {
     const LinkedStringMap & UPnPService::getProperties() const {
         return properties;
     }
+    
+    string UPnPService::getScpdUrl() {
+        return properties["SCPDURL"];
+    }
+    string UPnPService::getControlUrl() {
+        return properties["controlURL"];
+    }
+    string UPnPService::getEventSubscribeUrl() {
+        return properties["eventSubURL"];
+    }
 
     string & UPnPService::operator[](const string & name) {
         return properties[name];

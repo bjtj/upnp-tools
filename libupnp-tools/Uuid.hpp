@@ -14,6 +14,8 @@ namespace UPNP {
     private:
         std::string uuid;
         std::string rest;
+        static unsigned long nonce;
+        
     public:
         Uuid(const std::string & uuid);
         virtual ~Uuid();

@@ -2,7 +2,9 @@
 #include "Uuid.hpp"
 #include <liboslayer/Text.hpp>
 #include <liboslayer/Logger.hpp>
+#include <libhttp-server/FixedTransfer.hpp>
 #include "XmlDomParser.hpp"
+#include "XmlDocumentPrinter.hpp"
 #include "UPnPDeviceMaker.hpp"
 #include "UPnPDeviceXmlWriter.hpp"
 #include "XmlDocumentPrinter.hpp"
@@ -79,23 +81,38 @@ namespace UPNP {
      *
      */
     
-    UPnPEventSubsribeInfo::UPnPEventSubsribeInfo() : seq(0) {
+    UPnPEventSubscribeInfo::UPnPEventSubscribeInfo() : seq(0) {
     }
     
-    UPnPEventSubsribeInfo::UPnPEventSubsribeInfo(const string & sid, UPnPService & service, vector<string> & callbacks) : sid(sid), service(service), callbacks(callbacks), seq(0) {
+    UPnPEventSubscribeInfo::UPnPEventSubscribeInfo(const string & sid, UPnPService & service, vector<string> & callbacks) : sid(sid), service(service), callbacks(callbacks), seq(0) {
         
     }
-    UPnPEventSubsribeInfo::~UPnPEventSubsribeInfo() {
+    UPnPEventSubscribeInfo::~UPnPEventSubscribeInfo() {
     }
     
+    bool UPnPEventSubscribeInfo::empty() {
+        return sid.empty();
+    }
     
-    void UPnPEventSubsribeInfo::initSeq() {
+    string UPnPEventSubscribeInfo::getSid() {
+        return sid;
+    }
+    
+    vector<string> & UPnPEventSubscribeInfo::getCallbacks() {
+        return callbacks;
+    }
+    
+    UPnPService & UPnPEventSubscribeInfo::getService() {
+        return service;
+    }
+    
+    void UPnPEventSubscribeInfo::initSeq() {
         seq = 0;
     }
-    unsigned int UPnPEventSubsribeInfo::nextSeq() {
+    unsigned int UPnPEventSubscribeInfo::nextSeq() {
         return seq++;
     }
-    unsigned int UPnPEventSubsribeInfo::getSeq() {
+    unsigned int UPnPEventSubscribeInfo::getSeq() {
         return seq;
     }
     
@@ -113,28 +130,29 @@ namespace UPNP {
     
     string UPnPEventSubscriberPool::registerSubscriber(UPnPService & service, vector<string> & callbackUrls) {
         string sid = generateSid();
-        subscribers[sid] = UPnPEventSubsribeInfo(sid, service, callbackUrls);
+        subscribers[sid] = UPnPEventSubscribeInfo(sid, service, callbackUrls);
         return sid;
     }
     void UPnPEventSubscriberPool::unregisterSubscriber(const string & sid) {
         subscribers.erase(sid);
     }
     
-    UPnPEventSubsribeInfo UPnPEventSubscriberPool::getSubscriberInfo(const string & sid) {
+    UPnPEventSubscribeInfo UPnPEventSubscriberPool::getSubscriberInfo(const string & sid) {
         return subscribers[sid];
     }
     
-    UPnPEventSubsribeInfo UPnPEventSubscriberPool::getSubscriberInfo(UPnPService & service) {
-        for (map<string, UPnPEventSubsribeInfo>::iterator iter = subscribers.begin(); iter != subscribers.end(); iter++) {
-            
-            // TODO: implement it
+    UPnPEventSubscribeInfo UPnPEventSubscriberPool::getSubscriberInfo(UPnPService & service) {
+        for (map<string, UPnPEventSubscribeInfo>::iterator iter = subscribers.begin(); iter != subscribers.end(); iter++) {
+            if (!iter->second.getService().getEventSubscribeUrl().compare(service.getEventSubscribeUrl())) {
+                return iter->second;
+            }
         }
         
-        return UPnPEventSubsribeInfo();
+        return UPnPEventSubscribeInfo();
     }
     
     string UPnPEventSubscriberPool::generateSid() {
-        return "";
+        return Uuid::generateUuid();
     }
     
     
@@ -142,7 +160,7 @@ namespace UPNP {
      * @brief UPnPServer
      */
 
-	UPnPServer::UPnPServer(int port) : TimerEvent(false), actionRequestHandler(NULL), httpServer(port), pollingThread(NULL), urlSerializer(""), idx(0) {
+	UPnPServer::UPnPServer(int port) : TimerEvent(false), actionRequestHandler(NULL), httpServer(port), pollingThread(NULL), urlSerializer(""), idx(0), httpClientThreadPool(5) {
         
         registerPollee(&timer);
         registerSelectablePollee(&ssdpListener);
@@ -166,6 +184,8 @@ namespace UPNP {
         
         scheduleRepeatableRelativeTimer(0, -1, Timer::SECOND);
         timer.setTimerEvent(this);
+        
+        httpClientThreadPool.start();
 	}
     
     void UPnPServer::startAsync() {
@@ -181,6 +201,8 @@ namespace UPNP {
     }
 	
 	void UPnPServer::stop() {
+        
+        httpClientThreadPool.stop();
         
         timer.stop();
         httpServer.stop();
@@ -199,8 +221,13 @@ namespace UPNP {
         return ssdpListener.isRunning();
 	}
     
+    void UPnPServer::poll(unsigned long timeout) {
+        SelectorPoller::poll(timeout);
+        httpClientThreadPool.collectUnflaggedThreads();
+    }
+    
     UPnPDevice UPnPServer::getDevice(const string & udn) {
-        return devices.getDevice(udn);
+        return devicePool.getDevice(udn);
     }
     
     void UPnPServer::registerDeviceWithXml(const string & xmlDoc) {
@@ -211,16 +238,16 @@ namespace UPNP {
     }
     
     void UPnPServer::registerDevice(const UPnPDevice & device) {
-        if (!devices.hasDevice(device.getUdn())) {
-            devices.addDevice(device);
+        if (!devicePool.hasDevice(device.getUdn())) {
+            devicePool.addDevice(device);
             announceDeviceRecursive(device);
         }
     }
     void UPnPServer::unregisterDevice(const std::string & udn) {
-        if (devices.hasDevice(udn)) {
-            UPnPDevice & device = devices.getDevice(udn);
+        if (devicePool.hasDevice(udn)) {
+            UPnPDevice & device = devicePool.getDevice(udn);
             byebyeDeviceRecursive(device);
-            devices.removeDevice(udn);
+            devicePool.removeDevice(udn);
         }
     }
     void UPnPServer::announceDeviceRecursive(const UPnPDevice & device) {
@@ -304,7 +331,7 @@ namespace UPNP {
         string st = header.getHeaderFieldIgnoreCase("ST");
         if (Text::equalsIgnoreCase(st, "upnp:rootdevice")) {
             
-            vector<UPnPDevice> roots = devices.getRootDevices();
+            vector<UPnPDevice> roots = devicePool.getRootDevices();
             
             for (size_t i = 0; i < roots.size(); i++) {
                 UPnPDevice device = roots[i];
@@ -460,8 +487,8 @@ namespace UPNP {
             if (!udn.empty()) {
                 
                 udn = "uuid:" + udn;
-                if (devices.hasDevice(udn)) {
-                    UPnPDevice device = devices.getDevice(udn);
+                if (devicePool.hasDevice(udn)) {
+                    UPnPDevice device = devicePool.getDevice(udn);
                     if (device.hasServiceWithPropertyRecursive("SCPDURL", path)) {
                         onScpdRequest(request, response, device.getServiceWithPropertyRecursive("SCPDURL", path));
                     } else if (device.hasServiceWithPropertyRecursive("controlURL", path)) {
@@ -478,7 +505,7 @@ namespace UPNP {
 
         string udn = getUdnFromHttpRequest(request);
                 
-        if (devices.hasDevice(udn)) {
+        if (devicePool.hasDevice(udn)) {
             string xml = getDeviceDescription(udn);
 
 			response.setStatusCode(200);
@@ -551,17 +578,21 @@ namespace UPNP {
 	}
 	void UPnPServer::onEventSubRequest(HttpRequest & request, HttpResponse & response, UPnPService & service) {
         
+        string path = request.getPath();
+        
         string callback = request.getHeaderField("CALLBACK");
         vector<string> callbackUrls = parseCallbackUrls(callback);
         
         string sid = subsriberPool.registerSubscriber(service, callbackUrls);
         
         response.setStatusCode(200);
-        response.getHeader().setHeaderField("SID", sid);
+        response.getHeader().setHeaderField("SID", "uuid:" + sid);
         response.getHeader().setHeaderField("TIMEOUT", "Second-1800");
         response.setContentLength(0);
         
-        // TODO: send first event
+        if (eventSubscribeListener) {
+            eventSubscribeListener->onEventSubsribe(service);
+        }
 	}
     
     
@@ -587,7 +618,20 @@ namespace UPNP {
     }
     
     void UPnPServer::noitfyPropertyChanged(UPnPService & service, UTIL::LinkedStringMap & values) {
-        // TODO: implement it
+
+        UPnPEventSubscribeInfo info = subsriberPool.getSubscriberInfo(service);
+        vector<string> callbacks = info.getCallbacks();
+        
+        StringMap fields;
+        fields["NT"] = "upnp:event";
+        fields["NTS"] = "upnp:propchange";
+        fields["SEQ"] = Text::toString(info.nextSeq());
+        
+        string content = toPropertySetXmlString(values);
+        
+        for (vector<string>::iterator iter = callbacks.begin(); iter != callbacks.end(); iter++) {
+            sendHttpRequest(*iter, "NOTIFY", fields, content, NULL);
+        }
     }
     
 	string UPnPServer::getUdnFromHttpRequest(HttpRequest & request) {
@@ -616,7 +660,7 @@ namespace UPNP {
 
     string UPnPServer::getDeviceDescription(const string & udn) {
         UPnPDeviceXmlWriter writer;
-        UPnPDevice & device = devices.getDevice(udn);
+        UPnPDevice & device = devicePool.getDevice(udn);
         XmlDocument doc = writer.makeDeviceDescriptionXmlDocument(device);
         doc.setPrologue("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         XmlPrinter printer;
@@ -636,8 +680,67 @@ namespace UPNP {
     void UPnPServer::setActionRequestHandler(UPnPActionRequestHandler * actionRequestHandler) {
         this->actionRequestHandler = actionRequestHandler;
     }
+    
+    void UPnPServer::sendHttpRequest(const Url & url, const string & method, const StringMap & additionalFields, const string & content, UserData * userData) {
+        httpClientThreadPool.collectUnflaggedThreads();
+        httpClientThreadPool.setRequest(url, method, additionalFields, new FixedTransfer(content.c_str(), content.length()), userData);
+    }
+    void UPnPServer::onRequestComplete(Url & url, HttpResponse & response, const string & content, UserData * userData) {
+        
+    }
+    void UPnPServer::onRequestError(Exception & e, Url & url, UserData * userData) {
+        
+    }
+    
+    string UPnPServer::toPropertySetXmlString(LinkedStringMap props) {
+        XmlParseCursor cursor;
+        XmlNode propertySetNode;
+        propertySetNode.setNamespace("e");
+        propertySetNode.setTagName("propertyset");
+        propertySetNode.setAttribute("xmlns:e", "urn:schemas-upnp-org:event-1-0");
+        cursor.enter(propertySetNode);
+        
+        for (size_t i = 0; i < props.size(); i++) {
+            NameValue & nv = props.getByIndex(i);
+            string name = nv.getName();
+            string value = nv.getValue();
+            
+            XmlNode propertyNode;
+            propertyNode.setNamespace("e");
+            propertyNode.setTagName("property");
+            cursor.enter(propertyNode);
+            
+            XmlNode nameNode;
+            nameNode.setTagName(name);
+            cursor.enter(nameNode);
+            
+            XmlNode valueNode;
+            valueNode.setText(value);
+            cursor.enter(valueNode);
+            
+            cursor.leave();
+            cursor.leave();
+            cursor.leave();
+        }
+        
+        cursor.leave();
+        
+        XmlDocument doc;
+        doc.setRootNode(cursor.getRootNode());
+        doc.setPrologue("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        
+        XmlPrinter printer;
+        printer.setShowPrologue(true);
+        string content = printer.printDocument(doc);
+        
+        return content;
+    }
 	
 	UrlSerializer & UPnPServer::getUrlSerializer() {
 		return urlSerializer;
 	}
+    
+    void UPnPServer::setEventSubscribeListener(UPnPEventSubscribeListener * eventSubscribeListener) {
+        this->eventSubscribeListener = eventSubscribeListener;
+    }
 }

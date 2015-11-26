@@ -504,8 +504,6 @@ namespace UPNP {
         if (!transfer.empty()) {
             string content = transfer->getString();
             
-            string path = request.getPath();
-            
             string sid = request.getHeaderField("SID");
             Uuid uuid(sid);
             
@@ -513,22 +511,29 @@ namespace UPNP {
             
             UPnPService service = subscriptions.getService(uuidOfSid);
             
-            XmlDomParser parser;
-            XmlDocument doc = parser.parse(content);
-            vector<XmlNode> nodes = XmlNodeFinder::getAllNodesByTagName(doc.getRootNode(), "property");
-            
-            LinkedStringMap values;
-            
-            for (vector<XmlNode>::iterator iter = nodes.begin(); iter != nodes.end(); iter++) {
-                XmlNode node = iter->getFirstElement();
-                string variableName = node.getTagName();
-                string changedValue = node.getFirstContent();
-                values[variableName] = changedValue;
-            }
+            LinkedStringMap values = parsePropertySetXmlString(content);
             
             if (eventListener) {
                 eventListener->onEvent(service, values);
             }
         }
+    }
+    
+    LinkedStringMap UPnPControlPoint::parsePropertySetXmlString(const string & propertySetXmlString) {
+        
+        XmlDomParser parser;
+        XmlDocument doc = parser.parse(propertySetXmlString);
+        vector<XmlNode> nodes = XmlNodeFinder::getAllNodesByTagName(doc.getRootNode(), "property");
+        
+        LinkedStringMap values;
+        
+        for (vector<XmlNode>::iterator iter = nodes.begin(); iter != nodes.end(); iter++) {
+            XmlNode node = iter->getFirstElement();
+            string variableName = node.getTagName();
+            string changedValue = node.getFirstContent();
+            values[variableName] = changedValue;
+        }
+        
+        return values;
     }
 }

@@ -68,6 +68,10 @@ namespace UPNP {
 		std::string getProperty(const std::string & name) const;
         UTIL::LinkedStringMap & getProperties();
         const UTIL::LinkedStringMap & getProperties() const;
+        
+        std::string getScpdUrl();
+        std::string getControlUrl();
+        std::string getEventSubscribeUrl();
 
         std::string & operator[](const std::string & name);
 	};

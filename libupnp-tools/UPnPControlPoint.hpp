@@ -223,6 +223,7 @@ namespace UPNP {
         virtual void onHttpRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response);
         virtual void onHttpRequestContent(HTTP::HttpRequest & request, HTTP::HttpResponse &response, HTTP::Packet & packet);
         virtual void onHttpRequestContentCompleted(HTTP::HttpRequest &request, HTTP::HttpResponse &response);
+        UTIL::LinkedStringMap parsePropertySetXmlString(const std::string & propertySetXmlString);
 	};
 }
 

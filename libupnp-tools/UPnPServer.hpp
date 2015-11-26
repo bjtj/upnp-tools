@@ -5,9 +5,8 @@
 #include <vector>
 
 #include <liboslayer/PollablePool.hpp>
-//#include <libhttp-server/HttpServer.hpp>
 #include <libhttp-server/AnotherHttpServer.hpp>
-
+#include <libhttp-server/AnotherHttpClientThreadPool.hpp>
 
 #include "UPnPActionInvoke.hpp"
 #include "SSDPServer.hpp"
@@ -50,7 +49,7 @@ namespace UPNP {
     /**
      * @brief
      */
-    class UPnPEventSubsribeInfo {
+    class UPnPEventSubscribeInfo {
     private:
         std::string sid;
         UPnPService service;
@@ -58,9 +57,15 @@ namespace UPNP {
         unsigned int seq;
         
     public:
-        UPnPEventSubsribeInfo();
-        UPnPEventSubsribeInfo(const std::string & sid, UPnPService & service, std::vector<std::string> & callbacks);
-        virtual ~UPnPEventSubsribeInfo();
+        UPnPEventSubscribeInfo();
+        UPnPEventSubscribeInfo(const std::string & sid, UPnPService & service, std::vector<std::string> & callbacks);
+        virtual ~UPnPEventSubscribeInfo();
+        
+        bool empty();
+        
+        std::string getSid();
+        std::vector<std::string> & getCallbacks();
+        UPnPService & getService();
         
         void initSeq();
         unsigned int nextSeq();
@@ -72,17 +77,29 @@ namespace UPNP {
      */
     class UPnPEventSubscriberPool {
     private:
-        std::map<std::string, UPnPEventSubsribeInfo> subscribers;
+        std::map<std::string, UPnPEventSubscribeInfo> subscribers;
     public:
         UPnPEventSubscriberPool();
         virtual ~UPnPEventSubscriberPool();
         
         std::string registerSubscriber(UPnPService & service, std::vector<std::string> & callbackUrls);
         void unregisterSubscriber(const std::string & sid);
-        UPnPEventSubsribeInfo getSubscriberInfo(const std::string & sid);
-        UPnPEventSubsribeInfo getSubscriberInfo(UPnPService & service);
+        UPnPEventSubscribeInfo getSubscriberInfo(const std::string & sid);
+        UPnPEventSubscribeInfo getSubscriberInfo(UPnPService & service);
         
         std::string generateSid();
+    };
+    
+    /**
+     * @brief UPnPEventSubscribeListener
+     */
+    class UPnPEventSubscribeListener {
+    private:
+    public:
+        UPnPEventSubscribeListener() {}
+        virtual ~UPnPEventSubscribeListener() {}
+        
+        virtual void onEventSubsribe(UPnPService & service) = 0;
     };
     
 	/**
@@ -90,7 +107,7 @@ namespace UPNP {
 	 */
     class UPnPServer : public SSDP::OnMsearchHandler, public HTTP::HttpRequestHandler, public UTIL::SelectorPoller, public TimerEvent {
 	private:
-        UPnPDevicePool devices;
+        UPnPDevicePool devicePool;
         UPnPActionRequestHandler * actionRequestHandler;
         SSDP::SSDPListener ssdpListener;
         //HTTP::HttpServer httpServer;
@@ -101,6 +118,8 @@ namespace UPNP {
         int idx;
         
         UPnPEventSubscriberPool subsriberPool;
+        UPnPEventSubscribeListener * eventSubscribeListener;
+        HTTP::AnotherHttpClientThreadPool httpClientThreadPool;
 		
 	public:
 		UPnPServer(int port);
@@ -112,6 +131,7 @@ namespace UPNP {
         void startAsync();
         void stop();
 		bool isRunning();
+        virtual void poll(unsigned long timeout);
         
         UPnPDevice getDevice(const std::string & udn);
         void registerDeviceWithXml(const std::string & xmlDoc);
@@ -154,8 +174,15 @@ namespace UPNP {
         std::string getDeviceDescription(const std::string & udn);
         std::string getScpd(const Scpd & scpd);
         void setActionRequestHandler(UPnPActionRequestHandler * actionRequestHandler);
+        
+        void sendHttpRequest(const HTTP::Url & url, const std::string & method, const UTIL::StringMap & additionalFields, const std::string & content, HTTP::UserData * userData);
+        virtual void onRequestComplete(HTTP::Url & url, HTTP::HttpResponse & response, const std::string & content, HTTP::UserData * userData);
+        virtual void onRequestError(OS::Exception & e, HTTP::Url & url, HTTP::UserData * userData);
+        
+        std::string toPropertySetXmlString(UTIL::LinkedStringMap props);
 
 		UrlSerializer & getUrlSerializer();
+        void setEventSubscribeListener(UPnPEventSubscribeListener * eventSubscribeListener);
 	};
 	
 }
