@@ -79,14 +79,24 @@ namespace UPNP {
      *
      */
     
-    UPnPEventSubsribeInfo::UPnPEventSubsribeInfo() {
+    UPnPEventSubsribeInfo::UPnPEventSubsribeInfo() : seq(0) {
     }
     
-    UPnPEventSubsribeInfo::UPnPEventSubsribeInfo(const string & sid, UPnPService & service, vector<string> & callbacks) : sid(sid), service(service), callbacks(callbacks) {
+    UPnPEventSubsribeInfo::UPnPEventSubsribeInfo(const string & sid, UPnPService & service, vector<string> & callbacks) : sid(sid), service(service), callbacks(callbacks), seq(0) {
         
     }
     UPnPEventSubsribeInfo::~UPnPEventSubsribeInfo() {
-        
+    }
+    
+    
+    void UPnPEventSubsribeInfo::initSeq() {
+        seq = 0;
+    }
+    unsigned int UPnPEventSubsribeInfo::nextSeq() {
+        return seq++;
+    }
+    unsigned int UPnPEventSubsribeInfo::getSeq() {
+        return seq;
     }
     
     
@@ -301,7 +311,6 @@ namespace UPNP {
                 DatagramSocket socket(remoteAddr.getAddress().c_str(), remoteAddr.getPort());
                 HttpHeader responseHeader = makeMsearchResponse(device);
                 string packet = responseHeader.toString();
-				// logger.logd(packet);
                 socket.send(remoteAddr.getAddress().c_str(), remoteAddr.getPort(), packet.c_str(), packet.length());
             }
         }
@@ -482,7 +491,7 @@ namespace UPNP {
         }
 
 	}
-	void UPnPServer::onScpdRequest(HttpRequest & request, HttpResponse & response, const UPnPService & service) {
+	void UPnPServer::onScpdRequest(HttpRequest & request, HttpResponse & response, UPnPService & service) {
 
 		string xml = getScpd(service.getScpd());
 
@@ -490,7 +499,7 @@ namespace UPNP {
 		response.setContentType("text/xml");
         setFixedTransfer(response, xml);
 	}
-	void UPnPServer::onControlRequest(HttpRequest & request, HttpResponse & response, const UPnPService & service) {
+	void UPnPServer::onControlRequest(HttpRequest & request, HttpResponse & response, UPnPService & service) {
 		
         AutoRef<DataTransfer> transfer = request.getTransfer();
         
@@ -540,16 +549,44 @@ namespace UPNP {
             
         }
 	}
-	void UPnPServer::onEventSubRequest(HttpRequest & request, HttpResponse & response, const UPnPService & service) {
-
-		// TODO: implement it
-		response.setStatusCode(500, "Not supported yet");
+	void UPnPServer::onEventSubRequest(HttpRequest & request, HttpResponse & response, UPnPService & service) {
         
-//        vector<string> callbacks;
-//        subsriberPool.registerSubscriber(service, callbacks);
+        string callback = request.getHeaderField("CALLBACK");
+        vector<string> callbackUrls = parseCallbackUrls(callback);
+        
+        string sid = subsriberPool.registerSubscriber(service, callbackUrls);
+        
+        response.setStatusCode(200);
+        response.getHeader().setHeaderField("SID", sid);
+        response.getHeader().setHeaderField("TIMEOUT", "Second-1800");
+        response.setContentLength(0);
+        
+        // TODO: send first event
 	}
     
-    void UPnPServer::noitfy(UPnPService & service, UTIL::LinkedStringMap & values) {
+    
+    vector<string> UPnPServer::parseCallbackUrls(const string & callbackPhrase) {
+        
+        vector<string> urls;
+        
+        size_t f = callbackPhrase.find("<");
+        while (f != string::npos) {
+            size_t e = callbackPhrase.find(">", f);
+            if (e != string::npos) {
+                size_t s = f + 1;
+                string url = callbackPhrase.substr(s, e - s);
+                urls.push_back(url);
+            } else {
+                break;
+            }
+            
+            f = callbackPhrase.find("<", e + 1);
+        }
+        
+        return urls;
+    }
+    
+    void UPnPServer::noitfyPropertyChanged(UPnPService & service, UTIL::LinkedStringMap & values) {
         // TODO: implement it
     }
     

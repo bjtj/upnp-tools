@@ -55,10 +55,16 @@ namespace UPNP {
         std::string sid;
         UPnPService service;
         std::vector<std::string> callbacks;
+        unsigned int seq;
+        
     public:
         UPnPEventSubsribeInfo();
         UPnPEventSubsribeInfo(const std::string & sid, UPnPService & service, std::vector<std::string> & callbacks);
         virtual ~UPnPEventSubsribeInfo();
+        
+        void initSeq();
+        unsigned int nextSeq();
+        unsigned int getSeq();
     };
     
     /**
@@ -135,11 +141,12 @@ namespace UPNP {
 		virtual void onHttpRequestContent(HTTP::HttpRequest & request, HTTP::HttpResponse &response, HTTP::Packet & packet);
         virtual void onHttpRequestContentCompleted(HTTP::HttpRequest &request, HTTP::HttpResponse &response);
 		void onDeviceDescriptionRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response);
-		void onScpdRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response, const UPnPService & service);
-		void onControlRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response, const UPnPService & service);
-		void onEventSubRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response, const UPnPService & service);
+		void onScpdRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response, UPnPService & service);
+		void onControlRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response, UPnPService & service);
+		void onEventSubRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response, UPnPService & service);
         
-        void noitfy(UPnPService & service, UTIL::LinkedStringMap & values);
+        std::vector<std::string> parseCallbackUrls(const std::string & callbackPhrase);
+        void noitfyPropertyChanged(UPnPService & service, UTIL::LinkedStringMap & values);
 
 		std::string getUdnFromHttpRequest(HTTP::HttpRequest & request);
 		std::string getActionNameFromHttpRequest(HTTP::HttpRequest & request);

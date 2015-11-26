@@ -6,6 +6,7 @@
 #include <libhttp-server/Url.hpp>
 #include <libhttp-server/FixedTransfer.hpp>
 #include "XmlDomParser.hpp"
+#include "XmlNodeFinder.hpp"
 #include "UPnPDeviceMaker.hpp"
 #include "UPnPServiceMaker.hpp"
 #include "Uuid.hpp"
@@ -154,13 +155,33 @@ namespace UPNP {
 	void UPnPSSDPMessageHandler::setDeviceDetection(UPnPDeviceDetection * deviceDetection) {
 		this->deviceDetection = deviceDetection;
 	}
+    
+    /**
+     * @brief UPnPEventSubscriptions
+     */
+    
+    UPnPEventSubscriptions::UPnPEventSubscriptions() {
+        
+    }
+    UPnPEventSubscriptions::~UPnPEventSubscriptions() {
+    }
+    
+    void UPnPEventSubscriptions::subscribe(const string & sid, UPnPService & service) {
+        subscriptions[sid] = service;
+    }
+    void UPnPEventSubscriptions::unsubscribe(const string & sid) {
+        subscriptions.erase(sid);
+    }
+    UPnPService UPnPEventSubscriptions::getService(const string & sid) {
+        return subscriptions[sid];
+    }
 
 
 	/**
-	 *
+	 * @brief UPnPControlPoint
 	 */
 
-	UPnPControlPoint::UPnPControlPoint() : TimerEvent(false), deviceListener(NULL), invokeActionResponseListener(NULL), pollingThread(NULL), anotherHttpClientThreadPool(5) {
+	UPnPControlPoint::UPnPControlPoint(int port) : TimerEvent(false), deviceListener(NULL), invokeActionResponseListener(NULL), pollingThread(NULL), anotherHttpClientThreadPool(5), eventListener(NULL), httpServer(port) {
         
 		ssdpHandler.setDeviceDetection(this);
 		
@@ -189,14 +210,17 @@ namespace UPNP {
         timer.start();
         timer.setTimerEvent(this);
         anotherHttpClientThreadPool.start();
+        httpServer.start();
 	}
 
 	void UPnPControlPoint::startAsync() {
         
         start();
         
+        httpServer.startAsync();
+        
         if (!pollingThread) {
-            pollingThread = new PollingThread(this, 1000);
+            pollingThread = new PollingThread(this, 100);
             pollingThread->start();
         }
 	}
@@ -213,6 +237,8 @@ namespace UPNP {
         timer.stop();
 		ssdp.stop();
         anotherHttpClientThreadPool.stop();
+        
+        httpServer.stop();
 	}
 
 	void UPnPControlPoint::poll(unsigned long timeout) {
@@ -419,6 +445,11 @@ namespace UPNP {
     }
     
     ID_TYPE UPnPControlPoint::invokeAction(const UPnPService & service, const std::string & actionName, const UPnPActionParameters & in) {
+        
+        if (actionName.empty()) {
+            throw IllegalArgumentException("action name required", -1, 0);
+        }
+        
         Url url(service.getBaseUrl());
 		url.setPath(service.getProperty("controlURL"));
         StringMap headerFields;
@@ -442,5 +473,62 @@ namespace UPNP {
 		sendHttpRequest(url, "POST", headerFields, packet, session);
 
         return session->getId();
+    }
+    
+    void UPnPControlPoint::subscribe(UPnPService & service) {
+        // TODO: implement it
+    }
+    
+    void UPnPControlPoint::unsubscribe(UPnPService & service) {
+        // TODO: implement it
+    }
+    
+    void UPnPControlPoint::setEventListener(UPnPEventListener * eventListener) {
+        this->eventListener = eventListener;
+    }
+    
+    void UPnPControlPoint::onHttpRequest(HttpRequest & request, HttpResponse & response) {
+        
+        response.setStatusCode(404);
+        response.getHeader().setConnection("close");
+        
+        logger.logv(request.getPath());
+    }
+    
+    void UPnPControlPoint::onHttpRequestContent(HttpRequest & request, HttpResponse & response, Packet & packet) {
+    }
+    
+    void UPnPControlPoint::onHttpRequestContentCompleted(HttpRequest &request, HttpResponse &response) {
+        
+        AutoRef<DataTransfer> transfer = request.getTransfer();
+        if (!transfer.empty()) {
+            string content = transfer->getString();
+            
+            string path = request.getPath();
+            
+            string sid = request.getHeaderField("SID");
+            Uuid uuid(sid);
+            
+            string uuidOfSid = uuid.getUuid();
+            
+            UPnPService service = subscriptions.getService(uuidOfSid);
+            
+            XmlDomParser parser;
+            XmlDocument doc = parser.parse(content);
+            vector<XmlNode> nodes = XmlNodeFinder::getAllNodesByTagName(doc.getRootNode(), "property");
+            
+            LinkedStringMap values;
+            
+            for (vector<XmlNode>::iterator iter = nodes.begin(); iter != nodes.end(); iter++) {
+                XmlNode node = iter->getFirstElement();
+                string variableName = node.getTagName();
+                string changedValue = node.getFirstContent();
+                values[variableName] = changedValue;
+            }
+            
+            if (eventListener) {
+                eventListener->onEvent(service, values);
+            }
+        }
     }
 }

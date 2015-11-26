@@ -2,6 +2,7 @@
 #define __UPNP_CONTROL_POINT_HPP__
 
 #include <liboslayer/PollablePool.hpp>
+#include <libhttp-server/AnotherHttpServer.hpp>
 #include <libhttp-server/AnotherHttpClientThreadPool.hpp>
 #include <libhttp-server/HttpClientThreadPool.hpp>
 #include <libhttp-server/HttpResponse.hpp>
@@ -129,11 +130,38 @@ namespace UPNP {
 		virtual void onHttpResponse(const HTTP::HttpHeader & header);
 		void setDeviceDetection(UPnPDeviceDetection * deviceDetection);
 	};
+    
+    /**
+     * @brief UPnPEventListener
+     */
+    class UPnPEventListener {
+    private:
+    public:
+        UPnPEventListener() {}
+        virtual ~UPnPEventListener() {}
+        
+        virtual void onEvent(UPnPService & service, UTIL::LinkedStringMap & values) = 0;
+    };
+    
+    /**
+     * @brief UPnPEventSubscriptions
+     */
+    class UPnPEventSubscriptions {
+    private:
+        std::map<std::string, UPnPService> subscriptions;
+    public:
+        UPnPEventSubscriptions();
+        virtual ~UPnPEventSubscriptions();
+        
+        void subscribe(const std::string & sid, UPnPService & service);
+        void unsubscribe(const std::string & sid);
+        UPnPService getService(const std::string & sid);
+    };
 
 	/**
 	 * @brief upnp control point
 	 */
-    class UPnPControlPoint : public UPnPDeviceDetection, public UTIL::SelectorPoller, public TimerEvent, public HTTP::OnRequestCompleteListener {
+    class UPnPControlPoint : public UPnPDeviceDetection, public HTTP::HttpRequestHandler, public UTIL::SelectorPoller, public TimerEvent, public HTTP::OnRequestCompleteListener {
 	private:
         UniqueIdGenerator gen;
 		UPnPDevicePool devicePool;
@@ -146,12 +174,16 @@ namespace UPNP {
         Timer timer;
         
 		HTTP::AnotherHttpClientThreadPool anotherHttpClientThreadPool;
+        
+        UPnPEventSubscriptions subscriptions;
+        UPnPEventListener * eventListener;
+        HTTP::AnotherHttpServer httpServer;
 
 	private:
 		UPnPControlPoint(const UPnPControlPoint & other); // do not allow copy
     
 	public:
-		UPnPControlPoint();
+		UPnPControlPoint(int port);
 		virtual ~UPnPControlPoint();
         
         virtual void onTimerTriggered();
@@ -183,6 +215,14 @@ namespace UPNP {
         
         void setInvokeActionResponseListener(InvokeActionResponseListener * invokeActionResponseListener);
         ID_TYPE invokeAction(const UPnPService & service, const std::string & actionName, const UPnPActionParameters & in);
+        
+        void subscribe(UPnPService & service);
+        void unsubscribe(UPnPService & service);
+        void setEventListener(UPnPEventListener * eventListener);
+        
+        virtual void onHttpRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response);
+        virtual void onHttpRequestContent(HTTP::HttpRequest & request, HTTP::HttpResponse &response, HTTP::Packet & packet);
+        virtual void onHttpRequestContentCompleted(HTTP::HttpRequest &request, HTTP::HttpResponse &response);
 	};
 }
 

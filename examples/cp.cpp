@@ -186,7 +186,7 @@ static void s_test_cp() {
 	char buffer[1024] = {0,};
 
 	
-    UPnPControlPoint cp;
+    UPnPControlPoint cp(8084);
 	UPnPControlPointSsdpNotifyFilter filter;
 	filter.addFilterType("upnp:rootdevice");
 	cp.setFilter(filter);
