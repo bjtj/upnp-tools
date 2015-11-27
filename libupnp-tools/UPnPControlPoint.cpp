@@ -13,6 +13,7 @@
 #include "macros.hpp"
 #include "SoapWriter.hpp"
 #include "SoapReader.hpp"
+#include "NetworkUtil.hpp"
 
 namespace UPNP {
 
@@ -195,14 +196,17 @@ namespace UPNP {
         scheduleRepeatableRelativeTimer(0, -1, Timer::SECOND);
         
         anotherHttpClientThreadPool.setOnRequestCompleteListener(this);
+        
+        httpServer.registerRequestHandler("/notify", this);
 	}
 
 	UPnPControlPoint::~UPnPControlPoint() {
-        unregisterSelectorPoller(&ssdp);
+        stop();
 	}
     
     void UPnPControlPoint::onTimerTriggered() {
 		// TODO: Check UPnPDevice cache and remove outdated devices
+        // TODO: renew subscription
     }
 
 	void UPnPControlPoint::start() {
@@ -275,7 +279,11 @@ namespace UPNP {
     }
     
     void UPnPControlPoint::onRequestComplete(Url & url, HttpResponse & response, const string & content, UserData * userData) {
-
+        
+        if (!userData) {
+            return;
+        }
+        
 		UPnPHttpRequestSession & session = (UPnPHttpRequestSession &)*userData;
         
 		if (session.getRequestType() == UPnPHttpRequestType::DEVICE_DESCRIPTION) {
@@ -477,6 +485,20 @@ namespace UPNP {
     
     void UPnPControlPoint::subscribe(UPnPService & service) {
         // TODO: implement it
+        
+        Url url;
+        
+        url.setUrl(service.getBaseUrl());
+        url.setRelativePath(service.getEventSubscribeUrl());
+        
+        StringMap fields;
+        fields["NT"] = "upnp:event";
+        InetAddress addr = NetworkUtil::selectDefaultAddress();
+        addr.setPort(httpServer.getPort());
+        fields["CALLBACK"] = "<http://" + addr.getAddress() + ":" + Text::toString(addr.getPort()) + "/notify" + ">";
+        fields["TIMEOUT"] = "Second-300";
+        
+        sendHttpRequest(url, "SUBSCRIBE", fields, "", NULL);
     }
     
     void UPnPControlPoint::unsubscribe(UPnPService & service) {

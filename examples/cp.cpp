@@ -46,6 +46,25 @@ public:
 	}
 };
 
+
+class MyEventListener : public UPnPEventListener {
+private:
+public:
+    MyEventListener() {
+    }
+    virtual ~MyEventListener() {
+    }
+    
+    virtual void onEvent(UPnPService & service, UTIL::LinkedStringMap & values) {
+        cout << "Notify : " << service.getServiceType() << endl;
+        for (size_t i = 0; i < values.size(); i++) {
+            NameValue & nv = values[i];
+            cout << nv.getName() << " : " << nv.getValue() << endl;
+        }
+    }
+};
+
+
 class MyInvokeActionResponseListener : public InvokeActionResponseListener {
 	virtual void onActionResponse(ID_TYPE id, const UPnPActionRequest & actionRequest, const UPnPActionResponse & response) {
 		cout << "# Action Result : " << actionRequest.getActionName() << endl;
@@ -75,6 +94,40 @@ static void s_show_device_list_with_selection_number() {
         cout << " > Friendly Name: " << device.getFriendlyName() << endl;
     }
     cout << endl;
+}
+
+static UPnPService s_prompt_select_service() {
+    bool done = false;
+    while (!done) {
+        s_show_device_list_with_selection_number();
+        
+        char buffer[1024] = {0,};
+        if (cout << "device # ", readline(buffer, sizeof(buffer)) > 0) {
+            
+            if (!strcmp(buffer, "q")) {
+                break;
+            }
+            
+            int selection = Text::toInt(buffer);
+            UPnPDevice & device = devices[selection];
+            vector<UPnPService> services = device.getServicesRecursive();
+            cout << "service - " << services.size() << endl;
+            for (size_t i = 0; i < services.size(); i++) {
+                UPnPService & service = services[i];
+                cout << "[" << i << "] type: " << service.getServiceType() << endl;
+            }
+            if (cout << "service # ", readline(buffer, sizeof(buffer)) > 0) {
+                
+                if (!strcmp(buffer, "q")) {
+                    break;
+                }
+                
+                return services[Text::toInt(buffer)];
+            }
+        }
+    }
+    
+    return UPnPService();
 }
 
 static void s_send_action(UPnPControlPoint & cp) {
@@ -145,6 +198,25 @@ static void s_send_action(UPnPControlPoint & cp) {
     }
 }
 
+static void s_handle_subscribe(UPnPControlPoint & cp) {
+    UPnPService service = s_prompt_select_service();
+    if (service.empty()) {
+        return;
+    }
+    
+    char buffer[1024] = {0,};
+    cout << "[(s)ubscribe/(u)nsubscribe]> ";
+    readline(buffer, sizeof(buffer));
+    
+    if (!strcmp(buffer, "s")) {
+        cp.subscribe(service);
+    }
+    
+    if (!strcmp(buffer, "u")) {
+        cp.unsubscribe(service);
+    }
+}
+
 static int s_cmd_handler(const char * cmd, UPnPControlPoint & cp) {
     
     if (!*cmd) {
@@ -176,6 +248,10 @@ static int s_cmd_handler(const char * cmd, UPnPControlPoint & cp) {
     if (!strcmp(cmd, "a") || !strcmp(cmd, "action")) {
         s_send_action(cp);
     }
+    
+    if (!strcmp(cmd, "s") || !strcmp(cmd, "subscribe")) {
+        s_handle_subscribe(cp);
+    }
 
 	return 0;
 }
@@ -196,6 +272,9 @@ static void s_test_cp() {
     
     MyInvokeActionResponseListener actionResponseListener;
     cp.setInvokeActionResponseListener(&actionResponseListener);
+    
+    MyEventListener eventListener;
+    cp.setEventListener(&eventListener);
 
     cp.startAsync();
     

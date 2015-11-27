@@ -14,6 +14,7 @@
 #include "UPnPService.hpp"
 #include "UPnPDevicePool.hpp"
 #include "Timer.hpp"
+#include "NetworkUtil.hpp"
 
 namespace UPNP {
 
@@ -155,7 +156,6 @@ namespace UPNP {
         HTTP::HttpHeader makeNotifyByebye(const std::string & nt, const std::string usn, const UPnPDevice & device);
         std::string makeDeviceDescriptionUrl(const UPnPDevice & device);
         OS::InetAddress getHttpServerAddress();
-        OS::InetAddress selectDefaultAddress();
         
         virtual void onHttpRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response);
 		virtual void onHttpRequestContent(HTTP::HttpRequest & request, HTTP::HttpResponse &response, HTTP::Packet & packet);

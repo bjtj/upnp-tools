@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6C4A9F411C081A2F00A45604 /* NetworkUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C4A9F3F1C081A2F00A45604 /* NetworkUtil.cpp */; };
+		6C4A9F421C081A2F00A45604 /* NetworkUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C4A9F3F1C081A2F00A45604 /* NetworkUtil.cpp */; };
 		E82789091BDCDBDD0009E46A /* StringReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82788FF1BDCDBDD0009E46A /* StringReader.cpp */; };
 		E827890A1BDCDBDD0009E46A /* XmlDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82789011BDCDBDD0009E46A /* XmlDocument.cpp */; };
 		E827890B1BDCDBDD0009E46A /* XmlDocumentPrinter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82789031BDCDBDD0009E46A /* XmlDocumentPrinter.cpp */; };
@@ -156,6 +158,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		6C4A9F3F1C081A2F00A45604 /* NetworkUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkUtil.cpp; path = "../../libupnp-tools/NetworkUtil.cpp"; sourceTree = "<group>"; };
+		6C4A9F401C081A2F00A45604 /* NetworkUtil.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = NetworkUtil.hpp; path = "../../libupnp-tools/NetworkUtil.hpp"; sourceTree = "<group>"; };
 		E82788FF1BDCDBDD0009E46A /* StringReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StringReader.cpp; path = "../../libupnp-tools/StringReader.cpp"; sourceTree = "<group>"; };
 		E82789001BDCDBDD0009E46A /* StringReader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = StringReader.hpp; path = "../../libupnp-tools/StringReader.hpp"; sourceTree = "<group>"; };
 		E82789011BDCDBDD0009E46A /* XmlDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XmlDocument.cpp; path = "../../libupnp-tools/XmlDocument.cpp"; sourceTree = "<group>"; };
@@ -334,6 +338,8 @@
 				E857BAE81BE03C6300D2022F /* Timer.hpp */,
 				E857BB2E1BE7A51D00D2022F /* UniqueIdGenerator.cpp */,
 				E857BB2F1BE7A51D00D2022F /* UniqueIdGenerator.hpp */,
+				6C4A9F3F1C081A2F00A45604 /* NetworkUtil.cpp */,
+				6C4A9F401C081A2F00A45604 /* NetworkUtil.hpp */,
 			);
 			name = "upnp-tools-c++";
 			sourceTree = "<group>";
@@ -485,6 +491,7 @@
 				E8C743C51BDEC83100101962 /* UPnPDeviceMaker.cpp in Sources */,
 				E8C743C61BDEC83100101962 /* UPnPServiceMaker.cpp in Sources */,
 				E827898F1BDD95B90009E46A /* StringReader.cpp in Sources */,
+				6C4A9F421C081A2F00A45604 /* NetworkUtil.cpp in Sources */,
 				E82789901BDD95B90009E46A /* XmlDocument.cpp in Sources */,
 				E82789911BDD95B90009E46A /* XmlDocumentPrinter.cpp in Sources */,
 				E82789921BDD95B90009E46A /* XmlDomParser.cpp in Sources */,
@@ -521,6 +528,7 @@
 				E8FAB2CE1BD7D8FE00E89DC5 /* UPnPStateVariable.cpp in Sources */,
 				E8FAB2C61BD7D8FE00E89DC5 /* SSDPServer.cpp in Sources */,
 				E857BB281BE77A9F00D2022F /* UPnPDeviceDetection.cpp in Sources */,
+				6C4A9F411C081A2F00A45604 /* NetworkUtil.cpp in Sources */,
 				E827890C1BDCDBDD0009E46A /* XmlDomParser.cpp in Sources */,
 				E8C743C31BDEC82000101962 /* UPnPDeviceMaker.cpp in Sources */,
 				E8FAB2CD1BD7D8FE00E89DC5 /* UPnPService.cpp in Sources */,

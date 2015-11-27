@@ -442,28 +442,11 @@ namespace UPNP {
     }
     
     InetAddress UPnPServer::getHttpServerAddress() {
-        InetAddress addr = selectDefaultAddress();
+        InetAddress addr = NetworkUtil::selectDefaultAddress();
         addr.setPort(httpServer.getPort());
         return addr;
     }
     
-    InetAddress UPnPServer::selectDefaultAddress() {
-        vector<NetworkInterface> ifaces = Network::getNetworkInterfaces();
-        for (size_t i = 0; i < ifaces.size(); i++) {
-            NetworkInterface & iface = ifaces[i];
-            if (!iface.isLoopBack()) {
-                vector<InetAddress> addrs = iface.getInetAddresses();
-                for (size_t i = 0; i < addrs.size(); i++) {
-					InetAddress & addr = addrs[i];
-					if (addr.inet4() && addr.getAddress().compare("0.0.0.0")) {
-                        return addr;
-                    }
-                }
-            }
-        }
-        return InetAddress();
-    }
-
     void UPnPServer::onHttpRequest(HttpRequest & request, HttpResponse & response) {
         
         response.setStatusCode(404);
