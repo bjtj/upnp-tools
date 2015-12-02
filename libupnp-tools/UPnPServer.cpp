@@ -447,7 +447,7 @@ namespace UPNP {
         return addr;
     }
     
-    void UPnPServer::onHttpRequest(HttpRequest & request, HttpResponse & response) {
+    void UPnPServer::onHttpRequestHeaderCompleted(HttpRequest & request, HttpResponse & response) {
         
         response.setStatusCode(404);
         response.getHeader().setConnection("close");

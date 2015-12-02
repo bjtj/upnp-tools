@@ -68,6 +68,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\libupnp-tools\CacheControl.cpp" />
+    <ClCompile Include="..\libupnp-tools\NetworkUtil.cpp" />
     <ClCompile Include="..\libupnp-tools\SoapReader.cpp" />
     <ClCompile Include="..\libupnp-tools\SoapWriter.cpp" />
     <ClCompile Include="..\libupnp-tools\SSDPServer.cpp" />

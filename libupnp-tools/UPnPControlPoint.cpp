@@ -509,7 +509,7 @@ namespace UPNP {
         this->eventListener = eventListener;
     }
     
-    void UPnPControlPoint::onHttpRequest(HttpRequest & request, HttpResponse & response) {
+    void UPnPControlPoint::onHttpRequestHeaderCompleted(HttpRequest & request, HttpResponse & response) {
         
         response.setStatusCode(404);
         response.getHeader().setConnection("close");

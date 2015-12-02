@@ -157,7 +157,7 @@ namespace UPNP {
         std::string makeDeviceDescriptionUrl(const UPnPDevice & device);
         OS::InetAddress getHttpServerAddress();
         
-        virtual void onHttpRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response);
+        virtual void onHttpRequestHeaderCompleted(HTTP::HttpRequest & request, HTTP::HttpResponse & response);
 		virtual void onHttpRequestContent(HTTP::HttpRequest & request, HTTP::HttpResponse &response, HTTP::Packet & packet);
         virtual void onHttpRequestContentCompleted(HTTP::HttpRequest &request, HTTP::HttpResponse &response);
 		void onDeviceDescriptionRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response);

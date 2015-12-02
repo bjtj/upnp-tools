@@ -242,6 +242,7 @@ static int s_cmd_handler(const char * cmd, UPnPControlPoint & cp) {
 
 	if (!strcmp(cmd, "m") || !strcmp(cmd, "scan")) {
 		cp.sendMsearch("upnp:rootdevice");
+		cp.sendMsearch("ssdp:all");
 		return 0;
 	}
     
