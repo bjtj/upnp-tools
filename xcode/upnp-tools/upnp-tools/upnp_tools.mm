@@ -16,7 +16,7 @@ using namespace UPNP;
 - (void)startServer
 {
     if (!server) {
-        server = new UPnPServer(8080);
+        //server = new UPnPServer(8080);
         server->startAsync();
     }
 }
