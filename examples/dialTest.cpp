@@ -253,7 +253,7 @@ size_t readline(char * buffer, size_t max) {
 
 void s_print_device_list(vector<SimpleDevice> & devices) {
     
-    printf("Device list (%zd)\n", devices.size());
+    printf("Device list (%ld)\n", devices.size());
     
     for (size_t i = 0; i < devices.size(); i++) {
         SimpleDevice & device = devices[i];
