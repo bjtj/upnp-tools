@@ -1,5 +1,6 @@
 #include "UPnPServer.hpp"
 #include "Uuid.hpp"
+#include <liboslayer/DatagramSocket.hpp>
 #include <liboslayer/Text.hpp>
 #include <liboslayer/Logger.hpp>
 #include <libhttp-server/FixedTransfer.hpp>
@@ -18,6 +19,7 @@ namespace UPNP {
     using namespace UTIL;
     using namespace HTTP;
     using namespace OS;
+	using namespace XOS;
     using namespace XML;
 	using namespace SOAP;
     
@@ -335,10 +337,18 @@ namespace UPNP {
             
             for (size_t i = 0; i < roots.size(); i++) {
                 UPnPDevice device = roots[i];
-                DatagramSocket socket(remoteAddr.getAddress().c_str(), remoteAddr.getPort());
+                // DatagramSocket socket(remoteAddr.getAddress().c_str(), remoteAddr.getPort());
+				
+				DatagramSocket socket;
                 HttpHeader responseHeader = makeMsearchResponse(device);
-                string packet = responseHeader.toString();
-                socket.send(remoteAddr.getAddress().c_str(), remoteAddr.getPort(), packet.c_str(), packet.length());
+                // string packet = responseHeader.toString();
+                // socket.send(remoteAddr.getAddress().c_str(), remoteAddr.getPort(), packet.c_str(), packet.length());
+
+				char buffer[4096] = {0,};
+				DatagramPacket packet(buffer, sizeof(buffer));
+				packet.write(responseHeader.toString());
+				packet.setRemoteAddr(remoteAddr);
+				socket.send(packet);
             }
         }
     }
@@ -437,7 +447,7 @@ namespace UPNP {
         InetAddress addr = getHttpServerAddress();
         
         string path = urlSerializer.makeDeviceDescriptionUrlPath(device);
-        string url = "http://" + addr.getAddress() + ":" + Text::toString(addr.getPort()) + path;
+		string url = "http://" + addr.getHost() + ":" + Text::toString(addr.getPort()) + path;
         return url;
     }
     

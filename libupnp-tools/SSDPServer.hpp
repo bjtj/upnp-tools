@@ -2,6 +2,7 @@
 #define __SSDP_SERVER_HPP__
 
 #include <liboslayer/os.hpp>
+#include <liboslayer/DatagramSocket.hpp>
 #include <liboslayer/PollablePool.hpp>
 #include <libhttp-server/HttpHeader.hpp>
 
@@ -97,7 +98,7 @@ namespace SSDP {
         SSDPConfig config;
         std::vector<OnNotifyHandler*> notifyHandlers;
         std::vector<OnMsearchHandler*> msearchHandlers;
-        OS::DatagramSocket * mcastSocket;
+        XOS::MulticastSocket * mcastSocket;
         
     public:
         SSDPListener();
@@ -111,7 +112,7 @@ namespace SSDP {
         virtual void onIdle();
         virtual void listen(UTIL::SelectorPoller & poller);
         
-        void handleMessage(const OS::DatagramPacket & packet);
+        void handleMessage(OS::DatagramPacket & packet);
         
         void onMsearch(const HTTP::HttpHeader & header, const OS::InetAddress & remoteAddr);
         void onNotify(const HTTP::HttpHeader & header);
@@ -131,7 +132,7 @@ namespace SSDP {
     private:
         SSDPConfig config;
         std::vector<OnHttpResponseHandler*> httpResponseHandlers;
-        OS::DatagramSocket * msearchSocket;
+        XOS::DatagramSocket * msearchSocket;
         
     public:
         MsearchSender();

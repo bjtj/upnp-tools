@@ -2,6 +2,7 @@
 #include <map>
 #include <vector>
 #include <liboslayer/os.hpp>
+#include <liboslayer/DatagramSocket.hpp>
 #include <liboslayer/Utils.hpp>
 #include <libhttp-server/AnotherHttpClient.hpp>
 #include <libhttp-server/FixedTransfer.hpp>
@@ -12,6 +13,7 @@
 
 using namespace std;
 using namespace OS;
+using namespace XOS;
 using namespace UTIL;
 using namespace HTTP;
 using namespace SSDP;
@@ -299,7 +301,7 @@ int main(int argc, char * args[]) {
         if (isDigitString(buffer)) {
             int index = Text::toInt(buffer);
             vector<SimpleDevice> devices = dm.getDevices();
-            if (index >= 0 && index < devices.size()) {
+            if (index >= 0 && (size_t)index < devices.size()) {
                 SimpleDevice & device = devices[index];
                 string applicationUrl = device.getApplicationUrl();
                 client.setApplicationUrl(applicationUrl);

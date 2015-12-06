@@ -10,6 +10,7 @@ namespace SSDP {
 
 	using namespace std;
 	using namespace OS;
+	using namespace XOS;
 	using namespace HTTP;
 	using namespace UTIL;
 
@@ -87,8 +88,8 @@ namespace SSDP {
         int multicastPort = config.getMulticastPort();
         string & group = config.getMulticastGroup();
         if (!mcastSocket) {
-            mcastSocket = new DatagramSocket(multicastPort);
-            mcastSocket->setReuseAddr();
+            mcastSocket = new MulticastSocket(multicastPort);
+            mcastSocket->setReuseAddr(true);
             mcastSocket->joinGroup(group);
             
             registerSelector(mcastSocket->getFd());
@@ -125,7 +126,7 @@ namespace SSDP {
         }
     }
     
-    void SSDPListener::handleMessage(const DatagramPacket & packet) {
+    void SSDPListener::handleMessage(DatagramPacket & packet) {
         HttpHeaderParser parser;
         string header(packet.getData(), packet.getLength());
         
@@ -134,7 +135,8 @@ namespace SSDP {
             HttpHeader & header = parser.getHeader();
             string method = header.getPart1();
             if (Text::equalsIgnoreCase(method, "M-SEARCH")) {
-                onMsearch(header, InetAddress(packet.getRemoteAddr(), packet.getRemotePort()));
+                // onMsearch(header, InetAddress(packet.getRemoteAddr(), packet.getRemotePort()));
+				onMsearch(header, packet.getRemoteAddr());
             } else if (Text::equalsIgnoreCase(method, "NOTIFY")) {
                 onNotify(header);
             } else {
@@ -182,7 +184,13 @@ namespace SSDP {
         if (mcastSocket) {
             string groupAddr = config.getMulticastGroup();
             int groupPort = config.getMulticastPort();
-            return mcastSocket->send(groupAddr.c_str(), groupPort, data, len);
+			// return mcastSocket->send(groupAddr.c_str(), groupPort, data, len);
+
+			char buffer[4096] = {0,};
+			DatagramPacket packet(buffer, sizeof(buffer));
+			packet.write(data, len);
+			packet.setRemoteAddr(OS::InetAddress(groupAddr, groupPort));
+			return mcastSocket->send(packet);
         }
         return -1;
     }
@@ -207,13 +215,23 @@ namespace SSDP {
         
         if (!msearchSocket) {
             
-            int bindResult;
+            int bindResult = -1;
             msearchSocket = new DatagramSocket(msearchPort);
             
             // https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers
             // any random port range : 49152~65535
 			RangeRandomPortBinder binder(49152, 65535);
-			bindResult = msearchSocket->randomBind(binder);
+			// bindResult = msearchSocket->randomBind(binder);
+
+			binder.start();
+			while (!binder.wantFinish()) {
+				try {
+					msearchSocket->bind(OS::InetAddress(binder.getNextPort()));
+					bindResult = 0;
+					break;
+				} catch (IOException e) {
+				}
+			}
             
             if (bindResult < 0) {
                 throw IOException("bind() error", -1, 0);
@@ -259,7 +277,7 @@ namespace SSDP {
         string & group = config.getMulticastGroup();
         string & userAgent = config.getUserAgent();
         
-        string packet = "M-SEARCH * HTTP/1.1\r\n"
+        string content = "M-SEARCH * HTTP/1.1\r\n"
         "HOST: " + group +  ":" +  Text::toString(multicastPort) + "\r\n"
         "MAN: \"ssdp:discover\"\r\n"
         "MX: 10\r\n"
@@ -268,7 +286,12 @@ namespace SSDP {
         "Content-Length: 0\r\n"
         "\r\n";
         
-        return  msearchSocket->send(group.c_str(), multicastPort, (char*)packet.c_str(), packet.length());
+		char buffer[4096] = {0,};
+		DatagramPacket packet(buffer, sizeof(buffer));
+		packet.write(content);
+		packet.setRemoteAddr(InetAddress(group, multicastPort));
+		return  msearchSocket->send(packet);
+        // return  msearchSocket->send(group.c_str(), multicastPort, (char*)packet.c_str(), packet.length());
     }
     
     void MsearchSender::handleMessage(const DatagramPacket & packet) {

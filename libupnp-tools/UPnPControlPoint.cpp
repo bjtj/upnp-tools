@@ -495,7 +495,7 @@ namespace UPNP {
         fields["NT"] = "upnp:event";
         InetAddress addr = NetworkUtil::selectDefaultAddress();
         addr.setPort(httpServer.getPort());
-        fields["CALLBACK"] = "<http://" + addr.getAddress() + ":" + Text::toString(addr.getPort()) + "/notify" + ">";
+        fields["CALLBACK"] = "<http://" + addr.getHost() + ":" + Text::toString(addr.getPort()) + "/notify" + ">";
         fields["TIMEOUT"] = "Second-300";
         
         sendHttpRequest(url, "SUBSCRIBE", fields, "", NULL);

@@ -20,7 +20,7 @@ namespace UPNP {
                 vector<InetAddress> addrs = iface.getInetAddresses();
                 for (size_t i = 0; i < addrs.size(); i++) {
                     InetAddress & addr = addrs[i];
-                    if (addr.inet4() && addr.getAddress().compare("0.0.0.0")) {
+                    if (addr.inet4() && addr.getHost().compare("0.0.0.0")) {
                         return addr;
                     }
                 }
