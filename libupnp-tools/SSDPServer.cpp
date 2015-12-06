@@ -221,12 +221,11 @@ namespace SSDP {
             // https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers
             // any random port range : 49152~65535
 			RangeRandomPortBinder binder(49152, 65535);
-			// bindResult = msearchSocket->randomBind(binder);
 
 			binder.start();
 			while (!binder.wantFinish()) {
 				try {
-					msearchSocket->bind(OS::InetAddress(binder.getNextPort()));
+					msearchSocket->bind(OS::Inet4Address(binder.getNextPort()));
 					bindResult = 0;
 					break;
 				} catch (IOException e) {
@@ -291,7 +290,6 @@ namespace SSDP {
 		packet.write(content);
 		packet.setRemoteAddr(InetAddress(group, multicastPort));
 		return  msearchSocket->send(packet);
-        // return  msearchSocket->send(group.c_str(), multicastPort, (char*)packet.c_str(), packet.length());
     }
     
     void MsearchSender::handleMessage(const DatagramPacket & packet) {

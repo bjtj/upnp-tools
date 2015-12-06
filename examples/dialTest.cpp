@@ -82,34 +82,34 @@ public:
     
     virtual void onNotify(const HTTP::HttpHeader & header) {
         
-        string nts = header.getHeaderField("NTS");
+        string nts = header.getHeaderFieldIgnoreCase("NTS");
         
         if (Text::equalsIgnoreCase(nts, "ssdp:alive")) {
             
-            string usn = header.getHeaderField("USN");
+            string usn = header.getHeaderFieldIgnoreCase("USN");
             Uuid uuid(usn);
             
             if (filterDeviceType(usn)) {
                 
-                string location = header.getHeaderField("LOCATION");
+                string location = header.getHeaderFieldIgnoreCase("LOCATION");
                 onDeviceLocationFound(uuid.getUuid(), location);
             }
         }
         
         if (Text::equalsIgnoreCase(nts, "ssdp:byebye")) {
-            string usn = header.getHeaderField("USN");
+            string usn = header.getHeaderFieldIgnoreCase("USN");
             devices.erase(usn);
         }
     }
     
     virtual void onHttpResponse(const HttpHeader & header) {
         
-        string usn = header.getHeaderField("USN");
+		string usn = header.getHeaderFieldIgnoreCase("USN");
         Uuid uuid(usn);
         
         if (filterDeviceType(usn)) {
             
-            string location = header.getHeaderField("LOCATION");
+            string location = header.getHeaderFieldIgnoreCase("LOCATION");
             onDeviceLocationFound(uuid.getUuid(), location);
         }
     }
@@ -127,6 +127,10 @@ public:
         if (Text::endsWith(usn, "urn:dial-multiscreen-org:service:dial:1")) {
             return true;
         }
+
+		/*if (Text::endsWith(usn, "upnp:rootdevice")) {
+            return true;
+        }*/
         
         return false;
     }

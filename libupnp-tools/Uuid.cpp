@@ -31,7 +31,7 @@ namespace UPNP {
         clear();
         
         if (!Text::startsWith(uuid, "uuid:")) {
-            throw -1;
+            throw WrongFormatException("wrong format", -1, 0);
         }
         
         size_t sep = uuid.find("::");
