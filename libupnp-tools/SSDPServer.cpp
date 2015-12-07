@@ -10,7 +10,6 @@ namespace SSDP {
 
 	using namespace std;
 	using namespace OS;
-	using namespace XOS;
 	using namespace HTTP;
 	using namespace UTIL;
 

@@ -98,7 +98,7 @@ namespace SSDP {
         SSDPConfig config;
         std::vector<OnNotifyHandler*> notifyHandlers;
         std::vector<OnMsearchHandler*> msearchHandlers;
-        XOS::MulticastSocket * mcastSocket;
+        OS::MulticastSocket * mcastSocket;
         
     public:
         SSDPListener();
@@ -132,7 +132,7 @@ namespace SSDP {
     private:
         SSDPConfig config;
         std::vector<OnHttpResponseHandler*> httpResponseHandlers;
-        XOS::DatagramSocket * msearchSocket;
+        OS::DatagramSocket * msearchSocket;
         
     public:
         MsearchSender();

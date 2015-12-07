@@ -19,7 +19,6 @@ namespace UPNP {
     using namespace UTIL;
     using namespace HTTP;
     using namespace OS;
-	using namespace XOS;
     using namespace XML;
 	using namespace SOAP;
     
