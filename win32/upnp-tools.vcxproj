@@ -67,10 +67,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\libupnp-tools\AnotherSSDPServer.cpp" />
     <ClCompile Include="..\libupnp-tools\CacheControl.cpp" />
     <ClCompile Include="..\libupnp-tools\NetworkUtil.cpp" />
     <ClCompile Include="..\libupnp-tools\SoapReader.cpp" />
     <ClCompile Include="..\libupnp-tools\SoapWriter.cpp" />
+    <ClCompile Include="..\libupnp-tools\SSDPHeader.cpp" />
+    <ClCompile Include="..\libupnp-tools\SSDPMsearchSender.cpp" />
+    <ClCompile Include="..\libupnp-tools\SSDPMulticastListener.cpp" />
     <ClCompile Include="..\libupnp-tools\SSDPServer.cpp" />
     <ClCompile Include="..\libupnp-tools\StringReader.cpp" />
     <ClCompile Include="..\libupnp-tools\Timer.cpp" />
@@ -98,10 +102,15 @@
     <ClCompile Include="..\libupnp-tools\XmlNodeFinder.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\libupnp-tools\AnotherSSDPServer.hpp" />
     <ClInclude Include="..\libupnp-tools\CacheControl.hpp" />
     <ClInclude Include="..\libupnp-tools\macros.hpp" />
     <ClInclude Include="..\libupnp-tools\SoapReader.hpp" />
     <ClInclude Include="..\libupnp-tools\SoapWriter.hpp" />
+    <ClInclude Include="..\libupnp-tools\SSDPHeader.hpp" />
+    <ClInclude Include="..\libupnp-tools\SSDPMsearchSender.hpp" />
+    <ClInclude Include="..\libupnp-tools\SSDPMulticastListener.hpp" />
+    <ClInclude Include="..\libupnp-tools\SSDPPacketHandler.hpp" />
     <ClInclude Include="..\libupnp-tools\SSDPServer.hpp" />
     <ClInclude Include="..\libupnp-tools\StringReader.hpp" />
     <ClInclude Include="..\libupnp-tools\Timer.hpp" />
