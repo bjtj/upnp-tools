@@ -18,6 +18,7 @@ namespace SSDP {
 
 		void start();
 		void stop();
+        void poll(unsigned long timeout);
 
 		void sendMsearch(const std::string & st, unsigned long timeoutSec);
 		void setSSDPPacketHandler(SSDPPacketHandler * handler);

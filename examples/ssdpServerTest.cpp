@@ -8,6 +8,22 @@ size_t readline(char * buffer, size_t max) {
     return 0;
 }
 
+class PollingThread : public OS::Thread {
+private:
+    SSDP::AnotherSSDPServer * server;
+public:
+    PollingThread(SSDP::AnotherSSDPServer * server) : server(server) {
+    }
+    virtual ~PollingThread() {
+    }
+    
+    virtual void run() {
+        while (!interrupted()) {
+            server->poll(100);
+        }
+    }
+};
+
 int main(int argc, char * args[]) {
 
 	SSDP::AnotherSSDPServer server;
@@ -39,6 +55,9 @@ int main(int argc, char * args[]) {
 	server.setSSDPPacketHandler(&handler);
 
 	server.start();
+    
+    PollingThread th(&server);
+    th.start();
 
 	while (1) {
 		char buffer[1024] = {0,};
@@ -50,6 +69,9 @@ int main(int argc, char * args[]) {
 			server.sendMsearch(buffer, 3);
 		}
 	}
+    
+    th.interrupt();
+    th.join();
 
 	server.stop();
 

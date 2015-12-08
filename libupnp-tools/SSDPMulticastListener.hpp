@@ -4,7 +4,6 @@
 #include <string>
 #include <liboslayer/os.hpp>
 #include <liboslayer/DatagramSocket.hpp>
-#include "AnotherSSDPServer.hpp"
 #include "SSDPPacketHandler.hpp"
 
 namespace SSDP {

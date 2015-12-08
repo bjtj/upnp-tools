@@ -14,6 +14,9 @@ namespace SSDP {
 	void AnotherSSDPServer::stop() {
 		mcastListener.stop();
 	}
+    void AnotherSSDPServer::poll(unsigned long timeout) {
+        mcastListener.poll(timeout);
+    }
 
 	void AnotherSSDPServer::sendMsearch(const std::string & st, unsigned long timeoutSec) {
 		SSDPMsearchSender sender;

@@ -9,6 +9,14 @@
 /* Begin PBXBuildFile section */
 		6C4A9F411C081A2F00A45604 /* NetworkUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C4A9F3F1C081A2F00A45604 /* NetworkUtil.cpp */; };
 		6C4A9F421C081A2F00A45604 /* NetworkUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C4A9F3F1C081A2F00A45604 /* NetworkUtil.cpp */; };
+		6C9FC7781C17005C00B292B8 /* AnotherSSDPServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C9FC76F1C17005C00B292B8 /* AnotherSSDPServer.cpp */; };
+		6C9FC7791C17005C00B292B8 /* AnotherSSDPServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C9FC76F1C17005C00B292B8 /* AnotherSSDPServer.cpp */; };
+		6C9FC77A1C17005C00B292B8 /* SSDPHeader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C9FC7711C17005C00B292B8 /* SSDPHeader.cpp */; };
+		6C9FC77B1C17005C00B292B8 /* SSDPHeader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C9FC7711C17005C00B292B8 /* SSDPHeader.cpp */; };
+		6C9FC77C1C17005C00B292B8 /* SSDPMsearchSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C9FC7731C17005C00B292B8 /* SSDPMsearchSender.cpp */; };
+		6C9FC77D1C17005C00B292B8 /* SSDPMsearchSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C9FC7731C17005C00B292B8 /* SSDPMsearchSender.cpp */; };
+		6C9FC77E1C17005C00B292B8 /* SSDPMulticastListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C9FC7751C17005C00B292B8 /* SSDPMulticastListener.cpp */; };
+		6C9FC77F1C17005C00B292B8 /* SSDPMulticastListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C9FC7751C17005C00B292B8 /* SSDPMulticastListener.cpp */; };
 		E82789091BDCDBDD0009E46A /* StringReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82788FF1BDCDBDD0009E46A /* StringReader.cpp */; };
 		E827890A1BDCDBDD0009E46A /* XmlDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82789011BDCDBDD0009E46A /* XmlDocument.cpp */; };
 		E827890B1BDCDBDD0009E46A /* XmlDocumentPrinter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82789031BDCDBDD0009E46A /* XmlDocumentPrinter.cpp */; };
@@ -160,6 +168,15 @@
 /* Begin PBXFileReference section */
 		6C4A9F3F1C081A2F00A45604 /* NetworkUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkUtil.cpp; path = "../../libupnp-tools/NetworkUtil.cpp"; sourceTree = "<group>"; };
 		6C4A9F401C081A2F00A45604 /* NetworkUtil.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = NetworkUtil.hpp; path = "../../libupnp-tools/NetworkUtil.hpp"; sourceTree = "<group>"; };
+		6C9FC76F1C17005C00B292B8 /* AnotherSSDPServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AnotherSSDPServer.cpp; path = "../../libupnp-tools/AnotherSSDPServer.cpp"; sourceTree = "<group>"; };
+		6C9FC7701C17005C00B292B8 /* AnotherSSDPServer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = AnotherSSDPServer.hpp; path = "../../libupnp-tools/AnotherSSDPServer.hpp"; sourceTree = "<group>"; };
+		6C9FC7711C17005C00B292B8 /* SSDPHeader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SSDPHeader.cpp; path = "../../libupnp-tools/SSDPHeader.cpp"; sourceTree = "<group>"; };
+		6C9FC7721C17005C00B292B8 /* SSDPHeader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SSDPHeader.hpp; path = "../../libupnp-tools/SSDPHeader.hpp"; sourceTree = "<group>"; };
+		6C9FC7731C17005C00B292B8 /* SSDPMsearchSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SSDPMsearchSender.cpp; path = "../../libupnp-tools/SSDPMsearchSender.cpp"; sourceTree = "<group>"; };
+		6C9FC7741C17005C00B292B8 /* SSDPMsearchSender.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SSDPMsearchSender.hpp; path = "../../libupnp-tools/SSDPMsearchSender.hpp"; sourceTree = "<group>"; };
+		6C9FC7751C17005C00B292B8 /* SSDPMulticastListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SSDPMulticastListener.cpp; path = "../../libupnp-tools/SSDPMulticastListener.cpp"; sourceTree = "<group>"; };
+		6C9FC7761C17005C00B292B8 /* SSDPMulticastListener.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SSDPMulticastListener.hpp; path = "../../libupnp-tools/SSDPMulticastListener.hpp"; sourceTree = "<group>"; };
+		6C9FC7771C17005C00B292B8 /* SSDPPacketHandler.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SSDPPacketHandler.hpp; path = "../../libupnp-tools/SSDPPacketHandler.hpp"; sourceTree = "<group>"; };
 		E82788FF1BDCDBDD0009E46A /* StringReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StringReader.cpp; path = "../../libupnp-tools/StringReader.cpp"; sourceTree = "<group>"; };
 		E82789001BDCDBDD0009E46A /* StringReader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = StringReader.hpp; path = "../../libupnp-tools/StringReader.hpp"; sourceTree = "<group>"; };
 		E82789011BDCDBDD0009E46A /* XmlDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XmlDocument.cpp; path = "../../libupnp-tools/XmlDocument.cpp"; sourceTree = "<group>"; };
@@ -280,6 +297,15 @@
 		E8FAB2B11BD7D8E200E89DC5 /* upnp-tools-c++ */ = {
 			isa = PBXGroup;
 			children = (
+				6C9FC76F1C17005C00B292B8 /* AnotherSSDPServer.cpp */,
+				6C9FC7701C17005C00B292B8 /* AnotherSSDPServer.hpp */,
+				6C9FC7711C17005C00B292B8 /* SSDPHeader.cpp */,
+				6C9FC7721C17005C00B292B8 /* SSDPHeader.hpp */,
+				6C9FC7731C17005C00B292B8 /* SSDPMsearchSender.cpp */,
+				6C9FC7741C17005C00B292B8 /* SSDPMsearchSender.hpp */,
+				6C9FC7751C17005C00B292B8 /* SSDPMulticastListener.cpp */,
+				6C9FC7761C17005C00B292B8 /* SSDPMulticastListener.hpp */,
+				6C9FC7771C17005C00B292B8 /* SSDPPacketHandler.hpp */,
 				E857BB251BE77A9F00D2022F /* macros.hpp */,
 				E857BB821BED8EDB00D2022F /* CacheControl.cpp */,
 				E857BB831BED8EDB00D2022F /* CacheControl.hpp */,
@@ -483,6 +509,7 @@
 			files = (
 				E8447D141BF5F7FC000E2903 /* UPnPDeviceIterator.cpp in Sources */,
 				E857BB931BEDE56E00D2022F /* UPnPActionInvoke.cpp in Sources */,
+				6C9FC77B1C17005C00B292B8 /* SSDPHeader.cpp in Sources */,
 				E8447C891BF37481000E2903 /* XmlEncoderDecoder.cpp in Sources */,
 				E857BB291BE77AC500D2022F /* UPnPDeviceDetection.cpp in Sources */,
 				E857BB851BED8EDB00D2022F /* CacheControl.cpp in Sources */,
@@ -490,6 +517,7 @@
 				E857BAEA1BE03D3300D2022F /* Timer.cpp in Sources */,
 				E8C743C51BDEC83100101962 /* UPnPDeviceMaker.cpp in Sources */,
 				E8C743C61BDEC83100101962 /* UPnPServiceMaker.cpp in Sources */,
+				6C9FC77F1C17005C00B292B8 /* SSDPMulticastListener.cpp in Sources */,
 				E827898F1BDD95B90009E46A /* StringReader.cpp in Sources */,
 				6C4A9F421C081A2F00A45604 /* NetworkUtil.cpp in Sources */,
 				E82789901BDD95B90009E46A /* XmlDocument.cpp in Sources */,
@@ -498,6 +526,7 @@
 				E82789931BDD95B90009E46A /* XmlNodeFinder.cpp in Sources */,
 				E8E0FECC1BD8492300292C54 /* UPnPDevicePool.cpp in Sources */,
 				E8E0FECD1BD8492300292C54 /* UPnPServer.cpp in Sources */,
+				6C9FC7791C17005C00B292B8 /* AnotherSSDPServer.cpp in Sources */,
 				E8E0FECE1BD8492300292C54 /* UPnPStateVariable.cpp in Sources */,
 				E857BB3B1BE900E700D2022F /* SoapReader.cpp in Sources */,
 				E857BB161BE60BBA00D2022F /* Uuid.cpp in Sources */,
@@ -505,6 +534,7 @@
 				E8E0FECF1BD8492300292C54 /* SSDPServer.cpp in Sources */,
 				E857BB1E1BE6D30400D2022F /* UPnPServicePosition.cpp in Sources */,
 				E8E0FED11BD8492300292C54 /* UPnPService.cpp in Sources */,
+				6C9FC77D1C17005C00B292B8 /* SSDPMsearchSender.cpp in Sources */,
 				E8E0FED21BD8492300292C54 /* UPnPDevice.cpp in Sources */,
 				E8E0FED31BD8492300292C54 /* UPnPAction.cpp in Sources */,
 				E857BBAA1BEEFBDF00D2022F /* UPnPDeviceXmlWriter.cpp in Sources */,
@@ -520,6 +550,7 @@
 			files = (
 				E857BB921BEDE56E00D2022F /* UPnPActionInvoke.cpp in Sources */,
 				E8447C881BF37481000E2903 /* XmlEncoderDecoder.cpp in Sources */,
+				6C9FC77A1C17005C00B292B8 /* SSDPHeader.cpp in Sources */,
 				E8FAB2CB1BD7D8FE00E89DC5 /* UPnPDevicePool.cpp in Sources */,
 				E857BB841BED8EDB00D2022F /* CacheControl.cpp in Sources */,
 				E857BB2C1BE78B1C00D2022F /* SoapWriter.cpp in Sources */,
@@ -527,6 +558,7 @@
 				E827890D1BDCDBDD0009E46A /* XmlNodeFinder.cpp in Sources */,
 				E8FAB2CE1BD7D8FE00E89DC5 /* UPnPStateVariable.cpp in Sources */,
 				E8FAB2C61BD7D8FE00E89DC5 /* SSDPServer.cpp in Sources */,
+				6C9FC77E1C17005C00B292B8 /* SSDPMulticastListener.cpp in Sources */,
 				E857BB281BE77A9F00D2022F /* UPnPDeviceDetection.cpp in Sources */,
 				6C4A9F411C081A2F00A45604 /* NetworkUtil.cpp in Sources */,
 				E827890C1BDCDBDD0009E46A /* XmlDomParser.cpp in Sources */,
@@ -535,6 +567,7 @@
 				E82789091BDCDBDD0009E46A /* StringReader.cpp in Sources */,
 				E8FAB2CA1BD7D8FE00E89DC5 /* UPnPDevice.cpp in Sources */,
 				E857BB3A1BE900E700D2022F /* SoapReader.cpp in Sources */,
+				6C9FC7781C17005C00B292B8 /* AnotherSSDPServer.cpp in Sources */,
 				E857BB151BE60BBA00D2022F /* Uuid.cpp in Sources */,
 				E827890A1BDCDBDD0009E46A /* XmlDocument.cpp in Sources */,
 				E8447CF51BF4BE22000E2903 /* upnp_tools.mm in Sources */,
@@ -542,6 +575,7 @@
 				E8447D131BF5F7E3000E2903 /* UPnPDeviceIterator.cpp in Sources */,
 				E8FAB2C71BD7D8FE00E89DC5 /* UPnPAction.cpp in Sources */,
 				E8FAB2C81BD7D8FE00E89DC5 /* UPnPActionArgument.cpp in Sources */,
+				6C9FC77C1C17005C00B292B8 /* SSDPMsearchSender.cpp in Sources */,
 				E827890B1BDCDBDD0009E46A /* XmlDocumentPrinter.cpp in Sources */,
 				E857BAE91BE03C6300D2022F /* Timer.cpp in Sources */,
 				E857BBA91BEEFBDF00D2022F /* UPnPDeviceXmlWriter.cpp in Sources */,

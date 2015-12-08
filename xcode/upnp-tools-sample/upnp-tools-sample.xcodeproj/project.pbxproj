@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6C9FC7521C15116A00B292B8 /* server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E857BB8E1BEDE3C900D2022F /* server.cpp */; };
+		6C9FC7871C1701E000B292B8 /* ssdpServerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C9FC7811C17006D00B292B8 /* ssdpServerTest.cpp */; };
 		E8447CB01BF4B054000E2903 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E8447CAF1BF4B054000E2903 /* AppDelegate.m */; };
 		E8447CB31BF4B054000E2903 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E8447CB21BF4B054000E2903 /* main.m */; };
 		E8447CB51BF4B054000E2903 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E8447CB41BF4B054000E2903 /* Assets.xcassets */; };
@@ -80,6 +80,9 @@
 
 /* Begin PBXFileReference section */
 		6C4A9F571C0ED0A500A45604 /* dialTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = dialTest.cpp; path = ../../../examples/dialTest.cpp; sourceTree = "<group>"; };
+		6C9FC7801C17006D00B292B8 /* msearchTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = msearchTest.cpp; path = ../../../examples/msearchTest.cpp; sourceTree = "<group>"; };
+		6C9FC7811C17006D00B292B8 /* ssdpServerTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ssdpServerTest.cpp; path = ../../../examples/ssdpServerTest.cpp; sourceTree = "<group>"; };
+		6C9FC7821C17006D00B292B8 /* ssdpTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ssdpTest.cpp; path = ../../../examples/ssdpTest.cpp; sourceTree = "<group>"; };
 		E8447CAC1BF4B054000E2903 /* UPnPToolsOSX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UPnPToolsOSX.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8447CAE1BF4B054000E2903 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		E8447CAF1BF4B054000E2903 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -208,6 +211,9 @@
 		E8E0FE701BD8480B00292C54 /* upnp-tools-sample */ = {
 			isa = PBXGroup;
 			children = (
+				6C9FC7801C17006D00B292B8 /* msearchTest.cpp */,
+				6C9FC7811C17006D00B292B8 /* ssdpServerTest.cpp */,
+				6C9FC7821C17006D00B292B8 /* ssdpTest.cpp */,
 				E8447D181BF6034B000E2903 /* ServiceFindTest.cpp */,
 				E8447D191BF6034B000E2903 /* ssdp-server.cpp */,
 				E8C743C71BDEC8B200101962 /* cp.cpp */,
@@ -432,7 +438,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6C9FC7521C15116A00B292B8 /* server.cpp in Sources */,
+				6C9FC7871C1701E000B292B8 /* ssdpServerTest.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
