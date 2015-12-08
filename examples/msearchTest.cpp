@@ -106,6 +106,7 @@ private:
 	SSDPPacketListener * listener;
 	bool _cancel;
 	int port;
+
 public:
 	SSDPMsearchSender() : listener(NULL), _cancel(false), port(0) {
 	}
@@ -155,16 +156,7 @@ public:
 	}
 
 	void sendMsearch(const std::string & st, unsigned long timeoutSec, const std::string & group, int port) {
-
-		std::string msearchPacket = "M-SEARCH * HTTP/1.1\r\n"
-			"HOST: " + group + ":" + Text::toString(port) + "\r\n"
-			"MAN: \"ssdp:discover\"\r\n"
-			"MX: " + Text::toString(timeoutSec) + "\r\n"
-			"ST: " + st + "\r\n"
-			"USER-AGENT: OS/version UPnP/1.1 product/version\r\n"
-			"\r\n";
-
-		sendMcast(msearchPacket, group, port);
+		sendMcast(makeMsearchPacket(st, timeoutSec, group, port), group, port);
 	}
 
 	void sendMcast(const std::string & content, const std::string & group, int port) {
@@ -173,8 +165,31 @@ public:
 		packet.write(content);
 		sock.send(packet);
 	}
-	InetAddress getLocalInetAddress() {
-		return sock.getLocalInetAddress();
+
+	void sendMsearchAllInterfaces(const std::string & st, unsigned long timeoutSec, const std::string & group, int port) {
+		sendMcastToAllInterfaces(makeMsearchPacket(st, timeoutSec, group, port), group, port);
+	}
+
+	void sendMcastToAllInterfaces(const std::string & content, const std::string & group, int port) {
+		char buffer[4096] = {0,};
+		DatagramPacket packet(buffer, sizeof(buffer), group, port);
+		packet.write(content);
+		std::vector<InetAddress> addrs = Network::getAllInetAddress();
+		for (size_t i = 0; i < addrs.size(); i++) {
+			printf("host: %s\n", addrs[i].getHost().c_str());
+			sock.setMulticastInteface(addrs[i].getHost());
+			sock.send(packet);
+		}
+	}
+
+	std::string makeMsearchPacket(const std::string & st, unsigned long timeoutSec, const std::string & group, int port) {
+		return "M-SEARCH * HTTP/1.1\r\n"
+			"HOST: " + group + ":" + Text::toString(port) + "\r\n"
+			"MAN: \"ssdp:discover\"\r\n"
+			"MX: " + Text::toString(timeoutSec) + "\r\n"
+			"ST: " + st + "\r\n"
+			"USER-AGENT: OS/version UPnP/1.1 product/version\r\n"
+			"\r\n";
 	}
 	void setSSDPPacketListener(SSDPPacketListener * listener) {
 		this->listener = listener;
@@ -200,61 +215,6 @@ public:
 	}
 };
 
-class SSDPMsearchSenderFactory {
-private:
-	std::map<int, SSDPMsearchSender*> persistences;
-	std::map<int, SSDPMsearchSender*> instances;
-public:
-	SSDPMsearchSenderFactory() {
-	}
-	virtual ~SSDPMsearchSenderFactory() {
-		clearAll();
-	}
-	void clear(std::map<int, SSDPMsearchSender*> & senders) {
-		for (std::map<int, SSDPMsearchSender*>::iterator iter = senders.begin(); iter != senders.end(); iter++) {
-			iter->second->stop();
-			delete iter->second;
-			iter->second = NULL;
-		}
-	}
-	void clearAll() {
-		clear(persistences);
-		clear(instances);
-	}
-	SSDPMsearchSender * getPersistentSender(int port) {
-		if (persistences.find(port) != persistences.end()) {
-			return persistences[port];
-		}
-		SSDPMsearchSender * sender = new SSDPMsearchSender(port);
-		sender->start();
-		int boundPort = sender->getLocalInetAddress().getPort();
-		persistences[boundPort] = sender;
-		return sender;
-	}
-	SSDPMsearchSender * getInstantSender(int port) {
-		if (instances.find(port) != instances.end()) {
-			return instances[port];
-		}
-		SSDPMsearchSender * sender = new SSDPMsearchSender(port);
-		sender->start();
-		int boundPort = sender->getLocalInetAddress().getPort();
-		instances[boundPort] = sender;
-		return sender;
-	}
-	void release(SSDPMsearchSender * sender) {
-		int port = sender->getLocalInetAddress().getPort();
-		if (instances.find(port) != instances.end()) {
-			sender->stop();
-			delete sender;
-			instances.erase(port);
-		}
-		if (persistences.find(port) != persistences.end() && sender->isRunning() == false) {
-			delete sender;
-			persistences.erase(port);
-		}
-	}
-};
-
 static void s_test_msearch(const std::string & st) {
 
 	MySSDPPacketListener packetListener;
@@ -263,64 +223,24 @@ static void s_test_msearch(const std::string & st) {
 
 	sender.start();
 
-	for (int i = 0; i < 3; i++) {
-		sender.sendMsearch(st, 3, "239.255.255.250", 1900);
-		sender.gather(3000);
-	}
+	unsigned long mx = 5;
+	sender.sendMsearchAllInterfaces(st, mx, "239.255.255.250", 1900);
+	sender.gather(mx * 1000);
 
 	sender.stop();
 }
 
-static void s_test_msearch_with_factory(const std::string & st) {
-
-	SSDPMsearchSenderFactory factory;
-	SSDPMsearchSender * sender = factory.getPersistentSender(0);
-
-	MySSDPPacketListener packetListener;
-	sender->setSSDPPacketListener(&packetListener);
-
-	printf("BOUND PORT: %d\n", sender->getLocalInetAddress().getPort());
-
-	for (int i = 0; i < 3; i++) {
-		sender->sendMsearch(st, 3, "239.255.255.250", 1900);
-		sender->gather(3000);
-	}
-
-	factory.release(sender);
-}
-
-static void s_test_msearch_with_factory_instance(const std::string & st) {
-
-	SSDPMsearchSenderFactory factory;
-
-	for (int i = 0; i < 3; i++) {
-
-		SSDPMsearchSender * sender = factory.getInstantSender(0);
-
-		MySSDPPacketListener packetListener;
-		sender->setSSDPPacketListener(&packetListener);
-
-		printf("BOUND PORT: %d\n", sender->getLocalInetAddress().getPort());
-
-		sender->sendMsearch(st, 3, "239.255.255.250", 1900);
-		idle(300);
-		sender->sendMsearch(st, 3, "239.255.255.250", 1900);
-		idle(300);
-		sender->sendMsearch(st, 3, "239.255.255.250", 1900);
-		sender->gather(3000);
-	
-		factory.release(sender);
-
-	}
-}
-
 int main(int argc, char * args[]) {
 
-	//s_test_msearch("upnp:rootdevice");
-	s_test_msearch_with_factory("upnp:rootdevice");
-	//s_test_msearch_with_factory_instance("upnp:rootdevice");
+	while (1) {
+		s_test_msearch("upnp:rootdevice");
+		printf("press q to quit: ");
+		int ch = getchar();
+		if (ch == 'q') {
+			break;
+		}
+	}
 
-	printf("done\n");
 	getchar();
 
 	return 0;
