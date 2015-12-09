@@ -26,7 +26,7 @@ public:
 	virtual void onNotify(SSDPHeader & header) {
 		printf("onNotify :: %s (%s:%d)\n", header.getLocation().c_str(), header.getRemoteAddr().getHost().c_str(), header.getRemoteAddr().getPort());
 	}
-	virtual void onResponse(SSDPHeader & header) {
+	virtual void onMsearchResponse(SSDPHeader & header) {
 		printf("onResponse :: %s (%s:%d)\n", header.getLocation().c_str(), header.getRemoteAddr().getHost().c_str(), header.getRemoteAddr().getPort());
 	}
 };

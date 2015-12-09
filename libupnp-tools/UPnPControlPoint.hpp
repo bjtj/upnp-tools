@@ -12,6 +12,7 @@
 #include <map>
 #include "UPnPActionInvoke.hpp"
 #include "SSDPServer.hpp"
+#include "AnotherSSDPServer.hpp"
 #include "UPnPDevice.hpp"
 #include "UPnPDevicePool.hpp"
 #include "UPnPDeviceDetection.hpp"
@@ -115,21 +116,21 @@ namespace UPNP {
         virtual ~InvokeActionResponseListener() {}
         virtual void onActionResponse(ID_TYPE id, const UPnPActionRequest & actionRequest, const UPnPActionResponse & response) = 0;
     };
-	
-	/**
-	 * @brief upnp ssdp message handler
-	 */
-	class UPnPSSDPMessageHandler : public SSDP::OnNotifyHandler, public SSDP::OnMsearchHandler, public SSDP::OnHttpResponseHandler {
-	private:
-		UPnPDeviceDetection * deviceDetection;
-	public:
-		UPnPSSDPMessageHandler();
-		virtual ~UPnPSSDPMessageHandler();
-		virtual void onNotify(const HTTP::HttpHeader & header);
-        virtual void onMsearch(const HTTP::HttpHeader & header, const OS::InetAddress & remoteAddr);
-		virtual void onHttpResponse(const HTTP::HttpHeader & header);
-		void setDeviceDetection(UPnPDeviceDetection * deviceDetection);
-	};
+    
+    /**
+     * @brief UPnPSSDPPacketHandler
+     */
+    class UPnPSSDPPacketHandler : public SSDP::SSDPPacketHandler {
+    private:
+        UPnPDeviceDetection * deviceDetection;
+    public:
+        UPnPSSDPPacketHandler();
+        virtual ~UPnPSSDPPacketHandler();
+        virtual void onMsearch(SSDP::SSDPHeader & header);
+        virtual void onNotify(SSDP::SSDPHeader & header);
+        virtual void onMsearchResponse(SSDP::SSDPHeader & header);
+        void setDeviceDetection(UPnPDeviceDetection * deviceDetection);
+    };
     
     /**
      * @brief UPnPEventListener
@@ -157,6 +158,16 @@ namespace UPNP {
         void unsubscribe(const std::string & sid);
         UPnPService getService(const std::string & sid);
     };
+    
+    class UPnPControlPointThread : public OS::Thread {
+    private:
+        UPnPControlPoint * cp;
+    public:
+        UPnPControlPointThread(UPnPControlPoint * cp);
+        virtual ~UPnPControlPointThread();
+        
+        virtual void run();
+    };
 
 	/**
 	 * @brief upnp control point
@@ -165,12 +176,12 @@ namespace UPNP {
 	private:
         UniqueIdGenerator gen;
 		UPnPDevicePool devicePool;
-		SSDP::SSDPServer ssdp;
-		UPnPSSDPMessageHandler ssdpHandler;
+        SSDP::AnotherSSDPServer ssdpServer;
+        UPnPSSDPPacketHandler ssdpPacketHandler;
 		UPnPControlPointSsdpNotifyFilter filter;
 		DeviceAddRemoveListener * deviceListener;
         InvokeActionResponseListener * invokeActionResponseListener;
-        UTIL::PollingThread * pollingThread;
+        UPnPControlPointThread * thread;
         Timer timer;
         
 		HTTP::AnotherHttpClientThreadPool anotherHttpClientThreadPool;
@@ -191,6 +202,8 @@ namespace UPNP {
 		void start();
 		void startAsync();
 		void stop();
+        void startThread();
+        void stopThread();
 		virtual void poll(unsigned long timeout);
     
 		void sendMsearch(std::string searchType);

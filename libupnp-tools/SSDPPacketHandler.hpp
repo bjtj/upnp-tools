@@ -14,7 +14,7 @@ namespace SSDP {
 		virtual void onAnyPacket(SSDPHeader & header) {}
 		virtual void onMsearch(SSDPHeader & header) {}
 		virtual void onNotify(SSDPHeader & header) {}
-		virtual void onResponse(SSDPHeader & header) {}
+		virtual void onMsearchResponse(SSDPHeader & header) {}
 	};
 }
 

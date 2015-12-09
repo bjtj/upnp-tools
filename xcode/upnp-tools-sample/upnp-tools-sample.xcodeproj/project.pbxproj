@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6C9FC7871C1701E000B292B8 /* ssdpServerTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C9FC7811C17006D00B292B8 /* ssdpServerTest.cpp */; };
+		6C9FC78D1C17C15D00B292B8 /* cp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8C743C71BDEC8B200101962 /* cp.cpp */; };
 		E8447CB01BF4B054000E2903 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E8447CAF1BF4B054000E2903 /* AppDelegate.m */; };
 		E8447CB31BF4B054000E2903 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E8447CB21BF4B054000E2903 /* main.m */; };
 		E8447CB51BF4B054000E2903 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E8447CB41BF4B054000E2903 /* Assets.xcassets */; };
@@ -438,7 +438,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6C9FC7871C1701E000B292B8 /* ssdpServerTest.cpp in Sources */,
+				6C9FC78D1C17C15D00B292B8 /* cp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

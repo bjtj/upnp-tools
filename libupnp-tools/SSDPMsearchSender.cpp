@@ -49,7 +49,7 @@ namespace SSDP {
 		if (header.isSSDPResponse()) {
 			if (handler) {
 				handler->onAnyPacket(header);
-				handler->onResponse(header);
+				handler->onMsearchResponse(header);
 			}
 		}
 	}

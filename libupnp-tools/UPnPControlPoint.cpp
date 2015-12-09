@@ -124,38 +124,32 @@ namespace UPNP {
 
     
 	/**
-	 *
+	 * @brief UPnPSSDPPacketHandler
 	 */
-
-	UPnPSSDPMessageHandler::UPnPSSDPMessageHandler() : deviceDetection(NULL) {
-	}
     
-	UPnPSSDPMessageHandler::~UPnPSSDPMessageHandler() {
-	}
-    
-	void UPnPSSDPMessageHandler::onNotify(const HttpHeader & header) {
-		if (deviceDetection) {
-			string nts = header.getHeaderFieldIgnoreCase("NTS");
-			if (Text::equalsIgnoreCase(nts, "ssdp:alive")) {
-				deviceDetection->onDeviceHelloWithUrl(header.getHeaderFieldIgnoreCase("Location"), header);
-			} else if (Text::equalsIgnoreCase(nts, "ssdp:byebye")) {
-				deviceDetection->onDeviceByeBye(header.getHeaderFieldIgnoreCase("USN"));
-			}
-            
-		}
-	}
-	void UPnPSSDPMessageHandler::onMsearch(const HttpHeader & header, const InetAddress & remoteAddr) {
-        //
-	}
-	void UPnPSSDPMessageHandler::onHttpResponse(const HttpHeader & header) {
-		if (deviceDetection) {
-			deviceDetection->onDeviceHelloWithUrl(header.getHeaderFieldIgnoreCase("Location"), header);
-		}
-	}
-    
-	void UPnPSSDPMessageHandler::setDeviceDetection(UPnPDeviceDetection * deviceDetection) {
-		this->deviceDetection = deviceDetection;
-	}
+    UPnPSSDPPacketHandler::UPnPSSDPPacketHandler() : deviceDetection(NULL) {
+    }
+    UPnPSSDPPacketHandler::~UPnPSSDPPacketHandler() {
+    }
+    void UPnPSSDPPacketHandler::onNotify(SSDP::SSDPHeader & header) {
+        if (deviceDetection) {
+            if (header.isNotifyAlive()) {
+                deviceDetection->onDeviceHelloWithUrl(header.getLocation(), header);
+            } else if (header.isNotifyByebye()) {
+                deviceDetection->onDeviceByeBye(header.getUsn());
+            }
+        }
+    }
+    void UPnPSSDPPacketHandler::onMsearch(SSDP::SSDPHeader & header) {
+    }
+    void UPnPSSDPPacketHandler::onMsearchResponse(SSDP::SSDPHeader & header) {
+        if (deviceDetection) {
+            deviceDetection->onDeviceHelloWithUrl(header.getLocation(), header);
+        }
+    }
+    void UPnPSSDPPacketHandler::setDeviceDetection(UPnPDeviceDetection * deviceDetection) {
+        this->deviceDetection = deviceDetection;
+    }
     
     /**
      * @brief UPnPEventSubscriptions
@@ -177,20 +171,33 @@ namespace UPNP {
         return subscriptions[sid];
     }
 
+    /**
+     *
+     */
+    
+    UPnPControlPointThread::UPnPControlPointThread(UPnPControlPoint * cp) : cp(cp) {
+        
+    }
+    UPnPControlPointThread::~UPnPControlPointThread() {
+        
+    }
+    
+    void UPnPControlPointThread::run() {
+        while (!interrupted()) {
+            cp->poll(100);
+        }
+    }
 
 	/**
 	 * @brief UPnPControlPoint
 	 */
 
-	UPnPControlPoint::UPnPControlPoint(int port) : TimerEvent(false), deviceListener(NULL), invokeActionResponseListener(NULL), pollingThread(NULL), anotherHttpClientThreadPool(5), eventListener(NULL), httpServer(port) {
+	UPnPControlPoint::UPnPControlPoint(int port) : TimerEvent(false), deviceListener(NULL), invokeActionResponseListener(NULL), thread(NULL), anotherHttpClientThreadPool(5), eventListener(NULL), httpServer(port) {
         
-		ssdpHandler.setDeviceDetection(this);
-		
-		ssdp.addMsearchHandler(&ssdpHandler);
-        ssdp.addNotifyHandler(&ssdpHandler);
-        ssdp.addHttpResponseHandler(&ssdpHandler);
+        ssdpPacketHandler.setDeviceDetection(this);
+
+        ssdpServer.setSSDPPacketHandler(&ssdpPacketHandler);
     
-        registerSelectorPoller(&ssdp);
         registerPollee(&timer);
         
         scheduleRepeatableRelativeTimer(0, -1, Timer::SECOND);
@@ -210,7 +217,7 @@ namespace UPNP {
     }
 
 	void UPnPControlPoint::start() {
-		ssdp.start();
+        ssdpServer.start();
         timer.start();
         timer.setTimerEvent(this);
         anotherHttpClientThreadPool.start();
@@ -223,35 +230,42 @@ namespace UPNP {
         
         httpServer.startAsync();
         
-        if (!pollingThread) {
-            pollingThread = new PollingThread(this, 100);
-            pollingThread->start();
-        }
+        startThread();
 	}
 
 	void UPnPControlPoint::stop() {
         
-        if (pollingThread) {
-            pollingThread->interrupt();
-            pollingThread->join();
-            delete pollingThread;
-            pollingThread = NULL;
-        }
+        stopThread();
         
         timer.stop();
-		ssdp.stop();
+        ssdpServer.stop();
         anotherHttpClientThreadPool.stop();
         
         httpServer.stop();
 	}
+    
+    void UPnPControlPoint::startThread() {
+        if (!thread) {
+            thread = new UPnPControlPointThread(this);
+            thread->start();
+        }
+    }
+    void UPnPControlPoint::stopThread() {
+        if (thread) {
+            thread->interrupt();
+            thread->join();
+            delete thread;
+            thread = NULL;
+        }
+    }
 
 	void UPnPControlPoint::poll(unsigned long timeout) {
-		SelectorPoller::poll(timeout);
+        ssdpServer.poll(timeout);
 		anotherHttpClientThreadPool.collectUnflaggedThreads();
 	}
 
 	void UPnPControlPoint::sendMsearch(string searchType) {
-		ssdp.sendMsearch(searchType);
+        ssdpServer.sendMsearch(searchType, 5);
 	}
 
 	int UPnPControlPoint::getMaxAgeInSecond(const string & phrase) {
@@ -272,10 +286,9 @@ namespace UPNP {
 		return Text::toInt(value);
 	}
 
-
 	void UPnPControlPoint::sendHttpRequest(const Url & url, const string & method, const StringMap & additionalFields, const string & content, UserData * userData) {
 		anotherHttpClientThreadPool.collectUnflaggedThreads();
-		anotherHttpClientThreadPool.setRequest(url, method, additionalFields, new FixedTransfer(content.c_str(), content.length()), userData);
+		anotherHttpClientThreadPool.setRequest(url, method, additionalFields, new FixedTransfer(content.c_str(), content.length()), AutoRef<UserData>(userData));
     }
     
     void UPnPControlPoint::onRequestComplete(Url & url, HttpResponse & response, const string & content, UserData * userData) {
@@ -381,18 +394,12 @@ namespace UPNP {
 
 		Measurement m;
 
-		//m.pin();
-
 		XmlDomParser parser;
+        /* TODO: performence check in Windows platform */
 		Scpd scpd = UPnPServiceMaker::makeScpdFromXmlDocument("", parser.parse(xmlDoc));
-
-		//logger.logv("@parse xml: " + Text::toString(m.collect())); // TODO: fix bad performance (about 1 sec)
-		//m.pin();
     
 		devicePool.bindScpd(servicePosition, scpd);
 
-		//logger.logv("@bind: " + Text::toString(m.collect()));
-		//m.pin();
 
 		if (deviceListener) {
 			UPnPDevice device = devicePool.getDevice(servicePosition.getUdn());
@@ -400,8 +407,6 @@ namespace UPNP {
 				deviceListener->onDeviceAdded(*this, device);
 			}
 		}
-
-		//logger.logv("@scpd handling: " + Text::toString(m.collect()));
 	}
 
 	void UPnPControlPoint::onDeviceByeBye(string udn) {
@@ -484,7 +489,7 @@ namespace UPNP {
     }
     
     void UPnPControlPoint::subscribe(UPnPService & service) {
-        // TODO: implement it
+        // TODO: test this function
         
         Url url;
         

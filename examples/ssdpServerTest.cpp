@@ -45,7 +45,7 @@ int main(int argc, char * args[]) {
 				printf("NOTIFY / %s\n", header.getNt().c_str());
 			}
 		}
-		virtual void onResponse(SSDP::SSDPHeader & header) {
+		virtual void onMsearchResponse(SSDP::SSDPHeader & header) {
 			printf("RESP / URL: %s\n", header.getLocation().c_str());
 		}
 	};
