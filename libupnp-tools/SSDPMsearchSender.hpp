@@ -33,7 +33,6 @@ namespace SSDP {
 		std::string makeMsearchPacket(const std::string & st, unsigned long timeoutSec, const std::string & group, int port);
 		void setSSDPPacketHandler(SSDPPacketHandler * handler);
 	};
-
 }
 
 #endif

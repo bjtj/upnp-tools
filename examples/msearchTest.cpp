@@ -17,8 +17,9 @@ private:
 public:
 	MySSDPPacketListener() {}
 	virtual ~MySSDPPacketListener() {}
-	virtual void onAnyPacket(SSDPHeader & header) {
+	virtual bool filter(SSDPHeader & header) {
 		// printf("FROM %s:%d\n%s", header.getRemoteAddr().getHost().c_str(), header.getRemoteAddr().getPort(), header.toString().c_str());
+        return true;
 	}
 	virtual void onMsearch(SSDPHeader & header) {
 		printf("onMsearch :: %s (%s:%d)\n", header.getSt().c_str(), header.getRemoteAddr().getHost().c_str(), header.getRemoteAddr().getPort());

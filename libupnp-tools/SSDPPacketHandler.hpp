@@ -11,7 +11,7 @@ namespace SSDP {
 		SSDPPacketHandler() {}
 		virtual ~SSDPPacketHandler() {}
 
-		virtual void onAnyPacket(SSDPHeader & header) {}
+        virtual bool filter(SSDPHeader & header) {return true;}
 		virtual void onMsearch(SSDPHeader & header) {}
 		virtual void onNotify(SSDPHeader & header) {}
 		virtual void onMsearchResponse(SSDPHeader & header) {}

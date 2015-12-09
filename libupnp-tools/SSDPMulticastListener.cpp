@@ -27,8 +27,7 @@ namespace SSDP {
 	void SSDPMulticastListener::onReceive(OS::DatagramPacket & packet) {
 		SSDPHeader header(packet.getData(), packet.getRemoteAddr());
 
-		if (handler) {
-			handler->onAnyPacket(header);
+		if (handler && handler->filter(header)) {
 			if (header.isMsearch()) {
 				handler->onMsearch(header);
 			} else if (header.isNotify()) {

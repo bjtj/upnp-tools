@@ -47,8 +47,7 @@ namespace SSDP {
 		SSDPHeader header(packet.getData(), packet.getRemoteAddr());
 
 		if (header.isSSDPResponse()) {
-			if (handler) {
-				handler->onAnyPacket(header);
+			if (handler && handler->filter(header)) {
 				handler->onMsearchResponse(header);
 			}
 		}
