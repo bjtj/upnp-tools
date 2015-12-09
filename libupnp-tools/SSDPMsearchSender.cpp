@@ -75,7 +75,6 @@ namespace SSDP {
 		packet.write(content);
 		std::vector<OS::InetAddress> addrs = OS::Network::getAllInetAddress();
 		for (size_t i = 0; i < addrs.size(); i++) {
-			printf("host: %s\n", addrs[i].getHost().c_str());
 			sock.setMulticastInteface(addrs[i].getHost());
 			sock.send(packet);
 		}

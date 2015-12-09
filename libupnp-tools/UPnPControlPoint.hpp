@@ -189,6 +189,8 @@ namespace UPNP {
         UPnPEventSubscriptions subscriptions;
         UPnPEventListener * eventListener;
         HTTP::AnotherHttpServer httpServer;
+        
+        bool running;
 
 	private:
 		UPnPControlPoint(const UPnPControlPoint & other); // do not allow copy

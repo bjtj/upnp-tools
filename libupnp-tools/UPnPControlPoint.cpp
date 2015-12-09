@@ -192,7 +192,7 @@ namespace UPNP {
 	 * @brief UPnPControlPoint
 	 */
 
-	UPnPControlPoint::UPnPControlPoint(int port) : TimerEvent(false), deviceListener(NULL), invokeActionResponseListener(NULL), thread(NULL), anotherHttpClientThreadPool(5), eventListener(NULL), httpServer(port) {
+	UPnPControlPoint::UPnPControlPoint(int port) : TimerEvent(false), deviceListener(NULL), invokeActionResponseListener(NULL), thread(NULL), anotherHttpClientThreadPool(5), eventListener(NULL), httpServer(port), running(false) {
         
         ssdpPacketHandler.setDeviceDetection(this);
 
@@ -217,31 +217,35 @@ namespace UPNP {
     }
 
 	void UPnPControlPoint::start() {
-        ssdpServer.start();
-        timer.start();
-        timer.setTimerEvent(this);
-        anotherHttpClientThreadPool.start();
-        httpServer.start();
+        if (!running) {
+            ssdpServer.start();
+            timer.start();
+            timer.setTimerEvent(this);
+            anotherHttpClientThreadPool.start();
+            httpServer.start();
+            running = true;
+        }
+        
 	}
 
 	void UPnPControlPoint::startAsync() {
-        
-        start();
-        
-        httpServer.startAsync();
-        
-        startThread();
+        if (!running) {
+            start();
+            httpServer.startAsync();
+            startThread();
+            running = true;
+        }
 	}
 
 	void UPnPControlPoint::stop() {
-        
-        stopThread();
-        
-        timer.stop();
-        ssdpServer.stop();
-        anotherHttpClientThreadPool.stop();
-        
-        httpServer.stop();
+        if (running) {
+            stopThread();
+            timer.stop();
+            ssdpServer.stop();
+            anotherHttpClientThreadPool.stop();
+            httpServer.stop();
+            running = false;
+        }
 	}
     
     void UPnPControlPoint::startThread() {
