@@ -7,7 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6C9FC78D1C17C15D00B292B8 /* cp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E8C743C71BDEC8B200101962 /* cp.cpp */; };
+		6C9FC7A61C193D4200B292B8 /* server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E857BB8E1BEDE3C900D2022F /* server.cpp */; };
+		6C9FC7AF1C193F4F00B292B8 /* sample_cd_scpd.xml in Copy Files */ = {isa = PBXBuildFile; fileRef = 6C9FC7AC1C193F4600B292B8 /* sample_cd_scpd.xml */; };
+		6C9FC7B01C193F4F00B292B8 /* sample_cm_scpd.xml in Copy Files */ = {isa = PBXBuildFile; fileRef = 6C9FC7AD1C193F4600B292B8 /* sample_cm_scpd.xml */; };
+		6C9FC7B11C193F4F00B292B8 /* sample_device.xml in Copy Files */ = {isa = PBXBuildFile; fileRef = 6C9FC7AE1C193F4600B292B8 /* sample_device.xml */; };
 		E8447CB01BF4B054000E2903 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E8447CAF1BF4B054000E2903 /* AppDelegate.m */; };
 		E8447CB31BF4B054000E2903 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E8447CB21BF4B054000E2903 /* main.m */; };
 		E8447CB51BF4B054000E2903 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E8447CB41BF4B054000E2903 /* Assets.xcassets */; };
@@ -15,7 +18,6 @@
 		E8447CC31BF4B054000E2903 /* UPnPToolsOSXTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E8447CC21BF4B054000E2903 /* UPnPToolsOSXTests.m */; };
 		E8447CCE1BF4B054000E2903 /* UPnPToolsOSXUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = E8447CCD1BF4B054000E2903 /* UPnPToolsOSXUITests.m */; };
 		E8447CEE1BF4BAF1000E2903 /* libupnp-tools-cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8E0FEE71BD849CA00292C54 /* libupnp-tools-cocoa.a */; };
-		E8447D171BF5F8E9000E2903 /* res in Copy Files */ = {isa = PBXBuildFile; fileRef = E8447D151BF5F8C7000E2903 /* res */; };
 		E8E0FEE81BD849CF00292C54 /* libupnp-tools-cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8E0FEE71BD849CA00292C54 /* libupnp-tools-cocoa.a */; };
 /* End PBXBuildFile section */
 
@@ -68,10 +70,12 @@
 		E8E0FE6C1BD8480B00292C54 /* Copy Files */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
-			dstPath = "";
+			dstPath = res;
 			dstSubfolderSpec = 16;
 			files = (
-				E8447D171BF5F8E9000E2903 /* res in Copy Files */,
+				6C9FC7AF1C193F4F00B292B8 /* sample_cd_scpd.xml in Copy Files */,
+				6C9FC7B01C193F4F00B292B8 /* sample_cm_scpd.xml in Copy Files */,
+				6C9FC7B11C193F4F00B292B8 /* sample_device.xml in Copy Files */,
 			);
 			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -83,6 +87,9 @@
 		6C9FC7801C17006D00B292B8 /* msearchTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = msearchTest.cpp; path = ../../../examples/msearchTest.cpp; sourceTree = "<group>"; };
 		6C9FC7811C17006D00B292B8 /* ssdpServerTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ssdpServerTest.cpp; path = ../../../examples/ssdpServerTest.cpp; sourceTree = "<group>"; };
 		6C9FC7821C17006D00B292B8 /* ssdpTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ssdpTest.cpp; path = ../../../examples/ssdpTest.cpp; sourceTree = "<group>"; };
+		6C9FC7AC1C193F4600B292B8 /* sample_cd_scpd.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = sample_cd_scpd.xml; sourceTree = "<group>"; };
+		6C9FC7AD1C193F4600B292B8 /* sample_cm_scpd.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = sample_cm_scpd.xml; sourceTree = "<group>"; };
+		6C9FC7AE1C193F4600B292B8 /* sample_device.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = sample_device.xml; sourceTree = "<group>"; };
 		E8447CAC1BF4B054000E2903 /* UPnPToolsOSX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UPnPToolsOSX.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8447CAE1BF4B054000E2903 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		E8447CAF1BF4B054000E2903 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -96,7 +103,6 @@
 		E8447CC91BF4B054000E2903 /* UPnPToolsOSXUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UPnPToolsOSXUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8447CCD1BF4B054000E2903 /* UPnPToolsOSXUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UPnPToolsOSXUITests.m; sourceTree = "<group>"; };
 		E8447CCF1BF4B054000E2903 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		E8447D151BF5F8C7000E2903 /* res */ = {isa = PBXFileReference; lastKnownFileType = folder; name = res; path = ../../examples/res; sourceTree = "<group>"; };
 		E8447D181BF6034B000E2903 /* ServiceFindTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ServiceFindTest.cpp; path = ../../../examples/ServiceFindTest.cpp; sourceTree = "<group>"; };
 		E8447D191BF6034B000E2903 /* ssdp-server.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "ssdp-server.cpp"; path = "../../../examples/ssdp-server.cpp"; sourceTree = "<group>"; };
 		E857BB401BEA305700D2022F /* timerTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = timerTest.cpp; path = ../../../examples/timerTest.cpp; sourceTree = "<group>"; };
@@ -145,6 +151,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6C9FC7AB1C193F4600B292B8 /* res */ = {
+			isa = PBXGroup;
+			children = (
+				6C9FC7AC1C193F4600B292B8 /* sample_cd_scpd.xml */,
+				6C9FC7AD1C193F4600B292B8 /* sample_cm_scpd.xml */,
+				6C9FC7AE1C193F4600B292B8 /* sample_device.xml */,
+			);
+			name = res;
+			path = ../../res;
+			sourceTree = "<group>";
+		};
 		E8447CAD1BF4B054000E2903 /* UPnPToolsOSX */ = {
 			isa = PBXGroup;
 			children = (
@@ -187,7 +204,7 @@
 		E8E0FE651BD8480B00292C54 = {
 			isa = PBXGroup;
 			children = (
-				E8447D151BF5F8C7000E2903 /* res */,
+				6C9FC7AB1C193F4600B292B8 /* res */,
 				E8E0FE781BD8482A00292C54 /* upnp-tools.xcodeproj */,
 				E8E0FE701BD8480B00292C54 /* upnp-tools-sample */,
 				E8447CAD1BF4B054000E2903 /* UPnPToolsOSX */,
@@ -438,7 +455,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6C9FC78D1C17C15D00B292B8 /* cp.cpp in Sources */,
+				6C9FC7A61C193D4200B292B8 /* server.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
