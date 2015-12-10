@@ -195,19 +195,15 @@ namespace UPNP {
 	UPnPControlPoint::UPnPControlPoint(int port) : TimerEvent(false), deviceListener(NULL), invokeActionResponseListener(NULL), thread(NULL), anotherHttpClientThreadPool(5), eventListener(NULL), httpServer(port), running(false) {
         
         ssdpPacketHandler.setDeviceDetection(this);
-
         ssdpServer.setSSDPPacketHandler(&ssdpPacketHandler);
-    
         registerPollee(&timer);
-        
         scheduleRepeatableRelativeTimer(0, -1, Timer::SECOND);
-        
         anotherHttpClientThreadPool.setOnRequestCompleteListener(this);
-        
         httpServer.registerRequestHandler("/notify", this);
 	}
 
 	UPnPControlPoint::~UPnPControlPoint() {
+		printf("destruction of UPnPControlPoint\n");
         stop();
 	}
     

@@ -45,7 +45,6 @@ AC_CHECK_FUNCS([gettimeofday memset mkdir socket strcasecmp])
 AC_CONFIG_FILES([Makefile
 				 libupnp-tools/Makefile
 				 examples/Makefile
-				 examples/res/Makefile
 				 upnp-tools.pc])
 
 AC_OUTPUT

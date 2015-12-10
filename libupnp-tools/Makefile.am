@@ -1,6 +1,6 @@
 lib_LTLIBRARIES = libupnp-tools.la
 
-libupnp_toolsincdir = ${includedir}/upnp-tools
+libupnp_toolsincdir = ${includedir}/libupnp-tools
 libupnp_toolsinc_HEADERS = AnotherSSDPServer.hpp \
 	CacheControl.hpp \
 	NetworkUtil.hpp \

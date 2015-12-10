@@ -1,4 +1,4 @@
-SUBDIRS=res
+# SUBDIRS=res
 
 noinst_PROGRAMS = ssdp-server cp server dialTest
 
