@@ -1,8 +1,13 @@
 lib_LTLIBRARIES = libupnp-tools.la
 
 libupnp_toolsincdir = ${includedir}/upnp-tools
-libupnp_toolsinc_HEADERS = CacheControl.hpp \
+libupnp_toolsinc_HEADERS = AnotherSSDPServer.hpp \
+	CacheControl.hpp \
 	NetworkUtil.hpp \
+	SSDPHeader.hpp \
+	SSDPMsearchSender.hpp \
+	SSDPMulticastListener.hpp \
+	SSDPPacketHandler.hpp \
 	SSDPServer.hpp \
 	SoapReader.hpp \
 	SoapWriter.hpp \
@@ -33,10 +38,20 @@ libupnp_toolsinc_HEADERS = CacheControl.hpp \
 	XmlNodeFinder.hpp \
 	macros.hpp
 
-libupnp_tools_la_SOURCES = CacheControl.cpp \
+
+libupnp_tools_la_SOURCES = AnotherSSDPServer.cpp \
+	AnotherSSDPServer.hpp \
+	CacheControl.cpp \
 	CacheControl.hpp \
 	NetworkUtil.cpp \
 	NetworkUtil.hpp \
+	SSDPHeader.cpp \
+	SSDPHeader.hpp \
+	SSDPMsearchSender.cpp \
+	SSDPMsearchSender.hpp \
+	SSDPMulticastListener.cpp \
+	SSDPMulticastListener.hpp \
+	SSDPPacketHandler.hpp \
 	SSDPServer.cpp \
 	SSDPServer.hpp \
 	SoapReader.cpp \
@@ -93,6 +108,7 @@ libupnp_tools_la_SOURCES = CacheControl.cpp \
 	XmlNodeFinder.cpp \
 	XmlNodeFinder.hpp \
 	macros.hpp
+
 
 
 libupnp_tools_la_CXXFLAGS = $(PTHREAD_CXXFLAGS) $(LIBOSLAYER_CFLAGS) $(LIBHTTP_SERVER_CFLAGS)
