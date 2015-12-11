@@ -194,13 +194,16 @@ public:
     }
     void setApplicationUrl(const string & applicationUrl) {
         this->applicationUrl = applicationUrl;
+        printf("Set ApplicationURL: %s\n", this->applicationUrl.c_str());
     }
     void setDataUrl(const string & dataUrl) {
         this->dataUrl = dataUrl;
     }
     
     void requestStatus() {
-        Url url(applicationUrl + appName);
+        string target = applicationUrl + appName;
+        printf("request status: %s\n", target.c_str());
+        Url url(target);
         AnotherHttpClient client(url);
         client.setOnResponseListener(this);
         client.setRequest("GET", LinkedStringMap(), NULL);
@@ -287,6 +290,8 @@ int main(int argc, char * args[]) {
     
     dm.start();
     
+    printf("start\n");
+    
     while (1) {
         char buffer[1024] = {0,};
         readline(buffer, sizeof(buffer));
@@ -298,64 +303,51 @@ int main(int argc, char * args[]) {
         if (buffer[0] == '\0') {
             vector<SimpleDevice> devices = dm.getDevices();
             s_print_device_list(devices);
-            continue;
-        }
-        
-        if (isDigitString(buffer)) {
+        } else if (isDigitString(buffer)) {
             int index = Text::toInt(buffer);
             vector<SimpleDevice> devices = dm.getDevices();
             if (index >= 0 && (size_t)index < devices.size()) {
                 SimpleDevice & device = devices[index];
                 string applicationUrl = device.getApplicationUrl();
                 client.setApplicationUrl(applicationUrl);
-                
-                printf("Set ApplicationURL: %s\n", applicationUrl.c_str());
-                
             }
-            continue;
-        }
-        
-        if (!strcmp(buffer, "m")) {
+        } else if (!strcmp(buffer, "m")) {
             dm.sendMsearch("upnp:rootdevice");
             dm.sendMsearch("ssdp:all");
             dm.sendMsearch("urn:dial-multiscreen-org:service:dial:1");
-            continue;
-        }
-        
-        if (!strcmp(buffer, "get")) {
+        } else if (!strcmp(buffer, "get")) {
             client.requestStatus();
-            continue;
-        }
-        
-        if (!strcmp(buffer, "post")) {
-            string data(buffer+5);
-            client.requestLaunch(data);
-            continue;
-        }
-        
-        if (!strcmp(buffer, "delete")) {
+        } else if (Text::startsWith(buffer, "post")) {
+            if (buffer[4]) {
+                string data(buffer+5);
+                client.requestLaunch(data);
+            } else {
+                client.requestLaunch("");
+            }
+        } else if (!strcmp(buffer, "delete")) {
             client.requestStop();
-            continue;
-        }
-        
-        if (!strcmp(buffer, "data")) {
+        } else if (!strcmp(buffer, "data")) {
             string data(buffer+5);
             client.requestDialData(data);
-            continue;
-        }
-        
-        if (!strcmp(buffer, "dataUrl")) {
+        } else if (Text::startsWith(buffer, "url")) {
+            string url(buffer+4);
+            client.setApplicationUrl(url);
+        } else if (Text::startsWith(buffer, "dataUrl")) {
             string dataUrl(buffer+8);
             client.setDataUrl(dataUrl);
             printf("Set DataUrl: %s\n", dataUrl.c_str());
-            continue;
+        } else if (Text::startsWith(buffer, "app")) {
+            string app(buffer+4);
+            client.setAppName(app);
+            printf("Set AppName : %s\n", buffer);
+        } else {
+            printf("Unknown command/%s\n", buffer);
         }
-        
-        client.setAppName(buffer);
-        printf("Set AppName : %s\n", buffer);
     }
     
     dm.stop();
+    
+    printf("done\n");
     
     return 0;
 }

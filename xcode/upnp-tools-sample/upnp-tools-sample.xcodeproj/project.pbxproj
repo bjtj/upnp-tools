@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6C9FC7A61C193D4200B292B8 /* server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E857BB8E1BEDE3C900D2022F /* server.cpp */; };
 		6C9FC7AF1C193F4F00B292B8 /* sample_cd_scpd.xml in Copy Files */ = {isa = PBXBuildFile; fileRef = 6C9FC7AC1C193F4600B292B8 /* sample_cd_scpd.xml */; };
 		6C9FC7B01C193F4F00B292B8 /* sample_cm_scpd.xml in Copy Files */ = {isa = PBXBuildFile; fileRef = 6C9FC7AD1C193F4600B292B8 /* sample_cm_scpd.xml */; };
 		6C9FC7B11C193F4F00B292B8 /* sample_device.xml in Copy Files */ = {isa = PBXBuildFile; fileRef = 6C9FC7AE1C193F4600B292B8 /* sample_device.xml */; };
+		6C9FC7B41C1A9B3A00B292B8 /* dialTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C4A9F571C0ED0A500A45604 /* dialTest.cpp */; };
 		E8447CB01BF4B054000E2903 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E8447CAF1BF4B054000E2903 /* AppDelegate.m */; };
 		E8447CB31BF4B054000E2903 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E8447CB21BF4B054000E2903 /* main.m */; };
 		E8447CB51BF4B054000E2903 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E8447CB41BF4B054000E2903 /* Assets.xcassets */; };
@@ -455,7 +455,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6C9FC7A61C193D4200B292B8 /* server.cpp in Sources */,
+				6C9FC7B41C1A9B3A00B292B8 /* dialTest.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

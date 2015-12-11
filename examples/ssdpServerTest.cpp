@@ -35,18 +35,30 @@ int main(int argc, char * args[]) {
 		}
 		virtual ~MySSDPPacketHandler() {
 		}
+        virtual bool filter(SSDP::SSDPHeader & header) {
+            if (!header.getRemoteAddr().getHost().compare("192.168.0.1")) {
+                return false;
+            }
+            if (!header.getRemoteAddr().getHost().compare("192.168.0.2")) {
+                return false;
+            }
+            return true;
+        }
 		virtual void onMsearch(SSDP::SSDPHeader & header) {
-			printf("MSEARCH / ST: %s\n", header.getSt().c_str());
+            OS::InetAddress addr = header.getRemoteAddr();
+			printf("MSEARCH / ST: %s (%s:%d)\n", header.getSt().c_str(), addr.getHost().c_str(), addr.getPort());
 		}
 		virtual void onNotify(SSDP::SSDPHeader & header) {
+            OS::InetAddress addr = header.getRemoteAddr();
 			if (header.isNotifyAlive()) {
-				printf("NOTIFY / URL: %s\n", header.getLocation().c_str());
+				printf("NOTIFY / alive :: URL: %s (%s:%d)\n", header.getLocation().c_str(), addr.getHost().c_str(), addr.getPort());
 			} else {
-				printf("NOTIFY / %s\n", header.getNt().c_str());
+				printf("NOTIFY / byebye :: %s (%s:%d)\n", header.getNt().c_str(), addr.getHost().c_str(), addr.getPort());
 			}
 		}
 		virtual void onMsearchResponse(SSDP::SSDPHeader & header) {
-			printf("RESP / URL: %s\n", header.getLocation().c_str());
+            OS::InetAddress addr = header.getRemoteAddr();
+			printf("RESP / URL: %s (%s:%d)\n", header.getLocation().c_str(), addr.getHost().c_str(), addr.getPort());
 		}
 	};
 
