@@ -1,6 +1,6 @@
 # SUBDIRS=res
 
-noinst_PROGRAMS = ssdp-server cp server dialTest
+noinst_PROGRAMS = ssdp-server cp server dialTest yacp
 
 ssdp_server_SOURCES = ssdp-server.cpp
 ssdp_server_CPPFLAGS =-I$(top_srcdir)
@@ -26,3 +26,8 @@ dialTest_CXXFLAGS = $(PTHREAD_CXXFLAGS) $(LIBOSLAYER_CFLAGS) $(LIBHTTP_SERVER_CF
 dialTest_LDFLAGS = $(PTHREAD_CFLAGS)
 dialTest_LDADD = ../libupnp-tools/libupnp-tools.la $(LIBOSLAYER_LIBS) $(LIBHTTP_SERVER_LIBS)
 
+yacp_SOURCES = yacp.cpp
+yacp_CPPFLAGS =-I$(top_srcdir)
+yacp_CXXFLAGS = $(PTHREAD_CXXFLAGS) $(LIBOSLAYER_CFLAGS) $(LIBHTTP_SERVER_CFLAGS)
+yacp_LDFLAGS = $(PTHREAD_CFLAGS)
+yacp_LDADD = ../libupnp-tools/libupnp-tools.la $(LIBOSLAYER_LIBS) $(LIBHTTP_SERVER_LIBS)

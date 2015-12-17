@@ -25,6 +25,12 @@ namespace SSDP {
 		sender.gather(timeoutSec * 1000);
 		sender.close();
 	}
+	UTIL::AutoRef<SSDPMsearchSender> AnotherSSDPServer::sendMsearch(const std::string & st) {
+		SSDPMsearchSender * sender = new SSDPMsearchSender;
+		sender->setSSDPPacketHandler(handler);
+		sender->sendMsearchAllInterfaces(st, 5, "239.255.255.250", 1900);
+		return UTIL::AutoRef<SSDPMsearchSender>(sender);
+	}
 	void AnotherSSDPServer::setSSDPPacketHandler(SSDPPacketHandler * handler) {
 		this->handler = handler;
 		mcastListener.setSSDPPacketHandler(handler);
