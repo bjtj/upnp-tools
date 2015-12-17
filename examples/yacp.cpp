@@ -14,6 +14,24 @@ using namespace HTTP;
 using namespace SSDP;
 using namespace UPNP;
 
+class HttpResponseListener : public OnResponseListener {
+private:
+public:
+	HttpResponseListener() {}
+	virtual ~HttpResponseListener() {}
+	virtual void onResponseHeader(HttpResponse & response, UTIL::AutoRef<UserData> userData) {
+		response.setTransfer(createDataTransfer(response.getHeader()));
+	}
+	virtual void onTransferDone(HttpResponse & response, DataTransfer * transfer, UTIL::AutoRef<UserData> userData) {
+		if (transfer) {
+			cout << transfer->getString() << endl;
+		}
+	}
+	virtual void onError(OS::Exception & e, UTIL::AutoRef<UserData> userData) {
+
+	}
+};
+
 class SSDPHandler : public SSDPPacketHandler {
 private:
 public:
@@ -21,6 +39,14 @@ public:
 	virtual ~SSDPHandler() {}
 	virtual bool filter(SSDPHeader & header) {
 		return true;
+	}
+	void requestDeviceDescription(const std::string & url) {
+		AnotherHttpClient client;
+		HttpResponseListener listener;
+		client.setOnResponseListener(&listener);
+		client.setUrl(url);
+		client.setRequest("GET", UTIL::LinkedStringMap(), NULL);
+		client.execute();
 	}
 	virtual void onNotify(SSDPHeader & header) {
 		Uuid uuid(header["USN"]);
@@ -31,7 +57,16 @@ public:
 			cout << " - Location: " << header["Location"] << endl;
 		}
 	}
-	virtual void onMsearchResponse(SSDPHeader & header) {}
+	virtual void onMsearchResponse(SSDPHeader & header) {
+		Uuid uuid(header["USN"]);
+		cout << "RESP:" << endl;
+		cout << " - UUID: " << uuid.getUuid() << endl;
+		cout << " - TYPE: " << uuid.getRest() << endl;
+		cout << " - Location: " << header["Location"] << endl;
+		if (!uuid.getRest().compare("upnp:rootdevice")) {
+			requestDeviceDescription(header["Location"]);
+		}
+	}
 };
 
 class PollThread : public Thread {
@@ -74,6 +109,12 @@ int main(int argc, char *args[]) {
 		if (readline(buffer, sizeof(buffer)) > 0) {
 			if (!strcmp(buffer, "q")) {
 				break;
+			}
+			if (!strcmp(buffer, "m")) {
+				vector<string> st;
+				st.push_back("upnp:rootdevice");
+				st.push_back("ssdp:all");
+				server.sendMsearchAndGather(st, 5);
 			}
 		}
 	}

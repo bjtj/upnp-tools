@@ -265,7 +265,7 @@ namespace UPNP {
 	}
 
 	void UPnPControlPoint::sendMsearch(string searchType) {
-        ssdpServer.sendMsearch(searchType, 5);
+		ssdpServer.sendMsearchAndGather(searchType, 5);
 	}
 
 	int UPnPControlPoint::getMaxAgeInSecond(const string & phrase) {

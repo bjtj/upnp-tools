@@ -17,18 +17,28 @@ namespace SSDP {
     void AnotherSSDPServer::poll(unsigned long timeout) {
         mcastListener.poll(timeout);
     }
-
-	void AnotherSSDPServer::sendMsearch(const std::string & st, unsigned long timeoutSec) {
-		SSDPMsearchSender sender;
-		sender.setSSDPPacketHandler(handler);
-		sender.sendMsearchAllInterfaces(st, timeoutSec, "239.255.255.250", 1900);
-		sender.gather(timeoutSec * 1000);
-		sender.close();
+	void AnotherSSDPServer::sendMsearchAndGather(const std::string & st, unsigned long timeoutSec) {
+		UTIL::AutoRef<SSDPMsearchSender> sender = sendMsearch(st, timeoutSec);
+		sender->gather(timeoutSec * 1000);
+		sender->close();
 	}
-	UTIL::AutoRef<SSDPMsearchSender> AnotherSSDPServer::sendMsearch(const std::string & st) {
+	void AnotherSSDPServer::sendMsearchAndGather(std::vector<std::string> & st, unsigned long timeoutSec) {
+		UTIL::AutoRef<SSDPMsearchSender> sender = sendMsearch(st, timeoutSec);
+		sender->gather(timeoutSec * 1000);
+		sender->close();
+	}
+	UTIL::AutoRef<SSDPMsearchSender> AnotherSSDPServer::sendMsearch(const std::string & st, unsigned long timeoutSec) {
 		SSDPMsearchSender * sender = new SSDPMsearchSender;
 		sender->setSSDPPacketHandler(handler);
-		sender->sendMsearchAllInterfaces(st, 5, "239.255.255.250", 1900);
+		sender->sendMsearchAllInterfaces(st, timeoutSec, "239.255.255.250", 1900);
+		return UTIL::AutoRef<SSDPMsearchSender>(sender);
+	}
+	UTIL::AutoRef<SSDPMsearchSender> AnotherSSDPServer::sendMsearch(std::vector<std::string> & st, unsigned long timeoutSec) {
+		SSDPMsearchSender * sender = new SSDPMsearchSender;
+		sender->setSSDPPacketHandler(handler);
+		for (std::vector<std::string>::iterator iter = st.begin(); iter != st.end(); iter++) {
+			sender->sendMsearchAllInterfaces(*iter, timeoutSec, "239.255.255.250", 1900);
+		}
 		return UTIL::AutoRef<SSDPMsearchSender>(sender);
 	}
 	void AnotherSSDPServer::setSSDPPacketHandler(SSDPPacketHandler * handler) {

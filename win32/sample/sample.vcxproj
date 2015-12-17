@@ -82,7 +82,7 @@ xcopy /y $(SolutionDir)\..\res $(ProjectDir)\res</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\examples\cp.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\examples\deviceDescriptionTest.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -114,6 +114,7 @@ xcopy /y $(SolutionDir)\..\res $(ProjectDir)\res</Command>
     <ClCompile Include="..\..\examples\uuidTest.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\examples\yacp.cpp" />
     <ClCompile Include="main.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
