@@ -3,6 +3,7 @@
 #include <liboslayer/Utils.hpp>
 #include <libhttp-server/AnotherHttpServer.hpp>
 #include <libhttp-server/AnotherHttpClient.hpp>
+#include <libhttp-server/FixedTransfer.hpp>
 #include <libupnp-tools/AnotherSSDPServer.hpp>
 #include <libupnp-tools/UPnPDevicePool.hpp>
 #include <libupnp-tools/Uuid.hpp>
@@ -64,7 +65,8 @@ public:
 		cout << " - TYPE: " << uuid.getRest() << endl;
 		cout << " - Location: " << header["Location"] << endl;
 		if (!uuid.getRest().compare("upnp:rootdevice")) {
-			requestDeviceDescription(header["Location"]);
+			// requestDeviceDescription(header["Location"]);
+			// TODO: apply it after connection timeout check implementated
 		}
 	}
 };
@@ -115,6 +117,7 @@ int main(int argc, char *args[]) {
 				st.push_back("upnp:rootdevice");
 				st.push_back("ssdp:all");
 				server.sendMsearchAndGather(st, 5);
+				cout << "msearch gathering done." << endl;
 			}
 		}
 	}
