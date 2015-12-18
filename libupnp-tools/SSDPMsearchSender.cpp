@@ -74,8 +74,10 @@ namespace SSDP {
 		packet.write(content);
 		std::vector<OS::InetAddress> addrs = OS::Network::getAllInetAddress();
 		for (size_t i = 0; i < addrs.size(); i++) {
-			sock.setMulticastInterface(addrs[i].getHost());
-			sock.send(packet);
+			if (addrs[i].inet4()) {
+				sock.setMulticastInterface(addrs[i].getHost());
+				sock.send(packet);
+			}
 		}
 	}
 
