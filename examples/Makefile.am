@@ -1,6 +1,6 @@
 # SUBDIRS=res
 
-noinst_PROGRAMS = ssdp-server cp server dialTest yacp
+noinst_PROGRAMS = ssdp-server cp server dialTest yacp deviceMaker
 
 ssdp_server_SOURCES = ssdp-server.cpp
 ssdp_server_CPPFLAGS =-I$(top_srcdir)
@@ -31,3 +31,9 @@ yacp_CPPFLAGS =-I$(top_srcdir)
 yacp_CXXFLAGS = $(PTHREAD_CXXFLAGS) $(LIBOSLAYER_CFLAGS) $(LIBHTTP_SERVER_CFLAGS)
 yacp_LDFLAGS = $(PTHREAD_CFLAGS)
 yacp_LDADD = ../libupnp-tools/libupnp-tools.la $(LIBOSLAYER_LIBS) $(LIBHTTP_SERVER_LIBS)
+
+deviceMaker_SOURCES = deviceMaker.cpp
+deviceMaker_CPPFLAGS =-I$(top_srcdir)
+deviceMaker_CXXFLAGS = $(PTHREAD_CXXFLAGS) $(LIBOSLAYER_CFLAGS) $(LIBHTTP_SERVER_CFLAGS)
+deviceMaker_LDFLAGS = $(PTHREAD_CFLAGS)
+deviceMaker_LDADD = ../libupnp-tools/libupnp-tools.la $(LIBOSLAYER_LIBS) $(LIBHTTP_SERVER_LIBS)
