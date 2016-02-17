@@ -1,11 +1,11 @@
 #import "upnp_tools.h"
-#import "UPnPServer.hpp"
+//#import "UPnPServer.hpp"
 
-using namespace UPNP;
+//using namespace UPNP;
 
 @implementation upnp_tools
 {
-    UPnPServer * server;
+//    UPnPServer * server;
 }
 
 - (void)hello
@@ -15,19 +15,19 @@ using namespace UPNP;
 
 - (void)startServer
 {
-    if (!server) {
-        //server = new UPnPServer(8080);
-        server->startAsync();
-    }
+//    if (!server) {
+//        server = new UPnPServer(8080);
+//        server->startAsync();
+//    }
 }
 
 - (void)stopServer
 {
-    if (server) {
-        server->stop();
-        delete server;
-        server = NULL;
-    }
+//    if (server) {
+//        server->stop();
+//        delete server;
+//        server = NULL;
+//    }
 }
 
 @end
