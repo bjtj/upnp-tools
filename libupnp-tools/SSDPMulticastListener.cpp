@@ -14,6 +14,9 @@ namespace SSDP {
 		sock.unregisterSelector(selector);
 		sock.close();
 	}
+	bool SSDPMulticastListener::isRunning() {
+		return !sock.isClosed();
+	}
 	void SSDPMulticastListener::poll(unsigned long timeout) {
 		if (selector.select(timeout) > 0) {
 			if (sock.isReadalbeSelected(selector)) {
@@ -35,7 +38,7 @@ namespace SSDP {
 			}
 		}
 	}
-	void SSDPMulticastListener::setSSDPPacketHandler(SSDPPacketHandler * listener) {
-		this->handler = listener;
+	void SSDPMulticastListener::setSSDPEventHandler(SSDPEventHandler * handler) {
+		this->handler = handler;
 	}
 }

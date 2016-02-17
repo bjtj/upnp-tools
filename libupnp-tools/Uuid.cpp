@@ -27,19 +27,21 @@ namespace UPNP {
     }
     
     void Uuid::parse(const string & uuid) {
-        
+
+		size_t offset = 5;
         clear();
         
         if (!Text::startsWith(uuid, "uuid:")) {
-            throw WrongFormatException("wrong format", -1, 0);
+            //throw WrongFormatException("wrong format not start with uuid:", -1, 0);
+			offset = 0;
         }
         
         size_t sep = uuid.find("::");
         if (sep != string::npos) {
-            this->uuid = uuid.substr(0, sep);
+            this->uuid = uuid.substr(offset, sep - offset);
             this->rest = uuid.substr(sep + 2);
         } else {
-            this->uuid = uuid;
+            this->uuid = uuid.substr(offset);
         }
     }
     
@@ -116,6 +118,6 @@ namespace UPNP {
     }
     
     string Uuid::toString() const {
-        return uuid + (rest.empty() ? "" : "::" + rest);
+        return "uuid:" + uuid + (rest.empty() ? "" : "::" + rest);
     }
 }

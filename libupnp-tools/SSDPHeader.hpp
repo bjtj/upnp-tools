@@ -14,21 +14,21 @@ namespace SSDP {
 	public:
 		SSDPHeader(const std::string & headerString, OS::InetAddress & remoteAddr);
 		virtual ~SSDPHeader();
-		bool isSSDPRequest();
-		bool isSSDPResponse();
-		bool isNotifyAlive();
-		bool isNotifyByebye();
-		bool isNotifyUpdate();
-		bool isNotify();
-		bool isMsearch();
-		std::string getMethod();
-		std::string getUsn();
-		std::string getNt();
-		std::string getNts();
-		std::string getSt();
-		std::string getLocation();
-		std::string getMan();
-		OS::InetAddress getRemoteAddr();
+		bool isSSDPRequest() const;
+		bool isSSDPResponse() const;
+		bool isNotifyAlive() const;
+		bool isNotifyByebye() const;
+		bool isNotifyUpdate() const;
+		bool isNotify() const;
+		bool isMsearch() const;
+		std::string getMethod() const;
+		std::string getUsn() const;
+		std::string getNt() const;
+		std::string getNts() const;
+		std::string getSt() const;
+		std::string getLocation() const;
+		std::string getMan() const;
+		OS::InetAddress getRemoteAddr() const;
 	};
 
 }

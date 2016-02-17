@@ -10,70 +10,70 @@ namespace SSDP {
 	}
 	SSDPHeader::~SSDPHeader() {
 	}
-	bool SSDPHeader::isSSDPRequest() {
+	bool SSDPHeader::isSSDPRequest() const {
 		if (UTIL::Text::equalsIgnoreCase(getMethod(), "NOTIFY") || UTIL::Text::equalsIgnoreCase(getMethod(), "M-SEARCH")) {
 			return true;
 		}
 		return false;
 	}
-	bool SSDPHeader::isSSDPResponse() {
+	bool SSDPHeader::isSSDPResponse() const {
 		if (UTIL::Text::startsWith(getMethod(), "HTTP/", true)) {
 			return true;
 		}
 		return false;
 	}
-	bool SSDPHeader::isNotifyAlive() {
+	bool SSDPHeader::isNotifyAlive() const {
 		if (UTIL::Text::equalsIgnoreCase(getMethod(), "NOTIFY") && UTIL::Text::equalsIgnoreCase(getNts(), "ssdp:alive")) {
 			return true;
 		}
 		return false;
 	}
-	bool SSDPHeader::isNotifyByebye() {
+	bool SSDPHeader::isNotifyByebye() const {
 		if (UTIL::Text::equalsIgnoreCase(getMethod(), "NOTIFY") && UTIL::Text::equalsIgnoreCase(getNts(), "ssdp:byebye")) {
 			return true;
 		}
 		return false;
 	}
-	bool SSDPHeader::isNotifyUpdate() {
+	bool SSDPHeader::isNotifyUpdate() const {
 		if (UTIL::Text::equalsIgnoreCase(getMethod(), "NOTIFY") && UTIL::Text::equalsIgnoreCase(getNts(), "ssdp:update")) {
 			return true;
 		}
 		return false;
 	}
-	bool SSDPHeader::isNotify() {
+	bool SSDPHeader::isNotify() const {
 		if (UTIL::Text::equalsIgnoreCase(getMethod(), "NOTIFY")) {
 			return true;
 		}
 		return false;
 	}
-	bool SSDPHeader::isMsearch() {
+	bool SSDPHeader::isMsearch() const {
 		if (UTIL::Text::equalsIgnoreCase(getMethod(), "M-SEARCH")) {
 			return true;
 		}
 		return false;
 	}
-	std::string SSDPHeader::getMethod() {
+	std::string SSDPHeader::getMethod() const {
 		return getPart1();
 	}
-	std::string SSDPHeader::getUsn() {
+	std::string SSDPHeader::getUsn() const {
 		return getHeaderFieldIgnoreCase("USN");
 	}
-	std::string SSDPHeader::getNt() {
+	std::string SSDPHeader::getNt() const {
 		return getHeaderFieldIgnoreCase("NT");
 	}
-	std::string SSDPHeader::getNts() {
+	std::string SSDPHeader::getNts() const {
 		return getHeaderFieldIgnoreCase("NTS");
 	}
-	std::string SSDPHeader::getSt() {
+	std::string SSDPHeader::getSt() const {
 		return getHeaderFieldIgnoreCase("ST");
 	}
-	std::string SSDPHeader::getLocation() {
+	std::string SSDPHeader::getLocation() const {
 		return getHeaderFieldIgnoreCase("LOCATION");
 	}
-	std::string SSDPHeader::getMan() {
+	std::string SSDPHeader::getMan() const {
 		return getHeaderFieldIgnoreCase("MAN");
 	}
-	OS::InetAddress SSDPHeader::getRemoteAddr() {
+	OS::InetAddress SSDPHeader::getRemoteAddr() const {
 		return remoteAddr;
 	}
 }

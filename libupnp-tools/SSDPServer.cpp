@@ -1,423 +1,80 @@
 #include "SSDPServer.hpp"
-#include <liboslayer/Text.hpp>
-#include <liboslayer/RandomPortBinders.hpp>
-#include <algorithm>
-#include <libhttp-server/HttpHeaderParser.hpp>
-#include "macros.hpp"
-#include <liboslayer/Logger.hpp>
+#include "SSDPMsearchSender.hpp"
 
 namespace SSDP {
 
-	using namespace std;
-	using namespace OS;
-	using namespace HTTP;
-	using namespace UTIL;
+	static const char * MCAST_HOST = "239.255.255.250";
+	static const int MCAST_PORT = 1900;
 
-    static const Logger & logger = LoggerFactory::getDefaultLogger();
-
-	/**
-	 * @brief ssdp config
-	 */
-	SSDPConfig::SSDPConfig() :
-		userAgent("Linux/2.x UPnP/1.1 App/0.1"),
-		multicastPort(1900),
-		msearchPort(56789),
-		msearchPortBinder(NULL),
-		multicastGroup("239.255.255.250") {
-	}
-	
-	SSDPConfig::~SSDPConfig() {
-	}
-
-	void SSDPConfig::setUserAgent(std::string userAgent) {
-		this->userAgent = userAgent;
-	}
-
-	std::string & SSDPConfig::getUserAgent() {
-		return userAgent;
-	}
-
-	void SSDPConfig::setMulticastPort(int multicastPort) {
-		this->multicastPort = multicastPort;
-	}
-
-	int SSDPConfig::getMulticastPort() {
-		return multicastPort;
-	}
-
-	void SSDPConfig::setMsearchPort(int msearchPort) {
-		this->msearchPort = msearchPort;
-	}
-
-	int SSDPConfig::getMsearchPort() {
-		return msearchPort;
-	}
-
-	void SSDPConfig::setMsearchPortBinder(RandomPortBinder * msearchPortBinder) {
-		this->msearchPortBinder = msearchPortBinder;
-	}
-
-	RandomPortBinder * SSDPConfig::getMsearchPortBinder() {
-		return msearchPortBinder;
-	}
-	
-	void SSDPConfig::setMulticastGroup(std::string group) {
-		this->multicastGroup = group;
-	}
-	
-	std::string & SSDPConfig::getMulticastGroup() {
-		return multicastGroup;
-	}
-    
-    
-    /**
-     * @brief SSDPListener
-     */
-    
-    SSDPListener::SSDPListener() : mcastSocket(NULL) {
-    }
-    
-    SSDPListener::SSDPListener(SSDPConfig & config) : config(config), mcastSocket(NULL) {
-    }
-    
-    SSDPListener::~SSDPListener() {
-        
-    }
-    void SSDPListener::start() {
-        int multicastPort = config.getMulticastPort();
-        string & group = config.getMulticastGroup();
-        if (!mcastSocket) {
-            mcastSocket = new MulticastSocket(multicastPort);
-            mcastSocket->setReuseAddr(true);
-            mcastSocket->joinGroup(group);
-            
-            registerSelector(mcastSocket->getFd());
-        }
-    }
-    void SSDPListener::stop() {
-        notifyHandlers.clear();
-        msearchHandlers.clear();
-        if (mcastSocket) {
-
-			unregisterSelector(mcastSocket->getFd());
-
-            delete mcastSocket;
-            mcastSocket = NULL;
-        }
-    }
-    bool SSDPListener::isRunning() {
-        return mcastSocket != NULL;
-    }
-    
-    void SSDPListener::onIdle() {
-    }
-    
-    void SSDPListener::listen(SelectorPoller & poller) {
-        
-        if (poller.isReadableSelected(mcastSocket->getFd())) {
-            
-            char buffer[4096] = {0,};
-            DatagramPacket packet(buffer, sizeof(buffer));
-            int len;
-            if ((len = mcastSocket->recv(packet)) > 0) {
-                handleMessage(packet);
-            }
-        }
-    }
-    
-    void SSDPListener::handleMessage(DatagramPacket & packet) {
-        HttpHeaderParser parser;
-        string header(packet.getData(), packet.getLength());
-        
-        int ret = parser.parse(header);
-        if (ret == 0) {
-            HttpHeader & header = parser.getHeader();
-            string method = header.getPart1();
-            if (Text::equalsIgnoreCase(method, "M-SEARCH")) {
-                // onMsearch(header, InetAddress(packet.getRemoteAddr(), packet.getRemotePort()));
-				onMsearch(header, packet.getRemoteAddr());
-            } else if (Text::equalsIgnoreCase(method, "NOTIFY")) {
-                onNotify(header);
-            } else {
-                // unknown ssdp message
-            }
-        } else {
-            // unexpected message
-        }
-    }
-    
-    void SSDPListener::onMsearch(const HTTP::HttpHeader & header, const InetAddress & remoteAddr) {
-        for (size_t i = 0; i < msearchHandlers.size(); i++) {
-            msearchHandlers[i]->onMsearch(header, remoteAddr);
-        }
-    }
-    
-    void SSDPListener::onNotify(const HTTP::HttpHeader & header) {
-        for (size_t i = 0; i < notifyHandlers.size(); i++) {
-            notifyHandlers[i]->onNotify(header);
-        }
-    }
-    
-    void SSDPListener::addMsearchHandler(OnMsearchHandler * handler) {
-        msearchHandlers.push_back(handler);
-        
-    }
-    
-    void SSDPListener::removeMsearchHandler(OnMsearchHandler * handler) {
-        msearchHandlers.erase(std::remove(msearchHandlers.begin(),
-                                          msearchHandlers.end(),
-                                          handler), msearchHandlers.end());
-    }
-    
-    void SSDPListener::addNotifyHandler(OnNotifyHandler * handler) {
-        notifyHandlers.push_back(handler);
-    }
-    
-    void SSDPListener::removeNotifyHandler(OnNotifyHandler * handler) {
-        notifyHandlers.erase(std::remove(notifyHandlers.begin(),
-                                         notifyHandlers.end(),
-                                         handler), notifyHandlers.end());
-    }
-    
-    int SSDPListener::sendMulticast(const char * data, size_t len) {
-        if (mcastSocket) {
-            string groupAddr = config.getMulticastGroup();
-            int groupPort = config.getMulticastPort();
-			// return mcastSocket->send(groupAddr.c_str(), groupPort, data, len);
-
-			char buffer[4096] = {0,};
-			DatagramPacket packet(buffer, sizeof(buffer));
-			packet.write(data, len);
-			packet.setRemoteAddr(OS::InetAddress(groupAddr, groupPort));
-			return mcastSocket->send(packet);
-        }
-        return -1;
-    }
-    
-    /**
-     * @brief MsearchSender
-     */
-    
-    MsearchSender::MsearchSender() : msearchSocket(NULL) {
-        
-    }
-    MsearchSender::MsearchSender(SSDPConfig & config) : config(config), msearchSocket(NULL) {
-        
-    }
-    MsearchSender::~MsearchSender() {
-        
-    }
-    
-    void MsearchSender::start() {
-        
-        int msearchPort = config.getMsearchPort();
-        
-        if (!msearchSocket) {
-            
-            int bindResult = -1;
-            msearchSocket = new DatagramSocket(msearchPort);
-            
-            // https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers
-            // any random port range : 49152~65535
-			RangeRandomPortBinder binder(49152, 65535);
-
-			binder.start();
-			while (!binder.wantFinish()) {
-				try {
-					msearchSocket->bind(OS::Inet4Address(binder.getNextPort()));
-					bindResult = 0;
-					break;
-				} catch (IOException e) {
-				}
+	class PollThread : public OS::Thread {
+	private:
+		SSDPServer & server;
+		unsigned long timeout;
+	public:
+		PollThread(SSDPServer & server, unsigned long timeout) : server(server), timeout(timeout) {}
+		virtual ~PollThread() {}
+		virtual void run() {
+			while (!interrupted()) {
+				server.poll(timeout);
 			}
-            
-            if (bindResult < 0) {
-                throw IOException("bind() error", -1, 0);
-            }
-            
-            registerSelector(msearchSocket->getFd());
-        }
+		}
+	};
 
-    }
-    void MsearchSender::stop() {
-        if (msearchSocket) {
 
-			unregisterSelector(msearchSocket->getFd());
-
-            delete msearchSocket;
-            msearchSocket = NULL;
-        }
-    }
-    bool MsearchSender::isRunning() {
-        return msearchSocket != NULL;
-    }
-    void MsearchSender::poll(unsigned long timeout) {
-        getSelfPoller()->poll(timeout);
-    }
-    void MsearchSender::onIdle() {
-        
-    }
-    void MsearchSender::listen(SelectorPoller & poller) {
-        
-        if (poller.isReadableSelected(msearchSocket->getFd())) {
-            char buffer[4096] = {0,};
-            DatagramPacket packet(buffer, sizeof(buffer));
-            int len;
-            if ((len = msearchSocket->recv(packet)) > 0) {
-                handleMessage(packet);
-            }
-        }
-    }
-    
-    int MsearchSender::sendMsearch(const string & type) {
-        
-        int multicastPort = config.getMulticastPort();
-        string & group = config.getMulticastGroup();
-        string & userAgent = config.getUserAgent();
-        
-        string content = "M-SEARCH * HTTP/1.1\r\n"
-        "HOST: " + group +  ":" +  Text::toString(multicastPort) + "\r\n"
-        "MAN: \"ssdp:discover\"\r\n"
-        "MX: 10\r\n"
-        "ST: " + type + "\r\n"
-        "USER-AGENT: " + userAgent + "\r\n"
-        "Content-Length: 0\r\n"
-        "\r\n";
-        
-		char buffer[4096] = {0,};
-		DatagramPacket packet(buffer, sizeof(buffer));
-		packet.write(content);
-		packet.setRemoteAddr(InetAddress(group, multicastPort));
-		return  msearchSocket->send(packet);
-    }
-    
-    void MsearchSender::handleMessage(const DatagramPacket & packet) {
-        HttpHeaderParser parser;
-        string header(packet.getData(), packet.getLength());
-        
-        int ret = parser.parse(header);
-        if (ret == 0) {
-            HttpHeader & header = parser.getHeader();
-            string method = header.getPart1();
-            if (Text::startsWith(method, "HTTP")) {
-                onHttpResponse(header);
-            } else {
-                // unknown ssdp message
-            }
-        } else {
-            // unexpected message
-        }
-    }
-    
-    void MsearchSender::onHttpResponse(const HTTP::HttpHeader & header) {
-        for (size_t i = 0; i < httpResponseHandlers.size(); i++) {
-            httpResponseHandlers[i]->onHttpResponse(header);
-        }
-    }
-    void MsearchSender::addHttpResponseHandler(OnHttpResponseHandler * handler) {
-        httpResponseHandlers.push_back(handler);
-    }
-    void MsearchSender::removeHttpResponseHandler(OnHttpResponseHandler * handler) {
-        httpResponseHandlers.erase(std::remove(httpResponseHandlers.begin(),
-                                               httpResponseHandlers.end(),
-                                               handler), httpResponseHandlers.end());
-    }
-    
-
-	/**
-	 * @brief sddp server
-	 */
-	SSDPServer::SSDPServer() : pollingThread(NULL) {
-		init();
+	SSDPServer::SSDPServer() : mcastListener(MCAST_HOST, MCAST_PORT), handler(NULL), thread(NULL) {
 	}
-
-	SSDPServer::SSDPServer(SSDPConfig & config) : config(config), ssdpListener(config), msearchSender(config), pollingThread(NULL) {
-        init();
-	}
-
 	SSDPServer::~SSDPServer() {
-        stop();
 	}
-    
-    void SSDPServer::init() {
-		registerSelectablePollee(&ssdpListener);
-        registerSelectablePollee(&msearchSender);
-    }
 
 	void SSDPServer::start() {
-        
-        if (isRunning()) {
-            return;
-        }
-        
-        ssdpListener.start();
-        msearchSender.start();
+		mcastListener.start();
 	}
-	void SSDPServer::startAsync() {
-        
-        if (isRunning()) {
-            return;
-        }
-        
+	void SSDPServer::startAsync(unsigned long timeout) {
 		start();
-
-		startPollingThread();
+		if (!thread) {
+			thread = new PollThread(*this, timeout);
+			thread->start();
+		}
 	}
 	void SSDPServer::stop() {
-        
-        if (!isRunning()) {
-            return;
-        }
-
-		stopPollingThread();
-        
-        ssdpListener.stop();
-        msearchSender.stop();
-	}
-    
-	bool SSDPServer::isRunning() {
-        return ssdpListener.isRunning() && msearchSender.isRunning();
-	}
-
-	void SSDPServer::startPollingThread() {
-		if (!pollingThread) {
-			pollingThread = new PollingThread(this, 1000);
-			pollingThread->start();
+		if (thread) {
+			thread->interrupt();
+			thread->join();
+			delete thread;
+			thread = NULL;
 		}
+		mcastListener.stop();
 	}
-	void SSDPServer::stopPollingThread() {
-		if (pollingThread) {
-			pollingThread->interrupt();
-			pollingThread->join();
-			delete pollingThread;
-			pollingThread = NULL;
+    void SSDPServer::poll(unsigned long timeout) {
+        mcastListener.poll(timeout);
+    }
+	void SSDPServer::sendMsearchAndGather(const std::string & st, unsigned long timeoutSec) {
+		UTIL::AutoRef<SSDPMsearchSender> sender = sendMsearch(st, timeoutSec);
+		sender->gather(timeoutSec * 1000);
+		sender->close();
+	}
+	void SSDPServer::sendMsearchAndGather(std::vector<std::string> & st, unsigned long timeoutSec) {
+		UTIL::AutoRef<SSDPMsearchSender> sender = sendMsearch(st, timeoutSec);
+		sender->gather(timeoutSec * 1000);
+		sender->close();
+	}
+	UTIL::AutoRef<SSDPMsearchSender> SSDPServer::sendMsearch(const std::string & st, unsigned long timeoutSec) {
+		UTIL::AutoRef<SSDPMsearchSender> sender(new SSDPMsearchSender);
+		sender->setSSDPEventHandler(handler);
+		sender->sendMsearchAllInterfaces(st, timeoutSec, MCAST_HOST, MCAST_PORT);
+		return sender;
+	}
+	UTIL::AutoRef<SSDPMsearchSender> SSDPServer::sendMsearch(std::vector<std::string> & st, unsigned long timeoutSec) {
+		UTIL::AutoRef<SSDPMsearchSender> sender(new SSDPMsearchSender);
+		sender->setSSDPEventHandler(handler);
+		for (std::vector<std::string>::iterator iter = st.begin(); iter != st.end(); iter++) {
+			sender->sendMsearchAllInterfaces(*iter, timeoutSec, MCAST_HOST, MCAST_PORT);
 		}
+		return sender;
+	}
+	void SSDPServer::setSSDPEventHandler(SSDPEventHandler * handler) {
+		this->handler = handler;
+		mcastListener.setSSDPEventHandler(handler);
 	}
 
-	SSDPConfig & SSDPServer::getConfig() {
-		return config;
-	}
-    
-    int SSDPServer::sendMsearch(const string & type) {
-        return msearchSender.sendMsearch(type);
-    }
-    
-    void SSDPServer::addMsearchHandler(OnMsearchHandler * handler) {
-        ssdpListener.addMsearchHandler(handler);
-    }
-    void SSDPServer::removeMsearchHandler(OnMsearchHandler * handler) {
-        ssdpListener.removeMsearchHandler(handler);
-    }
-    void SSDPServer::addNotifyHandler(OnNotifyHandler * handler) {
-        ssdpListener.addNotifyHandler(handler);
-    }
-    void SSDPServer::removeNotifyHandler(OnNotifyHandler * handler) {
-        ssdpListener.removeNotifyHandler(handler);
-    }
-    void SSDPServer::addHttpResponseHandler(OnHttpResponseHandler * handler) {
-        msearchSender.addHttpResponseHandler(handler);
-    }
-    void SSDPServer::removeHttpResponseHandler(OnHttpResponseHandler * handler) {
-        msearchSender.removeHttpResponseHandler(handler);
-    }
 }

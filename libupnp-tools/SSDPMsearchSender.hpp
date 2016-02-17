@@ -3,7 +3,7 @@
 
 #include <liboslayer/os.hpp>
 #include <liboslayer/DatagramSocket.hpp>
-#include "SSDPPacketHandler.hpp"
+#include "SSDPEventHandler.hpp"
 
 namespace SSDP {
 
@@ -11,7 +11,7 @@ namespace SSDP {
 	private:
 		OS::DatagramSocket sock;
 		OS::Selector selector;
-		SSDPPacketHandler * handler;
+		SSDPEventHandler * handler;
 		bool _cancel;
 
 	public:
@@ -31,7 +31,7 @@ namespace SSDP {
 		void sendMsearchAllInterfaces(const std::string & st, unsigned long timeoutSec, const std::string & group, int port);
 		void sendMcastToAllInterfaces(const std::string & content, const std::string & group, int port);
 		std::string makeMsearchPacket(const std::string & st, unsigned long timeoutSec, const std::string & group, int port);
-		void setSSDPPacketHandler(SSDPPacketHandler * handler);
+		void setSSDPEventHandler(SSDPEventHandler * handler);
 	};
 }
 

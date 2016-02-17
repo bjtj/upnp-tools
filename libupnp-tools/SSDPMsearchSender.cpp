@@ -90,7 +90,7 @@ namespace SSDP {
 			"USER-AGENT: OS/version UPnP/1.1 product/version\r\n"
 			"\r\n";
 	}
-	void SSDPMsearchSender::setSSDPPacketHandler(SSDPPacketHandler * handler) {
+	void SSDPMsearchSender::setSSDPEventHandler(SSDPEventHandler * handler) {
 		this->handler = handler;
 	}
 }
