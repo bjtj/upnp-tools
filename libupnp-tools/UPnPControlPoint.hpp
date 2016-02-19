@@ -8,6 +8,9 @@
 
 namespace UPNP {
 
+	/**
+	 *
+	 */
 	class DeviceAddRemoveListener {
 	private:
 	public:
@@ -19,6 +22,9 @@ namespace UPNP {
 	};
 
 
+	/**
+	 *
+	 */
 	class UPnPControlPoint {
 	private:
 		UTIL::AutoRef<DeviceAddRemoveListener> deviceListener;

@@ -4,6 +4,8 @@
 
 namespace UPNP {
 
+	const static bool ENABLE_LOG = false;
+
 	using namespace UTIL;
 	using namespace SSDP;
 	using namespace std;
@@ -24,23 +26,29 @@ namespace UPNP {
 		}
 		virtual void onMsearch(SSDPHeader & header) {
 			OS::InetAddress addr = header.getRemoteAddr();
-			printf("> MSEARCH / ST: %s (%s:%d)\n",
-				   header.getSt().c_str(), addr.getHost().c_str(), addr.getPort());
+			if (ENABLE_LOG) {
+				printf("> MSEARCH / ST: %s (%s:%d)\n",
+					   header.getSt().c_str(), addr.getHost().c_str(), addr.getPort());
+			}
 		}
 		virtual void onNotify(SSDPHeader & header) {
 			OS::InetAddress addr = header.getRemoteAddr();
 			if (header.isNotifyAlive()) {
-				printf("> NOTIFY / alive :: URL: %s (%s:%d)\n",
-					   header.getLocation().c_str(), addr.getHost().c_str(), addr.getPort());
+				if (ENABLE_LOG) {
+					printf("> NOTIFY / alive :: URL: %s (%s:%d)\n",
+						   header.getLocation().c_str(), addr.getHost().c_str(), addr.getPort());
+				}
 
 				if (cp) {
 					cp->addDevice(header);
 				}
 			
 			} else {
-				printf("> NOTIFY / byebye :: %s (%s:%d)\n",
-					   header.getNt().c_str(), addr.getHost().c_str(), addr.getPort());
-
+				if (ENABLE_LOG) {
+					printf("> NOTIFY / byebye :: %s (%s:%d)\n",
+						   header.getNt().c_str(), addr.getHost().c_str(), addr.getPort());
+				}
+				
 				if (cp) {
 					cp->removeDevice(header);
 				}
@@ -50,10 +58,12 @@ namespace UPNP {
 			OS::InetAddress addr = header.getRemoteAddr();
 
 			Uuid uuid(header.getUsn());
-		
-			printf("> RESP / USN: %s / ST: %s / URL: %s (%s:%d)\n",
-				   header.getUsn().c_str(), header.getSt().c_str(),
-				   header.getLocation().c_str(), addr.getHost().c_str(), addr.getPort());
+
+			if (ENABLE_LOG) {
+				printf("> RESP / USN: %s / ST: %s / URL: %s (%s:%d)\n",
+					   header.getUsn().c_str(), header.getSt().c_str(),
+					   header.getLocation().c_str(), addr.getHost().c_str(), addr.getPort());
+			}
 
 			if (cp) {
 				cp->addDevice(header);
@@ -86,16 +96,39 @@ namespace UPNP {
 		if (!_sessionManager.has(udn)) {
 			AutoRef<UPnPSession> session = _sessionManager.prepareSession(udn);
 			session->buildDevice(header);
-			UPnPDevice & device = session->getDevice();
-			cout << " ++ DEVICE : " << device.getUdn() << " - " << device.getFriendlyName() << endl;
+			AutoRef<UPnPDevice> device = session->getRootDevice();
+			if (device.nil()) {
+				_sessionManager.remove(udn);
+				return;
+			}
+
+			if (ENABLE_LOG) {
+				cout << " ++ DEVICE : " << device->getUdn() << " - " << device->getFriendlyName() << endl;
+			}
+			
+
+			if (!deviceListener.nil()) {
+				deviceListener->onDeviceAdd(device);
+			}
 		}
 	}
 
 	void UPnPControlPoint::removeDevice(SSDPHeader & header) {
 		Uuid uuid(header.getUsn());
 		string udn = uuid.getUuid();
+
+		if (!deviceListener.nil()) {
+			AutoRef<UPnPDevice> device = _sessionManager[udn]->getRootDevice();
+			if (!device.nil()) {
+				deviceListener->onDeviceRemove(device);
+			}
+		}
+		
 		_sessionManager.remove(udn);
-		cout << " -- DEVICE : " << udn << endl;
+
+		if (ENABLE_LOG) {
+			cout << " -- DEVICE : " << udn << endl;
+		}
 	}
 
 	void UPnPControlPoint::clearDevices() {

@@ -23,13 +23,13 @@ namespace UPNP {
 		std::string fn;
 		std::string dd;
 		bool _completed;
-		UPnPDevice device;
+		UTIL::AutoRef<UPnPDevice> rootDevice;
 		unsigned long creationTime;
 		unsigned long updateTime;
 		unsigned long sessionTimeout;
 	
 	public:
-		UPnPSession(const std::string & udn) : udn(udn), _completed(false), creationTime(0), updateTime(0), sessionTimeout(0) {}
+		UPnPSession(const std::string & udn) : udn(udn), _completed(false), rootDevice(new UPnPDevice), creationTime(0), updateTime(0), sessionTimeout(0) {}
 		virtual ~UPnPSession() {printf("[%s] session instance destroyed\n", udn.c_str());}
 
 		void setCreationTime(unsigned long creationTime) {
@@ -58,11 +58,11 @@ namespace UPNP {
 
 		void buildDevice(SSDP::SSDPHeader & header) {
 			dd = HttpUtils::httpGet(header.getLocation());
-			device.baseUrl() = header.getLocation();
+			rootDevice->baseUrl() = header.getLocation();
 			XML::XmlDocument doc = XML::DomParser::parse(dd);
 			XML::XmlNode * deviceNode = doc.getRootNode()->getElementByTagName("device");
 			if (deviceNode) {
-				parseDeviceXmlNode(deviceNode, device);
+				parseDeviceXmlNode(deviceNode, *rootDevice);
 			}
 		}
 
@@ -167,12 +167,15 @@ namespace UPNP {
 			return _completed;
 		}
 
-		UPnPDevice & getDevice() {
-			return device;
+		UTIL::AutoRef<UPnPDevice> getRootDevice() {
+			return rootDevice;
 		}
 
 		std::string toString() {
-			return toString(device, 0);
+			if (rootDevice.nil()) {
+				return "";
+			}
+			return toString(*rootDevice, 0);
 		}
 
 		std::string toString(UPnPDevice & device, int depth) {
@@ -181,10 +184,10 @@ namespace UPNP {
 			str.append(depth, ' ');
 			if (depth > 0) { str.append(" - "); }
 			str.append(device.getUdn() + " (" + device.getFriendlyName() + ")");
-			str.append("\n");
 			
 			std::vector<UTIL::AutoRef<UPnPDevice> > & devices = device.devices();
 			for (std::vector<UTIL::AutoRef<UPnPDevice> >::iterator iter = devices.begin(); iter != devices.end(); iter++) {
+				str.append("\n");
 				str.append(toString(*(*iter), depth + 1));
 			}
 			return str;
