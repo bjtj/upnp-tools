@@ -1,20 +1,23 @@
 lib_LTLIBRARIES = libupnp-tools.la
 
 libupnp_toolsincdir = ${includedir}/libupnp-tools
-libupnp_toolsinc_HEADERS = HttpUtils.hpp \
+libupnp_toolsinc_HEADERS = \
+	HttpUtils.hpp \
 	NetworkUtil.hpp \
 	SSDPEventHandler.hpp \
 	SSDPHeader.hpp \
 	SSDPMsearchSender.hpp \
 	SSDPMulticastListener.hpp \
 	SSDPServer.hpp \
+	UPnPControlPoint.hpp \
 	UPnPModels.hpp \
 	UPnPSession.hpp \
 	Uuid.hpp \
 	XmlUtils.hpp
 
 
-libupnp_tools_la_SOURCES = HttpUtils.hpp \
+libupnp_tools_la_SOURCES = \
+	HttpUtils.hpp \
 	NetworkUtil.cpp \
 	NetworkUtil.hpp \
 	SSDPEventHandler.hpp \
@@ -26,11 +29,14 @@ libupnp_tools_la_SOURCES = HttpUtils.hpp \
 	SSDPMulticastListener.hpp \
 	SSDPServer.cpp \
 	SSDPServer.hpp \
+	UPnPControlPoint.cpp \
+	UPnPControlPoint.hpp \
 	UPnPModels.hpp \
 	UPnPSession.hpp \
 	Uuid.cpp \
 	Uuid.hpp \
 	XmlUtils.hpp
+
 
 libupnp_tools_la_CXXFLAGS = $(PTHREAD_CXXFLAGS) $(LIBOSLAYER_CFLAGS) $(LIBHTTP_SERVER_CFLAGS)
 libupnp_tools_la_LDFLAGS = $(PTHREAD_CFLAGS)

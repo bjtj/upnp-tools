@@ -21,7 +21,7 @@ namespace SSDP {
 	};
 
 
-	SSDPServer::SSDPServer() : mcastListener(MCAST_HOST, MCAST_PORT), handler(NULL), thread(NULL) {
+	SSDPServer::SSDPServer() : mcastListener(MCAST_HOST, MCAST_PORT), thread(NULL) {
 	}
 	SSDPServer::~SSDPServer() {
 	}
@@ -72,7 +72,7 @@ namespace SSDP {
 		}
 		return sender;
 	}
-	void SSDPServer::setSSDPEventHandler(SSDPEventHandler * handler) {
+	void SSDPServer::setSSDPEventHandler(UTIL::AutoRef<SSDPEventHandler> handler) {
 		this->handler = handler;
 		mcastListener.setSSDPEventHandler(handler);
 	}

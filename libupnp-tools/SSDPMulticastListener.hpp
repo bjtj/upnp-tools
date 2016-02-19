@@ -3,6 +3,7 @@
 
 #include <string>
 #include <liboslayer/os.hpp>
+#include <liboslayer/AutoRef.hpp>
 #include <liboslayer/DatagramSocket.hpp>
 #include "SSDPEventHandler.hpp"
 
@@ -13,7 +14,7 @@ namespace SSDP {
 		std::string group;
 		OS::MulticastSocket sock;
 		OS::Selector selector;
-		SSDPEventHandler * handler;
+		UTIL::AutoRef<SSDPEventHandler> handler;
 
 	public:
 		SSDPMulticastListener(const std::string & group, int port);
@@ -24,7 +25,7 @@ namespace SSDP {
 		bool isRunning();
 		void poll(unsigned long timeout);
 		void onReceive(OS::DatagramPacket & packet);
-		void setSSDPEventHandler(SSDPEventHandler * handler);
+		void setSSDPEventHandler(UTIL::AutoRef<SSDPEventHandler> handler);
 	};
 }
 

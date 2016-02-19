@@ -3,13 +3,13 @@
 
 namespace SSDP {
 
-	SSDPMsearchSender::SSDPMsearchSender() : handler(NULL), _cancel(false) {
+	SSDPMsearchSender::SSDPMsearchSender() : _cancel(false) {
 		init();
 	}
-	SSDPMsearchSender::SSDPMsearchSender(int port) : handler(NULL), _cancel(false), sock(port) {
+	SSDPMsearchSender::SSDPMsearchSender(int port) : _cancel(false), sock(port) {
 		init();
 	}
-	SSDPMsearchSender::SSDPMsearchSender(OS::InetAddress & bindAddr) : handler(NULL), _cancel(false), sock(bindAddr) {
+	SSDPMsearchSender::SSDPMsearchSender(OS::InetAddress & bindAddr) : _cancel(false), sock(bindAddr) {
 		init();
 
 	}
@@ -47,7 +47,7 @@ namespace SSDP {
 		SSDPHeader header(packet.getData(), packet.getRemoteAddr());
 
 		if (header.isSSDPResponse()) {
-			if (handler && handler->filter(header)) {
+			if (!handler.nil() && handler->filter(header)) {
 				handler->onMsearchResponse(header);
 			}
 		}
@@ -90,7 +90,7 @@ namespace SSDP {
 			"USER-AGENT: OS/version UPnP/1.1 product/version\r\n"
 			"\r\n";
 	}
-	void SSDPMsearchSender::setSSDPEventHandler(SSDPEventHandler * handler) {
+	void SSDPMsearchSender::setSSDPEventHandler(UTIL::AutoRef<SSDPEventHandler> handler) {
 		this->handler = handler;
 	}
 }

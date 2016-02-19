@@ -15,7 +15,7 @@ namespace SSDP {
 	class SSDPServer {
 	private:
 		SSDP::SSDPMulticastListener mcastListener;
-		SSDP::SSDPEventHandler * handler;
+		UTIL::AutoRef<SSDP::SSDPEventHandler> handler;
 		OS::Thread * thread;
 
 	public:
@@ -31,7 +31,7 @@ namespace SSDP {
 		void sendMsearchAndGather(std::vector<std::string> & st, unsigned long timeoutSec);
 		UTIL::AutoRef<SSDPMsearchSender> sendMsearch(const std::string & st, unsigned long timeoutSec);
 		UTIL::AutoRef<SSDPMsearchSender> sendMsearch(std::vector<std::string> & st, unsigned long timeoutSec);
-		void setSSDPEventHandler(SSDPEventHandler * handler);
+		void setSSDPEventHandler(UTIL::AutoRef<SSDPEventHandler> handler);
 	};
 }
 

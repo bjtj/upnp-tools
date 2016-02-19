@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <liboslayer/os.hpp>
 #include <liboslayer/StringElement.hpp>
 #include <liboslayer/XmlParser.hpp>
 #include "SSDPHeader.hpp"
@@ -13,6 +14,9 @@
 
 namespace UPNP {
 
+	/**
+	 *
+	 */
 	class UPnPSession {
 	private:
 		static unsigned long idx_seed;
@@ -22,13 +26,41 @@ namespace UPNP {
 		std::string dd;
 		bool _completed;
 		UPnPDevice device;
+		unsigned long creationTime;
+		unsigned long updateTime;
+		unsigned long sessionTimeout;
 	
 	public:
-		UPnPSession(const std::string & udn) : udn(udn), idx(idx_seed++), _completed(false) {}
+		UPnPSession(const std::string & udn) : udn(udn), idx(idx_seed++), _completed(false),
+											   creationTime(0), updateTime(0), sessionTimeout(0) {}
 		virtual ~UPnPSession() {printf("[%s] session instance destroyed\n", udn.c_str());}
 
 		unsigned long getUniqueSessionId() {
 			return idx;
+		}
+
+		void setCreationTime(unsigned long creationTime) {
+			this->creationTime = creationTime;
+		}
+
+		void setUpdateTime(unsigned long updateTime) {
+			this->updateTime = updateTime;
+		}
+
+		void setSessionTimeout(unsigned long sessionTimeout) {
+			this->sessionTimeout = sessionTimeout;
+		}
+
+		unsigned long lifetime() {
+			return (OS::tick_milli() - creationTime);
+		}
+
+		unsigned long duration() {
+			return (OS::tick_milli() - updateTime);
+		}
+
+		bool outdated() {
+			return (duration() >= sessionTimeout);
 		}
 
 		void buildDevice(SSDP::SSDPHeader & header) {
@@ -37,33 +69,31 @@ namespace UPNP {
 			XML::XmlDocument doc = XML::DomParser::parse(dd);
 			XML::XmlNode * deviceNode = doc.getRootNode()->getElementByTagName("device");
 			if (deviceNode) {
-				parseDeviceXmlNode(deviceNode);
+				parseDeviceXmlNode(deviceNode, device);
 			}
 		}
 
-		void parseDeviceXmlNode(XML::XmlNode * deviceXml) {
-			parseDevicePropertiesFromDeviceXmlNode(deviceXml);
-			parseServiceListFromDeviceXmlNode(deviceXml);
+		void parseDeviceXmlNode(XML::XmlNode * deviceXml, UPnPDevice & device) {
+			parseDevicePropertiesFromDeviceXmlNode(deviceXml, device);
+			parseServiceListFromDeviceXmlNode(deviceXml, device);
+
+			std::vector<XML::XmlNode*> devices =  deviceXml->getElementsByTagNameInDepth("device", 2);
+			for (std::vector<XML::XmlNode*>::iterator iter = devices.begin(); iter != devices.end(); iter++) {
+				parseDeviceXmlNode(*iter, *device.prepareDevice());
+			}
 		}
 
-		void parseDevicePropertiesFromDeviceXmlNode(XML::XmlNode * deviceXml) {
+		void parseDevicePropertiesFromDeviceXmlNode(XML::XmlNode * deviceXml, UPnPDevice & device) {
 			parsePropertiesFromXmlNode(deviceXml, device);
 		}
 
-		void parseServiceListFromDeviceXmlNode(XML::XmlNode * deviceXml) {
-			std::vector<XML::XmlNode*> services = deviceXml->getElementsByTagName("service");
+		void parseServiceListFromDeviceXmlNode(XML::XmlNode * deviceXml, UPnPDevice & device) {
+			std::vector<XML::XmlNode*> services = deviceXml->getElementsByTagNameInDepth("service", 2);
 			for (std::vector<XML::XmlNode*>::iterator iter = services.begin(); iter != services.end(); iter++) {
 				UTIL::AutoRef<UPnPService> service(new UPnPService(NULL));
-
 				parseServicePropertiesFromServiceXmlNode(*iter, &service);
-
 				device.addService(service);
-			
 				buildService(*service);
-
-				for (std::vector<UPnPAction>::iterator iter = service->actions().begin();
-					 iter != service->actions().end(); iter++) {
-				}
 			}
 		}
 
@@ -76,6 +106,9 @@ namespace UPNP {
 				HTTP::Url u = service.getDevice()->baseUrl().relativePath(service.getScpdUrl());
 				std::string scpd = HttpUtils::httpGet(u);
 				XML::XmlDocument doc = XML::DomParser::parse(scpd);
+				if (doc.getRootNode().nil()) {
+					return;
+				}
 				std::vector<XML::XmlNode*> actions = doc.getRootNode()->getElementsByTagName("action");
 				for (std::vector<XML::XmlNode*>::iterator iter = actions.begin(); iter != actions.end(); iter++) {
 					service.addAction(parseActionFromActionXml(*iter));
@@ -144,10 +177,32 @@ namespace UPNP {
 		UPnPDevice & getDevice() {
 			return device;
 		}
+
+		std::string toString() {
+			return toString(device, 0);
+		}
+
+		std::string toString(UPnPDevice & device, int depth) {
+			std::string str;
+
+			str.append(depth, ' ');
+			if (depth > 0) { str.append(" - "); }
+			str.append(device.getUdn() + " (" + device.getFriendlyName() + ")");
+			str.append("\n");
+			
+			std::vector<UTIL::AutoRef<UPnPDevice> > & devices = device.devices();
+			for (std::vector<UTIL::AutoRef<UPnPDevice> >::iterator iter = devices.begin(); iter != devices.end(); iter++) {
+				str.append(toString(*(*iter), depth + 1));
+			}
+			return str;
+		}
 	};
 
 	unsigned long UPnPSession::idx_seed = 0;
 
+	/**
+	 *
+	 */
 	class UPnPSessionManager {
 	private:
 		std::map<std::string, UTIL::AutoRef<UPnPSession> > sessions;
