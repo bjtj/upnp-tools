@@ -19,8 +19,6 @@ namespace UPNP {
 	 */
 	class UPnPSession {
 	private:
-		static unsigned long idx_seed;
-		unsigned long idx;
 		std::string udn;
 		std::string fn;
 		std::string dd;
@@ -31,13 +29,8 @@ namespace UPNP {
 		unsigned long sessionTimeout;
 	
 	public:
-		UPnPSession(const std::string & udn) : udn(udn), idx(idx_seed++), _completed(false),
-											   creationTime(0), updateTime(0), sessionTimeout(0) {}
+		UPnPSession(const std::string & udn) : udn(udn), _completed(false), creationTime(0), updateTime(0), sessionTimeout(0) {}
 		virtual ~UPnPSession() {printf("[%s] session instance destroyed\n", udn.c_str());}
-
-		unsigned long getUniqueSessionId() {
-			return idx;
-		}
 
 		void setCreationTime(unsigned long creationTime) {
 			this->creationTime = creationTime;
@@ -197,8 +190,6 @@ namespace UPNP {
 			return str;
 		}
 	};
-
-	unsigned long UPnPSession::idx_seed = 0;
 
 	/**
 	 *

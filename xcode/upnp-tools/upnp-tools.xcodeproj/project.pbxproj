@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		6C4A9F411C081A2F00A45604 /* NetworkUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C4A9F3F1C081A2F00A45604 /* NetworkUtil.cpp */; };
 		6C4A9F421C081A2F00A45604 /* NetworkUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C4A9F3F1C081A2F00A45604 /* NetworkUtil.cpp */; };
+		6C59ABE91C76CAB400F814A4 /* UPnPControlPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C59ABE71C76CAB400F814A4 /* UPnPControlPoint.cpp */; };
+		6C59ABEA1C76CAB400F814A4 /* UPnPControlPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C59ABE71C76CAB400F814A4 /* UPnPControlPoint.cpp */; };
 		6C9FC77A1C17005C00B292B8 /* SSDPHeader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C9FC7711C17005C00B292B8 /* SSDPHeader.cpp */; };
 		6C9FC77B1C17005C00B292B8 /* SSDPHeader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C9FC7711C17005C00B292B8 /* SSDPHeader.cpp */; };
 		6C9FC77C1C17005C00B292B8 /* SSDPMsearchSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C9FC7731C17005C00B292B8 /* SSDPMsearchSender.cpp */; };
@@ -114,6 +116,8 @@
 /* Begin PBXFileReference section */
 		6C4A9F3F1C081A2F00A45604 /* NetworkUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkUtil.cpp; path = "../../libupnp-tools/NetworkUtil.cpp"; sourceTree = "<group>"; };
 		6C4A9F401C081A2F00A45604 /* NetworkUtil.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = NetworkUtil.hpp; path = "../../libupnp-tools/NetworkUtil.hpp"; sourceTree = "<group>"; };
+		6C59ABE71C76CAB400F814A4 /* UPnPControlPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UPnPControlPoint.cpp; path = "../../libupnp-tools/UPnPControlPoint.cpp"; sourceTree = "<group>"; };
+		6C59ABE81C76CAB400F814A4 /* UPnPControlPoint.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UPnPControlPoint.hpp; path = "../../libupnp-tools/UPnPControlPoint.hpp"; sourceTree = "<group>"; };
 		6C9FC7711C17005C00B292B8 /* SSDPHeader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SSDPHeader.cpp; path = "../../libupnp-tools/SSDPHeader.cpp"; sourceTree = "<group>"; };
 		6C9FC7721C17005C00B292B8 /* SSDPHeader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SSDPHeader.hpp; path = "../../libupnp-tools/SSDPHeader.hpp"; sourceTree = "<group>"; };
 		6C9FC7731C17005C00B292B8 /* SSDPMsearchSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SSDPMsearchSender.cpp; path = "../../libupnp-tools/SSDPMsearchSender.cpp"; sourceTree = "<group>"; };
@@ -193,8 +197,6 @@
 			children = (
 				E876F9D71C75341B000A8B4B /* HttpUtils.hpp */,
 				E876F9D81C75341B000A8B4B /* SSDPEventHandler.hpp */,
-				E876F9D91C75341B000A8B4B /* UPnPModels.hpp */,
-				E876F9DA1C75341B000A8B4B /* UPnPSession.hpp */,
 				E876F9DB1C75341B000A8B4B /* XmlUtils.hpp */,
 				6C9FC7711C17005C00B292B8 /* SSDPHeader.cpp */,
 				6C9FC7721C17005C00B292B8 /* SSDPHeader.hpp */,
@@ -208,6 +210,10 @@
 				E857BB141BE60BBA00D2022F /* Uuid.hpp */,
 				6C4A9F3F1C081A2F00A45604 /* NetworkUtil.cpp */,
 				6C4A9F401C081A2F00A45604 /* NetworkUtil.hpp */,
+				6C59ABE71C76CAB400F814A4 /* UPnPControlPoint.cpp */,
+				6C59ABE81C76CAB400F814A4 /* UPnPControlPoint.hpp */,
+				E876F9D91C75341B000A8B4B /* UPnPModels.hpp */,
+				E876F9DA1C75341B000A8B4B /* UPnPSession.hpp */,
 			);
 			name = "upnp-tools-c++";
 			sourceTree = "<group>";
@@ -352,6 +358,7 @@
 				6C9FC77B1C17005C00B292B8 /* SSDPHeader.cpp in Sources */,
 				6C9FC77F1C17005C00B292B8 /* SSDPMulticastListener.cpp in Sources */,
 				6C4A9F421C081A2F00A45604 /* NetworkUtil.cpp in Sources */,
+				6C59ABEA1C76CAB400F814A4 /* UPnPControlPoint.cpp in Sources */,
 				E857BB161BE60BBA00D2022F /* Uuid.cpp in Sources */,
 				E8447CF61BF4BE22000E2903 /* upnp_tools.mm in Sources */,
 				E8E0FECF1BD8492300292C54 /* SSDPServer.cpp in Sources */,
@@ -366,6 +373,7 @@
 				6C9FC77A1C17005C00B292B8 /* SSDPHeader.cpp in Sources */,
 				E8FAB2C61BD7D8FE00E89DC5 /* SSDPServer.cpp in Sources */,
 				6C9FC77E1C17005C00B292B8 /* SSDPMulticastListener.cpp in Sources */,
+				6C59ABE91C76CAB400F814A4 /* UPnPControlPoint.cpp in Sources */,
 				6C4A9F411C081A2F00A45604 /* NetworkUtil.cpp in Sources */,
 				E857BB151BE60BBA00D2022F /* Uuid.cpp in Sources */,
 				E8447CF51BF4BE22000E2903 /* upnp_tools.mm in Sources */,
