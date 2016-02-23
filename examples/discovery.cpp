@@ -5,6 +5,7 @@
 #include <liboslayer/AutoRef.hpp>
 #include <liboslayer/Text.hpp>
 #include <libupnp-tools/UPnPControlPoint.hpp>
+#include <libupnp-tools/UPnPActionInvoker.hpp>
 
 using namespace std;
 using namespace UTIL;
@@ -65,8 +66,24 @@ public:
 	}
 };
 
+class Selection {
+private:
+	string _udn;
+	string _serviceType;
+	string _action;
+public:
+    Selection() {}
+    virtual ~Selection() {}
+
+	string & udn() {return _udn;}
+	string & serviceType() {return _serviceType;}
+	string & action() {return _action;}
+};
+
 
 int run(int argc, char *args[]) {
+
+	Selection selection;
 
 	UPnPControlPoint cp;
 
@@ -84,6 +101,45 @@ int run(int argc, char *args[]) {
 				int idx = Text::toInt(buffer);
 				cout << "idx : " << idx << endl;
 				selectDeviceByIndex(cp.sessionManager(), (size_t)idx);
+			} else if (!strncmp(buffer, "udn ", 4)) {
+				selection.udn() = string(buffer + 4);
+			} else if (!strcmp(buffer, "udn")) {
+				cout << "UDN: " << selection.udn() << endl;
+			} else if (!strncmp(buffer, "service ", 8)) {
+				selection.serviceType() = string(buffer + 8);
+			} else if (!strcmp(buffer, "service")) {
+				cout << "Service : " << selection.serviceType() << endl;
+			} else if (!strncmp(buffer, "action ", 7)) {
+				selection.action() = string(buffer + 7);
+			} else if (!strcmp(buffer, "action")) {
+				cout << "Action : " << selection.action() << endl;
+			} else if (!strcmp(buffer, "invoke")) {
+				try {
+					UPnPActionInvoker invoker = cp.prepareActionInvoke(selection.udn(), selection.serviceType());
+					invoker.actionName() = selection.action();
+					UPnPAction action = invoker.getService()->getAction(selection.action());
+					if (action.name().empty()) {
+						throw "Error: no action found";
+					}
+					vector<UPnPArgument> & arguments = action.arguments();
+					for (vector<UPnPArgument>::iterator iter = arguments.begin(); iter != arguments.end(); iter++) {
+						if (iter->direction() == UPnPArgument::IN_DIRECTION) {
+							char param[1024] = {0,};
+							prompt(iter->name() + " : ", param, sizeof(param));
+							invoker.inParams()[iter->name()] = string(param);
+						}
+					}
+					invoker.invoke();
+					map<string, string> & params = invoker.outParams();
+					for (map<string, string>::iterator iter = params.begin(); iter != params.end(); iter++) {
+						string name = iter->first;
+						string & value = iter->second;
+
+						cout << " - " << name << " := " << value << endl;
+					}
+				} catch (const char * e) {
+					cout << "Error: " << e << endl;
+				}
 			} else {
 				cout << " ** Searching... **" << endl;
 				cp.sendMsearchAndWait(buffer, 3);

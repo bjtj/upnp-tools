@@ -1,0 +1,521 @@
+<?xml version="1.0"?>
+<root xmlns="urn:schemas-upnp-org:device-1-0">
+<specVersion>
+<major>1</major>
+<minor>0</minor>
+</specVersion><device>
+<deviceType>urn:schemas-upnp-org:device:InternetGatewayDevice:1</deviceType>
+<friendlyName>EFM Networks ipTIME G104M</friendlyName>
+<manufacturer>EFM Networks</manufacturer>
+<manufacturerURL>www.iptime.co.kr</manufacturerURL>
+<modelDescription>EFM Networks ipTIME G104M</modelDescription>
+<modelName>ipTIME G104M</modelName>
+<modelNumber>1</modelNumber>
+<modelURL>www.iptime.co.kr</modelURL>
+<serialNumber>12345678</serialNumber>
+<presentationURL>http://192.168.0.1/</presentationURL>
+<UDN>uuid:fc4ec57e-b051-11db-88f8-0060085db3f6</UDN>
+<serviceList>
+<service>
+<serviceType>urn:schemas-dummy-com:service:Dummy:1</serviceType>
+<serviceId>urn:dummy-com:serviceId:dummy1</serviceId>
+<controlURL>/dummy</controlURL>
+<eventSubURL>/dummy</eventSubURL>
+<SCPDURL>/etc/linuxigd/dummy.xml</SCPDURL>
+</service></serviceList><deviceList>
+<device>
+<deviceType>urn:schemas-upnp-org:device:WANDevice:1</deviceType>
+<friendlyName>WANDevice</friendlyName>
+<manufacturer>UPnP</manufacturer>
+<manufacturerURL>www.iptime.co.kr</manufacturerURL>
+<modelDescription>WAN Device</modelDescription>
+<modelName>WAN Device</modelName>
+<modelNumber>20090617</modelNumber>
+<modelURL>www.iptime.co.kr</modelURL>
+<serialNumber>12345678</serialNumber>
+<UDN>uuid:fc4ec57e-b051-11db-88f8-0060085db3f6</UDN>
+<UPC>UPNPD</UPC>
+<serviceList>
+<service>
+<serviceType>urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1</serviceType>
+<serviceId>urn:upnp-org:serviceId:WANCommonIFC1</serviceId>
+<controlURL>/etc/linuxigd/gateicfgSCPD.ctl</controlURL>
+<eventSubURL>/etc/linuxigd/gateicfgSCPD.evt</eventSubURL>
+<SCPDURL>/etc/linuxigd/gateicfgSCPD.xml</SCPDURL>
+</service></serviceList><deviceList>
+<device>
+<deviceType>urn:schemas-upnp-org:device:WANConnectionDevice:1</deviceType>
+<friendlyName>WANConnectionDevice</friendlyName>
+<manufacturer>UPnP</manufacturer>
+<manufacturerURL>www.iptime.co.kr</manufacturerURL>
+<modelDescription>UPnP daemon</modelDescription>
+<modelName>UPnPd</modelName>
+<modelNumber>20090617</modelNumber>
+<modelURL>www.iptime.co.kr</modelURL>
+<serialNumber>12345678</serialNumber>
+<UDN>uuid:fc4ec57e-b051-11db-88f8-0060085db3f6</UDN>
+<UPC>UPNPD</UPC>
+<serviceList>
+<service>
+<serviceType>urn:schemas-upnp-org:service:WANIPConnection:1</serviceType>
+<serviceId>urn:upnp-org:serviceId:WANIPConn1</serviceId>
+<controlURL>/etc/linuxigd/gateconnSCPD.ctl</controlURL>
+<eventSubURL>/etc/linuxigd/gateconnSCPD.evt</eventSubURL>
+<SCPDURL>/etc/linuxigd/gateconnSCPD.xml</SCPDURL>
+</service></serviceList></device></deviceList></device></deviceList></device></root><?xml version="1.0"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0"> <specVersion>    <major>1</major>    <minor>0</minor>  </specVersion>  <actionList />  <serviceStateTable /></scpd>
+<?xml version="1.0"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0"><specVersion><major>1</major><minor>0</minor></specVersion><actionList><action><name>GetCommonLinkProperties</name><argumentList><argument><name>NewWANAccessType</name><direction>out</direction><relatedStateVariable>WANAccessType</relatedStateVariable></argument><argument><name>NewLayer1UpstreamMaxBitRate</name><direction>out</direction><relatedStateVariable>Layer1UpstreamMaxBitRate</relatedStateVariable></argument><argument><name>NewLayer1DownstreamMaxBitRate</name><direction>out</direction><relatedStateVariable>Layer1DownstreamMaxBitRate</relatedStateVariable></argument><argument><name>NewPhysicalLinkStatus</name><direction>out</direction><relatedStateVariable>PhysicalLinkStatus</relatedStateVariable></argument></argumentList></action></actionList><serviceStateTable><stateVariable sendEvents="no"><name>WANAccessType</name><dataType>string</dataType><allowedValueList><allowedValue>DSL</allowedValue><allowedValue>POTS</allowedValue><allowedValue>Cable</allowedValue><allowedValue>Ethernet</allowedValue></allowedValueList></stateVariable><stateVariable sendEvents="no"><name>Layer1UpstreamMaxBitRate</name><dataType>ui4</dataType></stateVariable><stateVariable sendEvents="no"><name>Layer1DownstreamMaxBitRate</name><dataType>ui4</dataType></stateVariable><stateVariable sendEvents="no"><name>PhysicalLinkStatus</name><dataType>string</dataType><allowedValueList><allowedValue>Up</allowedValue><allowedValue>Down</allowedValue><allowedValue>Initializing</allowedValue><allowedValue>Unavailable</allowedValue></allowedValueList></stateVariable></serviceStateTable></scpd><?xml version="1.0"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0"><specVersion><major>1</major><minor>0</minor></specVersion><actionList><action><name>AddPortMapping</name><argumentList><argument><name>NewRemoteHost</name><direction>in</direction><relatedStateVariable>RemoteHost</relatedStateVariable></argument><argument><name>NewExternalPort</name><direction>in</direction><relatedStateVariable>ExternalPort</relatedStateVariable></argument><argument><name>NewProtocol</name><direction>in</direction><relatedStateVariable>PortMappingProtocol</relatedStateVariable></argument><argument><name>NewInternalPort</name><direction>in</direction><relatedStateVariable>InternalPort</relatedStateVariable></argument><argument><name>NewInternalClient</name><direction>in</direction><relatedStateVariable>InternalClient</relatedStateVariable></argument><argument><name>NewEnabled</name><direction>in</direction><relatedStateVariable>PortMappingEnabled</relatedStateVariable></argument><argument><name>NewPortMappingDescription</name><direction>in</direction><relatedStateVariable>PortMappingDescription</relatedStateVariable></argument><argument><name>NewLeaseDuration</name><direction>in</direction><relatedStateVariable>PortMappingLeaseDuration</relatedStateVariable></argument></argumentList></action><action><name>GetExternalIPAddress</name><argumentList><argument><name>NewExternalIPAddress</name><direction>out</direction><relatedStateVariable>ExternalIPAddress</relatedStateVariable></argument></argumentList></action><action><name>DeletePortMapping</name><argumentList><argument><name>NewRemoteHost</name><direction>in</direction><relatedStateVariable>RemoteHost</relatedStateVariable></argument><argument><name>NewExternalPort</name><direction>in</direction><relatedStateVariable>ExternalPort</relatedStateVariable></argument><argument><name>NewProtocol</name><direction>in</direction><relatedStateVariable>PortMappingProtocol</relatedStateVariable></argument></argumentList></action><action><name>SetConnectionType</name><argumentList><argument><name>NewConnectionType</name><direction>in</direction><relatedStateVariable>ConnectionType</relatedStateVariable></argument></argumentList></action><action><name>GetConnectionTypeInfo</name><argumentList><argument><name>NewConnectionType</name><direction>out</direction><relatedStateVariable>ConnectionType</relatedStateVariable></argument><argument><name>NewPossibleConnectionTypes</name><direction>out</direction><relatedStateVariable>PossibleConnectionTypes</relatedStateVariable></argument></argumentList></action><action><name>RequestConnection</name></action><action><name>ForceTermination</name></action><action><name>GetStatusInfo</name><argumentList><argument><name>NewConnectionStatus</name><direction>out</direction><relatedStateVariable>ConnectionStatus</relatedStateVariable></argument><argument><name>NewLastConnectionError</name><direction>out</direction><relatedStateVariable>LastConnectionError</relatedStateVariable></argument><argument><name>NewUptime</name><direction>out</direction><relatedStateVariable>Uptime</relatedStateVariable></argument></argumentList></action><action><name>GetNATRSIPStatus</name><argumentList><argument><name>NewRSIPAvailable</name><direction>out</direction><relatedStateVariable>RSIPAvailable</relatedStateVariable></argument><argument><name>NewNATEnabled</name><direction>out</direction><relatedStateVariable>NATEnabled</relatedStateVariable></argument></argumentList></action><action><name>GetGenericPortMappingEntry</name><argumentList><argument><name>NewPortMappingIndex</name><direction>in</direction><relatedStateVariable>PortMappingNumberOfEntries</relatedStateVariable></argument><argument><name>NewRemoteHost</name><direction>out</direction><relatedStateVariable>RemoteHost</relatedStateVariable></argument><argument><name>NewExternalPort</name><direction>out</direction><relatedStateVariable>ExternalPort</relatedStateVariable></argument><argument><name>NewProtocol</name><direction>out</direction><relatedStateVariable>PortMappingProtocol</relatedStateVariable></argument><argument><name>NewInternalPort</name><direction>out</direction><relatedStateVariable>InternalPort</relatedStateVariable></argument><argument><name>NewInternalClient</name><direction>out</direction><relatedStateVariable>InternalClient</relatedStateVariable></argument><argument><name>NewEnabled</name><direction>out</direction><relatedStateVariable>PortMappingEnabled</relatedStateVariable></argument><argument><name>NewPortMappingDescription</name><direction>out</direction><relatedStateVariable>PortMappingDescription</relatedStateVariable></argument><argument><name>NewLeaseDuration</name><direction>out</direction><relatedStateVariable>PortMappingLeaseDuration</relatedStateVariable></argument></argumentList></action><action><name>GetSpecificPortMappingEntry</name><argumentList><argument><name>NewRemoteHost</name><direction>in</direction><relatedStateVariable>RemoteHost</relatedStateVariable></argument><argument><name>NewExternalPort</name><direction>in</direction><relatedStateVariable>ExternalPort</relatedStateVariable></argument><argument><name>NewProtocol</name><direction>in</direction><relatedStateVariable>PortMappingProtocol</relatedStateVariable></argument><argument><name>NewInternalPort</name><direction>out</direction><relatedStateVariable>InternalPort</relatedStateVariable></argument><argument><name>NewInternalClient</name><direction>out</direction><relatedStateVariable>InternalClient</relatedStateVariable></argument><argument><name>NewEnabled</name><direction>out</direction><relatedStateVariable>PortMappingEnabled</relatedStateVariable></argument><argument><name>NewPortMappingDescription</name><direction>out</direction><relatedStateVariable>PortMappingDescription</relatedStateVariable></argument><argument><name>NewLeaseDuration</name><direction>out</direction><relatedStateVariable>PortMappingLeaseDuration</relatedStateVariable></argument></argumentList></action></actionList><serviceStateTable><stateVariable sendEvents="no"><name>ConnectionType</name><dataType>string</dataType></stateVariable><stateVariable sendEvents="no"><name>PossibleConnectionTypes</name><dataType>string</dataType><allowedValueList><allowedValue>Unconfigured</allowedValue><allowedValue>IP_Routed</allowedValue><allowedValue>IP_Bridged</allowedValue></allowedValueList></stateVariable><stateVariable sendEvents="no"><name>ConnectionStatus</name><dataType>string</dataType><allowedValueList><allowedValue>Unconfigured</allowedValue><allowedValue>Connecting</allowedValue><allowedValue>Connected</allowedValue><allowedValue>PendingDisconnect</allowedValue><allowedValue>Disconnecting</allowedValue><allowedValue>Disconnected</allowedValue></allowedValueList></stateVariable><stateVariable sendEvents="no"><name>Uptime</name><dataType>ui4</dataType></stateVariable><stateVariable sendEvents="no"><name>LastConnectionError</name><dataType>string</dataType><allowedValueList><allowedValue>ERROR_NONE</allowedValue></allowedValueList></stateVariable><stateVariable sendEvents="no"><name>RSIPAvailable</name><dataType>boolean</dataType></stateVariable><stateVariable sendEvents="no"><name>NATEnabled</name><dataType>boolean</dataType></stateVariable><stateVariable sendEvents="no"><name>ExternalIPAddress</name><dataType>string</dataType></stateVariable><stateVariable sendEvents="no"><name>PortMappingNumberOfEntries</name><dataType>ui2</dataType></stateVariable><stateVariable sendEvents="no"><name>PortMappingEnabled</name><dataType>boolean</dataType></stateVariable><stateVariable sendEvents="no"><name>PortMappingLeaseDuration</name><dataType>ui4</dataType></stateVariable><stateVariable sendEvents="no"><name>RemoteHost</name><dataType>string</dataType></stateVariable><stateVariable sendEvents="no"><name>ExternalPort</name><dataType>ui2</dataType></stateVariable><stateVariable sendEvents="no"><name>InternalPort</name><dataType>ui2</dataType></stateVariable><stateVariable sendEvents="no"><name>PortMappingProtocol</name><dataType>string</dataType><allowedValueList><allowedValue>TCP</allowedValue><allowedValue>UDP</allowedValue></allowedValueList></stateVariable><stateVariable sendEvents="no"><name>InternalClient</name><dataType>string</dataType></stateVariable><stateVariable sendEvents="no"><name>PortMappingDescription</name><dataType>string</dataType></stateVariable></serviceStateTable></scpd> ** Added: EFM Networks ipTIME G104M
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns="urn:schemas-upnp-org:device-1-0" xmlns:dlna="urn:schemas-dlna-org:device-1-0">
+  <specVersion>
+    <major>1</major>
+    <minor>0</minor>
+  </specVersion>
+  <device>
+    <deviceType>urn:schemas-upnp-org:device:MediaServer:1</deviceType>
+    <friendlyName>Plex Media Server: TJ's MAC mini</friendlyName>
+    <manufacturer>Plex, Inc.</manufacturer>
+    <manufacturerURL>http://www.plexapp.com/</manufacturerURL>
+    <modelDescription>Plex Media Server</modelDescription>
+    <modelName>Plex Media Server</modelName>
+    <modelURL>http://www.plexapp.com/</modelURL>
+    <modelNumber>0.9.15.3</modelNumber>
+    <serialNumber></serialNumber>
+    <UDN>uuid:2d8b30ae-1583-8c13-2e08-cda2cbf6e314</UDN>
+    <dlna:X_DLNADOC xmlns:dlna="urn:schemas-dlna-org:device-1-0">DMS-1.50</dlna:X_DLNADOC>
+    <iconList>
+      <icon>
+        <mimetype>image/png</mimetype>
+        <width>260</width>
+        <height>260</height>
+        <depth>24</depth>
+        <url>/proxy/027d672c6a70ab72aa7c/260x260.png</url>
+      </icon>
+      <icon>
+        <mimetype>image/png</mimetype>
+        <width>120</width>
+        <height>120</height>
+        <depth>24</depth>
+        <url>/proxy/74b2fce849107951c424/120x120.png</url>
+      </icon>
+      <icon>
+        <mimetype>image/png</mimetype>
+        <width>48</width>
+        <height>48</height>
+        <depth>24</depth>
+        <url>/proxy/23b1739a6c33d02bf0ba/48x48.png</url>
+      </icon>
+      <icon>
+        <mimetype>image/jpeg</mimetype>
+        <width>260</width>
+        <height>260</height>
+        <depth>24</depth>
+        <url>/proxy/e2ba69ed701bbef38438/260x260.jpg</url>
+      </icon>
+      <icon>
+        <mimetype>image/jpeg</mimetype>
+        <width>120</width>
+        <height>120</height>
+        <depth>24</depth>
+        <url>/proxy/ae306aa36533cd3e14b4/120x120.jpg</url>
+      </icon>
+      <icon>
+        <mimetype>image/jpeg</mimetype>
+        <width>48</width>
+        <height>48</height>
+        <depth>24</depth>
+        <url>/proxy/f5095c764513b3c19c6b/48x48.jpg</url>
+      </icon>
+    </iconList>
+    <serviceList>
+      <service>
+        <serviceType>urn:microsoft.com:service:X_MS_MediaReceiverRegistrar:1</serviceType>
+        <serviceId>urn:microsoft.com:serviceId:X_MS_MediaReceiverRegistrar</serviceId>
+        <SCPDURL>/X_MS_MediaReceiverRegistrar/2d8b30ae-1583-8c13-2e08-cda2cbf6e314/scpd.xml</SCPDURL>
+        <controlURL>/X_MS_MediaReceiverRegistrar/2d8b30ae-1583-8c13-2e08-cda2cbf6e314/control.xml</controlURL>
+        <eventSubURL>/X_MS_MediaReceiverRegistrar/2d8b30ae-1583-8c13-2e08-cda2cbf6e314/event.xml</eventSubURL>
+      </service>
+      <service>
+        <serviceType>urn:schemas-upnp-org:service:ContentDirectory:1</serviceType>
+        <serviceId>urn:upnp-org:serviceId:ContentDirectory</serviceId>
+        <SCPDURL>/ContentDirectory/2d8b30ae-1583-8c13-2e08-cda2cbf6e314/scpd.xml</SCPDURL>
+        <controlURL>/ContentDirectory/2d8b30ae-1583-8c13-2e08-cda2cbf6e314/control.xml</controlURL>
+        <eventSubURL>/ContentDirectory/2d8b30ae-1583-8c13-2e08-cda2cbf6e314/event.xml</eventSubURL>
+      </service>
+      <service>
+        <serviceType>urn:schemas-upnp-org:service:ConnectionManager:1</serviceType>
+        <serviceId>urn:upnp-org:serviceId:ConnectionManager</serviceId>
+        <SCPDURL>/ConnectionManager/2d8b30ae-1583-8c13-2e08-cda2cbf6e314/scpd.xml</SCPDURL>
+        <controlURL>/ConnectionManager/2d8b30ae-1583-8c13-2e08-cda2cbf6e314/control.xml</controlURL>
+        <eventSubURL>/ConnectionManager/2d8b30ae-1583-8c13-2e08-cda2cbf6e314/event.xml</eventSubURL>
+      </service>
+    </serviceList>
+  </device>
+</root><?xml version="1.0" encoding="UTF-8"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+  <specVersion>
+    <major>1</major>
+    <minor>0</minor>
+  </specVersion>
+  <actionList>
+    <action>
+      <name>IsAuthorized</name>
+      <argumentList>
+        <argument>
+          <name>DeviceID</name>
+          <direction>in</direction>
+          <relatedStateVariable>A_ARG_TYPE_DeviceID</relatedStateVariable>
+        </argument>
+        <argument>
+          <name>Result</name>
+          <direction>out</direction>
+          <relatedStateVariable>A_ARG_TYPE_Result</relatedStateVariable>
+        </argument>
+      </argumentList>
+    </action>
+    <action>
+      <name>RegisterDevice</name>
+      <argumentList>
+        <argument>
+          <name>RegistrationReqMsg</name>
+          <direction>in</direction>
+          <relatedStateVariable>A_ARG_TYPE_RegistrationReqMsg</relatedStateVariable>
+        </argument>
+        <argument>
+          <name>RegistrationRespMsg</name>
+          <direction>out</direction>
+          <relatedStateVariable>A_ARG_TYPE_RegistrationRespMsg</relatedStateVariable>
+        </argument>
+      </argumentList>
+    </action>
+    <action>
+      <name>IsValidated</name>
+      <argumentList>
+        <argument>
+          <name>DeviceID</name>
+          <direction>in</direction>
+          <relatedStateVariable>A_ARG_TYPE_DeviceID</relatedStateVariable>
+        </argument>
+        <argument>
+          <name>Result</name>
+          <direction>out</direction>
+          <relatedStateVariable>A_ARG_TYPE_Result</relatedStateVariable>
+        </argument>
+      </argumentList>
+    </action>
+  </actionList>
+  <serviceStateTable>
+    <stateVariable sendEvents="no">
+      <name>A_ARG_TYPE_DeviceID</name>
+      <dataType>string</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="no">
+      <name>A_ARG_TYPE_Result</name>
+      <dataType>int</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="no">
+      <name>A_ARG_TYPE_RegistrationReqMsg</name>
+      <dataType>bin.base64</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="no">
+      <name>A_ARG_TYPE_RegistrationRespMsg</name>
+      <dataType>bin.base64</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>AuthorizationGrantedUpdateID</name>
+      <dataType>ui4</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>AuthorizationDeniedUpdateID</name>
+      <dataType>ui4</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>ValidationSucceededUpdateID</name>
+      <dataType>ui4</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>ValidationRevokedUpdateID</name>
+      <dataType>ui4</dataType>
+    </stateVariable>
+  </serviceStateTable>
+</scpd><?xml version="1.0" encoding="utf-8"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+	<specVersion>
+		<major>1</major> 
+		<minor>0</minor> 
+	</specVersion>
+	<actionList>
+		<action>
+		<name>Browse</name> 
+		<argumentList>
+			<argument>
+				<name>ObjectID</name> 
+				<direction>in</direction> 
+				<relatedStateVariable>A_ARG_TYPE_ObjectID</relatedStateVariable> 
+			</argument>
+			<argument>
+				<name>BrowseFlag</name> 
+				<direction>in</direction> 
+				<relatedStateVariable>A_ARG_TYPE_BrowseFlag</relatedStateVariable> 
+			</argument>
+			<argument>
+				<name>Filter</name> 
+				<direction>in</direction> 
+				<relatedStateVariable>A_ARG_TYPE_Filter</relatedStateVariable> 
+			</argument>
+			<argument>
+				<name>StartingIndex</name> 
+				<direction>in</direction> 
+				<relatedStateVariable>A_ARG_TYPE_Index</relatedStateVariable> 
+			</argument>
+			<argument>
+				<name>RequestedCount</name> 
+				<direction>in</direction> 
+				<relatedStateVariable>A_ARG_TYPE_Count</relatedStateVariable> 
+			</argument>
+			<argument>
+				<name>SortCriteria</name> 
+				<direction>in</direction> 
+				<relatedStateVariable>A_ARG_TYPE_SortCriteria</relatedStateVariable> 
+			</argument>
+			<argument>
+				<name>Result</name> 
+				<direction>out</direction> 
+				<relatedStateVariable>A_ARG_TYPE_Result</relatedStateVariable> 
+			</argument>
+			<argument>
+				<name>NumberReturned</name> 
+				<direction>out</direction> 
+				<relatedStateVariable>A_ARG_TYPE_Count</relatedStateVariable> 
+			</argument>
+			<argument>
+				<name>TotalMatches</name> 
+				<direction>out</direction> 
+				<relatedStateVariable>A_ARG_TYPE_Count</relatedStateVariable> 
+			</argument>
+			<argument>
+				<name>UpdateID</name> 
+				<direction>out</direction> 
+				<relatedStateVariable>A_ARG_TYPE_UpdateID</relatedStateVariable> 
+			</argument>
+		</argumentList>
+		</action>
+		<action>
+			<name>GetSortCapabilities</name> 
+			<argumentList>
+				<argument>
+					<name>SortCaps</name> 
+					<direction>out</direction> 
+					<relatedStateVariable>SortCapabilities</relatedStateVariable> 
+				</argument>
+			</argumentList>
+		</action>
+		<action>
+			<name>GetSystemUpdateID</name> 
+			<argumentList>
+				<argument>
+					<name>Id</name> 
+					<direction>out</direction> 
+					<relatedStateVariable>SystemUpdateID</relatedStateVariable> 
+				</argument>
+			</argumentList>
+		</action>
+		<action>
+			<name>GetSearchCapabilities</name> 
+			<argumentList>
+				<argument>
+					<name>SearchCaps</name> 
+					<direction>out</direction> 
+					<relatedStateVariable>SearchCapabilities</relatedStateVariable> 
+				</argument>
+			</argumentList>
+		</action>
+	</actionList>
+	<serviceStateTable>
+		<stateVariable sendEvents="no">
+			<name>A_ARG_TYPE_BrowseFlag</name> 
+			<dataType>string</dataType> 
+			<allowedValueList>
+				<allowedValue>BrowseMetadata</allowedValue> 
+				<allowedValue>BrowseDirectChildren</allowedValue> 
+			</allowedValueList>
+		</stateVariable>
+		<stateVariable sendEvents="yes">
+			<name>ContainerUpdateIDs</name> 
+			<dataType>string</dataType> 
+		</stateVariable>
+		<stateVariable sendEvents="yes">
+			<name>SystemUpdateID</name> 
+			<dataType>ui4</dataType> 
+		</stateVariable>
+		<stateVariable sendEvents="no">
+			<name>A_ARG_TYPE_Count</name> 
+			<dataType>ui4</dataType> 
+		</stateVariable>
+		<stateVariable sendEvents="no">
+			<name>A_ARG_TYPE_SortCriteria</name> 
+			<dataType>string</dataType> 
+		</stateVariable>
+		<stateVariable sendEvents="no">
+			<name>SortCapabilities</name> 
+			<dataType>string</dataType> 
+		</stateVariable>
+		<stateVariable sendEvents="no">
+			<name>A_ARG_TYPE_Index</name> 
+			<dataType>ui4</dataType> 
+		</stateVariable>
+		<stateVariable sendEvents="no">
+			<name>A_ARG_TYPE_ObjectID</name> 
+			<dataType>string</dataType> 
+		</stateVariable>
+		<stateVariable sendEvents="no">
+			<name>A_ARG_TYPE_UpdateID</name> 
+			<dataType>ui4</dataType> 
+		</stateVariable>
+		<stateVariable sendEvents="no">
+			<name>A_ARG_TYPE_Result</name> 
+			<dataType>string</dataType> 
+		</stateVariable>
+		<stateVariable sendEvents="no">
+			<name>SearchCapabilities</name> 
+			<dataType>string</dataType> 
+		</stateVariable>
+		<stateVariable sendEvents="no">
+			<name>A_ARG_TYPE_Filter</name> 
+			<dataType>string</dataType> 
+		</stateVariable>
+	</serviceStateTable>
+</scpd><?xml version="1.0" encoding="UTF-8"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+  <specVersion>
+    <major>1</major>
+    <minor>0</minor>
+  </specVersion>
+  <actionList>
+    <action>
+      <name>GetCurrentConnectionInfo</name>
+      <argumentList>
+        <argument>
+          <name>ConnectionID</name>
+          <direction>in</direction>
+          <relatedStateVariable>A_ARG_TYPE_ConnectionID</relatedStateVariable>
+        </argument>
+        <argument>
+          <name>RcsID</name>
+          <direction>out</direction>
+          <relatedStateVariable>A_ARG_TYPE_RcsID</relatedStateVariable>
+        </argument>
+        <argument>
+          <name>AVTransportID</name>
+          <direction>out</direction>
+          <relatedStateVariable>A_ARG_TYPE_AVTransportID</relatedStateVariable>
+        </argument>
+        <argument>
+          <name>ProtocolInfo</name>
+          <direction>out</direction>
+          <relatedStateVariable>A_ARG_TYPE_ProtocolInfo</relatedStateVariable>
+        </argument>
+        <argument>
+          <name>PeerConnectionManager</name>
+          <direction>out</direction>
+          <relatedStateVariable>A_ARG_TYPE_ConnectionManager</relatedStateVariable>
+        </argument>
+        <argument>
+          <name>PeerConnectionID</name>
+          <direction>out</direction>
+          <relatedStateVariable>A_ARG_TYPE_ConnectionID</relatedStateVariable>
+        </argument>
+        <argument>
+          <name>Direction</name>
+          <direction>out</direction>
+          <relatedStateVariable>A_ARG_TYPE_Direction</relatedStateVariable>
+        </argument>
+        <argument>
+          <name>Status</name>
+          <direction>out</direction>
+          <relatedStateVariable>A_ARG_TYPE_ConnectionStatus</relatedStateVariable>
+        </argument>
+      </argumentList>
+    </action>
+    <action>
+      <name>GetProtocolInfo</name>
+      <argumentList>
+        <argument>
+          <name>Source</name>
+          <direction>out</direction>
+          <relatedStateVariable>SourceProtocolInfo</relatedStateVariable>
+        </argument>
+        <argument>
+          <name>Sink</name>
+          <direction>out</direction>
+          <relatedStateVariable>SinkProtocolInfo</relatedStateVariable>
+        </argument>
+      </argumentList>
+    </action>
+    <action>
+      <name>GetCurrentConnectionIDs</name>
+      <argumentList>
+        <argument>
+          <name>ConnectionIDs</name>
+          <direction>out</direction>
+          <relatedStateVariable>CurrentConnectionIDs</relatedStateVariable>
+        </argument>
+      </argumentList>
+    </action>
+  </actionList>
+  <serviceStateTable>
+    <stateVariable sendEvents="no">
+      <name>A_ARG_TYPE_ProtocolInfo</name>
+      <dataType>string</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="no">
+      <name>A_ARG_TYPE_ConnectionStatus</name>
+      <dataType>string</dataType>
+      <allowedValueList>
+        <allowedValue>OK</allowedValue>
+        <allowedValue>ContentFormatMismatch</allowedValue>
+        <allowedValue>InsufficientBandwidth</allowedValue>
+        <allowedValue>UnreliableChannel</allowedValue>
+        <allowedValue>Unknown</allowedValue>
+      </allowedValueList>
+    </stateVariable>
+    <stateVariable sendEvents="no">
+      <name>A_ARG_TYPE_AVTransportID</name>
+      <dataType>i4</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="no">
+      <name>A_ARG_TYPE_RcsID</name>
+      <dataType>i4</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="no">
+      <name>A_ARG_TYPE_ConnectionID</name>
+      <dataType>i4</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="no">
+      <name>A_ARG_TYPE_ConnectionManager</name>
+      <dataType>string</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>SourceProtocolInfo</name>
+      <dataType>string</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>SinkProtocolInfo</name>
+      <dataType>string</dataType>
+    </stateVariable>
+    <stateVariable sendEvents="no">
+      <name>A_ARG_TYPE_Direction</name>
+      <dataType>string</dataType>
+      <allowedValueList>
+        <allowedValue>Input</allowedValue>
+        <allowedValue>Output</allowedValue>
+      </allowedValueList>
+    </stateVariable>
+    <stateVariable sendEvents="yes">
+      <name>CurrentConnectionIDs</name>
+      <dataType>string</dataType>
+    </stateVariable>
+  </serviceStateTable>
+</scpd>

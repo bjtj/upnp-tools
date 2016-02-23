@@ -58,6 +58,7 @@ namespace UPNP {
 
 		void buildDevice(SSDP::SSDPHeader & header) {
 			dd = HttpUtils::httpGet(header.getLocation());
+			printf("%s", dd.c_str());
 			rootDevice->baseUrl() = header.getLocation();
 			XML::XmlDocument doc = XML::DomParser::parse(dd);
 			XML::XmlNode * deviceNode = doc.getRootNode()->getElementByTagName("device");
@@ -98,6 +99,7 @@ namespace UPNP {
 			if (service.getDevice()) {
 				HTTP::Url u = service.getDevice()->baseUrl().relativePath(service.getScpdUrl());
 				std::string scpd = HttpUtils::httpGet(u);
+				printf("%s", scpd.c_str());
 				XML::XmlDocument doc = XML::DomParser::parse(scpd);
 				if (doc.getRootNode().nil()) {
 					return;

@@ -131,14 +131,35 @@ namespace UPNP {
 		}
 	}
 
+	AutoRef<UPnPDevice> UPnPControlPoint::getDevice(const string & udn) {
+		AutoRef<UPnPSession> session = _sessionManager[udn];
+		if (!session.nil()) {
+			return session->getRootDevice();
+		}
+		return NULL;
+	}
+
 	void UPnPControlPoint::clearDevices() {
 		_sessionManager.clear();
 	}
+	
 	void UPnPControlPoint::sendMsearchAndWait(const std::string & target, unsigned long timeoutSec) {
 		ssdpServer.sendMsearchAndGather(target, timeoutSec);
 	}
 
 	UPnPSessionManager & UPnPControlPoint::sessionManager() {
 		return _sessionManager;
+	}
+
+	UPnPActionInvoker UPnPControlPoint::prepareActionInvoke(const std::string & udn, const std::string & serviceType) {
+		AutoRef<UPnPDevice> device = getDevice(udn);
+		if (device.nil()) {
+			throw "device not found";
+		}
+		AutoRef<UPnPService> service = device->getService(serviceType);
+		if (service.nil()) {
+			throw "service not found";
+		}
+		return UPnPActionInvoker(device->baseUrl(), service);
 	}
 }

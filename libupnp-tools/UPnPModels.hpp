@@ -82,8 +82,12 @@ namespace UPNP {
 		UPnPAction() {}
 		virtual ~UPnPAction() {}
 
-		std::string & name() {return _name;}
-		std::vector<UPnPArgument> & arguments() {return _arguments;}
+		std::string & name() {
+			return _name;
+		}
+		std::vector<UPnPArgument> & arguments() {
+			return _arguments;
+		}
 		void addArgument(UPnPArgument arg) {
 			_arguments.push_back(arg);
 		}
@@ -120,6 +124,14 @@ namespace UPNP {
 			return device;
 		}
 		std::vector<UPnPAction> & actions() {return _actions;}
+		UPnPAction getAction(const std::string & actionName) {
+			for (std::vector<UPnPAction>::iterator iter = _actions.begin(); iter != _actions.end(); iter++) {
+				if (iter->name() == actionName) {
+					return *iter;
+				}
+			}
+			return UPnPAction();
+		}
 		void addAction(UPnPAction action) {_actions.push_back(action);}
 		std::vector<UPnPStateVariable> & stateVariables() {return _stateVariables;}
 	};

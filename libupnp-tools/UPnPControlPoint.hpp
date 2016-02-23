@@ -5,6 +5,7 @@
 #include "SSDPServer.hpp"
 #include "UPnPModels.hpp"
 #include "UPnPSession.hpp"
+#include "UPnPActionInvoker.hpp"
 
 namespace UPNP {
 
@@ -43,10 +44,12 @@ namespace UPNP {
 
 		void addDevice(SSDP::SSDPHeader & header);
 		void removeDevice(SSDP::SSDPHeader & header);
+		UTIL::AutoRef<UPnPDevice> getDevice(const std::string & udn);
 
 		void clearDevices();
 		void sendMsearchAndWait(const std::string & target, unsigned long timeoutSec);
 		UPnPSessionManager & sessionManager();
+		UPnPActionInvoker prepareActionInvoke(const std::string & udn, const std::string & serviceType);
 	};
 }
 
