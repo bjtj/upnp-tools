@@ -33,7 +33,7 @@ namespace UPNP {
 		std::map<std::string, std::string> & outParams() {return _outParams;}
 		void invoke() {
 			UTIL::LinkedStringMap headers;
-			headers["SOAPACTION"] = (service->getServiceType() + "#" + _actionName);
+			headers["SOAPACTION"] = ("\"" + service->getServiceType() + "#" + _actionName + "\"");
 			HTTP::Url url = _baseUrl.relativePath(service->getControlUrl());
 			std::string result = HttpUtils::httpPost(url, headers, makeSoapRequestContent());
 			XML::XmlDocument doc = XML::DomParser::parse(result);

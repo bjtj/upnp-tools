@@ -118,6 +118,7 @@
 		6C4A9F401C081A2F00A45604 /* NetworkUtil.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = NetworkUtil.hpp; path = "../../libupnp-tools/NetworkUtil.hpp"; sourceTree = "<group>"; };
 		6C59ABE71C76CAB400F814A4 /* UPnPControlPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UPnPControlPoint.cpp; path = "../../libupnp-tools/UPnPControlPoint.cpp"; sourceTree = "<group>"; };
 		6C59ABE81C76CAB400F814A4 /* UPnPControlPoint.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UPnPControlPoint.hpp; path = "../../libupnp-tools/UPnPControlPoint.hpp"; sourceTree = "<group>"; };
+		6C59ABF91C7D80FB00F814A4 /* UPnPActionInvoker.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UPnPActionInvoker.hpp; path = "../../libupnp-tools/UPnPActionInvoker.hpp"; sourceTree = "<group>"; };
 		6C9FC7711C17005C00B292B8 /* SSDPHeader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SSDPHeader.cpp; path = "../../libupnp-tools/SSDPHeader.cpp"; sourceTree = "<group>"; };
 		6C9FC7721C17005C00B292B8 /* SSDPHeader.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SSDPHeader.hpp; path = "../../libupnp-tools/SSDPHeader.hpp"; sourceTree = "<group>"; };
 		6C9FC7731C17005C00B292B8 /* SSDPMsearchSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SSDPMsearchSender.cpp; path = "../../libupnp-tools/SSDPMsearchSender.cpp"; sourceTree = "<group>"; };
@@ -210,6 +211,7 @@
 				E857BB141BE60BBA00D2022F /* Uuid.hpp */,
 				6C4A9F3F1C081A2F00A45604 /* NetworkUtil.cpp */,
 				6C4A9F401C081A2F00A45604 /* NetworkUtil.hpp */,
+				6C59ABF91C7D80FB00F814A4 /* UPnPActionInvoker.hpp */,
 				6C59ABE71C76CAB400F814A4 /* UPnPControlPoint.cpp */,
 				6C59ABE81C76CAB400F814A4 /* UPnPControlPoint.hpp */,
 				E876F9D91C75341B000A8B4B /* UPnPModels.hpp */,
