@@ -4,7 +4,7 @@
 #include <liboslayer/AutoRef.hpp>
 #include "SSDPServer.hpp"
 #include "UPnPModels.hpp"
-#include "UPnPSession.hpp"
+#include "UPnPSessionManager.hpp"
 #include "UPnPActionInvoker.hpp"
 
 namespace UPNP {

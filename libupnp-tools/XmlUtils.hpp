@@ -13,11 +13,14 @@ namespace UPNP {
 		virtual ~XmlUtils() {}
 
 		static UTIL::NameValue toNameValue(XML::XmlNode * node) {
+
+			if (!node) {
+				throw OS::Exception("node null", -1, 0);
+			}
+			
 			UTIL::NameValue nv;
-			std::string name = node->tagName();
-			std::string value = node->getFirstChild()->text();
-			nv.getName() = name;
-			nv.getValue() = value;
+			nv.name() = node->tagName();
+			nv.value() = (node->getFirstChild() ? node->getFirstChild()->text() : "");
 			return nv;
 		}
 

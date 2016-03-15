@@ -4,8 +4,6 @@
 
 namespace UPNP {
 
-	const static bool ENABLE_LOG = false;
-
 	using namespace UTIL;
 	using namespace SSDP;
 	using namespace std;
@@ -25,30 +23,15 @@ namespace UPNP {
 			return true;
 		}
 		virtual void onMsearch(SSDPHeader & header) {
-			OS::InetAddress addr = header.getRemoteAddr();
-			if (ENABLE_LOG) {
-				printf("> MSEARCH / ST: %s (%s:%d)\n",
-					   header.getSt().c_str(), addr.getHost().c_str(), addr.getPort());
-			}
 		}
 		virtual void onNotify(SSDPHeader & header) {
 			OS::InetAddress addr = header.getRemoteAddr();
 			if (header.isNotifyAlive()) {
-				if (ENABLE_LOG) {
-					printf("> NOTIFY / alive :: URL: %s (%s:%d)\n",
-						   header.getLocation().c_str(), addr.getHost().c_str(), addr.getPort());
-				}
-
 				if (cp) {
 					cp->addDevice(header);
 				}
 			
 			} else {
-				if (ENABLE_LOG) {
-					printf("> NOTIFY / byebye :: %s (%s:%d)\n",
-						   header.getNt().c_str(), addr.getHost().c_str(), addr.getPort());
-				}
-				
 				if (cp) {
 					cp->removeDevice(header);
 				}
@@ -58,12 +41,6 @@ namespace UPNP {
 			OS::InetAddress addr = header.getRemoteAddr();
 
 			Uuid uuid(header.getUsn());
-
-			if (ENABLE_LOG) {
-				printf("> RESP / USN: %s / ST: %s / URL: %s (%s:%d)\n",
-					   header.getUsn().c_str(), header.getSt().c_str(),
-					   header.getLocation().c_str(), addr.getHost().c_str(), addr.getPort());
-			}
 
 			if (cp) {
 				cp->addDevice(header);
@@ -102,11 +79,6 @@ namespace UPNP {
 				return;
 			}
 
-			if (ENABLE_LOG) {
-				cout << " ++ DEVICE : " << device->getUdn() << " - " << device->getFriendlyName() << endl;
-			}
-			
-
 			if (!deviceListener.nil()) {
 				deviceListener->onDeviceAdd(device);
 			}
@@ -125,10 +97,6 @@ namespace UPNP {
 		}
 		
 		_sessionManager.remove(udn);
-
-		if (ENABLE_LOG) {
-			cout << " -- DEVICE : " << udn << endl;
-		}
 	}
 
 	AutoRef<UPnPDevice> UPnPControlPoint::getDevice(const string & udn) {

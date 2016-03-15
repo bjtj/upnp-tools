@@ -15,6 +15,7 @@ namespace UPNP {
 
 		class DumpResponseHandler : public HTTP::OnResponseListener {
 		private:
+			HTTP::HttpResponseHeader responseHeader;
 			std::string dump;
 		public:
 			DumpResponseHandler() {
@@ -22,6 +23,7 @@ namespace UPNP {
 			virtual ~DumpResponseHandler() {
 			}
 			virtual void onTransferDone(HTTP::HttpResponse & response, HTTP::DataTransfer * transfer, UTIL::AutoRef<HTTP::UserData> userData) {
+				responseHeader = response.getHeader();
 				if (transfer) {
 					dump = transfer->getString();
 				}
@@ -29,14 +31,32 @@ namespace UPNP {
 			virtual void onError(OS::Exception & e, UTIL::AutoRef<HTTP::UserData> userData) {
 				printf("Error/e: %s\n", e.getMessage().c_str());
 			}
+			HTTP::HttpResponseHeader & getResponseHeader() {
+				return responseHeader;
+			}
 			std::string & getDump() {
 				return dump;
 			}
 		};
 		
 	public:
-		HttpUtils();
-		virtual ~HttpUtils();
+		HttpUtils() {}
+		virtual ~HttpUtils() {}
+
+		static DumpResponseHandler dumpHttpRequest(const HTTP::Url & url, const std::string & method, const UTIL::LinkedStringMap & headers) {
+			
+			HTTP::AnotherHttpClient client;
+    
+			DumpResponseHandler handler;
+			client.setOnResponseListener(&handler);
+    
+			client.setFollowRedirect(true);
+			client.setUrl(url);
+			client.setRequest(method, headers, NULL);
+			client.execute();
+
+			return handler;
+		}
 
 		static std::string httpGet(const HTTP::Url & url) {
 

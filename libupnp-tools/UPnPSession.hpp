@@ -58,7 +58,6 @@ namespace UPNP {
 
 		void buildDevice(SSDP::SSDPHeader & header) {
 			dd = HttpUtils::httpGet(header.getLocation());
-			printf("%s", dd.c_str());
 			rootDevice->baseUrl() = header.getLocation();
 			XML::XmlDocument doc = XML::DomParser::parse(dd);
 			XML::XmlNode * deviceNode = doc.getRootNode()->getElementByTagName("device");
@@ -99,7 +98,6 @@ namespace UPNP {
 			if (service.getDevice()) {
 				HTTP::Url u = service.getDevice()->baseUrl().relativePath(service.getScpdUrl());
 				std::string scpd = HttpUtils::httpGet(u);
-				printf("%s", scpd.c_str());
 				XML::XmlDocument doc = XML::DomParser::parse(scpd);
 				if (doc.getRootNode().nil()) {
 					return;
@@ -186,6 +184,13 @@ namespace UPNP {
 			str.append(depth, ' ');
 			if (depth > 0) { str.append(" - "); }
 			str.append(device.getUdn() + " (" + device.getFriendlyName() + ")");
+
+			std::vector<UTIL::AutoRef<UPnPService> > services = device.services();
+			for (std::vector<UTIL::AutoRef<UPnPService> >::iterator iter = services.begin(); iter != services.end(); iter++) {
+				str.append("\n");
+				str.append(depth, ' ');
+				str.append(" ** " + (*iter)->getServiceType());
+			}
 			
 			std::vector<UTIL::AutoRef<UPnPDevice> > & devices = device.devices();
 			for (std::vector<UTIL::AutoRef<UPnPDevice> >::iterator iter = devices.begin(); iter != devices.end(); iter++) {
@@ -195,47 +200,6 @@ namespace UPNP {
 			return str;
 		}
 	};
-
-	/**
-	 *
-	 */
-	class UPnPSessionManager {
-	private:
-		std::map<std::string, UTIL::AutoRef<UPnPSession> > sessions;
-	public:
-		UPnPSessionManager() {}
-		virtual ~UPnPSessionManager() {}
-
-		bool has(const std::string & udn) {
-			return (sessions.find(udn) != sessions.end());
-		}
-		void clear() {
-			sessions.clear();
-		}
-		UTIL::AutoRef<UPnPSession> prepareSession(const std::string & udn) {
-			if (!has(udn)) {
-				sessions[udn] = UTIL::AutoRef<UPnPSession>(new UPnPSession(udn));
-			}
-			return sessions[udn];
-		}
-		void remove(const std::string & udn) {
-			sessions.erase(udn);
-		}
-		size_t size() {
-			return sessions.size();
-		}
-		std::vector<std::string> getUdnS() {
-			std::vector<std::string> ret;
-			for (std::map<std::string, UTIL::AutoRef<UPnPSession> >::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
-				ret.push_back(iter->first);
-			}
-			return ret;
-		}
-		UTIL::AutoRef<UPnPSession> operator[] (const std::string & udn) {
-			return sessions[udn];
-		}
-	};
-
 }
 
 #endif

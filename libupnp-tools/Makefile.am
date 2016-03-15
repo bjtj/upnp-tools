@@ -13,6 +13,7 @@ libupnp_toolsinc_HEADERS = \
 	UPnPControlPoint.hpp \
 	UPnPModels.hpp \
 	UPnPSession.hpp \
+	UPnPSessionManager.hpp \
 	Uuid.hpp \
 	XmlUtils.hpp
 
@@ -35,6 +36,7 @@ libupnp_tools_la_SOURCES = \
 	UPnPControlPoint.hpp \
 	UPnPModels.hpp \
 	UPnPSession.hpp \
+	UPnPSessionManager.hpp \
 	Uuid.cpp \
 	Uuid.hpp \
 	XmlUtils.hpp
