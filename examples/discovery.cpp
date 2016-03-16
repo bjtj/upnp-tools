@@ -261,9 +261,8 @@ int run(int argc, char *args[]) {
 				cout << "Action : " << selection.action() << endl;
 			} else if (!strcmp(buffer, "invoke")) {
 				try {
-					UPnPActionInvoker invoker = cp.prepareActionInvoke(selection.udn(), selection.serviceType());
-					invoker.actionName() = selection.action();
-					UPnPAction action = invoker.getService()->getAction(selection.action());
+					UPnPActionInvoker invoker = cp.prepareActionInvoke(selection.udn(), selection.serviceType(), selection.action());
+					UPnPAction action = invoker.action();
 					if (action.name().empty()) {
 						throw "Error: no action found";
 					}
@@ -301,8 +300,8 @@ int run(int argc, char *args[]) {
 					throw "Error: select udn and sevice first";
 				}
 
-				UPnPActionInvoker invoker = cp.prepareActionInvoke(selection.udn(), selection.serviceType());
-				Url url = invoker.baseUrl().relativePath(invoker.getService()->getEventSubUrl());
+				AutoRef<UPnPService> service = cp.getServiceWithUdnAndServiceType(selection.udn(), selection.serviceType());
+				Url url = cp.getBaseUrlWithUdn(selection.udn()).relativePath(service->getEventSubUrl());
 				vector<string> callbackUrls;
 				OS::InetAddress addr = NetworkUtil::selectDefaultAddress();
 				callbackUrls.push_back("http://" + addr.getHost() + ":9998/notify");
@@ -317,8 +316,8 @@ int run(int argc, char *args[]) {
 					throw "Error: select udn and sevice first";
 				}
 
-				UPnPActionInvoker invoker = cp.prepareActionInvoke(selection.udn(), selection.serviceType());
-				Url url = invoker.baseUrl().relativePath(invoker.getService()->getEventSubUrl());
+				AutoRef<UPnPService> service = cp.getServiceWithUdnAndServiceType(selection.udn(), selection.serviceType());
+				Url url = cp.getBaseUrlWithUdn(selection.udn()).relativePath(service->getEventSubUrl());
 
 				if (subs.hasWithUdnAndServiceType(selection.udn(), selection.serviceType())) {
 					Subscription sub = subs.findWithUdnAndServiceType(selection.udn(), selection.serviceType());

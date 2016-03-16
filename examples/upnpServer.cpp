@@ -3,6 +3,7 @@
 #include <libupnp-tools/Uuid.hpp>
 #include <libupnp-tools/UPnPModels.hpp>
 #include <libupnp-tools/SSDPMsearchSender.hpp>
+#include <libupnp-tools/NetworkUtil.hpp>
 
 using namespace std;
 using namespace SSDP;
@@ -134,7 +135,8 @@ int main(int argc, char *args[]) {
 			if (!strcmp(buffer, "q")) {
 				break;
 			} else if (!strcmp(buffer, "alive")) {
-				notifyAlive(udn, "upnp:rootdevice", "http://192.168.0.26:9000/device.xml");
+				OS::InetAddress addr = NetworkUtil::selectDefaultAddress();
+				notifyAlive(udn, "upnp:rootdevice", "http://" + addr.getHost() + ":9000/device.xml");
 			} else if (!strcmp(buffer, "byebye")) {
 				notifyByeBye(udn, "upnp:rootdevice");
 			}

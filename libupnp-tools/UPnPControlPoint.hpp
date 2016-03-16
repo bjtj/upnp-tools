@@ -10,7 +10,7 @@
 namespace UPNP {
 
 	/**
-	 *
+	 * @brief device add remove listener
 	 */
 	class DeviceAddRemoveListener {
 	private:
@@ -24,7 +24,7 @@ namespace UPNP {
 
 
 	/**
-	 *
+	 * @brief upnp control point
 	 */
 	class UPnPControlPoint {
 	private:
@@ -49,7 +49,10 @@ namespace UPNP {
 		void clearDevices();
 		void sendMsearchAndWait(const std::string & target, unsigned long timeoutSec);
 		UPnPSessionManager & sessionManager();
-		UPnPActionInvoker prepareActionInvoke(const std::string & udn, const std::string & serviceType);
+
+		HTTP::Url getBaseUrlWithUdn(const std::string & udn);
+		UTIL::AutoRef<UPnPService> getServiceWithUdnAndServiceType(const std::string & udn, const std::string & serviceType);
+		UPnPActionInvoker prepareActionInvoke(const std::string & udn, const std::string & serviceType, const std::string & actionName);
 	};
 }
 

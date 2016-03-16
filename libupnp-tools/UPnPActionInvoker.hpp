@@ -17,30 +17,39 @@ namespace UPNP {
 	private:
 		HTTP::Url _baseUrl;
 		UTIL::AutoRef<UPnPService> service;
-		std::string _actionName;
+		UPnPAction _action;
 		std::map<std::string, std::string> _inParams;
 		std::map<std::string, std::string> _outParams;
 		
 	public:
-		UPnPActionInvoker(HTTP::Url baseUrl, UTIL::AutoRef<UPnPService> service) : _baseUrl(baseUrl), service(service) {}
+		UPnPActionInvoker(HTTP::Url baseUrl, UTIL::AutoRef<UPnPService> service, UPnPAction action) : _baseUrl(baseUrl), service(service), _action(action) {}
 		virtual ~UPnPActionInvoker() {}
 
-		HTTP::Url & baseUrl() {return _baseUrl;}
-		UTIL::AutoRef<UPnPService> getService() {return service;}
-		void setService(UTIL::AutoRef<UPnPService> service) {this->service = service;}
-		std::string & actionName() {return _actionName;}
-		std::map<std::string, std::string> & inParams() {return _inParams;}
-		std::map<std::string, std::string> & outParams() {return _outParams;}
+		HTTP::Url & baseUrl() {
+			return _baseUrl;
+		}
+		UTIL::AutoRef<UPnPService> getService() {
+			return service;
+		}
+		UPnPAction action() {
+			return _action;
+		};
+		std::map<std::string, std::string> & inParams() {
+			return _inParams;
+		}
+		std::map<std::string, std::string> & outParams() {
+			return _outParams;
+		}
 		void invoke() {
 			UTIL::LinkedStringMap headers;
-			headers["SOAPACTION"] = ("\"" + service->getServiceType() + "#" + _actionName + "\"");
+			headers["SOAPACTION"] = ("\"" + service->getServiceType() + "#" + _action.name() + "\"");
 			HTTP::Url url = _baseUrl.relativePath(service->getControlUrl());
 			std::string result = HttpUtils::httpPost(url, headers, makeSoapRequestContent());
 			XML::XmlDocument doc = XML::DomParser::parse(result);
 			if (doc.getRootNode().nil()) {
 				return;
 			}
-			XML::XmlNode * node = doc.getRootNode()->getElementByTagName(_actionName + "Response");
+			XML::XmlNode * node = doc.getRootNode()->getElementByTagName(_action.name() + "Response");
 			if (node) {
 				std::vector<XML::XmlNode*> children = node->children();
 				for (std::vector<XML::XmlNode*>::iterator iter = children.begin(); iter != children.end(); iter++) {
@@ -56,20 +65,18 @@ namespace UPNP {
 			request = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n";
 			request.append("<s:Envelope s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">\r\n");
 			request.append("<s:Body>\r\n");
-			request.append("<u:" + _actionName + " xmlns:u=\"" + service->getServiceType() + "\">\r\n");
+			request.append("<u:" + _action.name() + " xmlns:u=\"" + service->getServiceType() + "\">\r\n");
 			for (std::map<std::string, std::string>::iterator iter = _inParams.begin(); iter != _inParams.end(); iter++) {
 				std::string name = iter->first;
 				std::string & value = iter->second;
 				request.append("<" + name + ">" + XML::XmlEncoder::encode(value) + "</" + name + ">\r\n");
 			}
-			request.append("</u:" + _actionName + ">\r\n");
+			request.append("</u:" + _action.name() + ">\r\n");
 			request.append("</s:Body>\r\n");
 			request.append("</s:Envelope>");
 			return request;
 		}
 	};
-
-	
 }
 
 #endif

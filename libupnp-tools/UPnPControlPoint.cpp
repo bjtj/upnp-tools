@@ -5,6 +5,7 @@
 namespace UPNP {
 
 	using namespace UTIL;
+	using namespace HTTP;
 	using namespace SSDP;
 	using namespace std;
 
@@ -104,7 +105,7 @@ namespace UPNP {
 		if (!session.nil()) {
 			return session->getRootDevice();
 		}
-		return NULL;
+		throw OS::Exception("not found device / name : " + udn, -1, 0);
 	}
 
 	void UPnPControlPoint::clearDevices() {
@@ -119,15 +120,21 @@ namespace UPNP {
 		return _sessionManager;
 	}
 
-	UPnPActionInvoker UPnPControlPoint::prepareActionInvoke(const std::string & udn, const std::string & serviceType) {
+	Url UPnPControlPoint::getBaseUrlWithUdn(const string & udn) {
+		return getDevice(udn)->baseUrl();
+	}
+
+	AutoRef<UPnPService> UPnPControlPoint::getServiceWithUdnAndServiceType(const string & udn, const string & serviceType) {
 		AutoRef<UPnPDevice> device = getDevice(udn);
-		if (device.nil()) {
-			throw "device not found";
-		}
+		return device->getService(serviceType);
+	}
+
+	UPnPActionInvoker UPnPControlPoint::prepareActionInvoke(const std::string & udn, const std::string & serviceType, const std::string & actionName) {
+		
+		AutoRef<UPnPDevice> device = getDevice(udn);
 		AutoRef<UPnPService> service = device->getService(serviceType);
-		if (service.nil()) {
-			throw "service not found";
-		}
-		return UPnPActionInvoker(device->baseUrl(), service);
+		UPnPAction action = service->getAction(actionName);
+		
+		return UPnPActionInvoker(device->baseUrl(), service, action);
 	}
 }

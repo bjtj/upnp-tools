@@ -130,7 +130,7 @@ namespace UPNP {
 					return *iter;
 				}
 			}
-			return UPnPAction();
+			throw OS::Exception("not found action / name: " + actionName, -1, 0);
 		}
 		void addAction(UPnPAction action) {_actions.push_back(action);}
 		std::vector<UPnPStateVariable> & stateVariables() {return _stateVariables;}
@@ -178,7 +178,7 @@ namespace UPNP {
 					return *iter;
 				}
 			}
-			return NULL;
+			throw OS::Exception("not found service / name: " + serviceType, -1, 0);
 		}
 
 		std::vector<UTIL::AutoRef<UPnPDevice> > & devices() {
