@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -19,14 +19,12 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -69,76 +67,29 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\libupnp-tools\AnotherSSDPServer.cpp" />
-    <ClCompile Include="..\libupnp-tools\CacheControl.cpp" />
     <ClCompile Include="..\libupnp-tools\NetworkUtil.cpp" />
-    <ClCompile Include="..\libupnp-tools\SoapReader.cpp" />
-    <ClCompile Include="..\libupnp-tools\SoapWriter.cpp" />
     <ClCompile Include="..\libupnp-tools\SSDPHeader.cpp" />
     <ClCompile Include="..\libupnp-tools\SSDPMsearchSender.cpp" />
     <ClCompile Include="..\libupnp-tools\SSDPMulticastListener.cpp" />
     <ClCompile Include="..\libupnp-tools\SSDPServer.cpp" />
-    <ClCompile Include="..\libupnp-tools\StringReader.cpp" />
-    <ClCompile Include="..\libupnp-tools\Timer.cpp" />
-    <ClCompile Include="..\libupnp-tools\UniqueIdGenerator.cpp" />
-    <ClCompile Include="..\libupnp-tools\UPnPAction.cpp" />
-    <ClCompile Include="..\libupnp-tools\UPnPActionArgument.cpp" />
-    <ClCompile Include="..\libupnp-tools\UPnPActionInvoke.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPControlPoint.cpp" />
-    <ClCompile Include="..\libupnp-tools\UPnPDevice.cpp" />
-    <ClCompile Include="..\libupnp-tools\UPnPDeviceDetection.cpp" />
-    <ClCompile Include="..\libupnp-tools\UPnPDeviceIterator.cpp" />
-    <ClCompile Include="..\libupnp-tools\UPnPDeviceMaker.cpp" />
-    <ClCompile Include="..\libupnp-tools\UPnPDevicePool.cpp" />
-    <ClCompile Include="..\libupnp-tools\UPnPDeviceXmlWriter.cpp" />
-    <ClCompile Include="..\libupnp-tools\UPnPServer.cpp" />
-    <ClCompile Include="..\libupnp-tools\UPnPService.cpp" />
-    <ClCompile Include="..\libupnp-tools\UPnPServiceMaker.cpp" />
-    <ClCompile Include="..\libupnp-tools\UPnPServicePosition.cpp" />
-    <ClCompile Include="..\libupnp-tools\UPnPStateVariable.cpp" />
     <ClCompile Include="..\libupnp-tools\Uuid.cpp" />
-    <ClCompile Include="..\libupnp-tools\XmlDocument.cpp" />
-    <ClCompile Include="..\libupnp-tools\XmlDocumentPrinter.cpp" />
-    <ClCompile Include="..\libupnp-tools\XmlDomParser.cpp" />
-    <ClCompile Include="..\libupnp-tools\XmlEncoderDecoder.cpp" />
-    <ClCompile Include="..\libupnp-tools\XmlNodeFinder.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\libupnp-tools\AnotherSSDPServer.hpp" />
-    <ClInclude Include="..\libupnp-tools\CacheControl.hpp" />
-    <ClInclude Include="..\libupnp-tools\macros.hpp" />
-    <ClInclude Include="..\libupnp-tools\SoapReader.hpp" />
-    <ClInclude Include="..\libupnp-tools\SoapWriter.hpp" />
+    <ClInclude Include="..\libupnp-tools\HttpUtils.hpp" />
+    <ClInclude Include="..\libupnp-tools\NetworkUtil.hpp" />
+    <ClInclude Include="..\libupnp-tools\SSDPEventHandler.hpp" />
     <ClInclude Include="..\libupnp-tools\SSDPHeader.hpp" />
     <ClInclude Include="..\libupnp-tools\SSDPMsearchSender.hpp" />
     <ClInclude Include="..\libupnp-tools\SSDPMulticastListener.hpp" />
-    <ClInclude Include="..\libupnp-tools\SSDPPacketHandler.hpp" />
     <ClInclude Include="..\libupnp-tools\SSDPServer.hpp" />
-    <ClInclude Include="..\libupnp-tools\StringReader.hpp" />
-    <ClInclude Include="..\libupnp-tools\Timer.hpp" />
-    <ClInclude Include="..\libupnp-tools\UniqueIdGenerator.hpp" />
-    <ClInclude Include="..\libupnp-tools\UPnPAction.hpp" />
-    <ClInclude Include="..\libupnp-tools\UPnPActionArgument.hpp" />
-    <ClInclude Include="..\libupnp-tools\UPnPActionArgumentDirection.hpp" />
-    <ClInclude Include="..\libupnp-tools\UPnPActionInvoke.hpp" />
+    <ClInclude Include="..\libupnp-tools\UPnPActionInvoker.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPControlPoint.hpp" />
-    <ClInclude Include="..\libupnp-tools\UPnPDevice.hpp" />
-    <ClInclude Include="..\libupnp-tools\UPnPDeviceDetection.hpp" />
-    <ClInclude Include="..\libupnp-tools\UPnPDeviceIterator.hpp" />
-    <ClInclude Include="..\libupnp-tools\UPnPDeviceMaker.hpp" />
-    <ClInclude Include="..\libupnp-tools\UPnPDevicePool.hpp" />
-    <ClInclude Include="..\libupnp-tools\UPnPDeviceXmlWriter.hpp" />
-    <ClInclude Include="..\libupnp-tools\UPnPServer.hpp" />
-    <ClInclude Include="..\libupnp-tools\UPnPService.hpp" />
-    <ClInclude Include="..\libupnp-tools\UPnPServiceMaker.hpp" />
-    <ClInclude Include="..\libupnp-tools\UPnPServicePosition.hpp" />
-    <ClInclude Include="..\libupnp-tools\UPnPStateVariable.hpp" />
+    <ClInclude Include="..\libupnp-tools\UPnPModels.hpp" />
+    <ClInclude Include="..\libupnp-tools\UPnPSession.hpp" />
+    <ClInclude Include="..\libupnp-tools\UPnPSessionManager.hpp" />
     <ClInclude Include="..\libupnp-tools\Uuid.hpp" />
-    <ClInclude Include="..\libupnp-tools\XmlDocument.hpp" />
-    <ClInclude Include="..\libupnp-tools\XmlDocumentPrinter.hpp" />
-    <ClInclude Include="..\libupnp-tools\XmlDomParser.hpp" />
-    <ClInclude Include="..\libupnp-tools\XmlEncoderDecoder.hpp" />
-    <ClInclude Include="..\libupnp-tools\XmlNodeFinder.hpp" />
+    <ClInclude Include="..\libupnp-tools\XmlUtils.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\http-server\win32\http-server.vcxproj">
