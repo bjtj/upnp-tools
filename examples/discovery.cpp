@@ -7,6 +7,8 @@
 #include <liboslayer/XmlParser.hpp>
 #include <libupnp-tools/UPnPControlPoint.hpp>
 #include <libupnp-tools/UPnPActionInvoker.hpp>
+#include <libupnp-tools/UPnPActionRequest.hpp>
+#include <libupnp-tools/UPnPActionResponse.hpp>
 #include <libupnp-tools/NetworkUtil.hpp>
 #include <libhttp-server/AnotherHttpServer.hpp>
 
@@ -261,21 +263,25 @@ int run(int argc, char *args[]) {
 				cout << "Action : " << selection.action() << endl;
 			} else if (!strcmp(buffer, "invoke")) {
 				try {
-					UPnPActionInvoker invoker = cp.prepareActionInvoke(selection.udn(), selection.serviceType(), selection.action());
-					UPnPAction action = invoker.action();
+					UPnPActionInvoker invoker = cp.prepareActionInvoke(selection.udn(), selection.serviceType());
+					AutoRef<UPnPService> service = cp.getServiceWithUdnAndServiceType(selection.udn(), selection.serviceType());
+					UPnPAction action = service->getAction(selection.action());
 					if (action.name().empty()) {
 						throw "Error: no action found";
 					}
 					vector<UPnPArgument> & arguments = action.arguments();
+					UPnPActionRequest request;
+					request.serviceType() = service->getServiceType();
+					request.action() = action;
 					for (vector<UPnPArgument>::iterator iter = arguments.begin(); iter != arguments.end(); iter++) {
 						if (iter->direction() == UPnPArgument::IN_DIRECTION) {
 							char param[1024] = {0,};
 							prompt(iter->name() + " : ", param, sizeof(param));
-							invoker.inParams()[iter->name()] = string(param);
+							request[iter->name()] = string(param);
 						}
 					}
-					invoker.invoke();
-					map<string, string> & params = invoker.outParams();
+					UPnPActionResponse response = invoker.invoke(request);
+					map<string, string> & params = response.parameters();
 					for (map<string, string>::iterator iter = params.begin(); iter != params.end(); iter++) {
 						string name = iter->first;
 						string & value = iter->second;
@@ -284,6 +290,10 @@ int run(int argc, char *args[]) {
 					}
 				} catch (const char * e) {
 					cout << "Error: " << e << endl;
+				} catch (const string & e) {
+					cout << "Error: " << e << endl;
+				} catch (OS::Exception & e) {
+					cout << "Error: " << e.getMessage() << endl;
 				}
 			} else if (!strcmp(buffer, "subs")) {
 

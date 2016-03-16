@@ -10,6 +10,8 @@ libupnp_toolsinc_HEADERS = \
 	SSDPMulticastListener.hpp \
 	SSDPServer.hpp \
 	UPnPActionInvoker.hpp \
+	UPnPActionRequest.hpp \
+	UPnPActionResponse.hpp \
 	UPnPControlPoint.hpp \
 	UPnPModels.hpp \
 	UPnPSession.hpp \
@@ -32,6 +34,10 @@ libupnp_tools_la_SOURCES = \
 	SSDPServer.cpp \
 	SSDPServer.hpp \
 	UPnPActionInvoker.hpp \
+	UPnPActionRequest.cpp \
+	UPnPActionRequest.hpp \
+	UPnPActionResponse.cpp \
+	UPnPActionResponse.hpp \
 	UPnPControlPoint.cpp \
 	UPnPControlPoint.hpp \
 	UPnPModels.hpp \

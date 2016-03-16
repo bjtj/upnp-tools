@@ -52,7 +52,7 @@ namespace UPNP {
 
 		HTTP::Url getBaseUrlWithUdn(const std::string & udn);
 		UTIL::AutoRef<UPnPService> getServiceWithUdnAndServiceType(const std::string & udn, const std::string & serviceType);
-		UPnPActionInvoker prepareActionInvoke(const std::string & udn, const std::string & serviceType, const std::string & actionName);
+		UPnPActionInvoker prepareActionInvoke(const std::string & udn, const std::string & serviceType);
 	};
 }
 

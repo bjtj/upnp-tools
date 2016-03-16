@@ -75,15 +75,12 @@ namespace UPNP {
 
 		static std::string httpPost(const HTTP::Url & url, const UTIL::LinkedStringMap & headers, const std::string & content) {
 			HTTP::AnotherHttpClient client;
-    
 			DumpResponseHandler handler;
 			client.setOnResponseListener(&handler);
-    
 			client.setFollowRedirect(true);
 			client.setUrl(url);
 			client.setRequest("POST", headers, new HTTP::FixedTransfer(content));
 			client.execute();
-
 			return handler.getDump();
 		}
 	};

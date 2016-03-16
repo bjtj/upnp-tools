@@ -11,71 +11,70 @@
 #include "HttpUtils.hpp"
 #include "XmlUtils.hpp"
 
+#include "UPnPActionRequest.hpp"
+#include "UPnPActionResponse.hpp"
+
 namespace UPNP {
 	
 	class UPnPActionInvoker {
 	private:
-		HTTP::Url _baseUrl;
-		std::string serviceType;
-		std::string controlUrl;
-		UPnPAction _action;
-		std::map<std::string, std::string> _inParams;
-		std::map<std::string, std::string> _outParams;
+		HTTP::Url _controlUrl;
 		
 	public:
-		UPnPActionInvoker(HTTP::Url baseUrl, UTIL::AutoRef<UPnPService> service, UPnPAction action) : _baseUrl(baseUrl), _action(action) {
-			serviceType = service->getServiceType();
-			controlUrl = service->getControlUrl();
+		UPnPActionInvoker(HTTP::Url controlUrl) : _controlUrl(controlUrl) {
 		}
 		virtual ~UPnPActionInvoker() {}
 
-		HTTP::Url & baseUrl() {
-			return _baseUrl;
+		HTTP::Url & controlUrl() {
+			return _controlUrl;
 		}
-		UPnPAction action() {
-			return _action;
-		};
-		std::map<std::string, std::string> & inParams() {
-			return _inParams;
-		}
-		std::map<std::string, std::string> & outParams() {
-			return _outParams;
-		}
-		void invoke() {
+		UPnPActionResponse invoke(UPnPActionRequest & request) {
+
+			UPnPActionResponse response;
+			std::string serviceType = request.serviceType();
+			std::string actionName = request.actionName();
+			
 			UTIL::LinkedStringMap headers;
-			headers["SOAPACTION"] = ("\"" + serviceType + "#" + _action.name() + "\"");
-			HTTP::Url url = _baseUrl.relativePath(controlUrl);
-			std::string result = HttpUtils::httpPost(url, headers, makeSoapRequestContent());
+			headers["SOAPACTION"] = ("\"" + serviceType + "#" + actionName + "\"");
+			std::string result = HttpUtils::httpPost(_controlUrl, headers, makeSoapRequestContent(request));
 			XML::XmlDocument doc = XML::DomParser::parse(result);
 			if (doc.getRootNode().nil()) {
-				return;
+				throw OS::Exception("invoke error / wrong format", -1, 0);
 			}
-			XML::XmlNode * node = doc.getRootNode()->getElementByTagName(_action.name() + "Response");
-			if (node) {
-				std::vector<XML::XmlNode*> children = node->children();
-				for (std::vector<XML::XmlNode*>::iterator iter = children.begin(); iter != children.end(); iter++) {
-					if (XmlUtils::testNameValueXmlNode(*iter)) {
-						UTIL::NameValue nv = XmlUtils::toNameValue(*iter);
-						_outParams[nv.name()] = nv.value();
-					}
+			XML::XmlNode * node = doc.getRootNode()->getElementByTagName(actionName + "Response");
+			if (!node) {
+				throw OS::Exception("invoke error / wrong format", -1, 0);
+			}
+			std::vector<XML::XmlNode*> children = node->children();
+			for (std::vector<XML::XmlNode*>::iterator iter = children.begin(); iter != children.end(); iter++) {
+				if (XmlUtils::testNameValueXmlNode(*iter)) {
+					UTIL::NameValue nv = XmlUtils::toNameValue(*iter);
+					response[nv.name()] = nv.value();
 				}
 			}
+			return response;
 		}
-		std::string makeSoapRequestContent() {
-			std::string request;
-			request = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n";
-			request.append("<s:Envelope s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">\r\n");
-			request.append("<s:Body>\r\n");
-			request.append("<u:" + _action.name() + " xmlns:u=\"" + serviceType + "\">\r\n");
-			for (std::map<std::string, std::string>::iterator iter = _inParams.begin(); iter != _inParams.end(); iter++) {
+		std::string makeSoapRequestContent(UPnPActionRequest & request) {
+
+			std::string actionName = request.actionName();
+			std::string serviceType = request.serviceType();
+			std::map<std::string, std::string> & parameters = request.parameters();
+			
+			std::string xml;
+			xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n";
+			xml.append("<s:Envelope s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\" "
+						   "xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">\r\n");
+			xml.append("<s:Body>\r\n");
+			xml.append("<u:" + actionName + " xmlns:u=\"" + serviceType + "\">\r\n");
+			for (std::map<std::string, std::string>::iterator iter = parameters.begin(); iter != parameters.end(); iter++) {
 				std::string name = iter->first;
 				std::string & value = iter->second;
-				request.append("<" + name + ">" + XML::XmlEncoder::encode(value) + "</" + name + ">\r\n");
+				xml.append("<" + name + ">" + XML::XmlEncoder::encode(value) + "</" + name + ">\r\n");
 			}
-			request.append("</u:" + _action.name() + ">\r\n");
-			request.append("</s:Body>\r\n");
-			request.append("</s:Envelope>");
-			return request;
+			xml.append("</u:" + actionName + ">\r\n");
+			xml.append("</s:Body>\r\n");
+			xml.append("</s:Envelope>");
+			return xml;
 		}
 	};
 }

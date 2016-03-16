@@ -129,12 +129,9 @@ namespace UPNP {
 		return device->getService(serviceType);
 	}
 
-	UPnPActionInvoker UPnPControlPoint::prepareActionInvoke(const std::string & udn, const std::string & serviceType, const std::string & actionName) {
-		
+	UPnPActionInvoker UPnPControlPoint::prepareActionInvoke(const std::string & udn, const std::string & serviceType) {
 		AutoRef<UPnPDevice> device = getDevice(udn);
 		AutoRef<UPnPService> service = device->getService(serviceType);
-		UPnPAction action = service->getAction(actionName);
-		
-		return UPnPActionInvoker(device->baseUrl(), service, action);
+		return UPnPActionInvoker(device->baseUrl().relativePath(service->getControlUrl()));
 	}
 }
