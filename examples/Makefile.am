@@ -1,6 +1,6 @@
 # SUBDIRS=res
 
-noinst_PROGRAMS = ssdpServerTest discovery upnpServer
+noinst_PROGRAMS = ssdpServerTest discovery upnpServer server
 
 ssdpServerTest_SOURCES = ssdpServerTest.cpp
 ssdpServerTest_CPPFLAGS =-I$(top_srcdir)
@@ -19,3 +19,9 @@ upnpServer_CPPFLAGS =-I$(top_srcdir)
 upnpServer_CXXFLAGS = $(PTHREAD_CXXFLAGS) $(LIBOSLAYER_CFLAGS) $(LIBHTTP_SERVER_CFLAGS)
 upnpServer_LDFLAGS = $(PTHREAD_CFLAGS)
 upnpServer_LDADD = ../libupnp-tools/libupnp-tools.la $(LIBOSLAYER_LIBS) $(LIBHTTP_SERVER_LIBS)
+
+server_SOURCES = server.cpp
+server_CPPFLAGS =-I$(top_srcdir)
+server_CXXFLAGS = $(PTHREAD_CXXFLAGS) $(LIBOSLAYER_CFLAGS) $(LIBHTTP_SERVER_CFLAGS)
+server_LDFLAGS = $(PTHREAD_CFLAGS)
+server_LDADD = ../libupnp-tools/libupnp-tools.la $(LIBOSLAYER_LIBS) $(LIBHTTP_SERVER_LIBS)

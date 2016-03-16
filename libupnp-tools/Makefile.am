@@ -13,7 +13,10 @@ libupnp_toolsinc_HEADERS = \
 	UPnPActionRequest.hpp \
 	UPnPActionResponse.hpp \
 	UPnPControlPoint.hpp \
+	UPnPDeviceProfile.hpp \
 	UPnPModels.hpp \
+	UPnPServer.hpp \
+	UPnPServerProfile.hpp \
 	UPnPSession.hpp \
 	UPnPSessionManager.hpp \
 	Uuid.hpp \
@@ -40,7 +43,13 @@ libupnp_tools_la_SOURCES = \
 	UPnPActionResponse.hpp \
 	UPnPControlPoint.cpp \
 	UPnPControlPoint.hpp \
+	UPnPDeviceProfile.cpp \
+	UPnPDeviceProfile.hpp \
 	UPnPModels.hpp \
+	UPnPServer.cpp \
+	UPnPServer.hpp \
+	UPnPServerProfile.cpp \
+	UPnPServerProfile.hpp \
 	UPnPSession.hpp \
 	UPnPSessionManager.hpp \
 	Uuid.cpp \
