@@ -58,8 +58,12 @@ string scpd() {
 		"<major>1</major>"
 		"<minor>0</minor>"
 		"</specVersion>"
-		"<actionList />"
-		"<serviceStateTable />"
+		"<actionList>"
+		"<action><name>GetProtocolInfo</name><argumentList><argument><name>Source</name><direction>out</direction><relatedStateVariable>SourceProtocolInfo</relatedStateVariable></argument><argument><name>Sink</name><direction>out</direction><relatedStateVariable>SinkProtocolInfo</relatedStateVariable></argument></argumentList></action>"
+		"</actionList>"
+		"<serviceStateTable>"
+		"<stateVariable sendEvents=\"yes\"><name>SourceProtocolInfo</name><dataType>string</dataType></stateVariable><stateVariable sendEvents=\"yes\"><name>SinkProtocolInfo</name><dataType>string</dataType></stateVariable>"
+		"</serviceStateTable>"
 		"</scpd>";
 
 	return xml;
@@ -109,7 +113,13 @@ int main(int argc, char *args[]) {
 	device.udn() = udn;
 	device.deviceDescription() = dd(udn);
 	device.scpd("urn:schemas-dummy-com:service:Dummy:1") = scpd();
+	UPnPService service;
+	service["serviceType"] = "urn:schemas-dummy-com:service:Dummy:1";
+	service["SCPDURL"] = "scpd.xml?udn=" + udn + "&serviceType=urn:schemas-dummy-com:service:Dummy:1";
+	device.services().push_back(service);
 	server[udn] = device;
+
+	cout << "udn: " << udn << endl;
 
 	while (1) {
 		char buffer[1024] = {0,};

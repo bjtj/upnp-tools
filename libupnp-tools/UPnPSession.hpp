@@ -190,6 +190,13 @@ namespace UPNP {
 				str.append("\n");
 				str.append(depth, ' ');
 				str.append(" ** " + (*iter)->getServiceType());
+
+				std::vector<UPnPAction> actions = (*iter)->actions();
+				for (std::vector<UPnPAction>::iterator aiter = actions.begin(); aiter != actions.end(); aiter++) {
+					str.append("\n");
+					str.append(depth, ' ');
+					str.append("  - " + (*aiter).name());
+				}
 			}
 			
 			std::vector<UTIL::AutoRef<UPnPDevice> > & devices = device.devices();

@@ -1,6 +1,6 @@
 TESTS=$(check_PROGRAMS)
 
-check_PROGRAMS=test-basic test-network
+check_PROGRAMS=test-basic test-network test-server
 
 test_basic_SOURCES = test-basic.cpp
 test_basic_CPPFLAGS =-I$(top_srcdir)
@@ -13,3 +13,9 @@ test_network_CPPFLAGS =-I$(top_srcdir)
 test_network_CXXFLAGS = $(PTHREAD_CXXFLAGS) $(LIBOSLAYER_CFLAGS) $(LIBHTTP_SERVER_CFLAGS)
 test_network_LDFLAGS = $(PTHREAD_CFLAGS)
 test_network_LDADD = ../libupnp-tools/libupnp-tools.la $(LIBOSLAYER_LIBS) $(LIBHTTP_SERVER_LIBS)
+
+test_server_SOURCES = test-server.cpp
+test_server_CPPFLAGS =-I$(top_srcdir)
+test_server_CXXFLAGS = $(PTHREAD_CXXFLAGS) $(LIBOSLAYER_CFLAGS) $(LIBHTTP_SERVER_CFLAGS)
+test_server_LDFLAGS = $(PTHREAD_CFLAGS)
+test_server_LDADD = ../libupnp-tools/libupnp-tools.la $(LIBOSLAYER_LIBS) $(LIBHTTP_SERVER_LIBS)

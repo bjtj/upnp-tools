@@ -17,6 +17,9 @@ namespace UPNP {
 	string & UPnPDeviceProfile::deviceDescription() {
 		return _deviceDescription;
 	}
+	vector<UPnPService> & UPnPDeviceProfile::services() {
+		return _services;
+	}
 	string & UPnPDeviceProfile::scpd(const string & serviceType) {
 		return _scpds[serviceType];
 	}

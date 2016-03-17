@@ -1,3 +1,4 @@
+#include <iostream>
 #include "UPnPServer.hpp"
 #include "SSDPMsearchSender.hpp"
 #include "NetworkUtil.hpp"
@@ -21,15 +22,12 @@ namespace UPNP {
 		virtual ~UPnPServerHttpRequestHandler() {}
 
 		virtual void onHttpRequestHeaderCompleted(HttpRequest & request, HttpResponse & response) {
+			
 			// serve dd
 			// serve scpd
 
-			// ** next plan
-			// UPnPDeviceProfile profile = server.getProfileWithUdn(udn);
-			// string dd = profile.getDescription();
-			// string scpd = profile.getScpd(serviceType);
-			// setFixedTransfer(response, dd);
-			// setFixedTransfer(response, scpd);
+			cout << " ** uri: " << request.getHeader().getPart2() << endl;
+			string uri = request.getHeader().getPart2();
 			
 			if (request.getPath() == "/device.xml") {
 				response.setStatusCode(200);
@@ -39,7 +37,7 @@ namespace UPNP {
 				return;
 			}
 
-			string scpdUrl = request.getPath().substr(prefix.length());
+			string scpdUrl = uri.substr(prefix.length());
 			if (server.hasDeviceProfileWithScpdUrl(scpdUrl)) {
 				UPnPDeviceProfile profile = server.getDeviceProfileHasScpdUrl(scpdUrl);
 				response.setStatusCode(200);

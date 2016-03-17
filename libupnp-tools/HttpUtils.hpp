@@ -3,7 +3,9 @@
 
 #include <string>
 #include <liboslayer/os.hpp>
+#include <liboslayer/Text.hpp>
 #include <libhttp-server/AnotherHttpClient.hpp>
+#include <libhttp-server/HttpStatusCodes.hpp>
 #include <libhttp-server/Url.hpp>
 #include <liboslayer/StringElement.hpp>
 #include <libhttp-server/FixedTransfer.hpp>
@@ -69,6 +71,13 @@ namespace UPNP {
 			client.setUrl(url);
 			client.setRequest("GET", UTIL::LinkedStringMap(), NULL);
 			client.execute();
+
+			int code = handler.getResponseHeader().getStatusCode();
+			if (code / 100 != 2) {
+				std::string codeString = UTIL::Text::toString(code);
+				std::string msg = HTTP::HttpStatusCodes::getMessage(code);
+				throw OS::Exception("http error - " + codeString + " / " + msg, -1, 0);
+			}
 
 			return handler.getDump();
 		}
