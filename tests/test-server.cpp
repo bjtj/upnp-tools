@@ -4,6 +4,8 @@
 #include <libupnp-tools/HttpUtils.hpp>
 #include <libupnp-tools/XmlUtils.hpp>
 #include <libupnp-tools/UPnPSession.hpp>
+#include <libupnp-tools/UPnPActionInvoker.hpp>
+#include <libupnp-tools/UPnPActionHandler.hpp>
 #include <liboslayer/XmlParser.hpp>
 #include "utils.hpp"
 
@@ -16,6 +18,21 @@ using namespace HTTP;
 string dd(string udn);
 string scpd();
 
+class MyActionHandler : public UPnPActionHandler {
+private:
+public:
+    MyActionHandler() {}
+    virtual ~MyActionHandler() {}
+
+	virtual void handleActionRequest(UPnPActionRequest & request, UPnPActionResponse & response) {
+		if (request.actionName() == "GetProtocolInfo") {
+			response["Source"] = "<sample source>";
+			response["Sink"] = "<sample sink>";
+		}
+	}
+};
+
+
 static void test_device_profile() {
 	
 	string udn = Uuid::generateUuid();
@@ -25,38 +42,46 @@ static void test_device_profile() {
 
 	UPnPServer server(profile);
 
-	UPnPDeviceProfile device;
-	device.udn() = udn;
-	device.deviceDescription() = dd(udn);
-	device.scpd("urn:schemas-dummy-com:service:Dummy:1") = scpd();
-	UPnPService service;
-	service["serviceType"] = "urn:schemas-dummy-com:service:Dummy:1";
-	service["SCPDURL"] = "scpd.xml?udn=" + udn + "&serviceType=urn:schemas-dummy-com:service:Dummy:1";
-	device.services().push_back(service);
-	server[udn] = device;
+	UPnPDeviceProfile deviceProfile;
+	deviceProfile.udn() = udn;
+	deviceProfile.deviceDescription() = dd(udn);
+	UPnPServiceProfile serviceProfile;
+	serviceProfile.scpd() = scpd();
+	serviceProfile.serviceType() = "urn:schemas-dummy-com:service:Dummy:1";
+	serviceProfile.scpdUrl() = "/scpd.xml?udn=" + udn + "&serviceType=urn:schemas-dummy-com:service:Dummy:1";
+	serviceProfile.controlUrl() = "/control?udn=" + udn + "&serviceType=urn:schemas-dummy-com:service:Dummy:1";
+	serviceProfile.eventSubUrl() = "/event?udn=" + udn + "&serviceType=urn:schemas-dummy-com:service:Dummy:1";
+	deviceProfile.serviceProfiles().push_back(serviceProfile);
+	server[udn] = deviceProfile;
 
+	AutoRef<UPnPActionHandler> handler(new MyActionHandler);
+	server.setActionHandler(handler);
+	
 	server.startAsync();
 
+	// profile search check
 	{
-		string scpdUrl = "scpd.xml?udn=" + udn + "&serviceType=urn:schemas-dummy-com:service:Dummy:1";
+		string scpdUrl = "/scpd.xml?udn=" + udn + "&serviceType=urn:schemas-dummy-com:service:Dummy:1";
 		UPnPDeviceProfile deviceProfile = server.getDeviceProfileHasScpdUrl(scpdUrl);
-		UPnPService service = deviceProfile.getServiceWithScpdUrl(scpdUrl);
-		ASSERT(service.getServiceType(), ==, "urn:schemas-dummy-com:service:Dummy:1");
-
+		UPnPServiceProfile service = deviceProfile.getServiceProfileWithScpdUrl(scpdUrl);
+		ASSERT(service.serviceType(), ==, "urn:schemas-dummy-com:service:Dummy:1");
 		ASSERT(server.hasDeviceProfileWithScpdUrl(scpdUrl), ==, true);
 	}
 
+	// dd check
 	{
 		string xml = HttpUtils::httpGet(Url("http://localhost:9001/device.xml?udn=" + udn));
 		ASSERT(xml, ==, dd(udn));
 	}
 
+	// scpd check
 	{
 		string xml = HttpUtils::httpGet(Url("http://localhost:9001/scpd.xml?udn=" + udn +
 											"&serviceType=urn:schemas-dummy-com:service:Dummy:1"));
 		ASSERT(xml, ==, scpd());
 	}
 
+	// scpd check
 	{
 		XML::XmlDocument doc = XML::DomParser::parse(scpd());
 		ASSERT(doc.getRootNode().nil(), ==, false);
@@ -72,6 +97,18 @@ static void test_device_profile() {
 		vector<XmlNode*> stateVariables = doc.getRootNode()->getElementsByTagName("stateVariable");
 	}
 
+	// send action check
+	{
+		Url url = Url("http://localhost:9001/control?udn=" + udn + "&serviceType=urn:schemas-dummy-com:service:Dummy:1");
+		UPnPActionInvoker invoker(url);
+		UPnPActionRequest request;
+		request.serviceType() = "urn:schemas-dummy-com:service:Dummy:1";
+		request.actionName() = "GetProtocolInfo";
+		UPnPActionResponse response = invoker.invoke(request);
+		ASSERT(response["Sink"], ==, "<sample sink>");
+		ASSERT(response["Source"], ==, "<sample source>");
+	}
+
 	server.stop();
 }
 
@@ -81,8 +118,6 @@ int main(int argc, char *args[]) {
     
     return 0;
 }
-
-
 
 string dd(string udn) {
 	string dummy = "urn:schemas-dummy-com:service:Dummy:1";
@@ -106,9 +141,9 @@ string dd(string udn) {
 		"<service>"
 		"<serviceType>urn:schemas-dummy-com:service:Dummy:1</serviceType>"
 		"<serviceId>urn:dummy-com:serviceId:dummy1</serviceId>"
-		"<controlURL>control?udn=" + udn + "&serviceType=" + dummy + "</controlURL>"
-		"<eventSubURL>event?udn=" + udn + "&serviceType=" + dummy + "</eventSubURL>"
-		"<SCPDURL>scpd.xml?udn=" + udn + "&serviceType=" + dummy + "</SCPDURL>"
+		"<controlURL>/control?udn=" + udn + "&serviceType=" + dummy + "</controlURL>"
+		"<eventSubURL>/event?udn=" + udn + "&serviceType=" + dummy + "</eventSubURL>"
+		"<SCPDURL>/scpd.xml?udn=" + udn + "&serviceType=" + dummy + "</SCPDURL>"
 		"</service></serviceList>"
 		"</root>";
 

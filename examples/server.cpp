@@ -5,11 +5,13 @@
 #include <libupnp-tools/SSDPMsearchSender.hpp>
 #include <libupnp-tools/NetworkUtil.hpp>
 #include <libupnp-tools/UPnPServer.hpp>
+#include <libupnp-tools/UPnPActionHandler.hpp>
 
 using namespace std;
 using namespace SSDP;
 using namespace HTTP;
 using namespace UPNP;
+using namespace UTIL;
 
 size_t readline(char * buffer, size_t max) {
     if (fgets(buffer, (int)max - 1, stdin)) {
@@ -42,9 +44,9 @@ string dd(string udn) {
 		"<service>"
 		"<serviceType>urn:schemas-dummy-com:service:Dummy:1</serviceType>"
 		"<serviceId>urn:dummy-com:serviceId:dummy1</serviceId>"
-		"<controlURL>control?udn=" + udn + "&serviceType=" + dummy + "</controlURL>"
-		"<eventSubURL>event?udn=" + udn + "&serviceType=" + dummy + "</eventSubURL>"
-		"<SCPDURL>scpd.xml?udn=" + udn + "&serviceType=" + dummy + "</SCPDURL>"
+		"<controlURL>/control?udn=" + udn + "&serviceType=" + dummy + "</controlURL>"
+		"<eventSubURL>/event?udn=" + udn + "&serviceType=" + dummy + "</eventSubURL>"
+		"<SCPDURL>/scpd.xml?udn=" + udn + "&serviceType=" + dummy + "</SCPDURL>"
 		"</service></serviceList>"
 		"</root>";
 
@@ -99,6 +101,20 @@ void notifyByeBye(const string & udn, const string & deviceType) {
 	sender.close();
 }
 
+class MyActionHandler : public UPnPActionHandler {
+private:
+public:
+    MyActionHandler() {}
+    virtual ~MyActionHandler() {}
+
+	virtual void handleActionRequest(UPnPActionRequest & request, UPnPActionResponse & response) {
+		if (request.actionName() == "GetProtocolInfo") {
+			response["Source"] = "<sample source>";
+			response["Sink"] = "<sample sink>";
+		}
+	}
+};
+
 int main(int argc, char *args[]) {
 
 	string udn = Uuid::generateUuid();
@@ -115,9 +131,14 @@ int main(int argc, char *args[]) {
 	UPnPServiceProfile serviceProfile;
 	serviceProfile.scpd() = scpd();
 	serviceProfile.serviceType() = "urn:schemas-dummy-com:service:Dummy:1";
-	serviceProfile.scpdUrl() = "scpd.xml?udn=" + udn + "&serviceType=urn:schemas-dummy-com:service:Dummy:1";
+	serviceProfile.scpdUrl() = "/scpd.xml?udn=" + udn + "&serviceType=urn:schemas-dummy-com:service:Dummy:1";
+	serviceProfile.controlUrl() = "/control?udn=" + udn + "&serviceType=urn:schemas-dummy-com:service:Dummy:1";
+	serviceProfile.eventSubUrl() = "/event?udn=" + udn + "&serviceType=urn:schemas-dummy-com:service:Dummy:1";
 	deviceProfile.serviceProfiles().push_back(serviceProfile);
 	server[udn] = deviceProfile;
+
+	AutoRef<UPnPActionHandler> handler(new MyActionHandler);
+	server.setActionHandler(handler);
 
 	cout << "udn: " << udn << endl;
 

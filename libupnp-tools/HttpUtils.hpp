@@ -72,12 +72,7 @@ namespace UPNP {
 			client.setRequest("GET", UTIL::LinkedStringMap(), NULL);
 			client.execute();
 
-			int code = handler.getResponseHeader().getStatusCode();
-			if (code / 100 != 2) {
-				std::string codeString = UTIL::Text::toString(code);
-				std::string msg = HTTP::HttpStatusCodes::getMessage(code);
-				throw OS::Exception("http error - " + codeString + " / " + msg, -1, 0);
-			}
+			testHttpError(handler.getResponseHeader().getStatusCode());
 
 			return handler.getDump();
 		}
@@ -90,7 +85,18 @@ namespace UPNP {
 			client.setUrl(url);
 			client.setRequest("POST", headers, new HTTP::FixedTransfer(content));
 			client.execute();
+
+			testHttpError(handler.getResponseHeader().getStatusCode());
+			
 			return handler.getDump();
+		}
+
+		static void testHttpError(int code) {
+			if (code / 100 != 2) {
+				std::string codeString = UTIL::Text::toString(code);
+				std::string msg = HTTP::HttpStatusCodes::getMessage(code);
+				throw OS::Exception("http error - " + codeString + " / " + msg, -1, 0);
+			}
 		}
 	};
 }

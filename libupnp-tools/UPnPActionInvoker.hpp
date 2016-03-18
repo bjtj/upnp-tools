@@ -39,17 +39,17 @@ namespace UPNP {
 			std::string result = HttpUtils::httpPost(_controlUrl, headers, makeSoapRequestContent(request));
 			XML::XmlDocument doc = XML::DomParser::parse(result);
 			if (doc.getRootNode().nil()) {
-				throw OS::Exception("invoke error / wrong format", -1, 0);
+				throw OS::Exception("invoke error / wrong response format", -1, 0);
 			}
 			XML::XmlNode * node = doc.getRootNode()->getElementByTagName(actionName + "Response");
 			if (!node) {
-				throw OS::Exception("invoke error / wrong format", -1, 0);
+				throw OS::Exception("invoke error / wrong response format - no action response", -1, 0);
 			}
 			std::vector<XML::XmlNode*> children = node->children();
 			for (std::vector<XML::XmlNode*>::iterator iter = children.begin(); iter != children.end(); iter++) {
 				if (XmlUtils::testNameValueXmlNode(*iter)) {
 					UTIL::NameValue nv = XmlUtils::toNameValue(*iter);
-					response[nv.name()] = nv.value();
+					response[XML::XmlDecoder::decode(nv.name())] = XML::XmlDecoder::decode(nv.value());
 				}
 			}
 			return response;
@@ -67,9 +67,9 @@ namespace UPNP {
 			xml.append("<s:Body>\r\n");
 			xml.append("<u:" + actionName + " xmlns:u=\"" + serviceType + "\">\r\n");
 			for (std::map<std::string, std::string>::iterator iter = parameters.begin(); iter != parameters.end(); iter++) {
-				std::string name = iter->first;
-				std::string & value = iter->second;
-				xml.append("<" + name + ">" + XML::XmlEncoder::encode(value) + "</" + name + ">\r\n");
+				std::string name = XML::XmlEncoder::encode(iter->first);
+				std::string value = XML::XmlEncoder::encode(iter->second);
+				xml.append("<" + name + ">" + value + "</" + name + ">\r\n");
 			}
 			xml.append("</u:" + actionName + ">\r\n");
 			xml.append("</s:Body>\r\n");
