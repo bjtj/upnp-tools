@@ -27,13 +27,10 @@ namespace UPNP {
 		}
 		virtual void onNotify(SSDPHeader & header) {
 			OS::InetAddress addr = header.getRemoteAddr();
-			if (header.isNotifyAlive()) {
-				if (cp) {
+			if (cp) {
+				if (header.isNotifyAlive()) {
 					cp->addDevice(header);
-				}
-			
-			} else {
-				if (cp) {
+				} else {
 					cp->removeDevice(header);
 				}
 			}
@@ -90,7 +87,7 @@ namespace UPNP {
 		Uuid uuid(header.getUsn());
 		string udn = uuid.getUuid();
 
-		if (!deviceListener.nil()) {
+		if (!deviceListener.nil() && !_sessionManager[udn].nil()) {
 			AutoRef<UPnPDevice> device = _sessionManager[udn]->getRootDevice();
 			if (!device.nil()) {
 				deviceListener->onDeviceRemove(device);

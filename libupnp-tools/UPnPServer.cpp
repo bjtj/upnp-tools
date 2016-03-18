@@ -39,11 +39,11 @@ namespace UPNP {
 
 			string scpdUrl = uri.substr(prefix.length());
 			if (server.hasDeviceProfileWithScpdUrl(scpdUrl)) {
-				UPnPDeviceProfile profile = server.getDeviceProfileHasScpdUrl(scpdUrl);
+				UPnPDeviceProfile deviceProfile = server.getDeviceProfileHasScpdUrl(scpdUrl);
 				response.setStatusCode(200);
 				response.setContentType("text/xml");
-				UPnPService service = profile.getServiceWithScpdUrl(scpdUrl);
-				setFixedTransfer(response, profile.scpd(service.getServiceType()));
+				UPnPServiceProfile serviceProfile = deviceProfile.getServiceProfileWithScpdUrl(scpdUrl);
+				setFixedTransfer(response, serviceProfile.scpd());
 				return;
 			}
 

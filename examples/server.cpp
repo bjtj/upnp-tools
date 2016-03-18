@@ -109,15 +109,15 @@ int main(int argc, char *args[]) {
 	UPnPServer server(profile);
 	server.startAsync();
 
-	UPnPDeviceProfile device;
-	device.udn() = udn;
-	device.deviceDescription() = dd(udn);
-	device.scpd("urn:schemas-dummy-com:service:Dummy:1") = scpd();
-	UPnPService service;
-	service["serviceType"] = "urn:schemas-dummy-com:service:Dummy:1";
-	service["SCPDURL"] = "scpd.xml?udn=" + udn + "&serviceType=urn:schemas-dummy-com:service:Dummy:1";
-	device.services().push_back(service);
-	server[udn] = device;
+	UPnPDeviceProfile deviceProfile;
+	deviceProfile.udn() = udn;
+	deviceProfile.deviceDescription() = dd(udn);
+	UPnPServiceProfile serviceProfile;
+	serviceProfile.scpd() = scpd();
+	serviceProfile.serviceType() = "urn:schemas-dummy-com:service:Dummy:1";
+	serviceProfile.scpdUrl() = "scpd.xml?udn=" + udn + "&serviceType=urn:schemas-dummy-com:service:Dummy:1";
+	deviceProfile.serviceProfiles().push_back(serviceProfile);
+	server[udn] = deviceProfile;
 
 	cout << "udn: " << udn << endl;
 
@@ -127,9 +127,9 @@ int main(int argc, char *args[]) {
 			if (!strcmp(buffer, "q")) {
 				break;
 			} else if (!strcmp(buffer, "alive")) {
-				server.notifyAliveWithDeviceType(device, "upnp:rootdevice");
+				server.notifyAliveWithDeviceType(deviceProfile, "upnp:rootdevice");
 			} else if (!strcmp(buffer, "byebye")) {
-				server.notifyByeByeWithDeviceType(device, "upnp:rootdevice");
+				server.notifyByeByeWithDeviceType(deviceProfile, "upnp:rootdevice");
 			}
 		}
 	}

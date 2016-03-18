@@ -17,6 +17,7 @@ libupnp_toolsinc_HEADERS = \
 	UPnPModels.hpp \
 	UPnPServer.hpp \
 	UPnPServerProfile.hpp \
+	UPnPServiceProfile.hpp \
 	UPnPSession.hpp \
 	UPnPSessionManager.hpp \
 	Uuid.hpp \
@@ -50,6 +51,7 @@ libupnp_tools_la_SOURCES = \
 	UPnPServer.hpp \
 	UPnPServerProfile.cpp \
 	UPnPServerProfile.hpp \
+	UPnPServiceProfile.hpp \
 	UPnPSession.hpp \
 	UPnPSessionManager.hpp \
 	Uuid.cpp \
