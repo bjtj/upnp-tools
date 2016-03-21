@@ -94,23 +94,30 @@ namespace UPNP {
 			parsePropertiesFromXmlNode(serviceXml, *service);
 		}
 
+		std::string getDump(const HTTP::Url & url) {
+			return HttpUtils::httpGet(url);
+		}
+
 		void buildService(UPnPService & service) {
-			if (service.getDevice()) {
-				HTTP::Url u = service.getDevice()->baseUrl().relativePath(service.getScpdUrl());
-				std::string scpd = HttpUtils::httpGet(u);
-				XML::XmlDocument doc = XML::DomParser::parse(scpd);
-				if (doc.getRootNode().nil()) {
-					return;
-				}
-				std::vector<XML::XmlNode*> actions = doc.getRootNode()->getElementsByTagName("action");
-				for (std::vector<XML::XmlNode*>::iterator iter = actions.begin(); iter != actions.end(); iter++) {
-					service.addAction(parseActionFromActionXml(*iter));
-				}
-				std::vector<XML::XmlNode*> stateVariables = doc.getRootNode()->getElementsByTagName("stateVariable");
+			parseScpdFromXml(service, HttpUtils::httpGet(service.makeScpdUrl()));
+		}
+
+		void parseScpdFromXml(UPnPService & service, const std::string & scpd) {
+			XML::XmlDocument doc = XML::DomParser::parse(scpd);
+			if (doc.getRootNode().nil()) {
+				throw OS::Exception("wrong scpd format", -1, 0);
+			}
+			std::vector<XML::XmlNode*> actions = doc.getRootNode()->getElementsByTagName("action");
+			for (std::vector<XML::XmlNode*>::iterator iter = actions.begin(); iter != actions.end(); iter++) {
+				service.addAction(parseActionFromXml(*iter));
+			}
+			std::vector<XML::XmlNode*> stateVariables = doc.getRootNode()->getElementsByTagName("stateVariable");
+			for (std::vector<XML::XmlNode*>::iterator iter = stateVariables.begin(); iter != stateVariables.end(); iter++) {
+				service.addStateVariable(parseStateVariableFromXml(*iter));
 			}
 		}
 
-		UPnPAction parseActionFromActionXml(XML::XmlNode * actionXml) {
+		UPnPAction parseActionFromXml(XML::XmlNode * actionXml) {
 			UPnPAction action;
 			XML::XmlNode * name = actionXml->getElementByTagName("name");
 			if (XmlUtils::testNameValueXmlNode(name)) {
@@ -119,12 +126,12 @@ namespace UPNP {
 			}
 			std::vector<XML::XmlNode*> arguments = actionXml->getElementsByTagName("argument");
 			for (std::vector<XML::XmlNode*>::iterator iter = arguments.begin(); iter != arguments.end(); iter++) {
-				action.addArgument(parseArgumentFromArgumentXml(*iter));
+				action.addArgument(parseArgumentFromXml(*iter));
 			}
 			return action;
 		}
 
-		UPnPArgument parseArgumentFromArgumentXml(XML::XmlNode * argumentXml) {
+		UPnPArgument parseArgumentFromXml(XML::XmlNode * argumentXml) {
 			UPnPArgument arg;
 			std::vector<XML::XmlNode*> children = argumentXml->children();
 			for (std::vector<XML::XmlNode*>::iterator iter = children.begin(); iter != children.end(); iter++) {
@@ -133,8 +140,7 @@ namespace UPNP {
 					if (nv.name() == "name") {
 						arg.name() = nv.value();
 					} else if (nv.name() == "direction") {
-						arg.direction() = (nv.value() == "out" ?
-										   UPnPArgument::OUT_DIRECTION : UPnPArgument::IN_DIRECTION);
+						arg.direction() = (nv.value() == "out" ? UPnPArgument::OUT_DIRECTION : UPnPArgument::IN_DIRECTION);
 					} else if (nv.name() == "relatedStateVariable") {
 						arg.stateVariableName() = nv.value();
 					}
@@ -142,7 +148,34 @@ namespace UPNP {
 			}
 			return arg;
 		}
-
+		UPnPStateVariable parseStateVariableFromXml(XML::XmlNode * stateVariableXml) {
+			UPnPStateVariable stateVariable;
+			std::vector<XML::XmlNode*> children = stateVariableXml->children();
+			for (std::vector<XML::XmlNode*>::iterator iter = children.begin(); iter != children.end(); iter++) {
+				if ((*iter)->isElement()) {
+					if (XmlUtils::testNameValueXmlNode(*iter)) {
+						UTIL::NameValue nv = XmlUtils::toNameValue(*iter);
+						if (nv.name() == "name") {
+							stateVariable.name() = nv.value();
+						} else if (nv.name() == "dataType") {
+							stateVariable.dataType() = nv.value();
+						}
+					}
+					if ((*iter)->tagName() == "allowedValueList") {
+						std::vector<XML::XmlNode*> values = (*iter)->children();
+						for (std::vector<XML::XmlNode*>::iterator vi = values.begin(); vi != values.end(); vi++) {
+							if (XmlUtils::testNameValueXmlNode(*vi)) {
+								UTIL::NameValue anv = XmlUtils::toNameValue(*vi);
+								if (anv.name() == "allowedValue") {
+									stateVariable.addAllowedValue(anv.value());
+								}
+							}
+						}
+					}
+				}
+			}
+			return stateVariable;
+		}
 		void parsePropertiesFromXmlNode(XML::XmlNode * node, UPnPObject & obj) {
 			std::vector<XML::XmlNode*> children = node->children();
 			for (std::vector<XML::XmlNode*>::iterator iter = children.begin(); iter != children.end(); iter++) {

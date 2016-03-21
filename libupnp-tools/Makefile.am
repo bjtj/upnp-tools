@@ -51,6 +51,7 @@ libupnp_tools_la_SOURCES = \
 	UPnPControlPoint.hpp \
 	UPnPDeviceProfile.cpp \
 	UPnPDeviceProfile.hpp \
+	UPnPModels.cpp \
 	UPnPModels.hpp \
 	UPnPServer.cpp \
 	UPnPServer.hpp \

@@ -46,6 +46,8 @@ namespace UPNP {
 		std::string & dataType() {return _dataType;}
 		std::string & defaultValue() {return _defValue;}
 		std::vector<std::string> & allowedValueList() {return _allowedValueList;}
+		void addAllowedValue(const std::string & allowedValue) {_allowedValueList.push_back(allowedValue);}
+		bool hasAllowedValues() {return _allowedValueList.size() > 0;}
 	};
 
 	/**
@@ -102,38 +104,22 @@ namespace UPNP {
 		std::vector<UPnPAction> _actions;
 		std::vector<UPnPStateVariable> _stateVariables;
 	public:
-		UPnPService() : device(NULL) {}
-		UPnPService(UPnPDevice * device) : device(device) {}
-		virtual ~UPnPService() {}
-		std::string getServiceType() {
-			return getProperties()["serviceType"];
-		}
-		std::string getScpdUrl() {
-			return getProperties()["SCPDURL"];
-		}
-		std::string getControlUrl() {
-			return getProperties()["controlURL"];
-		}
-		std::string getEventSubUrl() {
-			return getProperties()["eventSubURL"];
-		}
-		void setDevice(UPnPDevice * device) {
-			this->device = device;
-		}
-		UPnPDevice * getDevice() {
-			return device;
-		}
-		std::vector<UPnPAction> & actions() {return _actions;}
-		UPnPAction getAction(const std::string & actionName) {
-			for (std::vector<UPnPAction>::iterator iter = _actions.begin(); iter != _actions.end(); iter++) {
-				if (iter->name() == actionName) {
-					return *iter;
-				}
-			}
-			throw OS::Exception("not found action / name: " + actionName, -1, 0);
-		}
-		void addAction(UPnPAction action) {_actions.push_back(action);}
-		std::vector<UPnPStateVariable> & stateVariables() {return _stateVariables;}
+		UPnPService();
+		UPnPService(UPnPDevice * device);
+		virtual ~UPnPService();
+		std::string getServiceType();
+		std::string getScpdUrl();
+		std::string getControlUrl();
+		std::string getEventSubUrl();
+		void setDevice(UPnPDevice * device);
+		UPnPDevice * getDevice();
+		HTTP::Url makeScpdUrl();
+		std::vector<UPnPAction> & actions();
+		UPnPAction getAction(const std::string & actionName);
+		void addAction(UPnPAction action);
+		std::vector<UPnPStateVariable> & stateVariables();
+		UPnPStateVariable getStateVariable(const std::string & stateVariableName);
+		void addStateVariable(UPnPStateVariable stateVariable);
 	};
 
 	/**
@@ -147,61 +133,20 @@ namespace UPNP {
 		HTTP::Url _baseUrl;
 		
 	public:
-		UPnPDevice() : parent(NULL) {}
-		UPnPDevice(UPnPDevice * parent) : parent(parent) {}
-		virtual ~UPnPDevice() {}
-
-		void setParent(UPnPDevice * parent) {
-			this->parent = parent;
-		}
-
-		UTIL::AutoRef<UPnPDevice> prepareDevice() {
-			UTIL::AutoRef<UPnPDevice> device(new UPnPDevice(this));
-			device->baseUrl() = _baseUrl;
-			addDevice(device);
-			return device;
-		}
-
-		void addDevice(UTIL::AutoRef<UPnPDevice> device) {
-			device->setParent(this);
-			_devices.push_back(device);
-		}
-
-		void addService(UTIL::AutoRef<UPnPService> service) {
-			service->setDevice(this);
-			_services.push_back(service);
-		}
-
-		UTIL::AutoRef<UPnPService> getService(const std::string & serviceType) {
-			for (std::vector<UTIL::AutoRef<UPnPService> >::iterator iter = _services.begin(); iter != _services.end(); iter++) {
-				if ((*iter)->getServiceType() == serviceType) {
-					return *iter;
-				}
-			}
-			throw OS::Exception("not found service / name: " + serviceType, -1, 0);
-		}
-
-		std::vector<UTIL::AutoRef<UPnPDevice> > & devices() {
-			return _devices;
-		}
-
-		std::vector<UTIL::AutoRef<UPnPService> > & services() {
-			return _services;
-		}
-
-		std::string getUdn() {
-			return getProperties()["UDN"];
-		}
-	
-		std::string getFriendlyName() {
-			return getProperties()["friendlyName"];
-		}
-
-		std::string getDeviceType() {
-			return getProperties()["deviceType"];
-		}
-
-		HTTP::Url & baseUrl() {return _baseUrl;}
+		UPnPDevice();
+		UPnPDevice(UPnPDevice * parent);
+		virtual ~UPnPDevice();
+		void setParent(UPnPDevice * parent);
+		UTIL::AutoRef<UPnPDevice> prepareDevice();
+		void addDevice(UTIL::AutoRef<UPnPDevice> device);
+		void addService(UTIL::AutoRef<UPnPService> service);
+		UTIL::AutoRef<UPnPService> getService(const std::string & serviceType);
+		std::vector<UTIL::AutoRef<UPnPDevice> > & devices();
+		std::vector<UTIL::AutoRef<UPnPService> > & services();
+		std::string getUdn();	
+		std::string getFriendlyName();
+		std::string getDeviceType();
+		HTTP::Url & baseUrl();
 	};	
 	
 }

@@ -90,11 +90,27 @@ static void test_device_profile() {
 
 		vector<XmlNode*> actions = doc.getRootNode()->getElementsByTagName("action");
 		for (vector<XmlNode*>::iterator iter = actions.begin(); iter != actions.end(); iter++) {
-			UPnPAction action = session.parseActionFromActionXml(*iter);
+			UPnPAction action = session.parseActionFromXml(*iter);
 			ASSERT(action.name(), ==, "GetProtocolInfo");
 		}
 		
 		vector<XmlNode*> stateVariables = doc.getRootNode()->getElementsByTagName("stateVariable");
+	}
+
+	// parse test
+	{
+		UPnPSession session(udn);
+		UPnPService service;
+		session.parseScpdFromXml(service, scpd());
+		UPnPStateVariable stateVariable = service.getStateVariable("SourceProtocolInfo");
+		ASSERT(stateVariable.name(), ==, "SourceProtocolInfo");
+
+		stateVariable.addAllowedValue("hello");
+		ASSERT(stateVariable.hasAllowedValues(), ==, true);
+
+		stateVariable = service.getStateVariable("A_ARG_TYPE_BrowseFlag");
+		ASSERT(stateVariable.name(), ==, "A_ARG_TYPE_BrowseFlag");
+		ASSERT(stateVariable.hasAllowedValues(), ==, true);
 	}
 
 	// send action check
@@ -161,7 +177,22 @@ string scpd() {
 		"<action><name>GetProtocolInfo</name><argumentList><argument><name>Source</name><direction>out</direction><relatedStateVariable>SourceProtocolInfo</relatedStateVariable></argument><argument><name>Sink</name><direction>out</direction><relatedStateVariable>SinkProtocolInfo</relatedStateVariable></argument></argumentList></action>"
 		"</actionList>"
 		"<serviceStateTable>"
-		"<stateVariable sendEvents=\"yes\"><name>SourceProtocolInfo</name><dataType>string</dataType></stateVariable><stateVariable sendEvents=\"yes\"><name>SinkProtocolInfo</name><dataType>string</dataType></stateVariable>"
+		"<stateVariable sendEvents=\"yes\">"
+		"<name>SourceProtocolInfo</name>"
+		"<dataType>string</dataType>"
+		"</stateVariable>"
+		"<stateVariable sendEvents=\"yes\">"
+		"<name>SinkProtocolInfo</name>"
+		"<dataType>string</dataType>"
+		"</stateVariable>"
+		"<stateVariable sendEvents=\"no\">"
+		"<name>A_ARG_TYPE_BrowseFlag</name>"
+		"<dataType>string</dataType>"
+		"<allowedValueList>"
+		"<allowedValue>BrowseMetadata</allowedValue>"
+		"<allowedValue>BrowseDirectChildren</allowedValue>"
+		"</allowedValueList>"
+		"</stateVariable>"
 		"</serviceStateTable>"
 		"</scpd>";
 

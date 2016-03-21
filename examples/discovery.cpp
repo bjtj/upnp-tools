@@ -275,8 +275,19 @@ int run(int argc, char *args[]) {
 					request.action() = action;
 					for (vector<UPnPArgument>::iterator iter = arguments.begin(); iter != arguments.end(); iter++) {
 						if (iter->direction() == UPnPArgument::IN_DIRECTION) {
+							string allows = "";
+							UPnPStateVariable sv = service->getStateVariable(iter->stateVariableName());
+							if (sv.hasAllowedValues()) {
+								for (vector<string>::iterator ai = sv.allowedValueList().begin(); ai != sv.allowedValueList().end(); ai++) {
+									if (allows.length() > 0) {
+										allows.append(", ");
+									}
+									allows.append(*ai);
+								}
+								allows = " [" + allows + "]";
+							}
 							char param[1024] = {0,};
-							prompt(iter->name() + " : ", param, sizeof(param));
+							prompt(iter->name() + allows + " : ", param, sizeof(param));
 							request[iter->name()] = string(param);
 						}
 					}
