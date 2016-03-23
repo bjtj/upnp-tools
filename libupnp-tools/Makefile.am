@@ -58,12 +58,13 @@ libupnp_tools_la_SOURCES = \
 	UPnPServerProfile.cpp \
 	UPnPServerProfile.hpp \
 	UPnPServiceProfile.hpp \
+	UPnPSession.cpp \
 	UPnPSession.hpp \
+	UPnPSessionManager.cpp \
 	UPnPSessionManager.hpp \
 	Uuid.cpp \
 	Uuid.hpp \
 	XmlUtils.hpp
-
 
 libupnp_tools_la_CXXFLAGS = $(PTHREAD_CXXFLAGS) $(LIBOSLAYER_CFLAGS) $(LIBHTTP_SERVER_CFLAGS)
 libupnp_tools_la_LDFLAGS = $(PTHREAD_CFLAGS)

@@ -29,216 +29,32 @@ namespace UPNP {
 		unsigned long sessionTimeout;
 	
 	public:
-		UPnPSession(const std::string & udn) : udn(udn), _completed(false), rootDevice(new UPnPDevice), creationTime(0), updateTime(0), sessionTimeout(0) {}
-		virtual ~UPnPSession() {printf("[%s] session instance destroyed\n", udn.c_str());}
-
-		void setCreationTime(unsigned long creationTime) {
-			this->creationTime = creationTime;
-		}
-
-		void setUpdateTime(unsigned long updateTime) {
-			this->updateTime = updateTime;
-		}
-
-		void setSessionTimeout(unsigned long sessionTimeout) {
-			this->sessionTimeout = sessionTimeout;
-		}
-
-		unsigned long lifetime() {
-			return (OS::tick_milli() - creationTime);
-		}
-
-		unsigned long duration() {
-			return (OS::tick_milli() - updateTime);
-		}
-
-		bool outdated() {
-			return (duration() >= sessionTimeout);
-		}
-
-		void buildDevice(SSDP::SSDPHeader & header) {
-			dd = HttpUtils::httpGet(header.getLocation());
-			rootDevice->baseUrl() = header.getLocation();
-			XML::XmlDocument doc = XML::DomParser::parse(dd);
-			XML::XmlNode * deviceNode = doc.getRootNode()->getElementByTagName("device");
-			if (deviceNode) {
-				parseDeviceXmlNode(deviceNode, *rootDevice);
-			}
-		}
-
-		void parseDeviceXmlNode(XML::XmlNode * deviceXml, UPnPDevice & device) {
-			parseDevicePropertiesFromDeviceXmlNode(deviceXml, device);
-			parseServiceListFromDeviceXmlNode(deviceXml, device);
-
-			std::vector<XML::XmlNode*> devices =  deviceXml->getElementsByTagNameInDepth("device", 2);
-			for (std::vector<XML::XmlNode*>::iterator iter = devices.begin(); iter != devices.end(); iter++) {
-				parseDeviceXmlNode(*iter, *device.prepareDevice());
-			}
-		}
-
-		void parseDevicePropertiesFromDeviceXmlNode(XML::XmlNode * deviceXml, UPnPDevice & device) {
-			parsePropertiesFromXmlNode(deviceXml, device);
-		}
-
-		void parseServiceListFromDeviceXmlNode(XML::XmlNode * deviceXml, UPnPDevice & device) {
-			std::vector<XML::XmlNode*> services = deviceXml->getElementsByTagNameInDepth("service", 2);
-			for (std::vector<XML::XmlNode*>::iterator iter = services.begin(); iter != services.end(); iter++) {
-				UTIL::AutoRef<UPnPService> service(new UPnPService(NULL));
-				parseServicePropertiesFromServiceXmlNode(*iter, &service);
-				device.addService(service);
-				buildService(*service);
-			}
-		}
-
-		void parseServicePropertiesFromServiceXmlNode(XML::XmlNode * serviceXml, UPnPService * service) {
-			parsePropertiesFromXmlNode(serviceXml, *service);
-		}
-
-		std::string getDump(const HTTP::Url & url) {
-			return HttpUtils::httpGet(url);
-		}
-
-		void buildService(UPnPService & service) {
-			parseScpdFromXml(service, HttpUtils::httpGet(service.makeScpdUrl()));
-		}
-
-		void parseScpdFromXml(UPnPService & service, const std::string & scpd) {
-			XML::XmlDocument doc = XML::DomParser::parse(scpd);
-			if (doc.getRootNode().nil()) {
-				throw OS::Exception("wrong scpd format", -1, 0);
-			}
-			std::vector<XML::XmlNode*> actions = doc.getRootNode()->getElementsByTagName("action");
-			for (std::vector<XML::XmlNode*>::iterator iter = actions.begin(); iter != actions.end(); iter++) {
-				service.addAction(parseActionFromXml(*iter));
-			}
-			std::vector<XML::XmlNode*> stateVariables = doc.getRootNode()->getElementsByTagName("stateVariable");
-			for (std::vector<XML::XmlNode*>::iterator iter = stateVariables.begin(); iter != stateVariables.end(); iter++) {
-				service.addStateVariable(parseStateVariableFromXml(*iter));
-			}
-		}
-
-		UPnPAction parseActionFromXml(XML::XmlNode * actionXml) {
-			UPnPAction action;
-			XML::XmlNode * name = actionXml->getElementByTagName("name");
-			if (XmlUtils::testNameValueXmlNode(name)) {
-				UTIL::NameValue nv = XmlUtils::toNameValue(name);
-				action.name() = nv.value();
-			}
-			std::vector<XML::XmlNode*> arguments = actionXml->getElementsByTagName("argument");
-			for (std::vector<XML::XmlNode*>::iterator iter = arguments.begin(); iter != arguments.end(); iter++) {
-				action.addArgument(parseArgumentFromXml(*iter));
-			}
-			return action;
-		}
-
-		UPnPArgument parseArgumentFromXml(XML::XmlNode * argumentXml) {
-			UPnPArgument arg;
-			std::vector<XML::XmlNode*> children = argumentXml->children();
-			for (std::vector<XML::XmlNode*>::iterator iter = children.begin(); iter != children.end(); iter++) {
-				if (XmlUtils::testNameValueXmlNode(*iter)) {
-					UTIL::NameValue nv = XmlUtils::toNameValue(*iter);
-					if (nv.name() == "name") {
-						arg.name() = nv.value();
-					} else if (nv.name() == "direction") {
-						arg.direction() = (nv.value() == "out" ? UPnPArgument::OUT_DIRECTION : UPnPArgument::IN_DIRECTION);
-					} else if (nv.name() == "relatedStateVariable") {
-						arg.stateVariableName() = nv.value();
-					}
-				}
-			}
-			return arg;
-		}
-		UPnPStateVariable parseStateVariableFromXml(XML::XmlNode * stateVariableXml) {
-			UPnPStateVariable stateVariable;
-			std::vector<XML::XmlNode*> children = stateVariableXml->children();
-			for (std::vector<XML::XmlNode*>::iterator iter = children.begin(); iter != children.end(); iter++) {
-				if ((*iter)->isElement()) {
-					if (XmlUtils::testNameValueXmlNode(*iter)) {
-						UTIL::NameValue nv = XmlUtils::toNameValue(*iter);
-						if (nv.name() == "name") {
-							stateVariable.name() = nv.value();
-						} else if (nv.name() == "dataType") {
-							stateVariable.dataType() = nv.value();
-						}
-					}
-					if ((*iter)->tagName() == "allowedValueList") {
-						std::vector<XML::XmlNode*> values = (*iter)->children();
-						for (std::vector<XML::XmlNode*>::iterator vi = values.begin(); vi != values.end(); vi++) {
-							if (XmlUtils::testNameValueXmlNode(*vi)) {
-								UTIL::NameValue anv = XmlUtils::toNameValue(*vi);
-								if (anv.name() == "allowedValue") {
-									stateVariable.addAllowedValue(anv.value());
-								}
-							}
-						}
-					}
-				}
-			}
-			return stateVariable;
-		}
-		void parsePropertiesFromXmlNode(XML::XmlNode * node, UPnPObject & obj) {
-			std::vector<XML::XmlNode*> children = node->children();
-			for (std::vector<XML::XmlNode*>::iterator iter = children.begin(); iter != children.end(); iter++) {
-				if (XmlUtils::testNameValueXmlNode(*iter)) {
-					UTIL::NameValue nv = XmlUtils::toNameValue(*iter);
-					if (!nv.value().empty()) {
-						obj[nv.name()] = nv.value();
-					}
-				}
-			}
-		}
-
-		std::string getDeviceDescription() {
-			return dd;
-		}
-
-		std::string getFriendlyName() {
-			return fn;
-		}
-
-		bool completed() {
-			return _completed;
-		}
-
-		UTIL::AutoRef<UPnPDevice> getRootDevice() {
-			return rootDevice;
-		}
-
-		std::string toString() {
-			if (rootDevice.nil()) {
-				return "";
-			}
-			return toString(*rootDevice, 0);
-		}
-
-		std::string toString(UPnPDevice & device, int depth) {
-			std::string str;
-
-			str.append(depth, ' ');
-			if (depth > 0) { str.append(" - "); }
-			str.append(device.getUdn() + " (" + device.getFriendlyName() + ")");
-
-			std::vector<UTIL::AutoRef<UPnPService> > services = device.services();
-			for (std::vector<UTIL::AutoRef<UPnPService> >::iterator iter = services.begin(); iter != services.end(); iter++) {
-				str.append("\n");
-				str.append(depth, ' ');
-				str.append(" ** " + (*iter)->getServiceType());
-
-				std::vector<UPnPAction> actions = (*iter)->actions();
-				for (std::vector<UPnPAction>::iterator aiter = actions.begin(); aiter != actions.end(); aiter++) {
-					str.append("\n");
-					str.append(depth, ' ');
-					str.append("  - " + (*aiter).name());
-				}
-			}
-			
-			std::vector<UTIL::AutoRef<UPnPDevice> > & devices = device.devices();
-			for (std::vector<UTIL::AutoRef<UPnPDevice> >::iterator iter = devices.begin(); iter != devices.end(); iter++) {
-				str.append("\n");
-				str.append(toString(*(*iter), depth + 1));
-			}
-			return str;
-		}
+		UPnPSession(const std::string & udn);
+		virtual ~UPnPSession();
+		void setCreationTime(unsigned long creationTime);
+		void setUpdateTime(unsigned long updateTime);
+		void setSessionTimeout(unsigned long sessionTimeout);
+		unsigned long lifetime();
+		unsigned long duration();
+		bool outdated();
+		void buildDevice(SSDP::SSDPHeader & header);
+		void parseDeviceXmlNode(XML::XmlNode * deviceXml, UPnPDevice & device);
+		void parseDevicePropertiesFromDeviceXmlNode(XML::XmlNode * deviceXml, UPnPDevice & device);
+		void parseServiceListFromDeviceXmlNode(XML::XmlNode * deviceXml, UPnPDevice & device);
+		void parseServicePropertiesFromServiceXmlNode(XML::XmlNode * serviceXml, UPnPService * service);
+		std::string getDump(const HTTP::Url & url);
+		void buildService(UPnPService & service);
+		void parseScpdFromXml(UPnPService & service, const std::string & scpd);
+		UPnPAction parseActionFromXml(XML::XmlNode * actionXml);
+		UPnPArgument parseArgumentFromXml(XML::XmlNode * argumentXml);
+		UPnPStateVariable parseStateVariableFromXml(XML::XmlNode * stateVariableXml);
+		void parsePropertiesFromXmlNode(XML::XmlNode * node, UPnPObject & obj);
+		std::string getDeviceDescription();
+		std::string getFriendlyName();
+		bool completed();
+		UTIL::AutoRef<UPnPDevice> getRootDevice();
+		std::string toString();
+		std::string toString(UPnPDevice & device, int depth);
 	};
 }
 

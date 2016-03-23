@@ -108,6 +108,11 @@ public:
     virtual ~MyActionHandler() {}
 
 	virtual void handleActionRequest(UPnPActionRequest & request, UPnPActionResponse & response) {
+
+		cout << "** Action requst **" << endl;
+		cout << " - service type : " << request.serviceType() << endl;
+		cout << " - action name : " << request.actionName() << endl;
+		
 		if (request.actionName() == "GetProtocolInfo") {
 			response["Source"] = "<sample source>";
 			response["Sink"] = "<sample sink>";
