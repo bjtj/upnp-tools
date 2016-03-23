@@ -17,7 +17,6 @@ namespace UPNP {
 	public:
 		DeviceAddRemoveListener() {}
 		virtual ~DeviceAddRemoveListener() {}
-
 		virtual void onDeviceAdd(UTIL::AutoRef<UPnPDevice> device) {}
 		virtual void onDeviceRemove(UTIL::AutoRef<UPnPDevice> device) {}
 	};
@@ -36,20 +35,15 @@ namespace UPNP {
 	public:
 		UPnPControlPoint();
 		virtual ~UPnPControlPoint();
-		
 		void startAsync();
 		void stop();
-
 		void setDeviceAddRemoveListener(UTIL::AutoRef<DeviceAddRemoveListener> deviceListener);
-
 		void addDevice(SSDP::SSDPHeader & header);
 		void removeDevice(SSDP::SSDPHeader & header);
 		UTIL::AutoRef<UPnPDevice> getDevice(const std::string & udn);
-
 		void clearDevices();
 		void sendMsearchAndWait(const std::string & target, unsigned long timeoutSec);
 		UPnPSessionManager & sessionManager();
-
 		HTTP::Url getBaseUrlWithUdn(const std::string & udn);
 		UTIL::AutoRef<UPnPService> getServiceWithUdnAndServiceType(const std::string & udn, const std::string & serviceType);
 		UPnPActionInvoker prepareActionInvoke(const std::string & udn, const std::string & serviceType);

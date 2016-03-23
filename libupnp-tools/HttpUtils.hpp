@@ -15,6 +15,8 @@ namespace UPNP {
 	class HttpUtils {
 	private:
 
+		static unsigned long connectionTimeout;
+
 		class DumpResponseHandler : public HTTP::OnResponseListener {
 		private:
 			HTTP::HttpResponseHeader responseHeader;
@@ -42,62 +44,16 @@ namespace UPNP {
 		};
 		
 	public:
-		HttpUtils() {}
-		virtual ~HttpUtils() {}
+		HttpUtils();
+		virtual ~HttpUtils();
 
-		static DumpResponseHandler dumpHttpRequest(const HTTP::Url & url, const std::string & method, const UTIL::LinkedStringMap & headers) {
-			
-			HTTP::AnotherHttpClient client;
-    
-			DumpResponseHandler handler;
-			client.setOnResponseListener(&handler);
-    
-			client.setFollowRedirect(true);
-			client.setUrl(url);
-			client.setRequest(method, headers, NULL);
-			client.execute();
+		static void setConnectionTimeout(unsigned long connectionTimeout);
+		static unsigned long getConnectionTimeout();
 
-			return handler;
-		}
-
-		static std::string httpGet(const HTTP::Url & url) {
-
-			HTTP::AnotherHttpClient client;
-    
-			DumpResponseHandler handler;
-			client.setOnResponseListener(&handler);
-    
-			client.setFollowRedirect(true);
-			client.setUrl(url);
-			client.setRequest("GET", UTIL::LinkedStringMap(), NULL);
-			client.execute();
-
-			testHttpError(handler.getResponseHeader().getStatusCode());
-
-			return handler.getDump();
-		}
-
-		static std::string httpPost(const HTTP::Url & url, const UTIL::LinkedStringMap & headers, const std::string & content) {
-			HTTP::AnotherHttpClient client;
-			DumpResponseHandler handler;
-			client.setOnResponseListener(&handler);
-			client.setFollowRedirect(true);
-			client.setUrl(url);
-			client.setRequest("POST", headers, new HTTP::FixedTransfer(content));
-			client.execute();
-
-			testHttpError(handler.getResponseHeader().getStatusCode());
-			
-			return handler.getDump();
-		}
-
-		static void testHttpError(int code) {
-			if (code / 100 != 2) {
-				std::string codeString = UTIL::Text::toString(code);
-				std::string msg = HTTP::HttpStatusCodes::getMessage(code);
-				throw OS::Exception("http error - " + codeString + " / " + msg, -1, 0);
-			}
-		}
+		static DumpResponseHandler dumpHttpRequest(const HTTP::Url & url, const std::string & method, const UTIL::LinkedStringMap & headers);
+		static std::string httpGet(const HTTP::Url & url);
+		static std::string httpPost(const HTTP::Url & url, const UTIL::LinkedStringMap & headers, const std::string & content);
+		static void testHttpError(int code);
 	};
 }
 

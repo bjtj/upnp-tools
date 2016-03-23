@@ -27,6 +27,7 @@ libupnp_toolsinc_HEADERS = \
 
 
 libupnp_tools_la_SOURCES = \
+	HttpUtils.cpp \
 	HttpUtils.hpp \
 	NetworkUtil.cpp \
 	NetworkUtil.hpp \

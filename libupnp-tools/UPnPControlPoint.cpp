@@ -8,6 +8,7 @@ namespace UPNP {
 	using namespace HTTP;
 	using namespace SSDP;
 	using namespace std;
+	using namespace OS;
 
 	class MySSDPHandler : public SSDPEventHandler {
 	private:
@@ -70,7 +71,11 @@ namespace UPNP {
 		string udn = uuid.getUuid();
 		if (!_sessionManager.has(udn)) {
 			AutoRef<UPnPSession> session = _sessionManager.prepareSession(udn);
-			session->buildDevice(header);
+			try {
+				session->buildDevice(header);
+			} catch (Exception & e) {
+				cout << e.getMessage() << endl;
+			}
 			AutoRef<UPnPDevice> device = session->getRootDevice();
 			if (device.nil()) {
 				_sessionManager.remove(udn);
