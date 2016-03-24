@@ -1,12 +1,13 @@
 #include "SSDPHeader.hpp"
-
 #include <liboslayer/Text.hpp>
 
 namespace SSDP {
 	
 	SSDPHeader::SSDPHeader(const std::string & headerString, OS::InetAddress & remoteAddr) : remoteAddr(remoteAddr) {
+		HTTP::HttpHeaderReader reader;
 		reader.read(headerString.c_str(), headerString.length());
 		this->setHeader(reader.getHeader());
+		rawPacket = headerString;
 	}
 	SSDPHeader::~SSDPHeader() {
 	}
@@ -75,5 +76,8 @@ namespace SSDP {
 	}
 	OS::InetAddress SSDPHeader::getRemoteAddr() const {
 		return remoteAddr;
+	}
+	std::string SSDPHeader::getRawPacket() const {
+		return rawPacket;
 	}
 }

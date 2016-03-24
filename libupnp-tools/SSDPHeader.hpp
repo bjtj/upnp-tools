@@ -9,7 +9,7 @@ namespace SSDP {
 
 	class SSDPHeader : public HTTP::HttpHeader {
 	private:
-		HTTP::HttpHeaderReader reader;
+		std::string rawPacket;
 		OS::InetAddress remoteAddr;
 	public:
 		SSDPHeader(const std::string & headerString, OS::InetAddress & remoteAddr);
@@ -29,6 +29,7 @@ namespace SSDP {
 		std::string getLocation() const;
 		std::string getMan() const;
 		OS::InetAddress getRemoteAddr() const;
+		std::string getRawPacket() const;
 	};
 
 }
