@@ -354,13 +354,21 @@ int run(int argc, char *args[]) {
 
 				Url url = cp.getBaseUrlWithUdn(selection.udn());
 				string dd = HttpUtils::httpGet(url);
-
 				cout << dd << endl;
-				
+
+				if (!selection.serviceType().empty()) {
+					AutoRef<UPnPService> service = cp.getServiceWithUdnAndServiceType(selection.udn(), selection.serviceType());
+					if (!service.nil()) {
+						url = cp.getBaseUrlWithUdn(selection.udn()).relativePath(service->getScpdUrl());
+						cout << "GET SCPD : " << url.toString() << endl;
+						dd = HttpUtils::httpGet(url);
+						cout << dd << endl;
+					}
+				}
 			} else {
-				cout << " ** Searching... " << string(buffer) << " **" << endl;
+				cout << " -**- Searching... " << string(buffer) << " **" << endl;
 				cp.sendMsearchAndWait(buffer, 3);
-				cout << endl << " ** Searching Done **" << endl;
+				cout << " -**- Searching Done **" << endl;
 			}
 		} else {
 			printList(cp.sessionManager());

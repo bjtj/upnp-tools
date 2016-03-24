@@ -75,7 +75,8 @@ namespace UPNP {
 		if (code / 100 != 2) {
 			string codeString = Text::toString(code);
 			string msg = HttpStatusCodes::getMessage(code);
-			throw Exception("http error - " + codeString + " / " + msg, -1, 0);
+			string errorMessage = "http error - " + codeString + " / " + msg;
+			throw Exception(errorMessage);
 		}
 	}
 	
