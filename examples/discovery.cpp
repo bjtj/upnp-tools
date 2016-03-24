@@ -136,6 +136,7 @@ void sendUnsubscribe(Url & url, const string & sid) {
 	int ret = HttpUtils::dumpHttpRequest(url, "UNSUBSCRIBE", headers).getResponseHeader().getStatusCode();
 }
 
+
 static int run(int argc, char *args[]);
 
 int main(int argc, char *args[]) {

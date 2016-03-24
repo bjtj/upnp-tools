@@ -122,7 +122,8 @@ public:
 
 int main(int argc, char *args[]) {
 
-	string udn = Uuid::generateUuid();
+	UuidGeneratorDefault gen;
+	string udn = gen.generate();
 
 	UPnPServerProfile profile;
 	profile["listen.port"] = "9001";

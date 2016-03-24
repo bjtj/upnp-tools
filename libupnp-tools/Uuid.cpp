@@ -11,14 +11,11 @@ namespace UPNP {
     
     DECL_NAMED_ONLY_EXCEPTION(WrongFormatException);
     
-    unsigned long Uuid::nonce = 0;
-    
     Uuid::Uuid(const string & uuid) {
         parse(uuid);
         
     }
     Uuid::~Uuid() {
-        
     }
     
     void Uuid::clear() {
@@ -32,7 +29,6 @@ namespace UPNP {
         clear();
         
         if (!Text::startsWith(uuid, "uuid:")) {
-            //throw WrongFormatException("wrong format not start with uuid:", -1, 0);
 			offset = 0;
         }
         
@@ -61,7 +57,7 @@ namespace UPNP {
         this->rest = rest;
     }
     
-    void Uuid::validFormat(const std::string & uuid) {
+    void Uuid::testValidFormat(const std::string & uuid) {
         
         if (uuid.empty()) {
             throw WrongFormatException("wrong format/empty string", -1, 0);
@@ -95,9 +91,23 @@ namespace UPNP {
         }
     }
     
-    string Uuid::generateUuid() {
-        
-        unsigned long num = nonce++;
+    string Uuid::toString() const {
+        return "uuid:" + uuid + (rest.empty() ? "" : "::" + rest);
+    }
+
+	
+	UuidGenerator::UuidGenerator() {
+	}
+	UuidGenerator::~UuidGenerator() {
+	}
+	
+
+	UuidGeneratorDefault::UuidGeneratorDefault() : nonce(0) {
+	}
+	UuidGeneratorDefault::~UuidGeneratorDefault() {
+	}
+	string UuidGeneratorDefault::generate() {
+		unsigned long num = nonce++;
         
         string part1(8, 'a');
         string part2 = Text::toHexString(num);
@@ -115,9 +125,5 @@ namespace UPNP {
         
         string uuid = part1 + "-" + part2 + "-" + part3 + "-" + part4 + "-" + part5;
         return uuid;
-    }
-    
-    string Uuid::toString() const {
-        return "uuid:" + uuid + (rest.empty() ? "" : "::" + rest);
-    }
+	}
 }

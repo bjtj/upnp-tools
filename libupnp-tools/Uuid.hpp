@@ -14,25 +14,43 @@ namespace UPNP {
     private:
         std::string uuid;
         std::string rest;
-        static unsigned long nonce;
         
     public:
         Uuid(const std::string & uuid);
         virtual ~Uuid();
-        
         void clear();
         void parse(const std::string & uuid);
-        
         std::string getUuid() const;
         std::string getRest() const;
         void setUuid(const std::string & uuid);
         void setRest(const std::string & rest);
-        
-        static void validFormat(const std::string & uuid);
-        static std::string generateUuid();
-        
+        static void testValidFormat(const std::string & uuid);
         std::string toString() const;
     };
+
+	/**
+	 * @brief
+	 */
+	class UuidGenerator {
+	private:
+	public:
+		UuidGenerator();
+		virtual ~UuidGenerator();
+		virtual std::string generate() = 0;
+	};
+
+	/**
+	 * @brief
+	 */
+	class UuidGeneratorDefault : public UuidGenerator {
+	private:
+		unsigned long nonce;
+	public:
+		UuidGeneratorDefault();
+		virtual ~UuidGeneratorDefault();
+		virtual std::string generate();
+	};
+
 }
 
 #endif
