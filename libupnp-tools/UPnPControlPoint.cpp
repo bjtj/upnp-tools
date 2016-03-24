@@ -73,17 +73,13 @@ namespace UPNP {
 			AutoRef<UPnPSession> session = _sessionManager.prepareSession(udn);
 			try {
 				session->buildDevice(header);
+				if (!deviceListener.nil()) {
+					deviceListener->onDeviceAdd(session->getRootDevice());
+				}
 			} catch (Exception & e) {
 				cout << e.getMessage() << endl;
-			}
-			AutoRef<UPnPDevice> device = session->getRootDevice();
-			if (device.nil()) {
 				_sessionManager.remove(udn);
 				return;
-			}
-
-			if (!deviceListener.nil()) {
-				deviceListener->onDeviceAdd(device);
 			}
 		}
 	}
