@@ -42,9 +42,10 @@ namespace UPNP {
 		rootDevice->baseUrl() = header.getLocation();
 		XmlDocument doc = DomParser::parse(dd);
 		XmlNode * deviceNode = doc.getRootNode()->getElementByTagName("device");
-		if (deviceNode) {
-			parseDeviceXmlNode(deviceNode, *rootDevice);
+		if (!deviceNode) {
+			throw OS::Exception("cannot build device / wrong device description");
 		}
+		parseDeviceXmlNode(deviceNode, *rootDevice);
 	}
 
 	void UPnPSession::parseDeviceXmlNode(XmlNode * deviceXml, UPnPDevice & device) {
