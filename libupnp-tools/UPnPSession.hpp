@@ -20,8 +20,6 @@ namespace UPNP {
 	class UPnPSession {
 	private:
 		std::string udn;
-		std::string fn;
-		std::string dd;
 		bool _completed;
 		UTIL::AutoRef<UPnPDevice> rootDevice;
 		unsigned long creationTime;
@@ -37,19 +35,8 @@ namespace UPNP {
 		unsigned long lifetime();
 		unsigned long duration();
 		bool outdated();
-		void buildDevice(SSDP::SSDPHeader & header);
-		void parseDeviceXmlNode(XML::XmlNode * deviceXml, UPnPDevice & device);
-		void parseDevicePropertiesFromDeviceXmlNode(XML::XmlNode * deviceXml, UPnPDevice & device);
-		void parseServiceListFromDeviceXmlNode(XML::XmlNode * deviceXml, UPnPDevice & device);
-		void parseServicePropertiesFromServiceXmlNode(XML::XmlNode * serviceXml, UPnPService * service);
 		std::string getDump(const HTTP::Url & url);
-		void buildService(UPnPService & service);
-		void parseScpdFromXml(UPnPService & service, const std::string & scpd);
-		UPnPAction parseActionFromXml(XML::XmlNode * actionXml);
-		UPnPArgument parseArgumentFromXml(XML::XmlNode * argumentXml);
-		UPnPStateVariable parseStateVariableFromXml(XML::XmlNode * stateVariableXml);
-		void parsePropertiesFromXmlNode(XML::XmlNode * node, UPnPObject & obj);
-		std::string getDeviceDescription();
+		void buildDevice(SSDP::SSDPHeader & header);
 		std::string getFriendlyName();
 		bool completed();
 		UTIL::AutoRef<UPnPDevice> getRootDevice();

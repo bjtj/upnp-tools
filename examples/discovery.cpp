@@ -218,7 +218,6 @@ public:
 	string & action() {return _action;}
 };
 
-
 int run(int argc, char *args[]) {
 
 	Selection selection;
@@ -345,6 +344,17 @@ int run(int argc, char *args[]) {
 					sendUnsubscribe(url, sub.sid());
 					subs.del(sub);
 				}
+
+			} else if (!strcmp(buffer, "dump")) {
+
+				if (selection.udn().empty()) {
+					throw "Error: select udn first";
+				}
+
+				Url url = cp.getBaseUrlWithUdn(selection.udn());
+				string dd = HttpUtils::httpGet(url);
+
+				cout << dd << endl;
 				
 			} else {
 				cout << " ** Searching... " << string(buffer) << " **" << endl;

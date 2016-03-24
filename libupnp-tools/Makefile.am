@@ -15,6 +15,7 @@ libupnp_toolsinc_HEADERS = \
 	UPnPActionRequest.hpp \
 	UPnPActionResponse.hpp \
 	UPnPControlPoint.hpp \
+	UPnPDeviceDeserializer.hpp \
 	UPnPDeviceProfile.hpp \
 	UPnPModels.hpp \
 	UPnPServer.hpp \
@@ -50,6 +51,8 @@ libupnp_tools_la_SOURCES = \
 	UPnPActionResponse.hpp \
 	UPnPControlPoint.cpp \
 	UPnPControlPoint.hpp \
+	UPnPDeviceDeserializer.cpp \
+	UPnPDeviceDeserializer.hpp \
 	UPnPDeviceProfile.cpp \
 	UPnPDeviceProfile.hpp \
 	UPnPModels.cpp \

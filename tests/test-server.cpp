@@ -6,6 +6,7 @@
 #include <libupnp-tools/UPnPSession.hpp>
 #include <libupnp-tools/UPnPActionInvoker.hpp>
 #include <libupnp-tools/UPnPActionHandler.hpp>
+#include <libupnp-tools/UPnPDeviceDeserializer.hpp>
 #include <liboslayer/XmlParser.hpp>
 #include "utils.hpp"
 
@@ -86,11 +87,9 @@ static void test_device_profile() {
 		XML::XmlDocument doc = XML::DomParser::parse(scpd());
 		ASSERT(doc.getRootNode().nil(), ==, false);
 
-		UPnPSession session(udn);
-
 		vector<XmlNode*> actions = doc.getRootNode()->getElementsByTagName("action");
 		for (vector<XmlNode*>::iterator iter = actions.begin(); iter != actions.end(); iter++) {
-			UPnPAction action = session.parseActionFromXml(*iter);
+			UPnPAction action = UPnPDeviceDeserializer::parseActionFromXml(*iter);
 			ASSERT(action.name(), ==, "GetProtocolInfo");
 		}
 		
@@ -99,9 +98,8 @@ static void test_device_profile() {
 
 	// parse test
 	{
-		UPnPSession session(udn);
 		UPnPService service;
-		session.parseScpdFromXml(service, scpd());
+		UPnPDeviceDeserializer::parseScpdFromXml(service, scpd());
 		UPnPStateVariable stateVariable = service.getStateVariable("SourceProtocolInfo");
 		ASSERT(stateVariable.name(), ==, "SourceProtocolInfo");
 

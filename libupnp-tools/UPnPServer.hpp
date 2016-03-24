@@ -28,7 +28,6 @@ namespace UPNP {
 	public:
 		UPnPServer(UPnPServerProfile & profile);
 		virtual ~UPnPServer();
-
 		void startAsync();
 		void stop();
 		std::string makeLocation(UPnPDeviceProfile & profile);
