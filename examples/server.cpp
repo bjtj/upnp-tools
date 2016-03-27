@@ -125,10 +125,8 @@ int main(int argc, char *args[]) {
 	UuidGeneratorDefault gen;
 	string udn = gen.generate();
 
-	UPnPServerProfile profile;
-	profile["listen.port"] = "9001";
-
-	UPnPServer server(profile);
+	UPnPServerConfig config(9001);
+	UPnPServer server(config);
 	server.startAsync();
 
 	UPnPDeviceProfile deviceProfile;

@@ -17,16 +17,17 @@ libupnp_toolsinc_HEADERS = \
 	UPnPControlPoint.hpp \
 	UPnPDeviceDeserializer.hpp \
 	UPnPDeviceProfile.hpp \
+	UPnPNotificationServer.hpp \
 	UPnPEventSubscriber.hpp \
+	UPnPEventSubscription.hpp \
+	UPnPEventSubscriptionRegistry.hpp \
 	UPnPModels.hpp \
 	UPnPServer.hpp \
-	UPnPServerProfile.hpp \
 	UPnPServiceProfile.hpp \
 	UPnPSession.hpp \
 	UPnPSessionManager.hpp \
 	Uuid.hpp \
 	XmlUtils.hpp
-
 
 libupnp_tools_la_SOURCES = \
 	HttpUtils.cpp \
@@ -56,14 +57,18 @@ libupnp_tools_la_SOURCES = \
 	UPnPDeviceDeserializer.hpp \
 	UPnPDeviceProfile.cpp \
 	UPnPDeviceProfile.hpp \
+	UPnPNotificationServer.cpp \
+	UPnPNotificationServer.hpp \
 	UPnPEventSubscriber.cpp \
 	UPnPEventSubscriber.hpp \
+	UPnPEventSubscription.cpp \
+	UPnPEventSubscription.hpp \
+	UPnPEventSubscriptionRegistry.cpp \
+	UPnPEventSubscriptionRegistry.hpp \
 	UPnPModels.cpp \
 	UPnPModels.hpp \
 	UPnPServer.cpp \
 	UPnPServer.hpp \
-	UPnPServerProfile.cpp \
-	UPnPServerProfile.hpp \
 	UPnPServiceProfile.hpp \
 	UPnPSession.cpp \
 	UPnPSession.hpp \
@@ -72,6 +77,7 @@ libupnp_tools_la_SOURCES = \
 	Uuid.cpp \
 	Uuid.hpp \
 	XmlUtils.hpp
+
 
 libupnp_tools_la_CXXFLAGS = $(PTHREAD_CXXFLAGS) $(LIBOSLAYER_CFLAGS) $(LIBHTTP_SERVER_CFLAGS)
 libupnp_tools_la_LDFLAGS = $(PTHREAD_CFLAGS)

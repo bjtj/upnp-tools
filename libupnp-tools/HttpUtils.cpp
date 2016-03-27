@@ -35,6 +35,8 @@ namespace UPNP {
 		client.setRequest(method, headers, NULL);
 		client.execute();
 
+		testHttpError(handler.getResponseHeader().getStatusCode());
+
 		return handler;
 	}
 

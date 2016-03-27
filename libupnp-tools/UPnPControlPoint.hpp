@@ -6,8 +6,22 @@
 #include "UPnPModels.hpp"
 #include "UPnPSessionManager.hpp"
 #include "UPnPActionInvoker.hpp"
+#include "UPnPEventSubscriber.hpp"
+#include "UPnPNotificationServer.hpp"
 
 namespace UPNP {
+
+	/**
+	 * @brief
+	 */
+	class UPnPControlPointConfig : public UTIL::Properties {
+	private:
+	public:
+		UPnPControlPointConfig() {}
+		UPnPControlPointConfig(int port) {setProperty("listen.port", port);}
+		virtual ~UPnPControlPointConfig() {}
+	};
+
 
 	/**
 	 * @brief device add remove listener
@@ -27,13 +41,15 @@ namespace UPNP {
 	 */
 	class UPnPControlPoint {
 	private:
+		UPnPControlPointConfig config;
 		UTIL::AutoRef<DeviceAddRemoveListener> deviceListener;
 		UTIL::AutoRef<SSDP::SSDPEventHandler> ssdpHandler;
 		SSDP::SSDPServer ssdpServer;
 		UPnPSessionManager _sessionManager;
+		UPnPNotificationServer * notificationServer;
 		
 	public:
-		UPnPControlPoint();
+		UPnPControlPoint(UPnPControlPointConfig & config);
 		virtual ~UPnPControlPoint();
 		void startAsync();
 		void stop();
@@ -47,6 +63,12 @@ namespace UPNP {
 		HTTP::Url getBaseUrlWithUdn(const std::string & udn);
 		UTIL::AutoRef<UPnPService> getServiceWithUdnAndServiceType(const std::string & udn, const std::string & serviceType);
 		UPnPActionInvoker prepareActionInvoke(const std::string & udn, const std::string & serviceType);
+
+		void subscribe(const std::string & udn, const std::string & serviceType);
+		void unsubscribe(const std::string & udn, const std::string & serviceType);
+		
+		UPnPEventSubscriber prepareEventSubscriber(const std::string & udn, const std::string & serviceType);
+		UPnPNotificationServer * getNotificationServer();
 	};
 }
 

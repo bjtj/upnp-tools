@@ -149,7 +149,7 @@ namespace UPNP {
 		}
 	};
 	
-	UPnPServer::UPnPServer(UPnPServerProfile & profile) : httpServer(NULL), profile(profile) {
+	UPnPServer::UPnPServer(UPnPServerConfig & config) : httpServer(NULL), config(config) {
 	}
 	UPnPServer::~UPnPServer() {
 	}
@@ -158,10 +158,10 @@ namespace UPNP {
 		if (httpServer) {
 			return;
 		}
-		HttpServerConfig config;
-		config["listen.port"] = profile["listen.port"];
-		config["thread.count"] = "5";
-		httpServer = new AnotherHttpServer(config);
+		HttpServerConfig httpServerConfig;
+		httpServerConfig["listen.port"] = config["listen.port"];
+		httpServerConfig["thread.count"] = config.getProperty("thread.count", "5");
+		httpServer = new AnotherHttpServer(httpServerConfig);
 		AutoRef<HttpRequestHandler> handler(new UPnPServerHttpRequestHandler(*this));
 		httpServer->registerRequestHandler("/*", handler);
 		httpServer->startAsync();
@@ -179,19 +179,13 @@ namespace UPNP {
 		Url url;
 		url.setProtocol("http");
 		url.setHost(NetworkUtil::selectDefaultAddress().getHost());
-		url.setPort(profile["listen.port"]);
+		url.setPort(config["listen.port"]);
 		url.setPath("device.xml");
 		url.setParameter("udn", deviceProfile.udn());
 		return url.toString();
 	}
 		
 	void UPnPServer::notifyAliveWithDeviceType(UPnPDeviceProfile & profile, const string & deviceType) {
-
-		// location
-		// device type
-		// ssdp group host
-		// ssdp port
-		// server profile
 
 		string udn = profile.udn();
 		string location = makeLocation(profile);
@@ -211,10 +205,6 @@ namespace UPNP {
 		sender.close();
 	}
 	void UPnPServer::notifyByeByeWithDeviceType(UPnPDeviceProfile & profile, const string & deviceType) {
-
-		// device type
-		// ssdp group host
-		// ssdp port
 
 		string udn = profile.udn();
 		

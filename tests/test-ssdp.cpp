@@ -46,7 +46,7 @@ static void test_discovery() {
 
 	SSDPServer server;
 	server.setSSDPEventHandler(handler);
-	server.startAsync(100);
+	server.startAsync();
 
 	idle(1000);
 

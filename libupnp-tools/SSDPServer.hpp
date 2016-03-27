@@ -23,7 +23,7 @@ namespace SSDP {
 		virtual ~SSDPServer();
 
 		void start();
-		void startAsync(unsigned long timeout);
+		void startAsync();
 		void stop();
         void poll(unsigned long timeout);
 

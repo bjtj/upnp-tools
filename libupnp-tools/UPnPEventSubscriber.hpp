@@ -5,36 +5,42 @@
 #include <map>
 #include <string>
 #include <libhttp-server/Url.hpp>
+#include "UPnPEventSubscription.hpp"
 
 namespace UPNP {
 
 	/**
 	 * @brief
 	 */
-	class UPnPEventNotify {
+	class UPnPNotify {
 	private:
 		std::string _sid;
 		unsigned long _seq;
 		std::map<std::string, std::string> props;
+		UPnPEventSubscription _subscription;
+		
 	public:
-		UPnPEventNotify();
-		virtual ~UPnPEventNotify();
+		UPnPNotify();
+		UPnPNotify(const std::string & sid);
+		UPnPNotify(const std::string & sid, unsigned long seq);
+		virtual ~UPnPNotify();
 		std::string & sid();
 		unsigned long & seq();
 		std::vector<std::string> propertyNames();
 		std::string & operator[] (const std::string & name);
+		UPnPEventSubscription & subscription();
 	};
 
 
 	/**
 	 * @brief
 	 */
-	class UPnPEventNotifyListener {
+	class UPnPNotificationListener {
 	private:
 	public:
-		UPnPEventNotifyListener();
-		virtual ~UPnPEventNotifyListener();
-		virtual void onNotify(UPnPEventNotify & notify) = 0;
+		UPnPNotificationListener();
+		virtual ~UPnPNotificationListener();
+		virtual void onNotify(UPnPNotify & notify) = 0;
 	};
 
 
@@ -47,6 +53,8 @@ namespace UPNP {
 		unsigned long _timeoutSec;
 	public:
 		UPnPEventSubscribeRequest();
+		UPnPEventSubscribeRequest(std::vector<std::string> & callbackUrls, unsigned long timeoutSec);
+		UPnPEventSubscribeRequest(const std::string & callbackUrl, unsigned long timeoutSec);
 		virtual ~UPnPEventSubscribeRequest();
 		std::vector<std::string> & callbackUrls();
 		unsigned long timeoutSec();
@@ -71,7 +79,7 @@ namespace UPNP {
 	private:
 		HTTP::Url eventSubUrl;
 	public:
-		UPnPEventSubscriber(HTTP::Url & eventSubUrl);
+		UPnPEventSubscriber(const HTTP::Url & eventSubUrl);
 		virtual ~UPnPEventSubscriber();
 		UPnPEventSubscribeResponse subscribe(UPnPEventSubscribeRequest & request);
 		void unsubscribe(const std::string & sid);

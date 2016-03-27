@@ -2,20 +2,31 @@
 #define __UPNP_SERVER_HPP__
 
 #include "UPnPDeviceProfile.hpp"
-#include "UPnPServerProfile.hpp"
 #include "UPnPActionHandler.hpp"
 #include <string>
 #include <map>
 #include <libhttp-server/AnotherHttpServer.hpp>
+#include <liboslayer/Properties.hpp>
 
 namespace UPNP {
+
+	/**
+	 * @brief
+	 */
+	class UPnPServerConfig : public UTIL::Properties {
+	private:
+	public:
+		UPnPServerConfig(int port) { setProperty("listen.port", port); };
+		virtual ~UPnPServerConfig() {}
+	};
+
 
 	/**
 	 * @breif upnp server
 	 */
 	class UPnPServer {
 	private:
-		UPnPServerProfile profile;
+		UPnPServerConfig config;
 		std::map<std::string, UPnPDeviceProfile> deviceProfiles;
 		HTTP::AnotherHttpServer * httpServer;
 		UTIL::AutoRef<UPnPActionHandler> actionHandler;
@@ -26,7 +37,7 @@ namespace UPNP {
 		UPnPServer & operator=(const UPnPServer & other);
 		
 	public:
-		UPnPServer(UPnPServerProfile & profile);
+		UPnPServer(UPnPServerConfig & config);
 		virtual ~UPnPServer();
 		void startAsync();
 		void stop();

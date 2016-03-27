@@ -29,10 +29,10 @@ namespace SSDP {
 	void SSDPServer::start() {
 		mcastListener.start();
 	}
-	void SSDPServer::startAsync(unsigned long timeout) {
+	void SSDPServer::startAsync() {
 		start();
 		if (!thread) {
-			thread = new PollThread(*this, timeout);
+			thread = new PollThread(*this, 100);
 			thread->start();
 		}
 	}

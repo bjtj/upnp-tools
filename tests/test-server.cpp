@@ -35,13 +35,12 @@ public:
 
 
 static void test_device_profile() {
-	
-	string udn = Uuid::generateUuid();
 
-	UPnPServerProfile profile;
-	profile["listen.port"] = "9001";
+	UuidGeneratorDefault gen;
+	string udn = gen.generate();
 
-	UPnPServer server(profile);
+	UPnPServerConfig config(9001);
+	UPnPServer server(config);
 
 	UPnPDeviceProfile deviceProfile;
 	deviceProfile.udn() = udn;

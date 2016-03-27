@@ -1,6 +1,7 @@
 #include "UPnPControlPoint.hpp"
 #include "Uuid.hpp"
 #include <iostream>
+#include "NetworkUtil.hpp"
 
 namespace UPNP {
 
@@ -48,17 +49,30 @@ namespace UPNP {
 	};
 
 	
-	UPnPControlPoint::UPnPControlPoint() : ssdpHandler(new MySSDPHandler(this)) {
+	UPnPControlPoint::UPnPControlPoint(UPnPControlPointConfig & config) : config(config), ssdpHandler(new MySSDPHandler(this)), notificationServer(NULL) {
 	}
+	
 	UPnPControlPoint::~UPnPControlPoint() {
 	}
 		
 	void UPnPControlPoint::startAsync() {
 		ssdpServer.setSSDPEventHandler(ssdpHandler);
-		ssdpServer.startAsync(100);
+		ssdpServer.startAsync();
+
+		if (!notificationServer) {
+			UPnPNotificationServerConfig notificationServerConfig(config.getIntegerProperty("listen.port"));
+			notificationServer = new UPnPNotificationServer(notificationServerConfig);
+			notificationServer->startAsync();
+		}
 	}
 
 	void UPnPControlPoint::stop() {
+		if (notificationServer) {
+			notificationServer->stop();
+			delete notificationServer;
+			notificationServer = NULL;
+		}
+		
 		ssdpServer.stop();
 	}
 
@@ -110,7 +124,7 @@ namespace UPNP {
 		_sessionManager.clear();
 	}
 	
-	void UPnPControlPoint::sendMsearchAndWait(const std::string & target, unsigned long timeoutSec) {
+	void UPnPControlPoint::sendMsearchAndWait(const string & target, unsigned long timeoutSec) {
 		ssdpServer.sendMsearchAndGather(target, timeoutSec);
 	}
 
@@ -127,9 +141,45 @@ namespace UPNP {
 		return device->getService(serviceType);
 	}
 
-	UPnPActionInvoker UPnPControlPoint::prepareActionInvoke(const std::string & udn, const std::string & serviceType) {
+	UPnPActionInvoker UPnPControlPoint::prepareActionInvoke(const string & udn, const string & serviceType) {
 		AutoRef<UPnPDevice> device = getDevice(udn);
 		AutoRef<UPnPService> service = device->getService(serviceType);
 		return UPnPActionInvoker(device->baseUrl().relativePath(service->getControlUrl()));
+	}
+
+	void UPnPControlPoint::subscribe(const string & udn, const string & serviceType) {
+		if (!notificationServer) {
+			throw Exception("notification server is not working");
+		}
+
+		OS::InetAddress addr = NetworkUtil::selectDefaultAddress();
+
+		UPnPEventSubscriber subscriber = prepareEventSubscriber(udn, serviceType);
+		UPnPEventSubscribeRequest request(notificationServer->getCallbackUrl(addr.getHost()), 300);
+		UPnPEventSubscribeResponse response = subscriber.subscribe(request);
+
+		UPnPEventSubscription subscription(response.sid());
+		subscription.udn() = udn;
+		subscription.serviceType() = serviceType;
+		notificationServer->addSubscription(subscription);
+		
+	}
+	void UPnPControlPoint::unsubscribe(const string & udn, const string & serviceType) {
+		if (!notificationServer) {
+			throw Exception("notification server is not working");
+		}
+
+		UPnPEventSubscription subscription = notificationServer->findSubscriptionWithUdnAndServiceType(udn, serviceType);
+		UPnPEventSubscriber subscriber = prepareEventSubscriber(udn, serviceType);
+		subscriber.unsubscribe(subscription.sid());
+	}
+	UPnPEventSubscriber UPnPControlPoint::prepareEventSubscriber(const string & udn, const string & serviceType) {
+		AutoRef<UPnPDevice> device = getDevice(udn);
+		AutoRef<UPnPService> service = device->getService(serviceType);
+		return UPnPEventSubscriber(device->baseUrl().relativePath(service->getEventSubUrl()));
+	}
+
+	UPnPNotificationServer * UPnPControlPoint::getNotificationServer() {
+		return notificationServer;
 	}
 }

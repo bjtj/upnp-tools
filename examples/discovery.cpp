@@ -10,6 +10,8 @@
 #include <libupnp-tools/UPnPActionRequest.hpp>
 #include <libupnp-tools/UPnPActionResponse.hpp>
 #include <libupnp-tools/NetworkUtil.hpp>
+#include <libupnp-tools/UPnPEventSubscriber.hpp>
+#include <libupnp-tools/UPnPNotificationServer.hpp>
 #include <libhttp-server/AnotherHttpServer.hpp>
 
 using namespace std;
@@ -18,123 +20,20 @@ using namespace UPNP;
 using namespace HTTP;
 using namespace XML;
 
-class Subscription {
-private:
-	string _sid;
-	unsigned long _lastSeq;
-	string _udn;
-	string _serviceType;
-	
-public:
-    Subscription() {}
-    virtual ~Subscription() {}
-	string & sid() {return _sid;}
-	unsigned long & lastSeq() {return _lastSeq;}
-	string & udn() {return _udn;}
-	string & serviceType() {return _serviceType;}
-};
-
-class SubscriptionRegstry {
-private:
-	map<string, Subscription> subs;
-public:
-    SubscriptionRegstry() {}
-    virtual ~SubscriptionRegstry() {}
-
-	map<string, Subscription> & subscriptions() {return subs;}
-	bool has(const string & sid) {return subs.find(sid) != subs.end();}
-	void add(Subscription & sub) {subs[sub.sid()] = sub;}
-	void del(const string & sid) {subs.erase(sid);}
-	void del(Subscription sub) {subs.erase(sub.sid());}
-	bool hasWithUdnAndServiceType(const string & udn, const string & serviceType) {
-		for (map<string, Subscription>::iterator iter = subs.begin(); iter != subs.end(); iter++) {
-			if (iter->second.udn() == udn && iter->second.serviceType() == serviceType) {
-				return true;
-			}
-		}
-		return false;
-	}
-	Subscription & findWithUdnAndServiceType(const string & udn, const string & serviceType) {
-		for (map<string, Subscription>::iterator iter = subs.begin(); iter != subs.end(); iter++) {
-			if (iter->second.udn() == udn && iter->second.serviceType() == serviceType) {
-				return iter->second;
-			}
-		}
-		throw OS::Exception("not found subscription", -1, 0);
-	}
-	Subscription & operator[] (const string & sid) {
-		return subs[sid];
-	}
-};
-
-class EventNotificationParser {
+class MyNotifyListener : public UPnPNotificationListener {
 private:
 public:
-    EventNotificationParser() {}
-    virtual ~EventNotificationParser() {}
-
-	static map<string, string> parseNotify(const string & xml) {
-		map<string, string> props;
-		XML::XmlDocument doc = XML::DomParser::parse(xml);
-		if (doc.getRootNode().nil()) {
-			return props;
+    MyNotifyListener() {}
+    virtual ~MyNotifyListener() {}
+	virtual void onNotify(UPnPNotify & notify) {
+		cout << "Notify : " << notify.sid() << endl;
+		vector<string> names = notify.propertyNames();
+		for (vector<string>::iterator iter = names.begin(); iter != names.end(); iter++) {
+			string value = notify[*iter];
+			cout << " - " << *iter << " : " << value << endl;
 		}
-		vector<XmlNode*> nodes = doc.getRootNode()->getElementsByTagName("property");
-		for (vector<XmlNode*>::iterator iter = nodes.begin(); iter != nodes.end(); iter++) {
-			XmlNode * node = *iter;
-			NameValue nv = XmlUtils::toNameValue(node->getFirstChildElement());
-			props[nv.name()] = nv.value();
-		}
-		return props;
 	}
 };
-
-class EventNotificationHandler : public HttpRequestHandler {
-private:
-public:
-    EventNotificationHandler() {}
-    virtual ~EventNotificationHandler() {}
-
-	virtual void onHttpRequestContentCompleted(HttpRequest & request, HttpResponse & response) {
-		AutoRef<DataTransfer> transfer = request.getTransfer();
-		if (!transfer.nil()) {
-			string sid = request.getHeader()["SID"];
-			string seq = request.getHeader()["SEQ"];
-			cout << " >>> Notify <<< " << endl;
-			cout << " ** SID : " << sid << endl;
-			cout << " ** SEQ : " << seq << endl;
-			map<string, string> props = EventNotificationParser::parseNotify(transfer->getString());
-			for (map<string, string>::iterator iter = props.begin(); iter != props.end(); iter++) {
-				cout << "  -- " << iter->first << " : " << iter->second << endl;
-			}
-		}
-	}	
-};
-
-Subscription sendSubscribe(Url & url, vector<string> callbackUrls) {
-	Subscription sub;
-	UTIL::LinkedStringMap headers;
-	string callbackUrlStrings;
-	for (vector<string>::iterator iter = callbackUrls.begin(); iter != callbackUrls.end(); iter++) {
-		if (callbackUrlStrings.size() > 0) {
-			callbackUrlStrings.append(" ");
-		}
-		callbackUrlStrings.append("<" + *iter + ">");
-	}
-	headers["CALLBACK"] = callbackUrlStrings;
-	headers["NT"] = "upnp:event";
-	headers["TIMEOUT"] = "Second-300";
-	HttpResponseHeader header = HttpUtils::dumpHttpRequest(url, "SUBSCRIBE", headers).getResponseHeader();
-	string sid = header["SID"];
-	sub.sid() = sid;
-	return sub;
-}
-
-void sendUnsubscribe(Url & url, const string & sid) {
-	UTIL::LinkedStringMap headers;
-	headers["SID"] = sid;
-	int ret = HttpUtils::dumpHttpRequest(url, "UNSUBSCRIBE", headers).getResponseHeader().getStatusCode();
-}
 
 
 static int run(int argc, char *args[]);
@@ -223,20 +122,13 @@ int run(int argc, char *args[]) {
 
 	Selection selection;
 
-	SubscriptionRegstry subs;
-
-	HttpServerConfig config;
-	config["listen.port"] = "9998";
-	config["thread.count"] = "5";
-	AnotherHttpServer server(config);
-	UPnPControlPoint cp;
-
-	AutoRef<HttpRequestHandler> handler(new EventNotificationHandler);
-	server.registerRequestHandler("/*", handler);
-	server.startAsync();
+	UPnPControlPointConfig config(9998);
+	UPnPControlPoint cp(config);
 
 	cp.setDeviceAddRemoveListener(AutoRef<DeviceAddRemoveListener>(new MyDeviceListener));
 	cp.startAsync();
+
+	cp.getNotificationServer()->addEventNoitfyListener(AutoRef<UPnPNotificationListener>(new MyNotifyListener));
 
 	while (1) {
 		char buffer[1024] = {0,};
@@ -307,44 +199,24 @@ int run(int argc, char *args[]) {
 					cout << "Error: " << e.getMessage() << endl;
 				}
 			} else if (!strcmp(buffer, "subs")) {
-
-				map<string, Subscription> & lst = subs.subscriptions();
-				cout << " == Subscriptions (" << lst.size() << ") == " << endl;
-				for (map<string, Subscription>::iterator iter = lst.begin(); iter != lst.end(); iter++) {
-					Subscription sub = iter->second;
-					cout << "  ** SID: " << sub.sid() << " (" << sub.udn() << " / " << sub.serviceType() << ")" << endl;
-				}
-				
+				// TODO: subscription list
 			} else if (!strcmp(buffer, "sub")) {
 
 				if (selection.udn().empty() || selection.serviceType().empty()) {
 					throw "Error: select udn and sevice first";
 				}
 
-				AutoRef<UPnPService> service = cp.getServiceWithUdnAndServiceType(selection.udn(), selection.serviceType());
-				Url url = cp.getBaseUrlWithUdn(selection.udn()).relativePath(service->getEventSubUrl());
-				vector<string> callbackUrls;
-				OS::InetAddress addr = NetworkUtil::selectDefaultAddress();
-				callbackUrls.push_back("http://" + addr.getHost() + ":9998/notify");
-				Subscription sub = sendSubscribe(url, callbackUrls);
-				sub.udn() = selection.udn();
-				sub.serviceType() = selection.serviceType();
-				subs.add(sub);
-				
+				cout << "Subscribe - " << selection.udn() << " .. " << selection.serviceType() << endl;
+				cp.subscribe(selection.udn(), selection.serviceType());
+
 			} else if (!strcmp(buffer, "unsub")) {
 
 				if (selection.udn().empty() || selection.serviceType().empty()) {
 					throw "Error: select udn and sevice first";
 				}
 
-				AutoRef<UPnPService> service = cp.getServiceWithUdnAndServiceType(selection.udn(), selection.serviceType());
-				Url url = cp.getBaseUrlWithUdn(selection.udn()).relativePath(service->getEventSubUrl());
-
-				if (subs.hasWithUdnAndServiceType(selection.udn(), selection.serviceType())) {
-					Subscription sub = subs.findWithUdnAndServiceType(selection.udn(), selection.serviceType());
-					sendUnsubscribe(url, sub.sid());
-					subs.del(sub);
-				}
+				cout << "Unsubscribe - " << selection.udn() << " .. " << selection.serviceType() << endl;
+				cp.unsubscribe(selection.udn(), selection.serviceType());
 
 			} else if (!strcmp(buffer, "dump")) {
 
@@ -375,9 +247,11 @@ int run(int argc, char *args[]) {
 		}
 	}
 
+	// eventServer.stop();
+
 	cp.stop();
 
-	server.stop();
+	// server.stop();
     
     return 0;
 }
