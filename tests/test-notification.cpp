@@ -51,6 +51,9 @@ static void test_notification_server() {
 	AutoRef<UPnPNotificationListener> listener(new NotificationListener);
 	server.addEventNoitfyListener(listener);
 
+	UPnPEventSubscription subscription("uuid:xxxxx");
+	server.addSubscription(subscription);
+
 	send_notify(Url("http://localhost:9998/"));
 
 	idle(1000);
@@ -67,17 +70,17 @@ static void test_subscription_registry() {
 
 	unsigned long tick = tick_milli();
 
-	AutoRef<UPnPEventSubscription> subscription(new UPnPEventSubscription("uuid:xxxxx", 3 * 1000));
+	UPnPEventSubscription subscription("uuid:xxxxx", 3 * 1000);
 	registry.addSubscription(subscription);
 
-	ASSERT(registry["uuid:xxxxx"]->sid(), ==, "uuid:xxxxx");
-	ASSERT(registry["uuid:xxxxx"]->timeoutTick(), ==, 3 * 1000);
-	ASSERT(registry["uuid:xxxxx"]->creationTick(), >=, tick);
-	ASSERT(registry["uuid:xxxxx"]->lastUpdatedTick(), >=, tick);
-	ASSERT(registry["uuid:xxxxx"]->lastSeq(), ==, 0);
-	ASSERT(registry["uuid:xxxxx"]->outdated(), ==, false);
+	ASSERT(registry["uuid:xxxxx"].sid(), ==, "uuid:xxxxx");
+	ASSERT(registry["uuid:xxxxx"].timeoutTick(), ==, 3 * 1000);
+	ASSERT(registry["uuid:xxxxx"].creationTick(), >=, tick);
+	ASSERT(registry["uuid:xxxxx"].lastUpdatedTick(), >=, tick);
+	ASSERT(registry["uuid:xxxxx"].lastSeq(), ==, 0);
+	ASSERT(registry["uuid:xxxxx"].outdated(), ==, false);
 	idle(3000);
-	ASSERT(registry["uuid:xxxxx"]->outdated(), ==, true);
+	ASSERT(registry["uuid:xxxxx"].outdated(), ==, true);
 }
 
 int main(int argc, char *args[]) {
