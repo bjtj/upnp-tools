@@ -12,6 +12,7 @@ namespace UPNP {
 		std::string _scpdUrl;
 		std::string _controlUrl;
 		std::string _eventSubUrl;
+		
 	public:
 		UPnPServiceProfile() {}
 		virtual ~UPnPServiceProfile() {}

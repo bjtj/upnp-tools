@@ -104,7 +104,7 @@ namespace UPNP {
 	void UPnPNotificationServer::removeSubscription(UPnPEventSubscription & subscription) {
 		registry.removeSubscription(subscription.sid());
 	}
-	void UPnPNotificationServer::addEventNoitfyListener(AutoRef<UPnPNotificationListener> listener) {
+	void UPnPNotificationServer::addNotificationListener(AutoRef<UPnPNotificationListener> listener) {
 		listeners.push_back(listener);
 	}
 

@@ -1,11 +1,13 @@
 #include <iostream>
 #include <liboslayer/XmlParser.hpp>
+#include <liboslayer/MessageQueue.hpp>
 #include "UPnPServer.hpp"
 #include "SSDPMsearchSender.hpp"
 #include "NetworkUtil.hpp"
 #include "UPnPActionRequest.hpp"
 #include "UPnPActionResponse.hpp"
 #include "XmlUtils.hpp"
+#include "Uuid.hpp"
 
 namespace UPNP {
 
@@ -24,9 +26,10 @@ namespace UPNP {
 		UPnPServerHttpRequestHandler(UPnPServer & server) : server(server) {}
 		virtual ~UPnPServerHttpRequestHandler() {}
 
-		virtual void onHttpRequestHeaderCompleted(HttpRequest & request, HttpResponse & response) {
+		virtual void onHttpResponseTransferCompleted(HttpRequest & request, HttpResponse & response) {
 			//
 		}
+
 		virtual void onHttpRequestContentCompleted(HttpRequest & request, HttpResponse & response) {
 			
 			string uri = request.getHeader().getPart2();
@@ -39,17 +42,19 @@ namespace UPNP {
 				return;
 			}
 			
-			string scpdUrl = uri;
-			if (server.hasDeviceProfileWithScpdUrl(scpdUrl)) {
-				UPnPDeviceProfile deviceProfile = server.getDeviceProfileHasScpdUrl(scpdUrl);
+			if (server.hasDeviceProfileWithScpdUrl(uri)) {
+				UPnPDeviceProfile deviceProfile = server.getDeviceProfileHasScpdUrl(uri);
 				response.setStatusCode(200);
 				response.setContentType("text/xml");
-				UPnPServiceProfile serviceProfile = deviceProfile.getServiceProfileWithScpdUrl(scpdUrl);
+				UPnPServiceProfile serviceProfile = deviceProfile.getServiceProfileWithScpdUrl(uri);
 				setFixedTransfer(response, serviceProfile.scpd());
 				return;
 			}
 			
 			if (server.hasDeviceProfileWithControlUrl(uri)) {
+				
+				// TODO: recognize specific device and service
+				
 				UPnPActionRequest actionRequest = parseActionRequest(request);
 				UPnPActionResponse actionResponse;
 				actionResponse.actionName() = actionRequest.actionName();
@@ -63,12 +68,54 @@ namespace UPNP {
 			}
 
 			if (server.hasDeviceProfileWithEventSubUrl(uri)) {
+				
 				// event sub/unsub
+
+				UPnPDeviceProfile deviceProfile = server.getDeviceProfileHasEventSubUrl(uri);
+				UPnPServiceProfile serviceProfile = deviceProfile.getServiceProfileWithEventSubUrl(uri);
+				UPnPNotificationCenter & nc = server.getNotificationCenter();
+
+				if (request.getMethod() == "SUBSCRIBE") {
+					string callbackUrls = request.getHeaderField("CALLBACK");
+					cout << " ** subscribe / callback urls : " << callbackUrls << endl;
+					vector<string> urls = parseCallbackUrls(callbackUrls);
+					string timeout = request.getParameter("TIMEOUT");
+					unsigned long timeoutMilli = parseTimeout(timeout);
+
+					UuidGeneratorDefault gen;
+					string sid = gen.generate();
+
+					UPnPEventSubscriptionSession session;
+					session.sid() = sid;
+					session.callbackUrls() = urls;
+					session.setTimeout(timeoutMilli);
+					session.udn() = deviceProfile.udn();
+					session.serviceType() = serviceProfile.serviceType();
+
+					nc.addSubscriptionSession(session);
+
+					server.getEventNotifyThread().delayNotify(100, sid);
+
+					response.setStatusCode(200);
+					response.setContentType("text/xml");
+					response.getHeader().setHeaderField("SID", sid);
+					return;
+					
+				} else if (request.getMethod() == "UNSUBSCRIBE") {
+					string sid = request.getParameter("SID");
+					nc.removeSubscriptionSession(sid);
+					response.setStatusCode(200);
+					return;
+				}
 			}
 
 			response.setStatusCode(404);
 			response.setContentType("text/plain");
 			setFixedTransfer(response, "Not found");
+		}
+
+		void scheduleNotifyEvent(const string & sid) {
+			// TODO: add to queue
 		}
 
 		void handleActionRequest(UPnPActionRequest & request, UPnPActionResponse & response) {
@@ -137,6 +184,29 @@ namespace UPNP {
 			return xml;
 		}
 
+		vector<string> parseCallbackUrls(const string & urls) {
+			vector<string> ret;
+			string buffer;
+			for (string::const_iterator iter = urls.begin(); iter != urls.end(); iter++) {
+				if (*iter == '<') {
+					buffer = "";
+					for (iter++; iter != urls.end() && *iter != '>'; iter++) {
+						buffer.append(1, *iter);
+					}
+					ret.push_back(buffer);
+				}
+			}
+			return ret;
+		}
+
+		unsigned long parseTimeout(const string & phrase) {
+			size_t p = phrase.find("Second-"); // TODO: case insensitive
+			if (p == string::npos) {
+				return 0; // parsing failed
+			}
+			return Text::toLong(phrase.substr(p + 7));
+		}
+
 		string unwrapQuotes(const string & text) {
 			string ret = text;
 			if (*ret.begin() == '\"') {
@@ -148,8 +218,11 @@ namespace UPNP {
 			return ret;
 		}
 	};
-	
-	UPnPServer::UPnPServer(UPnPServerConfig & config) : httpServer(NULL), config(config) {
+
+	/**
+	 *
+	 */
+	UPnPServer::UPnPServer(UPnPServerConfig & config) : httpServer(NULL), config(config), notifyThread(notificationCenter) {
 	}
 	UPnPServer::~UPnPServer() {
 	}
@@ -165,11 +238,17 @@ namespace UPNP {
 		AutoRef<HttpRequestHandler> handler(new UPnPServerHttpRequestHandler(*this));
 		httpServer->registerRequestHandler("/*", handler);
 		httpServer->startAsync();
+
+		notifyThread.start();
 	}
 	void UPnPServer::stop() {
 		if (!httpServer) {
 			return;
 		}
+
+		notifyThread.interrupt();
+		notifyThread.join();
+		
 		httpServer->stop();
 		delete httpServer;
 		httpServer = NULL;
@@ -272,6 +351,15 @@ namespace UPNP {
 		}
 		throw OS::Exception("not found deivce profile", -1, 0);
 	}
+
+	UPnPDeviceProfile & UPnPServer::getDeviceProfileHasEventSubUrl(const std::string & eventSubUrl) {
+		for (map<string, UPnPDeviceProfile>::iterator iter = deviceProfiles.begin(); iter != deviceProfiles.end(); iter++) {
+			if (iter->second.hasServiceWithEventSubUrl(eventSubUrl)) {
+				return iter->second;
+			}
+		}
+		throw OS::Exception("not found deivce profile", -1, 0);
+	}
 	
 	UPnPDeviceProfile & UPnPServer::operator[] (const string & udn) {
 		return deviceProfiles[udn];
@@ -283,5 +371,13 @@ namespace UPNP {
 
 	AutoRef<UPnPActionHandler> UPnPServer::getActionHandler() {
 		return actionHandler;
+	}
+
+	UPnPNotificationCenter & UPnPServer::getNotificationCenter() {
+		return notificationCenter;
+	}
+
+	UPnPEventNotifyThread & UPnPServer::getEventNotifyThread() {
+		return notifyThread;
 	}
 }

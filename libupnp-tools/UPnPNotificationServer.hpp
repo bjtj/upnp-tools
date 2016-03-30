@@ -39,7 +39,7 @@ namespace UPNP {
 		void stop();
 		void addSubscription(UPnPEventSubscription & subscription);
 		void removeSubscription(UPnPEventSubscription & subscription);
-		void addEventNoitfyListener(UTIL::AutoRef<UPnPNotificationListener> listener);
+		void addNotificationListener(UTIL::AutoRef<UPnPNotificationListener> listener);
 		UPnPEventSubscription & findSubscriptionWithUdnAndServiceType(const std::string & udn, const std::string & serviceType);
 		virtual void onNotify(UPnPNotify & notify);
 		std::string getCallbackUrl(const std::string & host);

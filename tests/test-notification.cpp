@@ -49,7 +49,7 @@ static void test_notification_server() {
 	
 	server.startAsync();
 	AutoRef<UPnPNotificationListener> listener(new NotificationListener);
-	server.addEventNoitfyListener(listener);
+	server.addNotificationListener(listener);
 
 	UPnPEventSubscription subscription("uuid:xxxxx");
 	server.addSubscription(subscription);
@@ -70,17 +70,11 @@ static void test_subscription_registry() {
 
 	unsigned long tick = tick_milli();
 
-	UPnPEventSubscription subscription("uuid:xxxxx", 3 * 1000);
+	UPnPEventSubscription subscription("uuid:xxxxx");
 	registry.addSubscription(subscription);
 
 	ASSERT(registry["uuid:xxxxx"].sid(), ==, "uuid:xxxxx");
-	ASSERT(registry["uuid:xxxxx"].timeoutTick(), ==, 3 * 1000);
-	ASSERT(registry["uuid:xxxxx"].creationTick(), >=, tick);
-	ASSERT(registry["uuid:xxxxx"].lastUpdatedTick(), >=, tick);
 	ASSERT(registry["uuid:xxxxx"].lastSeq(), ==, 0);
-	ASSERT(registry["uuid:xxxxx"].outdated(), ==, false);
-	idle(3000);
-	ASSERT(registry["uuid:xxxxx"].outdated(), ==, true);
 }
 
 int main(int argc, char *args[]) {

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <liboslayer/os.hpp>
 #include <libupnp-tools/UPnPServer.hpp>
 #include <libupnp-tools/Uuid.hpp>
 #include <libupnp-tools/HttpUtils.hpp>
@@ -7,10 +8,13 @@
 #include <libupnp-tools/UPnPActionInvoker.hpp>
 #include <libupnp-tools/UPnPActionHandler.hpp>
 #include <libupnp-tools/UPnPDeviceDeserializer.hpp>
+#include <libupnp-tools/UPnPEventSubscriber.hpp>
+#include <libupnp-tools/UPnPNotificationServer.hpp>
 #include <liboslayer/XmlParser.hpp>
 #include "utils.hpp"
 
 using namespace std;
+using namespace OS;
 using namespace UPNP;
 using namespace XML;
 using namespace UTIL;
@@ -33,11 +37,36 @@ public:
 	}
 };
 
+static UPnPNotify s_notify;
+
+class MyNotifyHandler: public UPnPNotificationListener {
+private:
+public:
+    MyNotifyHandler() {}
+    virtual ~MyNotifyHandler() {}
+	virtual void onNotify(UPnPNotify & notify) {
+		s_notify = notify;
+		cout << "NOTIFY" << endl;
+		cout << " - SID: " << notify.sid() << endl;
+		cout << " - SEQ: " << notify.seq() << endl;
+		vector<string> names = notify.propertyNames();
+		for (vector<string>::iterator iter = names.begin(); iter != names.end(); iter++) {
+			string value = notify[*iter];
+			cout << "  ** " << *iter << " := " << value << endl;
+		}
+	}
+};
+
 
 static void test_device_profile() {
 
 	UuidGeneratorDefault gen;
 	string udn = gen.generate();
+
+	UPnPNotificationServerConfig notiConfig(9998);
+	UPnPNotificationServer notiServer(notiConfig);
+	notiServer.addNotificationListener(AutoRef<UPnPNotificationListener>(new MyNotifyHandler));
+	notiServer.startAsync();
 
 	UPnPServerConfig config(9001);
 	UPnPServer server(config);
@@ -54,9 +83,13 @@ static void test_device_profile() {
 	deviceProfile.serviceProfiles().push_back(serviceProfile);
 	server[udn] = deviceProfile;
 
+	LinkedStringMap props;
+	props["xxx"] = "";
+	server.getNotificationCenter().registerService(udn, "urn:schemas-dummy-com:service:Dummy:1", props);
+
 	AutoRef<UPnPActionHandler> handler(new MyActionHandler);
 	server.setActionHandler(handler);
-	
+
 	server.startAsync();
 
 	// profile search check
@@ -95,7 +128,7 @@ static void test_device_profile() {
 		vector<XmlNode*> stateVariables = doc.getRootNode()->getElementsByTagName("stateVariable");
 	}
 
-	// parse test
+	// parsing test
 	{
 		UPnPService service;
 		UPnPDeviceDeserializer::parseScpdFromXml(service, scpd());
@@ -110,7 +143,7 @@ static void test_device_profile() {
 		ASSERT(stateVariable.hasAllowedValues(), ==, true);
 	}
 
-	// send action check
+	// action test
 	{
 		Url url = Url("http://localhost:9001/control?udn=" + udn + "&serviceType=urn:schemas-dummy-com:service:Dummy:1");
 		UPnPActionInvoker invoker(url);
@@ -122,6 +155,29 @@ static void test_device_profile() {
 		ASSERT(response["Source"], ==, "<sample source>");
 	}
 
+	// event test
+	{
+		string serviceType = "urn:schemas-dummy-com:service:Dummy:1";
+		Url url = Url("http://localhost:9001/event?udn=" + udn + "&serviceType=" + serviceType);
+		UPnPEventSubscriber subscriber(url);
+
+		UPnPEventSubscribeRequest request("http://localhost:9998", 300);
+		UPnPEventSubscribeResponse response = subscriber.subscribe(request);
+
+		cout << " ** Recieved SID : " << response.sid() << endl;
+		ASSERT(response.sid().empty(), ==, false);
+
+		UPnPEventSubscription subscription(response.sid());
+		subscription.udn() = udn;
+		subscription.serviceType() = serviceType;
+		notiServer.addSubscription(subscription);
+
+		idle(1000);
+
+		ASSERT(s_notify.sid(), ==, response.sid());
+	}
+
+	notiServer.stop();
 	server.stop();
 }
 

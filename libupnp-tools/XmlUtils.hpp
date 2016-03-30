@@ -28,8 +28,13 @@ namespace UPNP {
 			return node && node->isElement() && node->childrenCount() == 1 &&
 				node->getFirstChild() && node->getFirstChild()->isText();
 		}
-	};
 
+		static std::string toNameValueTag(const UTIL::NameValue & nv) {
+			std::string name = XML::XmlEncoder::encode(nv.name_const());
+			std::string value = XML::XmlEncoder::encode(nv.value_const());
+			return ("<" + name + ">" + value + "</" + name + ">");
+		}
+	};
 }
 
 #endif

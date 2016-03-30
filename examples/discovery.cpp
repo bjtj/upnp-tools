@@ -128,7 +128,7 @@ int run(int argc, char *args[]) {
 	cp.setDeviceAddRemoveListener(AutoRef<DeviceAddRemoveListener>(new MyDeviceListener));
 	cp.startAsync();
 
-	cp.getNotificationServer()->addEventNoitfyListener(AutoRef<UPnPNotificationListener>(new MyNotifyListener));
+	cp.getNotificationServer()->addNotificationListener(AutoRef<UPnPNotificationListener>(new MyNotifyListener));
 
 	while (1) {
 		char buffer[1024] = {0,};

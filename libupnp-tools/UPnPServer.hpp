@@ -7,6 +7,8 @@
 #include <map>
 #include <libhttp-server/AnotherHttpServer.hpp>
 #include <liboslayer/Properties.hpp>
+#include <liboslayer/StringElement.hpp>
+#include "UPnPNotificationCenter.hpp"
 
 namespace UPNP {
 
@@ -30,6 +32,8 @@ namespace UPNP {
 		std::map<std::string, UPnPDeviceProfile> deviceProfiles;
 		HTTP::AnotherHttpServer * httpServer;
 		UTIL::AutoRef<UPnPActionHandler> actionHandler;
+		UPnPNotificationCenter notificationCenter;
+		UPnPEventNotifyThread notifyThread;
 
 	private:
 		// do not allow copy or assign
@@ -50,9 +54,12 @@ namespace UPNP {
 		UPnPDeviceProfile & getDeviceProfileWithUdn(const std::string & udn);
 		UPnPDeviceProfile & getDeviceProfileWithAlias(const std::string & alias);
 		UPnPDeviceProfile & getDeviceProfileHasScpdUrl(const std::string & scpdUrl);
+		UPnPDeviceProfile & getDeviceProfileHasEventSubUrl(const std::string & eventSubUrl);
 		UPnPDeviceProfile & operator[] (const std::string & udn);
 		void setActionHandler(UTIL::AutoRef<UPnPActionHandler> actionHandler);
 		UTIL::AutoRef<UPnPActionHandler> getActionHandler();
+		UPnPNotificationCenter & getNotificationCenter();
+		UPnPEventNotifyThread & getEventNotifyThread();
 	};
 }
 
