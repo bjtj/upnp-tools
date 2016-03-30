@@ -17,6 +17,21 @@ namespace UPNP {
 	using namespace UTIL;
 
 	/**
+	 * @breif life time task
+	 */
+	class LifetimeTask : public TimerTask {
+	private:
+	public:
+		LifetimeTask() {}
+		virtual ~LifetimeTask() {}
+		virtual void doTask() {
+			// TODO: notify alive profiles
+			// TODO: check outdated resources
+		}
+	};
+
+
+	/**
 	 * @brief upnp server http request handler
 	 */
 	class UPnPServerHttpRequestHandler : public HttpRequestHandler {
@@ -228,9 +243,11 @@ namespace UPNP {
 	}
 
 	void UPnPServer::startAsync() {
+		
 		if (httpServer) {
 			return;
 		}
+		
 		HttpServerConfig httpServerConfig;
 		httpServerConfig["listen.port"] = config["listen.port"];
 		httpServerConfig["thread.count"] = config.getProperty("thread.count", "5");
@@ -240,12 +257,19 @@ namespace UPNP {
 		httpServer->startAsync();
 
 		notifyThread.start();
+		
+		timerThread.start();
+		timerThread.looper().interval(10 * 1000, AutoRef<TimerTask>(new LifetimeTask));
 	}
 	void UPnPServer::stop() {
+		
 		if (!httpServer) {
 			return;
 		}
 
+		timerThread.stop();
+		timerThread.join();
+		
 		notifyThread.interrupt();
 		notifyThread.join();
 		
@@ -379,5 +403,9 @@ namespace UPNP {
 
 	UPnPEventNotifyThread & UPnPServer::getEventNotifyThread() {
 		return notifyThread;
+	}
+
+	TimerLooperThread & UPnPServer::getTimerThread() {
+		return timerThread;
 	}
 }

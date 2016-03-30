@@ -2,6 +2,7 @@
 #define __UPNP_CONTROL_POINT_HPP__
 
 #include <liboslayer/AutoRef.hpp>
+#include <liboslayer/Timer.hpp>
 #include "SSDPServer.hpp"
 #include "UPnPModels.hpp"
 #include "UPnPSessionManager.hpp"
@@ -47,6 +48,8 @@ namespace UPNP {
 		SSDP::SSDPServer ssdpServer;
 		UPnPSessionManager _sessionManager;
 		UPnPNotificationServer * notificationServer;
+		UTIL::TimerLooperThread timerThread;
+		bool started;
 		
 	public:
 		UPnPControlPoint(UPnPControlPointConfig & config);
@@ -69,6 +72,7 @@ namespace UPNP {
 		
 		UPnPEventSubscriber prepareEventSubscriber(const std::string & udn, const std::string & serviceType);
 		UPnPNotificationServer * getNotificationServer();
+		UTIL::TimerLooperThread & getTimerThread();
 	};
 }
 

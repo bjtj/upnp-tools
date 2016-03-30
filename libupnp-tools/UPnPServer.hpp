@@ -8,6 +8,7 @@
 #include <libhttp-server/AnotherHttpServer.hpp>
 #include <liboslayer/Properties.hpp>
 #include <liboslayer/StringElement.hpp>
+#include <liboslayer/Timer.hpp>
 #include "UPnPNotificationCenter.hpp"
 
 namespace UPNP {
@@ -34,6 +35,7 @@ namespace UPNP {
 		UTIL::AutoRef<UPnPActionHandler> actionHandler;
 		UPnPNotificationCenter notificationCenter;
 		UPnPEventNotifyThread notifyThread;
+		UTIL::TimerLooperThread timerThread;
 
 	private:
 		// do not allow copy or assign
@@ -60,6 +62,7 @@ namespace UPNP {
 		UTIL::AutoRef<UPnPActionHandler> getActionHandler();
 		UPnPNotificationCenter & getNotificationCenter();
 		UPnPEventNotifyThread & getEventNotifyThread();
+		UTIL::TimerLooperThread & getTimerThread();
 	};
 }
 

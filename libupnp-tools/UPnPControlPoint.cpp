@@ -11,12 +11,29 @@ namespace UPNP {
 	using namespace std;
 	using namespace OS;
 
-	class MySSDPHandler : public SSDPEventHandler {
+	/**
+	 * @brief
+	 */
+	class LifetimeTask : public TimerTask {
+	private:
+	public:
+		LifetimeTask() {}
+		virtual ~LifetimeTask() {}
+		virtual void doTask() {
+			// TODO: handle outdated resources
+		}
+	};
+
+
+	/**
+	 * @brief
+	 */
+	class ControlPointSSDPHandler : public SSDPEventHandler {
 	private:
 		UPnPControlPoint * cp;
 	public:
-		MySSDPHandler(UPnPControlPoint * cp) : cp(cp) {}
-		virtual ~MySSDPHandler() {}
+		ControlPointSSDPHandler(UPnPControlPoint * cp) : cp(cp) {}
+		virtual ~ControlPointSSDPHandler() {}
 
 		void setControlPoint(UPnPControlPoint * cp) {
 			this->cp = cp;
@@ -48,14 +65,20 @@ namespace UPNP {
 		}
 	};
 
+	// 
 	
-	UPnPControlPoint::UPnPControlPoint(UPnPControlPointConfig & config) : config(config), ssdpHandler(new MySSDPHandler(this)), notificationServer(NULL) {
+	UPnPControlPoint::UPnPControlPoint(UPnPControlPointConfig & config) : config(config), ssdpHandler(new ControlPointSSDPHandler(this)), notificationServer(NULL), started(false) {
 	}
 	
 	UPnPControlPoint::~UPnPControlPoint() {
 	}
 		
 	void UPnPControlPoint::startAsync() {
+
+		if (started) {
+			return;
+		}
+		
 		ssdpServer.setSSDPEventHandler(ssdpHandler);
 		ssdpServer.startAsync();
 
@@ -64,9 +87,22 @@ namespace UPNP {
 			notificationServer = new UPnPNotificationServer(notificationServerConfig);
 			notificationServer->startAsync();
 		}
+
+		timerThread.start();
+		timerThread.looper().interval(10 * 1000, AutoRef<TimerTask>(new LifetimeTask));
+
+		started = true;
 	}
 
 	void UPnPControlPoint::stop() {
+
+		if (!started) {
+			return;
+		}
+
+		timerThread.stop();
+		timerThread.join();
+		
 		if (notificationServer) {
 			notificationServer->stop();
 			delete notificationServer;
@@ -74,6 +110,8 @@ namespace UPNP {
 		}
 		
 		ssdpServer.stop();
+
+		started = false;
 	}
 
 	void UPnPControlPoint::setDeviceAddRemoveListener(AutoRef<DeviceAddRemoveListener> deviceListener) {
@@ -181,5 +219,9 @@ namespace UPNP {
 
 	UPnPNotificationServer * UPnPControlPoint::getNotificationServer() {
 		return notificationServer;
+	}
+
+	UTIL::TimerLooperThread & UPnPControlPoint::getTimerThread() {
+		return timerThread;
 	}
 }
