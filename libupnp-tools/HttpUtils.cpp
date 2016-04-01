@@ -1,4 +1,5 @@
 #include "HttpUtils.hpp"
+#include <libhttp-server/StringDataSource.hpp>
 
 namespace UPNP {
 
@@ -32,7 +33,7 @@ namespace UPNP {
     
 		client.setFollowRedirect(true);
 		client.setUrl(url);
-		client.setRequest(method, headers, NULL);
+		client.setRequest(method, headers);
 		client.execute();
 
 		testHttpError(handler.getResponseHeader().getStatusCode());
@@ -49,7 +50,7 @@ namespace UPNP {
     
 		client.setFollowRedirect(true);
 		client.setUrl(url);
-		client.setRequest("GET", LinkedStringMap(), NULL);
+		client.setRequest("GET", LinkedStringMap());
 		client.execute();
 
 		testHttpError(handler.getResponseHeader().getStatusCode());
@@ -65,7 +66,9 @@ namespace UPNP {
 		client.setOnResponseListener(&handler);
 		client.setFollowRedirect(true);
 		client.setUrl(url);
-		client.setRequest("POST", headers, new FixedTransfer(content));
+		AutoRef<DataSource> source(new StringDataSource(content));
+		AutoRef<DataTransfer> transfer(new FixedTransfer(source, content.size()));
+		client.setRequestWithFixedTransfer("POST", headers, transfer, content.size());
 		client.execute();
 
 		testHttpError(handler.getResponseHeader().getStatusCode());

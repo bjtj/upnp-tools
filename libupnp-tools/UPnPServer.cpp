@@ -1,6 +1,7 @@
 #include <iostream>
 #include <liboslayer/XmlParser.hpp>
 #include <liboslayer/MessageQueue.hpp>
+#include <libhttp-server/StringDataSink.hpp>
 #include "UPnPServer.hpp"
 #include "SSDPMsearchSender.hpp"
 #include "NetworkUtil.hpp"
@@ -154,7 +155,7 @@ namespace UPNP {
 			actionRequest.serviceType() = serviceType;
 			actionRequest.actionName() = actionName;
 
-			string xml = request.getTransfer()->getString();
+			string xml = ((StringDataSink*)&request.getTransfer()->sink())->data();
 			XML::XmlDocument doc = XML::DomParser::parse(xml);
 			if (doc.getRootNode().nil()) {
 				throw OS::Exception("wrong soap action xml format", -1, 0);

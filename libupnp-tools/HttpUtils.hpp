@@ -9,6 +9,7 @@
 #include <libhttp-server/Url.hpp>
 #include <liboslayer/StringElement.hpp>
 #include <libhttp-server/FixedTransfer.hpp>
+#include <libhttp-server/StringDataSink.hpp>
 
 namespace UPNP {
 
@@ -26,10 +27,13 @@ namespace UPNP {
 			}
 			virtual ~DumpResponseHandler() {
 			}
-			virtual void onTransferDone(HTTP::HttpResponse & response, HTTP::DataTransfer * transfer, UTIL::AutoRef<HTTP::UserData> userData) {
+			virtual UTIL::AutoRef<HTTP::DataSink> getDataSink() {
+				return UTIL::AutoRef<HTTP::DataSink>(new HTTP::StringDataSink);
+			}
+			virtual void onTransferDone(HTTP::HttpResponse & response, UTIL::AutoRef<HTTP::DataSink> sink, UTIL::AutoRef<HTTP::UserData> userData) {
 				responseHeader = response.getHeader();
-				if (transfer) {
-					dump = transfer->getString();
+				if (!sink.nil()) {
+					dump = ((HTTP::StringDataSink*)&sink)->data();
 				}
 			}
 			virtual void onError(OS::Exception & e, UTIL::AutoRef<HTTP::UserData> userData) {

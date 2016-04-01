@@ -1,5 +1,6 @@
 #include "UPnPNotificationServer.hpp"
 #include <libhttp-server/AnotherHttpServer.hpp>
+#include <libhttp-server/StringDataSink.hpp>
 #include <liboslayer/Text.hpp>
 #include <liboslayer/XmlParser.hpp>
 #include "XmlUtils.hpp"
@@ -57,8 +58,9 @@ namespace UPNP {
 			string seq = request.getHeader()["SEQ"];
 
 			UPnPNotify notify(sid, Text::toLong(seq));
-			
-			map<string, string> props = UPnPNotificationParser::parseNotify(transfer->getString());
+
+			string dump = ((StringDataSink*)&transfer->sink())->data();
+			map<string, string> props = UPnPNotificationParser::parseNotify(dump);
 			for (map<string, string>::iterator iter = props.begin(); iter != props.end(); iter++) {
 				notify[iter->first] = iter->second;
 			}
