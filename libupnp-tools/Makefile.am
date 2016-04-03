@@ -24,6 +24,7 @@ libupnp_toolsinc_HEADERS = \
 	UPnPModels.hpp \
 	UPnPNotificationCenter.hpp \
 	UPnPNotificationServer.hpp \
+	UPnPResourceManager.hpp \
 	UPnPServer.hpp \
 	UPnPServiceProfile.hpp \
 	UPnPSession.hpp \
@@ -74,6 +75,8 @@ libupnp_tools_la_SOURCES = \
 	UPnPNotificationCenter.hpp \
 	UPnPNotificationServer.cpp \
 	UPnPNotificationServer.hpp \
+	UPnPResourceManager.cpp \
+	UPnPResourceManager.hpp \
 	UPnPServer.cpp \
 	UPnPServer.hpp \
 	UPnPServiceProfile.hpp \

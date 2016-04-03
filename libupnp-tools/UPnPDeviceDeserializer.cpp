@@ -1,6 +1,6 @@
 #include "UPnPDeviceDeserializer.hpp"
-#include "HttpUtils.hpp"
 #include "XmlUtils.hpp"
+#include "UPnPResourceManager.hpp"
 
 namespace UPNP {
 
@@ -15,7 +15,7 @@ namespace UPNP {
 
 	AutoRef<UPnPDevice> UPnPDeviceDeserializer::buildDevice(SSDPHeader & header) {
 		
-		XmlDocument doc = DomParser::parse(HttpUtils::httpGet(header.getLocation()));
+		XmlDocument doc = DomParser::parse(UPnPResourceManager::getResource(header.getLocation()));
 		XmlNode * deviceNode = doc.getRootNode()->getElementByTagName("device");
 		if (!deviceNode) {
 			throw OS::Exception("cannot build device / wrong device description");
@@ -31,7 +31,6 @@ namespace UPNP {
 	void UPnPDeviceDeserializer::parseDeviceXmlNode(XmlNode * deviceXml, UPnPDevice & device) {
 		parseDevicePropertiesFromDeviceXmlNode(deviceXml, device);
 		parseServiceListFromDeviceXmlNode(deviceXml, device);
-
 		vector<XmlNode*> devices =  deviceXml->getElementsByTagNameInDepth("device", 2);
 		for (vector<XmlNode*>::iterator iter = devices.begin(); iter != devices.end(); iter++) {
 			parseDeviceXmlNode(*iter, *device.prepareDevice());
@@ -57,7 +56,7 @@ namespace UPNP {
 	}
 
 	void UPnPDeviceDeserializer::buildService(UPnPService & service) {
-		parseScpdFromXml(service, HttpUtils::httpGet(service.makeScpdUrl()));
+		parseScpdFromXml(service, UPnPResourceManager::getResource(service.makeScpdUrl()));
 	}
 
 	void UPnPDeviceDeserializer::parseScpdFromXml(UPnPService & service, const string & scpd) {

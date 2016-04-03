@@ -1,6 +1,6 @@
 TESTS=$(check_PROGRAMS)
 
-check_PROGRAMS=test-basic test-network test-server test-ssdp test-notification
+check_PROGRAMS=test-basic test-network test-server test-ssdp test-notification test-resource-manager
 
 test_basic_SOURCES = test-basic.cpp
 test_basic_CPPFLAGS =-I$(top_srcdir)
@@ -31,3 +31,10 @@ test_notification_CPPFLAGS =-I$(top_srcdir)
 test_notification_CXXFLAGS = $(PTHREAD_CXXFLAGS) $(LIBOSLAYER_CFLAGS) $(LIBHTTP_SERVER_CFLAGS)
 test_notification_LDFLAGS = $(PTHREAD_CFLAGS)
 test_notification_LDADD = ../libupnp-tools/libupnp-tools.la $(LIBOSLAYER_LIBS) $(LIBHTTP_SERVER_LIBS)
+
+test_resource_manager_SOURCES = test-resource-manager.cpp
+test_resource_manager_CPPFLAGS =-I$(top_srcdir)
+test_resource_manager_CXXFLAGS = $(PTHREAD_CXXFLAGS) $(LIBOSLAYER_CFLAGS) $(LIBHTTP_SERVER_CFLAGS)
+test_resource_manager_LDFLAGS = $(PTHREAD_CFLAGS)
+test_resource_manager_LDADD = ../libupnp-tools/libupnp-tools.la $(LIBOSLAYER_LIBS) $(LIBHTTP_SERVER_LIBS)
+
