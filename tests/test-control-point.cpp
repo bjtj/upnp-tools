@@ -3,6 +3,7 @@
 #include <libupnp-tools/UPnPControlPoint.hpp>
 #include <libupnp-tools/Uuid.hpp>
 #include <libhttp-server/AnotherHttpServer.hpp>
+#include <libhttp-server/StringDataSink.hpp>
 
 using namespace std;
 using namespace OS;
@@ -22,7 +23,10 @@ public:
 		dummy = "urn:schemas-dummy-com:service:Dummy:1";
 	}
     virtual ~RequestHandler() {}
-	virtual void onHttpRequestContentCompleted(HttpRequest & request, HttpResponse & response) {
+	virtual AutoRef<DataSink> getDataSink() {
+		return AutoRef<DataSink>(new StringDataSink);
+	}
+	virtual void onHttpRequestContentCompleted(HttpRequest & request, AutoRef<DataSink> sink, HttpResponse & response) {
 		cout << " ** path : " << request.getHeader().getPart2() << endl;
 		if (request.getPath() == "/device.xml") {
 			response.setStatusCode(200);
