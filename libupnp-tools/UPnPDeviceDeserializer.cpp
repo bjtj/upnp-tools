@@ -23,6 +23,7 @@ namespace UPNP {
 		
 		AutoRef<UPnPDevice> device(new UPnPDevice);
 		device->baseUrl() = header.getLocation();
+
 		parseDeviceXmlNode(deviceNode, *device);
 
 		return device;
@@ -62,7 +63,7 @@ namespace UPNP {
 	void UPnPDeviceDeserializer::parseScpdFromXml(UPnPService & service, const string & scpd) {
 		XmlDocument doc = DomParser::parse(scpd);
 		if (doc.getRootNode().nil()) {
-			throw OS::Exception("wrong scpd format", -1, 0);
+			throw OS::Exception("wrong scpd format");
 		}
 		vector<XmlNode*> actions = doc.getRootNode()->getElementsByTagName("action");
 		for (vector<XmlNode*>::iterator iter = actions.begin(); iter != actions.end(); iter++) {

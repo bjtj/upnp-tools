@@ -3,6 +3,7 @@
 
 #include <liboslayer/AutoRef.hpp>
 #include <liboslayer/Timer.hpp>
+#include <liboslayer/TaskThreadPool.hpp>
 #include "SSDPServer.hpp"
 #include "UPnPModels.hpp"
 #include "UPnPSessionManager.hpp"
@@ -50,6 +51,7 @@ namespace UPNP {
 		UPnPNotificationServer * notificationServer;
 		UTIL::TimerLooperThread timerThread;
 		bool started;
+		UTIL::TaskThreadPool deviceBuildTaskThreadPool;
 		
 	public:
 		UPnPControlPoint(UPnPControlPointConfig & config);
@@ -59,6 +61,8 @@ namespace UPNP {
 		void setDeviceAddRemoveListener(UTIL::AutoRef<DeviceAddRemoveListener> deviceListener);
 		void addDevice(SSDP::SSDPHeader & header);
 		void removeDevice(SSDP::SSDPHeader & header);
+		void onDeviceBuildCompleted(UTIL::AutoRef<UPnPSession> session);
+		void onDeviceBuildFailed(UTIL::AutoRef<UPnPSession> session);
 		UTIL::AutoRef<UPnPDevice> getDevice(const std::string & udn);
 		void clearDevices();
 		void sendMsearchAndWait(const std::string & target, unsigned long timeoutSec);

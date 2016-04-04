@@ -30,9 +30,15 @@ static void test_resource_manager() {
 	ASSERT(relative.getPath(), ==, "/base/path/proj/hello.txt");
 }
 
+static void test_web_resource() {
+	string dump = UPnPResourceManager::getResource(Url("http://www.google.com"));
+	cout << dump << endl;
+}
+
 int main(int argc, char *args[]) {
 
 	test_resource_manager();
+	test_web_resource();
     
     return 0;
 }

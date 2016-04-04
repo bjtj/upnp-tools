@@ -19,7 +19,7 @@ namespace UPNP {
 	 */
 	class UPnPSession {
 	private:
-		std::string udn;
+		std::string _udn;
 		bool _completed;
 		UTIL::AutoRef<UPnPDevice> rootDevice;
 		unsigned long creationTime;
@@ -29,6 +29,7 @@ namespace UPNP {
 	public:
 		UPnPSession(const std::string & udn);
 		virtual ~UPnPSession();
+		std::string & udn();
 		void setCreationTime(unsigned long creationTime);
 		void setUpdateTime(unsigned long updateTime);
 		void setSessionTimeout(unsigned long sessionTimeout);

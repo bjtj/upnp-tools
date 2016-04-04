@@ -9,10 +9,14 @@ namespace UPNP {
 	using namespace XML;
 	
 	UPnPSession::UPnPSession(const string & udn) :
-		udn(udn), _completed(false), creationTime(0), updateTime(0), sessionTimeout(0) {
+		_udn(udn), _completed(false), creationTime(0), updateTime(0), sessionTimeout(0) {
 	}
 	UPnPSession::~UPnPSession() {
-		printf("[%s] session instance destroyed\n", udn.c_str());
+		printf("[%s] session instance destroyed\n", _udn.c_str());
+	}
+
+	string & UPnPSession::udn() {
+		return _udn;
 	}
 
 	void UPnPSession::setCreationTime(unsigned long creationTime) {

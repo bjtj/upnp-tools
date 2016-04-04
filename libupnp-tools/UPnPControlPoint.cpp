@@ -1,6 +1,5 @@
 #include "UPnPControlPoint.hpp"
 #include "Uuid.hpp"
-#include <iostream>
 #include "NetworkUtil.hpp"
 
 namespace UPNP {
@@ -21,6 +20,28 @@ namespace UPNP {
 		virtual ~LifetimeTask() {}
 		virtual void doTask() {
 			// TODO: handle outdated resources
+		}
+	};
+
+	/**
+	 * @brief
+	 */
+	class DeviceBuildTask : public Task {
+	private:
+		UPnPControlPoint & cp;
+		AutoRef<UPnPSession> session;
+		SSDPHeader header;
+	public:
+		DeviceBuildTask(UPnPControlPoint & cp, AutoRef<UPnPSession> session, SSDPHeader & header) : cp(cp), session(session), header(header) {}
+		virtual ~DeviceBuildTask() {}
+
+		virtual void doTask() {
+			try {
+				session->buildDevice(header);
+				cp.onDeviceBuildCompleted(session);
+			} catch (Exception & e) {
+				cp.onDeviceBuildFailed(session);
+			}
 		}
 	};
 
@@ -67,7 +88,7 @@ namespace UPNP {
 
 	// 
 	
-	UPnPControlPoint::UPnPControlPoint(UPnPControlPointConfig & config) : config(config), ssdpHandler(new ControlPointSSDPHandler(this)), notificationServer(NULL), started(false) {
+	UPnPControlPoint::UPnPControlPoint(UPnPControlPointConfig & config) : config(config), ssdpHandler(new ControlPointSSDPHandler(this)), notificationServer(NULL), started(false), deviceBuildTaskThreadPool(10) {
 	}
 	
 	UPnPControlPoint::~UPnPControlPoint() {
@@ -91,6 +112,8 @@ namespace UPNP {
 		timerThread.start();
 		timerThread.looper().interval(10 * 1000, AutoRef<TimerTask>(new LifetimeTask));
 
+		deviceBuildTaskThreadPool.start();
+
 		started = true;
 	}
 
@@ -99,6 +122,8 @@ namespace UPNP {
 		if (!started) {
 			return;
 		}
+
+		deviceBuildTaskThreadPool.stop();
 
 		timerThread.stop();
 		timerThread.join();
@@ -119,20 +144,13 @@ namespace UPNP {
 	}
 
 	void UPnPControlPoint::addDevice(SSDPHeader & header) {
+		
 		Uuid uuid(header.getUsn());
 		string udn = uuid.getUuid();
+		InetAddress addr = header.getRemoteAddr();
 		if (!_sessionManager.has(udn)) {
 			AutoRef<UPnPSession> session = _sessionManager.prepareSession(udn);
-			try {
-				session->buildDevice(header);
-				if (!deviceListener.nil()) {
-					deviceListener->onDeviceAdd(session->getRootDevice());
-				}
-			} catch (Exception & e) {
-				cout << e.getMessage() << endl;
-				_sessionManager.remove(udn);
-				return;
-			}
+			deviceBuildTaskThreadPool.setTask(AutoRef<Task>(new DeviceBuildTask(*this, session, header)));
 		}
 	}
 
@@ -148,6 +166,15 @@ namespace UPNP {
 		}
 		
 		_sessionManager.remove(udn);
+	}
+
+	void UPnPControlPoint::onDeviceBuildCompleted(AutoRef<UPnPSession> session) {
+		if (!deviceListener.nil()) {
+			deviceListener->onDeviceAdd(session->getRootDevice());
+		}
+	}
+	void UPnPControlPoint::onDeviceBuildFailed(AutoRef<UPnPSession> session) {
+		_sessionManager.remove(session->udn());
 	}
 
 	AutoRef<UPnPDevice> UPnPControlPoint::getDevice(const string & udn) {
