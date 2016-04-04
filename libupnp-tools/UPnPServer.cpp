@@ -42,7 +42,11 @@ namespace UPNP {
 		UPnPServerHttpRequestHandler(UPnPServer & server) : server(server) {}
 		virtual ~UPnPServerHttpRequestHandler() {}
 
-		virtual void onHttpResponseTransferCompleted(HttpRequest & request, HttpResponse & response) {
+		virtual AutoRef<DataSink> getDataSink() {
+			return AutoRef<DataSink>(new StringDataSink);
+		}
+
+		virtual void onHttpResponseTransferCompleted(HttpRequest & request, AutoRef<DataSink> sink, HttpResponse & response) {
 			//
 		}
 

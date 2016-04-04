@@ -47,10 +47,12 @@ namespace UPNP {
 	public:
 		EventNotificationHandler(UPnPNotificationListener * listener) : listener(listener) {}
 		virtual ~EventNotificationHandler() {}
-		virtual void onHttpRequestContentCompleted(HttpRequest & request, HttpResponse & response) {
+		virtual AutoRef<DataSink> getDataSink() {
+			return AutoRef<DataSink>(new StringDataSink);
+		}
+		virtual void onHttpRequestContentCompleted(HttpRequest & request, AutoRef<DataSink> sink, HttpResponse & response) {
 			
-			AutoRef<DataTransfer> transfer = request.getTransfer();
-			if (transfer.nil()) {
+			if (sink.nil()) {
 				throw Exception("wrong event notify / no content");
 			}
 			
@@ -59,7 +61,7 @@ namespace UPNP {
 
 			UPnPNotify notify(sid, Text::toLong(seq));
 
-			string dump = ((StringDataSink*)&transfer->sink())->data();
+			string dump = ((StringDataSink*)&sink)->data();
 			map<string, string> props = UPnPNotificationParser::parseNotify(dump);
 			for (map<string, string>::iterator iter = props.begin(); iter != props.end(); iter++) {
 				notify[iter->first] = iter->second;
