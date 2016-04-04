@@ -2,8 +2,10 @@
 #include <liboslayer/Text.hpp>
 
 namespace SSDP {
+
+	using namespace std;
 	
-	SSDPHeader::SSDPHeader(const std::string & headerString, OS::InetAddress & remoteAddr) : remoteAddr(remoteAddr) {
+	SSDPHeader::SSDPHeader(const string & headerString, OS::InetAddress & remoteAddr) : remoteAddr(remoteAddr) {
 		HTTP::HttpHeaderReader reader;
 		reader.read(headerString.c_str(), headerString.length());
 		this->setHeader(reader.getHeader());
@@ -53,31 +55,34 @@ namespace SSDP {
 		}
 		return false;
 	}
-	std::string SSDPHeader::getMethod() const {
+	string SSDPHeader::getMethod() const {
 		return getPart1();
 	}
-	std::string SSDPHeader::getUsn() const {
+	string SSDPHeader::getUsn() const {
 		return getHeaderFieldIgnoreCase("USN");
 	}
-	std::string SSDPHeader::getNt() const {
+	string SSDPHeader::getNt() const {
 		return getHeaderFieldIgnoreCase("NT");
 	}
-	std::string SSDPHeader::getNts() const {
+	string SSDPHeader::getNts() const {
 		return getHeaderFieldIgnoreCase("NTS");
 	}
-	std::string SSDPHeader::getSt() const {
+	string SSDPHeader::getSt() const {
 		return getHeaderFieldIgnoreCase("ST");
 	}
-	std::string SSDPHeader::getLocation() const {
+	string SSDPHeader::getLocation() const {
 		return getHeaderFieldIgnoreCase("LOCATION");
 	}
-	std::string SSDPHeader::getMan() const {
+	string SSDPHeader::getMan() const {
 		return getHeaderFieldIgnoreCase("MAN");
 	}
 	OS::InetAddress SSDPHeader::getRemoteAddr() const {
 		return remoteAddr;
 	}
-	std::string SSDPHeader::getRawPacket() const {
+	string SSDPHeader::getRawPacket() const {
 		return rawPacket;
+	}
+	string SSDPHeader::getCacheControl() const {
+		return getHeaderFieldIgnoreCase("Cache-Control");
 	}
 }

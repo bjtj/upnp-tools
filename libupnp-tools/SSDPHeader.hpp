@@ -30,6 +30,7 @@ namespace SSDP {
 		std::string getMan() const;
 		OS::InetAddress getRemoteAddr() const;
 		std::string getRawPacket() const;
+		std::string getCacheControl() const;
 	};
 
 }

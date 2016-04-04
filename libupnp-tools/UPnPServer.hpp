@@ -62,7 +62,7 @@ namespace UPNP {
 		UTIL::AutoRef<UPnPActionHandler> getActionHandler();
 		UPnPNotificationCenter & getNotificationCenter();
 		UPnPEventNotifyThread & getEventNotifyThread();
-		UTIL::TimerLooperThread & getTimerThread();
+		UTIL::TimerLooperThread & getTimerThread();	
 	};
 }
 

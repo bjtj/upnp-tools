@@ -70,13 +70,13 @@ namespace UPNP {
 		HTTP::Url getBaseUrlWithUdn(const std::string & udn);
 		UTIL::AutoRef<UPnPService> getServiceWithUdnAndServiceType(const std::string & udn, const std::string & serviceType);
 		UPnPActionInvoker prepareActionInvoke(const std::string & udn, const std::string & serviceType);
-
 		void subscribe(const std::string & udn, const std::string & serviceType);
 		void unsubscribe(const std::string & udn, const std::string & serviceType);
-		
 		UPnPEventSubscriber prepareEventSubscriber(const std::string & udn, const std::string & serviceType);
 		UPnPNotificationServer * getNotificationServer();
 		UTIL::TimerLooperThread & getTimerThread();
+		void clearOudatedSessions();
+		unsigned long parseCacheControlMilli(const std::string & cacheControl, unsigned long def);
 	};
 }
 

@@ -10,6 +10,9 @@ namespace UPNP {
 	
 	UPnPSession::UPnPSession(const string & udn) :
 		_udn(udn), _completed(false), creationTime(0), updateTime(0), sessionTimeout(0) {
+
+		updateTime = creationTime = OS::tick_milli();
+		sessionTimeout = DEFAULT_TIMEOUT;
 	}
 	UPnPSession::~UPnPSession() {
 		printf("[%s] session instance destroyed\n", _udn.c_str());
@@ -31,16 +34,28 @@ namespace UPNP {
 		this->sessionTimeout = sessionTimeout;
 	}
 
-	unsigned long UPnPSession::lifetime() {
+	unsigned long UPnPSession::lifetimeFromCreation() {
 		return (OS::tick_milli() - creationTime);
 	}
 
-	unsigned long UPnPSession::duration() {
+	unsigned long UPnPSession::lifetimeFromLastUpdate() {
 		return (OS::tick_milli() - updateTime);
 	}
 
 	bool UPnPSession::outdated() {
-		return (duration() >= sessionTimeout);
+		return (lifetimeFromLastUpdate() >= sessionTimeout);
+	}
+
+	void UPnPSession::prolong(const string & cacheControl) {
+		unsigned long timeout = parseCacheControlMilli(cacheControl, DEFAULT_TIMEOUT);
+		if (timeout < DEFAULT_TIMEOUT) {
+			timeout = DEFAULT_TIMEOUT;
+		}
+		prolong(timeout);
+	}
+	void UPnPSession::prolong(unsigned long timeout) {
+		this->updateTime = OS::tick_milli();
+		this->sessionTimeout = timeout;
 	}
 
 	string UPnPSession::getDump(const HTTP::Url & url) {
@@ -49,6 +64,7 @@ namespace UPNP {
 
 	void UPnPSession::buildDevice(SSDP::SSDPHeader & header) {
 		rootDevice = UPnPDeviceDeserializer::buildDevice(header);
+		prolong(header.getCacheControl());
 	}
 
 	bool UPnPSession::completed() {
@@ -58,42 +74,11 @@ namespace UPNP {
 	AutoRef<UPnPDevice> UPnPSession::getRootDevice() {
 		return rootDevice;
 	}
-
-	string UPnPSession::toString() {
-		if (rootDevice.nil()) {
-			return "";
-		}
-		return toString(*rootDevice, 0);
-	}
-
-	string UPnPSession::toString(UPnPDevice & device, int depth) {
-		string str;
-
-		str.append(depth, ' ');
-		if (depth > 0) { str.append(" - "); }
-		str.append(device.getUdn() + " (" + device.getFriendlyName() + ")");
-
-		vector<AutoRef<UPnPService> > services = device.services();
-		for (vector<AutoRef<UPnPService> >::iterator iter = services.begin(); iter != services.end(); iter++) {
-			str.append("\n");
-			str.append(depth, ' ');
-			str.append(" ** " + (*iter)->getServiceType());
-
-			vector<UPnPAction> actions = (*iter)->actions();
-			for (vector<UPnPAction>::iterator aiter = actions.begin(); aiter != actions.end(); aiter++) {
-				str.append("\n");
-				str.append(depth, ' ');
-				str.append("  - " + (*aiter).name());
-			}
-		}
-			
-		vector<AutoRef<UPnPDevice> > & devices = device.devices();
-		for (vector<AutoRef<UPnPDevice> >::iterator iter = devices.begin(); iter != devices.end(); iter++) {
-			str.append("\n");
-			str.append(toString(*(*iter), depth + 1));
-		}
-		return str;
-	}
 	
+	unsigned long UPnPSession::parseCacheControlMilli(const std::string & cacheControl, unsigned long def) {
+		if (!Text::startsWith(cacheControl, "max-age=")) {
+			return def;
+		}
+	}
 }
 

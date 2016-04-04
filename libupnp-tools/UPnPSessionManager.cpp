@@ -36,6 +36,14 @@ namespace UPNP {
 	AutoRef<UPnPSession> UPnPSessionManager::operator[] (const string & udn) {
 		return sessions[udn];
 	}
-	
+	vector<AutoRef<UPnPSession> > UPnPSessionManager::getOutdatedSessions() {
+		vector<AutoRef<UPnPSession> > ret;
+		for (map<string, AutoRef<UPnPSession> >::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
+			if (iter->second->outdated()) {
+				ret.push_back(iter->second);
+			}
+		}
+		return ret;
+	}
 }
 

@@ -19,6 +19,7 @@ namespace UPNP {
 	 */
 	class UPnPSession {
 	private:
+		static const unsigned long DEFAULT_TIMEOUT = 1800 * 1000; 
 		std::string _udn;
 		bool _completed;
 		UTIL::AutoRef<UPnPDevice> rootDevice;
@@ -33,16 +34,17 @@ namespace UPNP {
 		void setCreationTime(unsigned long creationTime);
 		void setUpdateTime(unsigned long updateTime);
 		void setSessionTimeout(unsigned long sessionTimeout);
-		unsigned long lifetime();
-		unsigned long duration();
+		unsigned long lifetimeFromCreation();
+		unsigned long lifetimeFromLastUpdate();
 		bool outdated();
+		void prolong(const std::string & cacheControl);
+		void prolong(unsigned long timeout);
 		std::string getDump(const HTTP::Url & url);
 		void buildDevice(SSDP::SSDPHeader & header);
 		std::string getFriendlyName();
 		bool completed();
 		UTIL::AutoRef<UPnPDevice> getRootDevice();
-		std::string toString();
-		std::string toString(UPnPDevice & device, int depth);
+		unsigned long parseCacheControlMilli(const std::string & cacheControl, unsigned long def);
 	};
 }
 

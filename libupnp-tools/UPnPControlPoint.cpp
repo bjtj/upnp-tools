@@ -15,11 +15,12 @@ namespace UPNP {
 	 */
 	class LifetimeTask : public TimerTask {
 	private:
+		UPnPControlPoint & cp;
 	public:
-		LifetimeTask() {}
+		LifetimeTask(UPnPControlPoint & cp) : cp(cp) {}
 		virtual ~LifetimeTask() {}
 		virtual void doTask() {
-			// TODO: handle outdated resources
+			cp.clearOudatedSessions();
 		}
 	};
 
@@ -42,6 +43,8 @@ namespace UPNP {
 			} catch (Exception & e) {
 				cp.onDeviceBuildFailed(session);
 			}
+
+			session = NULL;
 		}
 	};
 
@@ -110,7 +113,7 @@ namespace UPNP {
 		}
 
 		timerThread.start();
-		timerThread.looper().interval(10 * 1000, AutoRef<TimerTask>(new LifetimeTask));
+		timerThread.looper().interval(10 * 1000, AutoRef<TimerTask>(new LifetimeTask(*this)));
 
 		deviceBuildTaskThreadPool.start();
 
@@ -151,6 +154,8 @@ namespace UPNP {
 		if (!_sessionManager.has(udn)) {
 			AutoRef<UPnPSession> session = _sessionManager.prepareSession(udn);
 			deviceBuildTaskThreadPool.setTask(AutoRef<Task>(new DeviceBuildTask(*this, session, header)));
+		} else {
+			_sessionManager[udn]->prolong(header.getCacheControl());
 		}
 	}
 
@@ -250,5 +255,13 @@ namespace UPNP {
 
 	UTIL::TimerLooperThread & UPnPControlPoint::getTimerThread() {
 		return timerThread;
+	}
+	void UPnPControlPoint::clearOudatedSessions() {
+		vector<AutoRef<UPnPSession> > sessions = _sessionManager.getOutdatedSessions();
+		for (vector<AutoRef<UPnPSession> >::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
+			AutoRef<UPnPDevice> device = (*iter)->getRootDevice();
+			deviceListener->onDeviceRemove(device);
+			_sessionManager.remove((*iter)->udn());
+		}
 	}
 }

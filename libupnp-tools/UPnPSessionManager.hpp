@@ -22,6 +22,7 @@ namespace UPNP {
 		size_t size();
 		std::vector<std::string> getUdnS();
 		UTIL::AutoRef<UPnPSession> operator[] (const std::string & udn);
+		std::vector<UTIL::AutoRef<UPnPSession> > getOutdatedSessions();
 	};
 }
 
