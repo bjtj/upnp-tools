@@ -14,7 +14,7 @@ namespace UPNP {
 	vector<string> & UPnPEventSubscriptionSession::callbackUrls() {
 		return _callbackUrls;
 	}
-	bool UPnPEventSubscriptionSession::setTimeout(unsigned long timeoutTick) {
+	void UPnPEventSubscriptionSession::setTimeout(unsigned long timeoutTick) {
 		this->timeoutTick = timeoutTick;
 	}
 	void UPnPEventSubscriptionSession::renew() {

@@ -68,8 +68,6 @@ static void test_subscription_registry() {
 
 	UPnPEventSubscriptionRegistry registry;
 
-	unsigned long tick = tick_milli();
-
 	UPnPEventSubscription subscription("uuid:xxxxx");
 	registry.addSubscription(subscription);
 

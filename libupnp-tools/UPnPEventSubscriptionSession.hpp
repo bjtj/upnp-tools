@@ -17,7 +17,7 @@ namespace UPNP {
 		UPnPEventSubscriptionSession();
 		virtual ~UPnPEventSubscriptionSession();
 		std::vector<std::string> & callbackUrls();
-		bool setTimeout(unsigned long timeoutTick);
+		void setTimeout(unsigned long timeoutTick);
 		void renew();
 		bool outdated();
 	};

@@ -19,11 +19,11 @@ namespace SSDP {
 	SSDPMsearchSender::~SSDPMsearchSender() {
 	}
 	void SSDPMsearchSender::init() {
-		sock.registerSelector(selector);
+		sock.registerSelector(selector, Selector::READ);
 	}
 	void SSDPMsearchSender::close() {
 		cancel();
-		sock.unregisterSelector(selector);
+		sock.unregisterSelector(selector, Selector::READ);
 		sock.close();
 	}
 	void SSDPMsearchSender::cancel() {
@@ -38,7 +38,7 @@ namespace SSDP {
 	}
 	void SSDPMsearchSender::poll(unsigned long timeout) {
 		if (selector.select(timeout) > 0) {
-			if (sock.isReadalbeSelected(selector)) {
+			if (sock.isReadableSelected(selector)) {
 				char buffer[4096] = {0,};
 				DatagramPacket packet(buffer, sizeof(buffer));
 				sock.recv(packet);

@@ -1,17 +1,20 @@
 #include "SSDPMulticastListener.hpp"
 
 namespace SSDP {
+
+	using namespace std;
+	using namespace OS;
 	
-	SSDPMulticastListener::SSDPMulticastListener(const std::string & group, int port) : group(group), sock(port) {
+	SSDPMulticastListener::SSDPMulticastListener(const string & group, int port) : group(group), sock(port) {
 	}
 	SSDPMulticastListener::~SSDPMulticastListener() {
 	}
 	void SSDPMulticastListener::start() {
 		sock.joinGroup(group);
-		sock.registerSelector(selector);
+		sock.registerSelector(selector, Selector::READ);
 	}
 	void SSDPMulticastListener::stop() {
-		sock.unregisterSelector(selector);
+		sock.unregisterSelector(selector, Selector::READ);
 		sock.close();
 	}
 	bool SSDPMulticastListener::isRunning() {
@@ -19,7 +22,7 @@ namespace SSDP {
 	}
 	void SSDPMulticastListener::poll(unsigned long timeout) {
 		if (selector.select(timeout) > 0) {
-			if (sock.isReadalbeSelected(selector)) {
+			if (sock.isReadableSelected(selector)) {
 				char buffer[4096] = {0,};
 				OS::DatagramPacket packet(buffer, sizeof(buffer));
 				sock.recv(packet);
