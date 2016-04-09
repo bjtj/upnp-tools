@@ -40,7 +40,6 @@ static int run(int argc, char *args[]);
 
 int main(int argc, char *args[]) {
 
-	int ret = 0;
 	try {
 		return run(argc, args);
 	} catch (const char * e) {
@@ -53,6 +52,8 @@ int main(int argc, char *args[]) {
 		cerr << e.getMessage() << endl;
 		return 1;
 	}
+
+	return 0;
 }
 
 size_t readline(char * buffer, size_t max) {

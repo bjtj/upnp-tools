@@ -5,6 +5,8 @@
 #include <map>
 #include <vector>
 #include <liboslayer/AutoRef.hpp>
+#include <liboslayer/StringElement.hpp>
+#include <liboslayer/PropertyMap.hpp>
 #include <libhttp-server/Url.hpp>
 
 namespace UPNP {
@@ -15,14 +17,15 @@ namespace UPNP {
 	/**
 	 *
 	 */
-	class UPnPObject {
+	class UPnPModelObject {
 	private:
-		std::map<std::string, std::string> props;
+		// UTIL::LinkedStringMap props;
+		UTIL::PropertyMap props;
 	public:
-		UPnPObject() {}
-		virtual ~UPnPObject() {}
+		UPnPModelObject() {}
+		virtual ~UPnPModelObject() {}
 
-		std::map<std::string, std::string> & getProperties() {return props;}
+		UTIL::PropertyMap & getProperties() {return props;}
 
 		std::string & operator[] (const std::string & name) {
 			return props[name];
@@ -32,7 +35,7 @@ namespace UPNP {
 	/**
 	 *
 	 */
-	class UPnPStateVariable : public UPnPObject {
+	class UPnPStateVariable : public UPnPModelObject {
 	private:
 		std::string _name;
 		std::string _dataType;
@@ -53,7 +56,7 @@ namespace UPNP {
 	/**
 	 *
 	 */
-	class UPnPArgument : public UPnPObject {
+	class UPnPArgument : public UPnPModelObject {
 	public:
 		static const int UNKNOWN_DIRECTION = 0;
 		static const int IN_DIRECTION = 1;
@@ -66,7 +69,7 @@ namespace UPNP {
 		UPnPArgument() : _direction(UNKNOWN_DIRECTION) {}
 		virtual ~UPnPArgument() {}
 		bool in() {return _direction == IN_DIRECTION;}
-		bool out() {return _direction = OUT_DIRECTION;}
+		bool out() {return _direction == OUT_DIRECTION;}
 		std::string & name() {return _name;}
 		int & direction() {return _direction;}
 		std::string & stateVariableName() {return _stateVariableName;}
@@ -75,7 +78,7 @@ namespace UPNP {
 	/**
 	 *
 	 */
-	class UPnPAction : public UPnPObject {
+	class UPnPAction : public UPnPModelObject {
 	private:
 		std::string _name;
 		std::vector<UPnPArgument> _arguments;
@@ -98,7 +101,7 @@ namespace UPNP {
 	/**
 	 *
 	 */
-	class UPnPService : public UPnPObject{
+	class UPnPService : public UPnPModelObject{
 	private:
 		UPnPDevice * device;
 		std::vector<UPnPAction> _actions;
@@ -108,6 +111,7 @@ namespace UPNP {
 		UPnPService(UPnPDevice * device);
 		virtual ~UPnPService();
 		std::string getServiceType();
+		std::string getServiceId();
 		std::string getScpdUrl();
 		std::string getControlUrl();
 		std::string getEventSubUrl();
@@ -125,7 +129,7 @@ namespace UPNP {
 	/**
 	 *
 	 */
-	class UPnPDevice : public UPnPObject {
+	class UPnPDevice : public UPnPModelObject {
 	private:
 		UPnPDevice * parent;
 		std::vector<UTIL::AutoRef<UPnPDevice> > _devices;
@@ -140,6 +144,7 @@ namespace UPNP {
 		UTIL::AutoRef<UPnPDevice> prepareDevice();
 		void addDevice(UTIL::AutoRef<UPnPDevice> device);
 		void addService(UTIL::AutoRef<UPnPService> service);
+		bool hasService(const std::string & serviceType);
 		UTIL::AutoRef<UPnPService> getService(const std::string & serviceType);
 		std::vector<UTIL::AutoRef<UPnPDevice> > & devices();
 		std::vector<UTIL::AutoRef<UPnPService> > & services();

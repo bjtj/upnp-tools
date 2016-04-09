@@ -14,6 +14,9 @@ namespace UPNP {
 	string UPnPService::getServiceType() {
 		return getProperties()["serviceType"];
 	}
+	string UPnPService::getServiceId() {
+		return getProperties()["serviceId"];
+	}
 	string UPnPService::getScpdUrl() {
 		return getProperties()["SCPDURL"];
 	}
@@ -91,6 +94,15 @@ namespace UPNP {
 		_services.push_back(service);
 	}
 
+	bool UPnPDevice::hasService(const string & serviceType) {
+		for (vector<AutoRef<UPnPService> >::iterator iter = _services.begin(); iter != _services.end(); iter++) {
+			if ((*iter)->getServiceType() == serviceType) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	AutoRef<UPnPService> UPnPDevice::getService(const string & serviceType) {
 		for (vector<AutoRef<UPnPService> >::iterator iter = _services.begin(); iter != _services.end(); iter++) {
 			if ((*iter)->getServiceType() == serviceType) {

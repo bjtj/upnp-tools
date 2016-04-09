@@ -1,4 +1,5 @@
 #include <iostream>
+#include <liboslayer/FileStream.hpp>
 #include <libhttp-server/AnotherHttpServer.hpp>
 #include <libupnp-tools/Uuid.hpp>
 #include <libupnp-tools/UPnPModels.hpp>
@@ -13,18 +14,14 @@ using namespace HTTP;
 using namespace UPNP;
 using namespace UTIL;
 
-size_t readline(char * buffer, size_t max) {
-    if (fgets(buffer, (int)max - 1, stdin)) {
-		buffer[strlen(buffer) - 1] = 0;
-		return strlen(buffer);
-	}
-    return 0;
+string readline() {
+	FileStream fs(stdin);
+	return fs.readline();
 }
 
-
-string dd(string udn) {
+string dd(const string & uuid) {
 	string dummy = "urn:schemas-dummy-com:service:Dummy:1";
-	string xml = "<?xml version=\"1.0\"?>"
+	string xml = "<?xml version=\"1.0\"?>\r\n"
 		"<root xmlns=\"urn:schemas-upnp-org:device-1-0\">"
 		"<specVersion>"
 		"<major>1</major>"
@@ -39,15 +36,16 @@ string dd(string udn) {
 		"<modelNumber>1</modelNumber>"
 		"<modelURL>www.example.com</modelURL>"
 		"<serialNumber>12345678</serialNumber>"
-		"<UDN>uuid:" + udn + "</UDN>"
+		"<UDN>uuid:" + uuid + "</UDN>"
 		"<serviceList>"
 		"<service>"
 		"<serviceType>urn:schemas-dummy-com:service:Dummy:1</serviceType>"
 		"<serviceId>urn:dummy-com:serviceId:dummy1</serviceId>"
-		"<controlURL>/control?udn=" + udn + "&serviceType=" + dummy + "</controlURL>"
-		"<eventSubURL>/event?udn=" + udn + "&serviceType=" + dummy + "</eventSubURL>"
-		"<SCPDURL>/scpd.xml?udn=" + udn + "&serviceType=" + dummy + "</SCPDURL>"
+		"<controlURL>/control?udn=" + uuid + "::" + dummy + "</controlURL>"
+		"<eventSubURL>/event?udn=" + uuid + "::" + dummy + "</eventSubURL>"
+		"<SCPDURL>/scpd.xml?udn=" + uuid + "::" + dummy + "</SCPDURL>"
 		"</service></serviceList>"
+		"</device>"
 		"</root>";
 
 	return xml;
@@ -69,36 +67,6 @@ string scpd() {
 		"</scpd>";
 
 	return xml;
-}
-
-void notifyAlive(const string & udn, const string & deviceType, const string & location) {
-
-	string ssdp = "NOTIFY * HTTP/1.1\r\n"
-		"Cache-Control: max-age=120\r\n"
-		"HOST: 239.255.255.250:1900\r\n"
-		"Location: " + location + "\r\n"
-		"NT: " + deviceType + "\r\n"
-		"NTS: ssdp:alive\r\n"
-		"Server: Net-OS 5.xx UPnP/1.0\r\n"
-		"USN: uuid:" + udn + "::" + deviceType + "\r\n"
-		"\r\n";
-
-	SSDPMsearchSender sender;
-	sender.sendMcastToAllInterfaces(ssdp, "239.255.255.250", 1900);
-	sender.close();
-}
-
-void notifyByeBye(const string & udn, const string & deviceType) {
-	string ssdp = "NOTIFY * HTTP/1.1\r\n"
-		"Host: 239.255.255.250:1900\r\n"
-		"NT: " + (deviceType.empty() ? "uuid:" + udn : deviceType)  + "\r\n"
-		"NTS: ssdp:byebye\r\n"
-		"USN: uuid:" + udn + (deviceType.empty() ? "" : "::" + deviceType) + "\r\n"
-		"\r\n";
-
-	SSDPMsearchSender sender;
-	sender.sendMcastToAllInterfaces(ssdp, "239.255.255.250", 1900);
-	sender.close();
 }
 
 class MyActionHandler : public UPnPActionHandler {
@@ -123,38 +91,51 @@ public:
 int main(int argc, char *args[]) {
 
 	UuidGeneratorDefault gen;
-	string udn = gen.generate();
+	string uuid = gen.generate();
 
 	UPnPServerConfig config(9001);
 	UPnPServer server(config);
 	server.startAsync();
 
+	string dummy = "urn:schemas-dummy-com:service:Dummy:1";
+
 	UPnPDeviceProfile deviceProfile;
-	deviceProfile.udn() = udn;
-	deviceProfile.deviceDescription() = dd(udn);
+	deviceProfile.uuid() = uuid;
+	deviceProfile.deviceDescription() = dd(uuid);
+	deviceProfile.deviceTypes().push_back("urn:schemas-upnp-org:device:InternetGatewayDevice:1");
 	UPnPServiceProfile serviceProfile;
 	serviceProfile.scpd() = scpd();
 	serviceProfile.serviceType() = "urn:schemas-dummy-com:service:Dummy:1";
-	serviceProfile.scpdUrl() = "/scpd.xml?udn=" + udn + "&serviceType=urn:schemas-dummy-com:service:Dummy:1";
-	serviceProfile.controlUrl() = "/control?udn=" + udn + "&serviceType=urn:schemas-dummy-com:service:Dummy:1";
-	serviceProfile.eventSubUrl() = "/event?udn=" + udn + "&serviceType=urn:schemas-dummy-com:service:Dummy:1";
+	serviceProfile.scpdUrl() = "/scpd.xml?udn=" + uuid + "::urn:schemas-dummy-com:service:Dummy:1";
+	serviceProfile.controlUrl() = "/control?udn=" + uuid + "::urn:schemas-dummy-com:service:Dummy:1";
+	serviceProfile.eventSubUrl() = "/event?udn=" + uuid + "::urn:schemas-dummy-com:service:Dummy:1";
 	deviceProfile.serviceProfiles().push_back(serviceProfile);
-	server[udn] = deviceProfile;
+	server[uuid] = deviceProfile;
 
+	LinkedStringMap props;
+	props["SourceProtocolInfo"] = "<initial source>";
+	props["SinkProtocolInfo"] = "<initial sink>";
+	server.getNotificationCenter().registerService(uuid, dummy, props);
+	
 	AutoRef<UPnPActionHandler> handler(new MyActionHandler);
 	server.setActionHandler(handler);
 
-	cout << "udn: " << udn << endl;
+	cout << "uuid: " << uuid << endl;
 
 	while (1) {
-		char buffer[1024] = {0,};
-		if (readline(buffer, sizeof(buffer)) > 0) {
-			if (!strcmp(buffer, "q")) {
+		string cmd;
+		if ((cmd = readline()).size() > 0) {
+			if (cmd == "q") {
 				break;
-			} else if (!strcmp(buffer, "alive")) {
-				server.notifyAliveWithDeviceType(deviceProfile, "upnp:rootdevice");
-			} else if (!strcmp(buffer, "byebye")) {
-				server.notifyByeByeWithDeviceType(deviceProfile, "upnp:rootdevice");
+			} else if (cmd == "alive") {
+				server.notifyAlive(deviceProfile);
+			} else if (cmd == "byebye") {
+				server.notifyByeBye(deviceProfile);
+			} else if (cmd == "set-props") {
+				LinkedStringMap props;
+				props["SourceProtocolInfo"] = "<sample sourc>";
+				props["SinkProtocolInfo"] = "<sample sink>";
+				server.getNotificationCenter().setProperties(uuid, dummy, props);
 			}
 		}
 	}

@@ -42,7 +42,7 @@ public:
 				return *iter;
 			}
 		}
-		throw "not found";
+		throw Exception("not found");
 	}
 	bool hasHeaderWithRawPacket(const string & rawPacket) {
 		for (vector<SSDPHeader>::iterator iter = _headers.begin(); iter != _headers.end(); iter++) {

@@ -11,18 +11,20 @@ namespace UPNP {
 
 	class UPnPDeviceProfile {
 	private:
-		std::string _udn;
-		std::string _alias;
+		std::string _uuid;
 		std::string _deviceDescription;
+		std::vector<std::string> _deviceTypes;
 		std::vector<UPnPServiceProfile> _serviceProfiles;
 	public:
 		UPnPDeviceProfile();
 		virtual ~UPnPDeviceProfile();
-		std::string & udn();
-		std::string & alias();
+		std::string & uuid();
 		std::string & deviceDescription();
+		std::vector<std::string> & deviceTypes();
+		std::string rootDeviceType();
 		std::vector<UPnPServiceProfile> & serviceProfiles();
 		std::string & scpd(const std::string & serviceType);
+		bool match(const std::string & st);
 		bool hasServiceWithServiceType(const std::string & serviceType);
 		bool hasServiceWithScpdUrl(const std::string & scpdUrl);
 		bool hasServiceWithControlUrl(const std::string & controlUrl);

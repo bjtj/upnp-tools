@@ -13,12 +13,12 @@ namespace UPNP {
 	/**
 	 * @brief
 	 */
-	class LifetimeTask : public TimerTask {
+	class UPnPControlPointLifetimeTask : public TimerTask {
 	private:
 		UPnPControlPoint & cp;
 	public:
-		LifetimeTask(UPnPControlPoint & cp) : cp(cp) {}
-		virtual ~LifetimeTask() {}
+		UPnPControlPointLifetimeTask(UPnPControlPoint & cp) : cp(cp) {}
+		virtual ~UPnPControlPointLifetimeTask() {}
 		virtual void doTask() {
 			cp.clearOudatedSessions();
 		}
@@ -113,7 +113,7 @@ namespace UPNP {
 		}
 
 		timerThread.start();
-		timerThread.looper().interval(10 * 1000, AutoRef<TimerTask>(new LifetimeTask(*this)));
+		timerThread.looper().interval(10 * 1000, AutoRef<TimerTask>(new UPnPControlPointLifetimeTask(*this)));
 
 		deviceBuildTaskThreadPool.start();
 

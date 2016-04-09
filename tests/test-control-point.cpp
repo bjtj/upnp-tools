@@ -75,9 +75,9 @@ public:
 			"<service>"
 			"<serviceType>urn:schemas-dummy-com:service:Dummy:1</serviceType>"
 			"<serviceId>urn:dummy-com:serviceId:dummy1</serviceId>"
-			"<controlURL>/control?udn=" + udn + "&serviceType=" + dummy + "</controlURL>"
-			"<eventSubURL>/event?udn=" + udn + "&serviceType=" + dummy + "</eventSubURL>"
-			"<SCPDURL>/scpd.xml?udn=" + udn + "&serviceType=" + dummy + "</SCPDURL>"
+			"<controlURL>/control?udn=" + udn + "&amp;serviceType=" + dummy + "</controlURL>"
+			"<eventSubURL>/event?udn=" + udn + "&amp;serviceType=" + dummy + "</eventSubURL>"
+			"<SCPDURL>/scpd.xml?udn=" + udn + "&amp;serviceType=" + dummy + "</SCPDURL>"
 			"</service></serviceList>"
 			"</root>";
 

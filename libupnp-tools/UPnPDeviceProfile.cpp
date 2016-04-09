@@ -8,20 +8,42 @@ namespace UPNP {
 	}
 	UPnPDeviceProfile::~UPnPDeviceProfile() {
 	}
-	string & UPnPDeviceProfile::udn() {
-		return _udn;
-	}
-	string & UPnPDeviceProfile::alias() {
-		return _alias;
+	string & UPnPDeviceProfile::uuid() {
+		return _uuid;
 	}
 	string & UPnPDeviceProfile::deviceDescription() {
 		return _deviceDescription;
+	}
+	vector<string> & UPnPDeviceProfile::deviceTypes() {
+		return _deviceTypes;
+	}
+	string UPnPDeviceProfile::rootDeviceType() {
+		return _deviceTypes[0];
 	}
 	vector<UPnPServiceProfile> & UPnPDeviceProfile::serviceProfiles() {
 		return _serviceProfiles;
 	}
 	string & UPnPDeviceProfile::scpd(const string & serviceType) {
 		return getServiceProfileWithServiceType(serviceType).scpd();
+	}
+	bool UPnPDeviceProfile::match(const string & st) {
+		if (st == "upnp:rootdevice") {
+			return true;
+		}
+
+		for (vector<string>::iterator iter = _deviceTypes.begin(); iter != _deviceTypes.end(); iter++) {
+			if (*iter == st) {
+				return true;
+			}
+		}
+
+		for (vector<UPnPServiceProfile>::iterator iter = _serviceProfiles.begin(); iter != _serviceProfiles.end(); iter++) {
+			if (iter->serviceType() == st) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	bool UPnPDeviceProfile::hasServiceWithServiceType(const string & serviceType) {
 		for (vector<UPnPServiceProfile>::iterator iter = _serviceProfiles.begin(); iter != _serviceProfiles.end(); iter++) {

@@ -1,6 +1,6 @@
 TESTS=$(check_PROGRAMS)
 
-check_PROGRAMS=test-basic test-network test-server test-ssdp test-notification test-resource-manager test-control-point
+check_PROGRAMS=test-basic test-network test-server test-ssdp test-notification test-resource-manager test-control-point test-serialize
 
 test_basic_SOURCES = test-basic.cpp
 test_basic_CPPFLAGS =-I$(top_srcdir)
@@ -43,4 +43,10 @@ test_control_point_CPPFLAGS =-I$(top_srcdir)
 test_control_point_CXXFLAGS = $(PTHREAD_CXXFLAGS) $(LIBOSLAYER_CFLAGS) $(LIBHTTP_SERVER_CFLAGS)
 test_control_point_LDFLAGS = $(PTHREAD_CFLAGS)
 test_control_point_LDADD = ../libupnp-tools/libupnp-tools.la $(LIBOSLAYER_LIBS) $(LIBHTTP_SERVER_LIBS)
+
+test_serialize_SOURCES = test-serialize.cpp
+test_serialize_CPPFLAGS =-I$(top_srcdir)
+test_serialize_CXXFLAGS = $(PTHREAD_CXXFLAGS) $(LIBOSLAYER_CFLAGS) $(LIBHTTP_SERVER_CFLAGS)
+test_serialize_LDFLAGS = $(PTHREAD_CFLAGS)
+test_serialize_LDADD = ../libupnp-tools/libupnp-tools.la $(LIBOSLAYER_LIBS) $(LIBHTTP_SERVER_LIBS)
 

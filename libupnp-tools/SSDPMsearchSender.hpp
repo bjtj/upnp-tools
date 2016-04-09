@@ -33,6 +33,7 @@ namespace SSDP {
 		void sendMcastToAllInterfaces(const std::string & content, const std::string & group, int port);
 		std::string makeMsearchPacket(const std::string & st, unsigned long timeoutSec, const std::string & group, int port);
 		void setSSDPEventHandler(UTIL::AutoRef<SSDPEventHandler> handler);
+		void unicast(const std::string & content, OS::InetAddress & remoteAddr);
 	};
 }
 

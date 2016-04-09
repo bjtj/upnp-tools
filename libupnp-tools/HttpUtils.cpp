@@ -9,6 +9,7 @@ namespace UPNP {
 	using namespace UTIL;
 
 	unsigned long HttpUtils::connectionTimeout = 5000;
+	unsigned long HttpUtils::soTimeout = 5000;
 	
 	HttpUtils::HttpUtils() {
 	}
@@ -27,6 +28,7 @@ namespace UPNP {
 	HttpUtils::DumpResponseHandler HttpUtils::dumpHttpRequest(const Url & url, const string & method, const LinkedStringMap & headers) {
 		AnotherHttpClient client;
 		client.setConnectionTimeout(connectionTimeout);
+		client.setRecvTimeout(soTimeout);
     
 		HttpUtils::DumpResponseHandler handler;
 		client.setOnResponseListener(&handler);
@@ -44,10 +46,10 @@ namespace UPNP {
 	string HttpUtils::httpGet(const Url & url) {
 		AnotherHttpClient client;
 		client.setConnectionTimeout(connectionTimeout);
+		client.setRecvTimeout(soTimeout);
     
 		DumpResponseHandler handler;
 		client.setOnResponseListener(&handler);
-    
 		client.setFollowRedirect(true);
 		client.setUrl(url);
 		client.setRequest("GET", LinkedStringMap());
@@ -59,16 +61,24 @@ namespace UPNP {
 	}
 
 	string HttpUtils::httpPost(const Url & url, const LinkedStringMap & headers, const string & content) {
+		return httpPost("POST", url, headers, content);
+	}
+
+	string HttpUtils::httpPost(const string & method, const Url & url, const LinkedStringMap & headers, const string & content) {
+		
 		AnotherHttpClient client;
 		client.setConnectionTimeout(connectionTimeout);
+		client.setRecvTimeout(soTimeout);
 		
 		DumpResponseHandler handler;
 		client.setOnResponseListener(&handler);
 		client.setFollowRedirect(true);
 		client.setUrl(url);
+
 		AutoRef<DataSource> source(new StringDataSource(content));
 		AutoRef<DataTransfer> transfer(new FixedTransfer(source, content.size()));
-		client.setRequestWithFixedTransfer("POST", headers, transfer, content.size());
+		client.setRequestWithFixedTransfer(method, headers, transfer, content.size());
+		
 		client.execute();
 
 		testHttpError(handler.getResponseHeader().getStatusCode());

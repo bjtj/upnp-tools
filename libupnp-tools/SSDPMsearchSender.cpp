@@ -3,13 +3,16 @@
 
 namespace SSDP {
 
+	using namespace std;
+	using namespace OS;
+
 	SSDPMsearchSender::SSDPMsearchSender() : _cancel(false) {
 		init();
 	}
-	SSDPMsearchSender::SSDPMsearchSender(int port) : _cancel(false), sock(port) {
+	SSDPMsearchSender::SSDPMsearchSender(int port) : sock(port), _cancel(false) {
 		init();
 	}
-	SSDPMsearchSender::SSDPMsearchSender(OS::InetAddress & bindAddr) : _cancel(false), sock(bindAddr) {
+	SSDPMsearchSender::SSDPMsearchSender(InetAddress & bindAddr) : sock(bindAddr), _cancel(false) {
 		init();
 
 	}
@@ -28,8 +31,8 @@ namespace SSDP {
 	}
 	
 	void SSDPMsearchSender::gather(unsigned long timeout) {
-		unsigned long startTick = OS::tick_milli();
-		while (!_cancel && (OS::tick_milli() - startTick < timeout)) {
+		unsigned long startTick = tick_milli();
+		while (!_cancel && (tick_milli() - startTick < timeout)) {
 			poll(100);
 		}
 	}
@@ -37,13 +40,13 @@ namespace SSDP {
 		if (selector.select(timeout) > 0) {
 			if (sock.isReadalbeSelected(selector)) {
 				char buffer[4096] = {0,};
-				OS::DatagramPacket packet(buffer, sizeof(buffer));
+				DatagramPacket packet(buffer, sizeof(buffer));
 				sock.recv(packet);
 				onReceive(packet);
 			}
 		}
 	}
-	void SSDPMsearchSender::onReceive(OS::DatagramPacket & packet) {
+	void SSDPMsearchSender::onReceive(DatagramPacket & packet) {
 		SSDPHeader header(packet.getData(), packet.getRemoteAddr());
 
 		if (header.isSSDPResponse()) {
@@ -59,7 +62,7 @@ namespace SSDP {
 
 	void SSDPMsearchSender::sendMcast(const std::string & content, const std::string & group, int port) {
 		char buffer[4096] = {0,};
-		OS::DatagramPacket packet(buffer, sizeof(buffer), group, port);
+		DatagramPacket packet(buffer, sizeof(buffer), group, port);
 		packet.write(content);
 		sock.send(packet);
 	}
@@ -70,9 +73,9 @@ namespace SSDP {
 
 	void SSDPMsearchSender::sendMcastToAllInterfaces(const std::string & content, const std::string & group, int port) {
 		char buffer[4096] = {0,};
-		OS::DatagramPacket packet(buffer, sizeof(buffer), group, port);
+		DatagramPacket packet(buffer, sizeof(buffer), group, port);
 		packet.write(content);
-		std::vector<OS::InetAddress> addrs = OS::Network::getAllInetAddress();
+		std::vector<InetAddress> addrs = Network::getAllInetAddress();
 		for (size_t i = 0; i < addrs.size(); i++) {
 			if (addrs[i].inet4()) {
 				sock.setMulticastInterface(addrs[i].getHost());
@@ -92,5 +95,14 @@ namespace SSDP {
 	}
 	void SSDPMsearchSender::setSSDPEventHandler(UTIL::AutoRef<SSDPEventHandler> handler) {
 		this->handler = handler;
+	}
+
+	void SSDPMsearchSender::unicast(const string & content, InetAddress & remoteAddr) {
+		DatagramSocket sock;
+		char * buffer = new char[content.size()];
+		DatagramPacket packet(buffer, content.size(), remoteAddr);
+		packet.write(content);
+		sock.send(packet);
+		delete[] buffer;
 	}
 }

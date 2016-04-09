@@ -13,20 +13,37 @@ namespace UPNP {
 	UPnPDeviceDeserializer::UPnPDeviceDeserializer() {}
 	UPnPDeviceDeserializer::~UPnPDeviceDeserializer() {}
 
-	AutoRef<UPnPDevice> UPnPDeviceDeserializer::buildDevice(SSDPHeader & header) {
+	AutoRef<UPnPDevice> UPnPDeviceDeserializer::buildDevice(const Url & url) {
 		
-		XmlDocument doc = DomParser::parse(UPnPResourceManager::getResource(header.getLocation()));
+		// XmlDocument doc = DomParser::parse(UPnPResourceManager::getResource(url));
+		// XmlNode * deviceNode = doc.getRootNode()->getElementByTagName("device");
+		// if (!deviceNode) {
+		// 	throw OS::Exception("cannot build device / wrong device description");
+		// }
+		
+		// AutoRef<UPnPDevice> device(new UPnPDevice);
+		// device->baseUrl() = url;
+
+		// parseDeviceXmlNode(deviceNode, *device);
+
+		// return device;
+
+		AutoRef<UPnPDevice> device(new UPnPDevice);
+		device->baseUrl() = url;
+
+		parseDeviceXml(UPnPResourceManager::getResource(url), *device);
+
+		return device;
+	}
+
+	void UPnPDeviceDeserializer::parseDeviceXml(const string & xml, UPnPDevice & device) {
+		XmlDocument doc = DomParser::parse(xml);
 		XmlNode * deviceNode = doc.getRootNode()->getElementByTagName("device");
 		if (!deviceNode) {
 			throw OS::Exception("cannot build device / wrong device description");
 		}
 		
-		AutoRef<UPnPDevice> device(new UPnPDevice);
-		device->baseUrl() = header.getLocation();
-
-		parseDeviceXmlNode(deviceNode, *device);
-
-		return device;
+		parseDeviceXmlNode(deviceNode, device);
 	}
 
 	void UPnPDeviceDeserializer::parseDeviceXmlNode(XmlNode * deviceXml, UPnPDevice & device) {
@@ -134,7 +151,7 @@ namespace UPNP {
 		}
 		return stateVariable;
 	}
-	void UPnPDeviceDeserializer::parsePropertiesFromXmlNode(XmlNode * node, UPnPObject & obj) {
+	void UPnPDeviceDeserializer::parsePropertiesFromXmlNode(XmlNode * node, UPnPModelObject & obj) {
 		vector<XmlNode*> children = node->children();
 		for (vector<XmlNode*>::iterator iter = children.begin(); iter != children.end(); iter++) {
 			if (XmlUtils::testNameValueXmlNode(*iter)) {

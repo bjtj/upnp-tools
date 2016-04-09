@@ -8,6 +8,7 @@ namespace UPNP {
 	class UPnPServiceProfile {
 	private:
 		std::string _serviceType;
+		std::string _serviceId;
 		std::string _scpd;
 		std::string _scpdUrl;
 		std::string _controlUrl;
@@ -18,6 +19,7 @@ namespace UPNP {
 		virtual ~UPnPServiceProfile() {}
 
 		std::string & serviceType() {return _serviceType;}
+		std::string & serviceId() {return _serviceId;}
 		std::string & scpd() {return _scpd;}
 		std::string & scpdUrl() {return _scpdUrl;}
 		std::string & controlUrl() {return _controlUrl;}

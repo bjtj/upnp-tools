@@ -32,11 +32,11 @@ namespace UPNP {
 		string & sid() {
 			return _sid;
 		}
-		bool ready() {
+		bool prepared() {
 			return (tick_milli() - creationTick) >= delay;
 		}
-		static bool ready(Message msg) {
-			return ((NotifyRequestObject*)&msg.obj())->ready();
+		static bool prepared(Message msg) {
+			return ((NotifyRequestObject*)&msg.obj())->prepared();
 		}
 		static string sid(Message msg) {
 			return ((NotifyRequestObject*)&msg.obj())->sid();
@@ -46,30 +46,30 @@ namespace UPNP {
 	/**
 	 * @brief
 	 */
-	UPnPEventNotifyThread::UPnPEventNotifyThread(UPnPNotificationCenter & nc) : nc(nc) {
+	UPnPEventNotifyThread::UPnPEventNotifyThread(UPnPNotificationCenter & notificationCenter) : notificationCenter(notificationCenter) {
 	}
 	UPnPEventNotifyThread::~UPnPEventNotifyThread() {
 	}
 	void UPnPEventNotifyThread::run() {
 		while (!interrupted()) {
-			if (mq.size() == 0) {
+			if (messageQueue.size() == 0) {
 				idle(10);
 				continue;
 			}
-			size_t size = mq.size();
+			size_t size = messageQueue.size();
 			while (size-- > 0) {
-				if (NotifyRequestObject::ready(mq.front())) {
-					string sid = NotifyRequestObject::sid(mq.dequeue());
-					nc.notify(sid);
+				if (NotifyRequestObject::prepared(messageQueue.front())) {
+					string sid = NotifyRequestObject::sid(messageQueue.dequeue());
+					notificationCenter.notify(sid);
 				}
 			}
 		}
 	}
 	void UPnPEventNotifyThread::scheduleNotify(const string & sid) {
-		mq.enqueue(Message(0, AutoRef<Object>(new NotifyRequestObject(sid))));
+		messageQueue.enqueue(Message(0, AutoRef<Object>(new NotifyRequestObject(sid))));
 	}
 	void UPnPEventNotifyThread::delayNotify(unsigned long delay, const string & sid) {
-		mq.enqueue(Message(0, AutoRef<Object>(new NotifyRequestObject(delay, sid))));
+		messageQueue.enqueue(Message(0, AutoRef<Object>(new NotifyRequestObject(delay, sid))));
 	}
 
 	/**
@@ -129,10 +129,11 @@ namespace UPNP {
 		vector<string> urls = session.callbackUrls();
 		LinkedStringMap headers;
 		headers["SID"] = session.sid();
-		headers["SEQ"] = ++session.lastSeq();
+		headers["SEQ"] = Text::toString(session.lastSeq()++);
+		headers["Content-Type"] = "text/xml";
 		string content = makePropertiesXml(props);
 		for (vector<string>::iterator iter = urls.begin(); iter != urls.end(); iter++) {
-			HttpUtils::httpPost(HTTP::Url(*iter), headers, content);
+			HttpUtils::httpPost("NOTIFY", HTTP::Url(*iter), headers, content);
 		}
 	}
 

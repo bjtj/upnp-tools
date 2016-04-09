@@ -15,8 +15,8 @@ namespace UPNP {
 	 */
 	class UPnPEventNotifyThread : public OS::Thread {
 	private:
-		UTIL::MessageQueue mq;
-		UPnPNotificationCenter & nc;
+		UTIL::MessageQueue messageQueue;
+		UPnPNotificationCenter & notificationCenter;
 	public:
 		UPnPEventNotifyThread(UPnPNotificationCenter & nc);
 		virtual ~UPnPEventNotifyThread();

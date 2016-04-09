@@ -63,7 +63,7 @@ namespace UPNP {
 	}
 
 	void UPnPSession::buildDevice(SSDP::SSDPHeader & header) {
-		rootDevice = UPnPDeviceDeserializer::buildDevice(header);
+		rootDevice = UPnPDeviceDeserializer::buildDevice(header.getLocation());
 		prolong(header.getCacheControl());
 	}
 
@@ -76,9 +76,11 @@ namespace UPNP {
 	}
 	
 	unsigned long UPnPSession::parseCacheControlMilli(const std::string & cacheControl, unsigned long def) {
-		if (!Text::startsWith(cacheControl, "max-age=")) {
+		string maxAgePrefix = "max-age=";
+		if (!Text::startsWith(cacheControl, maxAgePrefix)) {
 			return def;
 		}
+		return (unsigned long)Text::toLong(cacheControl.substr(maxAgePrefix.size())) * 1000;
 	}
 }
 

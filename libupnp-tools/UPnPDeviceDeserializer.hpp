@@ -14,7 +14,8 @@ namespace UPNP {
 		UPnPDeviceDeserializer();
 		virtual ~UPnPDeviceDeserializer();
 
-		static UTIL::AutoRef<UPnPDevice> buildDevice(SSDP::SSDPHeader & header);
+		static UTIL::AutoRef<UPnPDevice> buildDevice(const HTTP::Url & url);
+		static void parseDeviceXml(const std::string & xml, UPnPDevice & device);
 		static void parseDeviceXmlNode(XML::XmlNode * deviceXml, UPnPDevice & device);
 		static void parseDevicePropertiesFromDeviceXmlNode(XML::XmlNode * deviceXml, UPnPDevice & device);
 		static void parseServiceListFromDeviceXmlNode(XML::XmlNode * deviceXml, UPnPDevice & device);
@@ -24,7 +25,7 @@ namespace UPNP {
 		static UPnPAction parseActionFromXml(XML::XmlNode * actionXml);
 		static UPnPArgument parseArgumentFromXml(XML::XmlNode * argumentXml);
 		static UPnPStateVariable parseStateVariableFromXml(XML::XmlNode * stateVariableXml);
-		static void parsePropertiesFromXmlNode(XML::XmlNode * node, UPnPObject & obj);
+		static void parsePropertiesFromXmlNode(XML::XmlNode * node, UPnPModelObject & obj);
 	};
 }
 
