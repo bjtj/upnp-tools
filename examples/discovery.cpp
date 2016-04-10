@@ -249,7 +249,7 @@ int run(int argc, char *args[]) {
 					for (vector<UPnPArgument>::iterator iter = arguments.begin(); iter != arguments.end(); iter++) {
 						if (iter->direction() == UPnPArgument::IN_DIRECTION) {
 							string allows = "";
-							UPnPStateVariable sv = service->getStateVariable(iter->stateVariableName());
+							UPnPStateVariable sv = service->getStateVariable(iter->relatedStateVariable());
 							if (sv.hasAllowedValues()) {
 								for (vector<string>::iterator ai = sv.allowedValueList().begin(); ai != sv.allowedValueList().end(); ai++) {
 									if (allows.length() > 0) {

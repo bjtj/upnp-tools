@@ -9,6 +9,8 @@ namespace UPNP {
 	using namespace HTTP;
 	using namespace UTIL;
 	using namespace OS;
+
+	Properties UPnPResourceManager::props;
 	
 	UPnPResourceManager::UPnPResourceManager() {
 	}
@@ -27,7 +29,13 @@ namespace UPNP {
 			}
 			fstream.close();
 			return ret;
+		} else if (url.getScheme() == "prop") {
+			return props[url.getPath()];
 		}
-		throw Exception("unknown scheme");
+		throw Exception("UPnPResourceManager :: unknown scheme - " + url.getScheme());
+	}
+
+	Properties & UPnPResourceManager::properties() {
+		return props;
 	}
 }

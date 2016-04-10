@@ -30,9 +30,15 @@ namespace UPNP {
 		}
 
 		static std::string toNameValueTag(const UTIL::NameValue & nv) {
-			std::string name = XML::XmlEncoder::encode(nv.name_const());
-			std::string value = XML::XmlEncoder::encode(nv.value_const());
-			return ("<" + name + ">" + value + "</" + name + ">");
+			std::string tag = XML::XmlEncoder::encode(nv.name_const());
+			std::string encodedContent = XML::XmlEncoder::encode(nv.value_const());
+			return ("<" + tag + ">" + encodedContent + "</" + tag + ">");
+		}
+
+		static std::string toNameValueTag(const std::string & name, const std::string & value) {
+			std::string tag = XML::XmlEncoder::encode(name);
+			std::string encodedContent = XML::XmlEncoder::encode(value);
+			return ("<" + tag + ">" + encodedContent + "</" + tag + ">");
 		}
 	};
 }

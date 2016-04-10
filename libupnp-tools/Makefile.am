@@ -17,6 +17,7 @@ libupnp_toolsinc_HEADERS = \
 	UPnPControlPoint.hpp \
 	UPnPDeviceDeserializer.hpp \
 	UPnPDeviceProfile.hpp \
+	UPnPDeviceProfileBuilder.hpp \
 	UPnPDeviceProfileSession.hpp \
 	UPnPDeviceProfileSessionManager.hpp \
 	UPnPDeviceSerializer.hpp \
@@ -24,7 +25,6 @@ libupnp_toolsinc_HEADERS = \
 	UPnPEventSubscription.hpp \
 	UPnPEventSubscriptionRegistry.hpp \
 	UPnPEventSubscriptionSession.hpp \
-	UPnPLocationResolver.hpp \
 	UPnPModels.hpp \
 	UPnPNotificationCenter.hpp \
 	UPnPNotificationServer.hpp \
@@ -64,6 +64,8 @@ libupnp_tools_la_SOURCES = \
 	UPnPDeviceDeserializer.hpp \
 	UPnPDeviceProfile.cpp \
 	UPnPDeviceProfile.hpp \
+	UPnPDeviceProfileBuilder.cpp \
+	UPnPDeviceProfileBuilder.hpp \
 	UPnPDeviceProfileSession.cpp \
 	UPnPDeviceProfileSession.hpp \
 	UPnPDeviceProfileSessionManager.cpp \
@@ -78,7 +80,6 @@ libupnp_tools_la_SOURCES = \
 	UPnPEventSubscriptionRegistry.hpp \
 	UPnPEventSubscriptionSession.cpp \
 	UPnPEventSubscriptionSession.hpp \
-	UPnPLocationResolver.hpp \
 	UPnPModels.cpp \
 	UPnPModels.hpp \
 	UPnPNotificationCenter.cpp \

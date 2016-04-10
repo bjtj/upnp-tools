@@ -1,6 +1,6 @@
 TESTS=$(check_PROGRAMS)
 
-check_PROGRAMS=test-basic test-network test-server test-ssdp test-notification test-resource-manager test-control-point test-serialize
+check_PROGRAMS=test-basic test-network test-server test-ssdp test-notification test-resource-manager test-control-point test-serialize test-device-profile-builder
 
 test_basic_SOURCES = test-basic.cpp
 test_basic_CPPFLAGS =-I$(top_srcdir)
@@ -50,3 +50,8 @@ test_serialize_CXXFLAGS = $(PTHREAD_CXXFLAGS) $(LIBOSLAYER_CFLAGS) $(LIBHTTP_SER
 test_serialize_LDFLAGS = $(PTHREAD_CFLAGS)
 test_serialize_LDADD = ../libupnp-tools/libupnp-tools.la $(LIBOSLAYER_LIBS) $(LIBHTTP_SERVER_LIBS)
 
+test_device_profile_builder_SOURCES = test-device-profile-builder.cpp
+test_device_profile_builder_CPPFLAGS =-I$(top_srcdir)
+test_device_profile_builder_CXXFLAGS = $(PTHREAD_CXXFLAGS) $(LIBOSLAYER_CFLAGS) $(LIBHTTP_SERVER_CFLAGS)
+test_device_profile_builder_LDFLAGS = $(PTHREAD_CFLAGS)
+test_device_profile_builder_LDADD = ../libupnp-tools/libupnp-tools.la $(LIBOSLAYER_LIBS) $(LIBHTTP_SERVER_LIBS)

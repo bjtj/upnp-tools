@@ -131,6 +131,28 @@ static void test_serialize() {
 	server.stop();
 }
 
+static void test_scpd_serialize() {
+	UPnPService service;
+	UPnPDeviceDeserializer::parseScpdFromXml(service, scpd());
+	UPnPAction action = service.getAction("GetProtocolInfo");
+	ASSERT(action.name(), ==, "GetProtocolInfo");
+
+	string xml = UPnPDeviceSerializer::serializeScpd(service);
+	ASSERT(xml.size(), >, 0);
+
+	UPnPService newService;
+	UPnPDeviceDeserializer::parseScpdFromXml(newService, xml);
+
+	action = newService.getAction("GetProtocolInfo");
+	ASSERT(action.arguments()[0].name(), ==, "Source");
+	ASSERT(action.arguments()[0].out(), ==, true);
+	ASSERT(action.arguments()[0].relatedStateVariable(), ==, "SourceProtocolInfo");
+
+	ASSERT(action.arguments()[1].name(), ==, "Sink");
+	ASSERT(action.arguments()[1].out(), ==, true);
+	ASSERT(action.arguments()[1].relatedStateVariable(), ==, "SinkProtocolInfo");
+}
+
 int main(int argc, char *args[]) {
 
 	cout << " ** test_deserialize" << endl;
@@ -139,6 +161,8 @@ int main(int argc, char *args[]) {
 	test_filesystem_base_deserialize();
 	cout << " ** test_serialize" << endl;
 	test_serialize();
+	cout << " ** test_scpd_serialize" << endl;
+	test_scpd_serialize();
     
     return 0;
 }

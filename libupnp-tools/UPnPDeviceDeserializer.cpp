@@ -14,19 +14,6 @@ namespace UPNP {
 	UPnPDeviceDeserializer::~UPnPDeviceDeserializer() {}
 
 	AutoRef<UPnPDevice> UPnPDeviceDeserializer::buildDevice(const Url & url) {
-		
-		// XmlDocument doc = DomParser::parse(UPnPResourceManager::getResource(url));
-		// XmlNode * deviceNode = doc.getRootNode()->getElementByTagName("device");
-		// if (!deviceNode) {
-		// 	throw OS::Exception("cannot build device / wrong device description");
-		// }
-		
-		// AutoRef<UPnPDevice> device(new UPnPDevice);
-		// device->baseUrl() = url;
-
-		// parseDeviceXmlNode(deviceNode, *device);
-
-		// return device;
 
 		AutoRef<UPnPDevice> device(new UPnPDevice);
 		device->baseUrl() = url;
@@ -117,7 +104,7 @@ namespace UPNP {
 				} else if (nv.name() == "direction") {
 					arg.direction() = (nv.value() == "out" ? UPnPArgument::OUT_DIRECTION : UPnPArgument::IN_DIRECTION);
 				} else if (nv.name() == "relatedStateVariable") {
-					arg.stateVariableName() = nv.value();
+					arg.relatedStateVariable() = nv.value();
 				}
 			}
 		}
@@ -125,9 +112,26 @@ namespace UPNP {
 	}
 	UPnPStateVariable UPnPDeviceDeserializer::parseStateVariableFromXml(XmlNode * stateVariableXml) {
 		UPnPStateVariable stateVariable;
+
+		// send events
+		if (stateVariableXml->attr("sendEvents") == "no") {
+			stateVariable.sendEvents() = false;
+		} else {
+			stateVariable.sendEvents() = true;
+		}
+
+		// multicast
+		if (stateVariableXml->attr("multicast") == "yes") {
+			stateVariable.multicast() = true;
+		} else {
+			stateVariable.multicast() = false;
+		}
+		
 		vector<XmlNode*> children = stateVariableXml->children();
 		for (vector<XmlNode*>::iterator iter = children.begin(); iter != children.end(); iter++) {
 			if ((*iter)->isElement()) {
+				
+				// single arguments
 				if (XmlUtils::testNameValueXmlNode(*iter)) {
 					NameValue nv = XmlUtils::toNameValue(*iter);
 					if (nv.name() == "name") {
@@ -136,6 +140,7 @@ namespace UPNP {
 						stateVariable.dataType() = nv.value();
 					}
 				}
+				// allowed value list
 				if ((*iter)->tagName() == "allowedValueList") {
 					vector<XmlNode*> values = (*iter)->children();
 					for (vector<XmlNode*>::iterator vi = values.begin(); vi != values.end(); vi++) {
@@ -147,6 +152,7 @@ namespace UPNP {
 						}
 					}
 				}
+				// TODO: allowed value range (minimum, maximum, step)
 			}
 		}
 		return stateVariable;

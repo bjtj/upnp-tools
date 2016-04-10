@@ -37,20 +37,31 @@ namespace UPNP {
 	 */
 	class UPnPStateVariable : public UPnPModelObject {
 	private:
+		bool _sendEvents;
+		bool _multicast;
 		std::string _name;
 		std::string _dataType;
 		std::string _defValue;
 		std::vector<std::string> _allowedValueList;
+		// TODO: allowedValueRange
+		std::string _minimum;
+		std::string _maximum;
+		std::string _step;
 	public:
 		UPnPStateVariable() {}
 		virtual ~UPnPStateVariable() {}
 
+		bool & sendEvents() {return _sendEvents;}
+		bool & multicast() {return _multicast;}
 		std::string & name() {return _name;}
 		std::string & dataType() {return _dataType;}
 		std::string & defaultValue() {return _defValue;}
 		std::vector<std::string> & allowedValueList() {return _allowedValueList;}
 		void addAllowedValue(const std::string & allowedValue) {_allowedValueList.push_back(allowedValue);}
 		bool hasAllowedValues() {return _allowedValueList.size() > 0;}
+		std::string & minimum() {return _minimum;}
+		std::string & maximum() {return _maximum;}
+		std::string & step() {return _step;}
 	};
 
 	/**
@@ -64,7 +75,7 @@ namespace UPNP {
 	private:
 		std::string _name;
 		int _direction;
-		std::string _stateVariableName;
+		std::string _relatedStateVariable;
 	public:
 		UPnPArgument() : _direction(UNKNOWN_DIRECTION) {}
 		virtual ~UPnPArgument() {}
@@ -72,7 +83,7 @@ namespace UPNP {
 		bool out() {return _direction == OUT_DIRECTION;}
 		std::string & name() {return _name;}
 		int & direction() {return _direction;}
-		std::string & stateVariableName() {return _stateVariableName;}
+		std::string & relatedStateVariable() {return _relatedStateVariable;}
 	};
 
 	/**

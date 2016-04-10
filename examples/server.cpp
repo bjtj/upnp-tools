@@ -7,6 +7,9 @@
 #include <libupnp-tools/NetworkUtil.hpp>
 #include <libupnp-tools/UPnPServer.hpp>
 #include <libupnp-tools/UPnPActionHandler.hpp>
+#include <libupnp-tools/UPnPDeviceDeserializer.hpp>
+#include <libupnp-tools/UPnPResourceManager.hpp>
+#include <libupnp-tools/UPnPDeviceProfileBuilder.hpp>
 
 using namespace std;
 using namespace SSDP;
@@ -99,17 +102,13 @@ int main(int argc, char *args[]) {
 
 	string dummy = "urn:schemas-dummy-com:service:Dummy:1";
 
-	UPnPDeviceProfile deviceProfile;
-	deviceProfile.uuid() = uuid;
-	deviceProfile.deviceDescription() = dd(uuid);
-	deviceProfile.deviceTypes().push_back("urn:schemas-upnp-org:device:InternetGatewayDevice:1");
-	UPnPServiceProfile serviceProfile;
-	serviceProfile.scpd() = scpd();
-	serviceProfile.serviceType() = "urn:schemas-dummy-com:service:Dummy:1";
-	serviceProfile.scpdUrl() = "/scpd.xml?udn=" + uuid + "::urn:schemas-dummy-com:service:Dummy:1";
-	serviceProfile.controlUrl() = "/control?udn=" + uuid + "::urn:schemas-dummy-com:service:Dummy:1";
-	serviceProfile.eventSubUrl() = "/event?udn=" + uuid + "::urn:schemas-dummy-com:service:Dummy:1";
-	deviceProfile.serviceProfiles().push_back(serviceProfile);
+	UPnPResourceManager::properties()["/device.xml"] = dd(uuid);
+	UPnPResourceManager::properties()["/scpd.xml?udn=" + uuid + "::" + dummy] = scpd();
+
+	AutoRef<UPnPDevice> device = UPnPDeviceDeserializer::buildDevice(Url("prop:///device.xml"));
+	UPnPDeviceProfileBuilder builder(uuid, device);
+	UPnPDeviceProfile deviceProfile = builder.build();
+
 	server[uuid] = deviceProfile;
 
 	LinkedStringMap props;
