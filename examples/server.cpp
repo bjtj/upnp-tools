@@ -44,9 +44,9 @@ string dd(const string & uuid) {
 		"<service>"
 		"<serviceType>urn:schemas-dummy-com:service:Dummy:1</serviceType>"
 		"<serviceId>urn:dummy-com:serviceId:dummy1</serviceId>"
-		"<controlURL>/control?udn=" + uuid + "::" + dummy + "</controlURL>"
-		"<eventSubURL>/event?udn=" + uuid + "::" + dummy + "</eventSubURL>"
-		"<SCPDURL>/scpd.xml?udn=" + uuid + "::" + dummy + "</SCPDURL>"
+		"<controlURL>/control/" + uuid + "::" + dummy + "</controlURL>"
+		"<eventSubURL>/event/" + uuid + "::" + dummy + "</eventSubURL>"
+		"<SCPDURL>/scpd.xml/" + uuid + "::" + dummy + "</SCPDURL>"
 		"</service></serviceList>"
 		"</device>"
 		"</root>";
@@ -103,7 +103,7 @@ int main(int argc, char *args[]) {
 	string dummy = "urn:schemas-dummy-com:service:Dummy:1";
 
 	UPnPResourceManager::properties()["/device.xml"] = dd(uuid);
-	UPnPResourceManager::properties()["/scpd.xml?udn=" + uuid + "::" + dummy] = scpd();
+	UPnPResourceManager::properties()["/scpd.xml/" + uuid + "::" + dummy] = scpd();
 
 	AutoRef<UPnPDevice> device = UPnPDeviceDeserializer::buildDevice(Url("prop:///device.xml"));
 	UPnPDeviceProfileBuilder builder(uuid, device);

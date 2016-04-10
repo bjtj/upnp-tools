@@ -67,7 +67,7 @@ namespace UPNP {
 	void UPnPDeviceDeserializer::parseScpdFromXml(UPnPService & service, const string & scpd) {
 		XmlDocument doc = DomParser::parse(scpd);
 		if (doc.getRootNode().nil()) {
-			throw OS::Exception("wrong scpd format");
+			throw OS::Exception("wrong scpd format - xml parse failed");
 		}
 		vector<XmlNode*> actions = doc.getRootNode()->getElementsByTagName("action");
 		for (vector<XmlNode*>::iterator iter = actions.begin(); iter != actions.end(); iter++) {
