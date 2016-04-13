@@ -12,6 +12,11 @@ namespace UPNP {
 	map<string, AutoRef<UPnPDeviceProfileSession> > & UPnPDeviceProfileSessionManager::sessions() {
 		return _sessions;
 	}
+
+	void UPnPDeviceProfileSessionManager::registerProfile(const string & uuid, const UPnPDeviceProfile & profile) {
+		_sessions[uuid] = AutoRef<UPnPDeviceProfileSession>(new UPnPDeviceProfileSession(profile));
+	}
+	
 	vector<AutoRef<UPnPDeviceProfileSession> > UPnPDeviceProfileSessionManager::searchProfileSessions(const string & st) {
 		vector<AutoRef<UPnPDeviceProfileSession> > ret;
 		for (map<string, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin(); iter != _sessions.end(); iter++) {
@@ -75,9 +80,5 @@ namespace UPNP {
 			}
 		}
 		throw OS::Exception("not found deivce profile session");
-	}
-
-	AutoRef<UPnPDeviceProfileSession> UPnPDeviceProfileSessionManager::operator[] (const std::string & uuid) {
-		return _sessions[uuid];
 	}
 }

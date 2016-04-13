@@ -110,7 +110,8 @@ int main(int argc, char *args[]) {
 	UPnPDeviceProfileBuilder builder(uuid, device);
 	UPnPDeviceProfile deviceProfile = builder.build();
 
-	server[uuid] = deviceProfile;
+	// server[uuid] = deviceProfile;
+	server.registerDeviceProfile(uuid, deviceProfile);
 
 	LinkedStringMap props;
 	props["SourceProtocolInfo"] = "<initial source>";

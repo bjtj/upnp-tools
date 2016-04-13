@@ -81,7 +81,8 @@ static void test_device_profile() {
 	serviceProfile.controlUrl() = "/control?udn=" + uuid + "&serviceType=urn:schemas-dummy-com:service:Dummy:1";
 	serviceProfile.eventSubUrl() = "/event?udn=" + uuid + "&serviceType=urn:schemas-dummy-com:service:Dummy:1";
 	deviceProfile.serviceProfiles().push_back(serviceProfile);
-	server[uuid] = deviceProfile;
+	// server[uuid] = deviceProfile;
+	server.registerDeviceProfile(uuid, deviceProfile);
 
 	LinkedStringMap props;
 	props["xxx"] = "";
@@ -95,10 +96,12 @@ static void test_device_profile() {
 	// profile search check
 	{
 		string scpdUrl = "/scpd.xml?udn=" + uuid + "&serviceType=urn:schemas-dummy-com:service:Dummy:1";
-		UPnPDeviceProfile deviceProfile = server.getDeviceProfileHasScpdUrl(scpdUrl);
+		// UPnPDeviceProfile deviceProfile = server.getDeviceProfileHasScpdUrl(scpdUrl);
+		UPnPDeviceProfile deviceProfile = server.getProfileManager().getDeviceProfileSessionHasScpdUrl(scpdUrl)->profile();
 		UPnPServiceProfile service = deviceProfile.getServiceProfileWithScpdUrl(scpdUrl);
 		ASSERT(service.serviceType(), ==, "urn:schemas-dummy-com:service:Dummy:1");
-		ASSERT(server.hasDeviceProfileWithScpdUrl(scpdUrl), ==, true);
+		// ASSERT(server.hasDeviceProfileWithScpdUrl(scpdUrl), ==, true);
+		ASSERT(server.getProfileManager().hasDeviceProfileSessionWithScpdUrl(scpdUrl), ==, true);
 	}
 
 	// dd check

@@ -10,7 +10,7 @@ namespace UPNP {
 		bool enabled;
 		UPnPDeviceProfile _profile;
 	public:
-		UPnPDeviceProfileSession(UPnPDeviceProfile & profile);
+		UPnPDeviceProfileSession(const UPnPDeviceProfile & profile);
 		virtual ~UPnPDeviceProfileSession();
 		UPnPDeviceProfile & profile();
 		void setEnable(bool enable);

@@ -2,7 +2,7 @@
 
 namespace UPNP {
 
-	UPnPDeviceProfileSession::UPnPDeviceProfileSession(UPnPDeviceProfile & profile) : enabled(false), _profile(profile){
+	UPnPDeviceProfileSession::UPnPDeviceProfileSession(const UPnPDeviceProfile & profile) : enabled(false), _profile(profile){
 	}
 	UPnPDeviceProfileSession::~UPnPDeviceProfileSession() {
 	}
