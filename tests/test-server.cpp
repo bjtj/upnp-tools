@@ -121,7 +121,8 @@ static void test_device_profile() {
 
 		vector<XmlNode*> actions = doc.getRootNode()->getElementsByTagName("action");
 		for (vector<XmlNode*>::iterator iter = actions.begin(); iter != actions.end(); iter++) {
-			UPnPAction action = UPnPDeviceDeserializer::parseActionFromXml(*iter);
+			UPnPDeviceDeserializer deserializer;
+			UPnPAction action = deserializer.parseActionFromXmlNode(*iter);
 			ASSERT(action.name(), ==, "GetProtocolInfo");
 		}
 		
@@ -131,7 +132,8 @@ static void test_device_profile() {
 	// parsing test
 	{
 		UPnPService service;
-		UPnPDeviceDeserializer::parseScpdFromXml(service, scpd());
+		UPnPDeviceDeserializer deserializer;
+		deserializer.parseScpdFromXml(service, scpd());
 		UPnPStateVariable stateVariable = service.getStateVariable("SourceProtocolInfo");
 		ASSERT(stateVariable.name(), ==, "SourceProtocolInfo");
 

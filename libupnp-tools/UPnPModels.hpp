@@ -159,9 +159,12 @@ namespace UPNP {
 		UTIL::AutoRef<UPnPService> getService(const std::string & serviceType);
 		std::vector<UTIL::AutoRef<UPnPDevice> > & devices();
 		std::vector<UTIL::AutoRef<UPnPService> > & services();
-		std::string getUdn();	
+		std::string getUdn();
+		void setUdn(const std::string & udn);
 		std::string getFriendlyName();
+		void setFriendlyName(const std::string & friendlyName);
 		std::string getDeviceType();
+		void setDeviceType(const std::string & deviceType);
 		HTTP::Url & baseUrl();
 	};	
 	

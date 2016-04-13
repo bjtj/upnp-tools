@@ -69,7 +69,8 @@ static void test_deserialize() {
 	server.registerRequestHandler("/*", AutoRef<HttpRequestHandler>(new RequestHandler(udn)));
 	server.startAsync();
 
-	AutoRef<UPnPDevice> device = UPnPDeviceDeserializer::buildDevice(Url("http://localhost:9999/device.xml"));
+	UPnPDeviceDeserializer deserializer;
+	AutoRef<UPnPDevice> device = deserializer.buildDevice(Url("http://localhost:9999/device.xml"));
 
 	ASSERT(device->getUdn(), ==, "uuid:" + udn);
 	ASSERT(device->getFriendlyName(), ==, "UPnP Test Device");
@@ -93,7 +94,8 @@ static void test_filesystem_base_deserialize() {
 	fs.write(scpd().c_str(), scpd().size());
 	fs.close();
 
-	AutoRef<UPnPDevice> device = UPnPDeviceDeserializer::buildDevice(Url("file://" + File::getCwd() + "/device.xml"));
+	UPnPDeviceDeserializer deserializer;
+	AutoRef<UPnPDevice> device = deserializer.buildDevice(Url("file://" + File::getCwd() + "/device.xml"));
 
 	ASSERT(device->getUdn(), ==, "uuid:" + udn);
 	ASSERT(device->getFriendlyName(), ==, "UPnP Test Device");
@@ -110,7 +112,8 @@ static void test_serialize() {
 	server.registerRequestHandler("/*", AutoRef<HttpRequestHandler>(new RequestHandler(udn)));
 	server.startAsync();
 
-	AutoRef<UPnPDevice> device = UPnPDeviceDeserializer::buildDevice(Url("http://localhost:9999/device.xml"));
+	UPnPDeviceDeserializer deserializer;
+	AutoRef<UPnPDevice> device = deserializer.buildDevice(Url("http://localhost:9999/device.xml"));
 
 	ASSERT(device->getUdn(), ==, "uuid:" + udn);
 	ASSERT(device->getFriendlyName(), ==, "UPnP Test Device");
@@ -124,7 +127,7 @@ static void test_serialize() {
 
 	AutoRef<UPnPDevice> deserialized(new UPnPDevice);
 	deserialized->baseUrl() = Url("http://localhost:9999/device.xml");
-	UPnPDeviceDeserializer::parseDeviceXml(dd, *deserialized);
+	deserializer.parseDeviceXml(dd, *deserialized);
 
 	ASSERT(deserialized->getUdn(), ==, "uuid:" + udn);
 
@@ -133,7 +136,8 @@ static void test_serialize() {
 
 static void test_scpd_serialize() {
 	UPnPService service;
-	UPnPDeviceDeserializer::parseScpdFromXml(service, scpd());
+	UPnPDeviceDeserializer deserializer;
+	deserializer.parseScpdFromXml(service, scpd());
 	UPnPAction action = service.getAction("GetProtocolInfo");
 	ASSERT(action.name(), ==, "GetProtocolInfo");
 
@@ -141,7 +145,7 @@ static void test_scpd_serialize() {
 	ASSERT(xml.size(), >, 0);
 
 	UPnPService newService;
-	UPnPDeviceDeserializer::parseScpdFromXml(newService, xml);
+	deserializer.parseScpdFromXml(newService, xml);
 
 	action = newService.getAction("GetProtocolInfo");
 	ASSERT(action.arguments()[0].name(), ==, "Source");

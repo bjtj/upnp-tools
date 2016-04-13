@@ -41,6 +41,7 @@ namespace UPNP {
 
 		UPnPDeviceProfile deviceProfile;
 		deviceProfile.uuid() = _uuid;
+		setUdn(_device, "uuid:" + _uuid);
 		deviceProfile.deviceDescription() = UPnPDeviceSerializer::serializeDeviceDescription(*_device);
 
 		vector<AutoRef<UPnPDevice> > devices;
@@ -69,5 +70,11 @@ namespace UPNP {
 
 		return deviceProfile;
 	}
-	
+
+	void UPnPDeviceProfileBuilder::setUdn(AutoRef<UPnPDevice> device, const string & udn) {
+		device->setUdn(udn);
+		for (size_t i = 0; i < device->devices().size(); i++) {
+			setUdn(device->devices()[i], udn);
+		}
+	}
 }

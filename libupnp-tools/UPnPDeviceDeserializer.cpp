@@ -10,19 +10,25 @@ namespace UPNP {
 	using namespace HTTP;
 	using namespace UTIL;
 
-	UPnPDeviceDeserializer::UPnPDeviceDeserializer() {}
+	UPnPDeviceDeserializer::UPnPDeviceDeserializer() : _withScpdBuild(true) {}
+	UPnPDeviceDeserializer::UPnPDeviceDeserializer(bool withScpdBuild) : _withScpdBuild(withScpdBuild) {}
 	UPnPDeviceDeserializer::~UPnPDeviceDeserializer() {}
 
-	AutoRef<UPnPDevice> UPnPDeviceDeserializer::buildDevice(const Url & url) {
-
-		AutoRef<UPnPDevice> device(new UPnPDevice);
-		device->baseUrl() = url;
-
-		parseDeviceXml(UPnPResourceManager::getResource(url), *device);
-
-		return device;
+	bool & UPnPDeviceDeserializer::withScpdBuild() {
+		return _withScpdBuild;
 	}
 
+	AutoRef<UPnPDevice> UPnPDeviceDeserializer::buildDevice(const Url & url) {
+		return buildDeviceWithDescriptionXml(UPnPResourceManager::getResource(url), url);
+	}
+
+	AutoRef<UPnPDevice> UPnPDeviceDeserializer::buildDeviceWithDescriptionXml(const string & descriptionXml, const Url & url) {
+		AutoRef<UPnPDevice> device(new UPnPDevice);
+		device->baseUrl() = url;
+		parseDeviceXml(descriptionXml, *device);
+		return device;
+	}
+	
 	void UPnPDeviceDeserializer::parseDeviceXml(const string & xml, UPnPDevice & device) {
 		XmlDocument doc = DomParser::parse(xml);
 		XmlNode * deviceNode = doc.getRootNode()->getElementByTagName("device");
@@ -52,7 +58,9 @@ namespace UPNP {
 			AutoRef<UPnPService> service(new UPnPService(NULL));
 			parseServicePropertiesFromServiceXmlNode(*iter, &service);
 			device.addService(service);
-			buildService(*service);
+			if (withScpdBuild()) {
+				buildService(*service);
+			}
 		}
 	}
 
@@ -71,15 +79,15 @@ namespace UPNP {
 		}
 		vector<XmlNode*> actions = doc.getRootNode()->getElementsByTagName("action");
 		for (vector<XmlNode*>::iterator iter = actions.begin(); iter != actions.end(); iter++) {
-			service.addAction(parseActionFromXml(*iter));
+			service.addAction(parseActionFromXmlNode(*iter));
 		}
 		vector<XmlNode*> stateVariables = doc.getRootNode()->getElementsByTagName("stateVariable");
 		for (vector<XmlNode*>::iterator iter = stateVariables.begin(); iter != stateVariables.end(); iter++) {
-			service.addStateVariable(parseStateVariableFromXml(*iter));
+			service.addStateVariable(parseStateVariableFromXmlNode(*iter));
 		}
 	}
 
-	UPnPAction UPnPDeviceDeserializer::parseActionFromXml(XmlNode * actionXml) {
+	UPnPAction UPnPDeviceDeserializer::parseActionFromXmlNode(XmlNode * actionXml) {
 		UPnPAction action;
 		XmlNode * name = actionXml->getElementByTagName("name");
 		if (XmlUtils::testNameValueXmlNode(name)) {
@@ -88,12 +96,12 @@ namespace UPNP {
 		}
 		vector<XmlNode*> arguments = actionXml->getElementsByTagName("argument");
 		for (vector<XmlNode*>::iterator iter = arguments.begin(); iter != arguments.end(); iter++) {
-			action.addArgument(parseArgumentFromXml(*iter));
+			action.addArgument(parseArgumentFromXmlNode(*iter));
 		}
 		return action;
 	}
 
-	UPnPArgument UPnPDeviceDeserializer::parseArgumentFromXml(XmlNode * argumentXml) {
+	UPnPArgument UPnPDeviceDeserializer::parseArgumentFromXmlNode(XmlNode * argumentXml) {
 		UPnPArgument arg;
 		vector<XmlNode*> children = argumentXml->children();
 		for (vector<XmlNode*>::iterator iter = children.begin(); iter != children.end(); iter++) {
@@ -110,7 +118,7 @@ namespace UPNP {
 		}
 		return arg;
 	}
-	UPnPStateVariable UPnPDeviceDeserializer::parseStateVariableFromXml(XmlNode * stateVariableXml) {
+	UPnPStateVariable UPnPDeviceDeserializer::parseStateVariableFromXmlNode(XmlNode * stateVariableXml) {
 		UPnPStateVariable stateVariable;
 
 		// send events

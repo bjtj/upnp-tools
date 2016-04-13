@@ -20,6 +20,7 @@ namespace UPNP {
 		UTIL::AutoRef<UPnPDevice> device();
 		std::vector<UTIL::AutoRef<UPnPDevice> > selectAllDevices(UTIL::AutoRef<UPnPDevice> device);
 		UPnPDeviceProfile build();
+		void setUdn(UTIL::AutoRef<UPnPDevice> device, const std::string & udn);
 	};
 }
 

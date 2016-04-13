@@ -123,13 +123,25 @@ namespace UPNP {
 	string UPnPDevice::getUdn() {
 		return getProperties()["UDN"];
 	}
+
+	void UPnPDevice::setUdn(const string & udn) {
+		getProperties()["UDN"] = udn;
+	}
 	
 	string UPnPDevice::getFriendlyName() {
 		return getProperties()["friendlyName"];
 	}
 
+	void UPnPDevice::setFriendlyName(const string & friendlyName) {
+		getProperties()["friendlyName"] = friendlyName;
+	}
+
 	string UPnPDevice::getDeviceType() {
 		return getProperties()["deviceType"];
+	}
+
+	void UPnPDevice::setDeviceType(const string & deviceType) {
+		getProperties()["deviceType"] = deviceType;
 	}
 
 	Url & UPnPDevice::baseUrl() {

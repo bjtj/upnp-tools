@@ -10,22 +10,27 @@ namespace UPNP {
 	
 	class UPnPDeviceDeserializer {
 	private:
+		bool _withScpdBuild;
 	public:
 		UPnPDeviceDeserializer();
+		UPnPDeviceDeserializer(bool withScpdBuild);
 		virtual ~UPnPDeviceDeserializer();
 
-		static UTIL::AutoRef<UPnPDevice> buildDevice(const HTTP::Url & url);
-		static void parseDeviceXml(const std::string & xml, UPnPDevice & device);
-		static void parseDeviceXmlNode(XML::XmlNode * deviceXml, UPnPDevice & device);
-		static void parseDevicePropertiesFromDeviceXmlNode(XML::XmlNode * deviceXml, UPnPDevice & device);
-		static void parseServiceListFromDeviceXmlNode(XML::XmlNode * deviceXml, UPnPDevice & device);
-		static void parseServicePropertiesFromServiceXmlNode(XML::XmlNode * serviceXml, UPnPService * service);
-		static void buildService(UPnPService & service);
-		static void parseScpdFromXml(UPnPService & service, const std::string & scpd);
-		static UPnPAction parseActionFromXml(XML::XmlNode * actionXml);
-		static UPnPArgument parseArgumentFromXml(XML::XmlNode * argumentXml);
-		static UPnPStateVariable parseStateVariableFromXml(XML::XmlNode * stateVariableXml);
-		static void parsePropertiesFromXmlNode(XML::XmlNode * node, UPnPModelObject & obj);
+		bool & withScpdBuild();
+
+		UTIL::AutoRef<UPnPDevice> buildDevice(const HTTP::Url & url);
+		UTIL::AutoRef<UPnPDevice> buildDeviceWithDescriptionXml(const std::string & descriptionXml, const HTTP::Url & url);
+		void parseDeviceXml(const std::string & xml, UPnPDevice & device);
+		void parseDeviceXmlNode(XML::XmlNode * deviceXml, UPnPDevice & device);
+		void parseDevicePropertiesFromDeviceXmlNode(XML::XmlNode * deviceXml, UPnPDevice & device);
+		void parseServiceListFromDeviceXmlNode(XML::XmlNode * deviceXml, UPnPDevice & device);
+		void parseServicePropertiesFromServiceXmlNode(XML::XmlNode * serviceXml, UPnPService * service);
+		void buildService(UPnPService & service);
+		void parseScpdFromXml(UPnPService & service, const std::string & scpd);
+		UPnPAction parseActionFromXmlNode(XML::XmlNode * actionXml);
+		UPnPArgument parseArgumentFromXmlNode(XML::XmlNode * argumentXml);
+		UPnPStateVariable parseStateVariableFromXmlNode(XML::XmlNode * stateVariableXml);
+		void parsePropertiesFromXmlNode(XML::XmlNode * node, UPnPModelObject & obj);
 	};
 }
 

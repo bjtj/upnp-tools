@@ -63,7 +63,8 @@ namespace UPNP {
 	}
 
 	void UPnPSession::buildDevice(SSDP::SSDPHeader & header) {
-		rootDevice = UPnPDeviceDeserializer::buildDevice(header.getLocation());
+		UPnPDeviceDeserializer deserializer;
+		rootDevice = deserializer.buildDevice(header.getLocation());
 		prolong(header.getCacheControl());
 	}
 
