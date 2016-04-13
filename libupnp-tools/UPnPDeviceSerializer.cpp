@@ -139,7 +139,6 @@ namespace UPNP {
 		ret.append(NEWLINE);
 		for (size_t i = 0; i < action.arguments().size(); i++) {
 			ret.append(serializeArgument(action.arguments()[i]));
-			ret.append(NEWLINE);
 		}
 		ret.append("</argumentList>");
 		ret.append(NEWLINE);
@@ -149,7 +148,7 @@ namespace UPNP {
 		return ret;
 	}
 	string UPnPDeviceSerializer::serializeArgument(UPnPArgument & argument) {
-		string ret = "<arargument>";
+		string ret = "<argument>";
 		ret.append(NEWLINE);
 		ret.append(XmlUtils::toNameValueTag("name", argument.name()));
 		ret.append(NEWLINE);
@@ -164,8 +163,7 @@ namespace UPNP {
 	string UPnPDeviceSerializer::serializeStateVariable(UPnPStateVariable & stateVariable) {
 		
 		string ret = "<stateVariable ";
-		ret.append(NEWLINE);
-
+		
 		// send events
 		ret.append("sendEvents=");
 		ret.append(Text::quote(stateVariable.sendEvents() ? "yes" : "no", "\""));
