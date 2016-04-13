@@ -32,7 +32,6 @@ namespace UPNP {
 	private:
 		static std::string SERVER_INFO;
 		UPnPServerConfig config;
-		// std::map<std::string, UPnPDeviceProfile> deviceProfiles;
 		UPnPDeviceProfileSessionManager profileManager;
 		HTTP::AnotherHttpServer * httpServer;
 		UTIL::AutoRef<UPnPActionHandler> actionHandler;
@@ -66,19 +65,9 @@ namespace UPNP {
 		void respondMsearch(const std::string & st, OS::InetAddress & remoteAddr);
 		std::string makeMsearchResponse(const std::string & location, const std::string & uuid, const std::string & st);
 
-		// resource retrieving
-
+		// profile management
 		UPnPDeviceProfileSessionManager & getProfileManager();
 		void registerDeviceProfile(const std::string & uuid, const UPnPDeviceProfile & profile);
-		
-		// std::vector<UPnPDeviceProfile> searchProfiles(const std::string & st);
-		// bool hasDeviceProfileWithScpdUrl(const std::string & scpdUrl);
-		// bool hasDeviceProfileWithControlUrl(const std::string & controlUrl);
-		// bool hasDeviceProfileWithEventSubUrl(const std::string & eventSubUrl);
-		// UPnPDeviceProfile & getDeviceProfileWithUuid(const std::string & udn);
-		// UPnPDeviceProfile & getDeviceProfileHasScpdUrl(const std::string & scpdUrl);
-		// UPnPDeviceProfile & getDeviceProfileHasEventSubUrl(const std::string & eventSubUrl);
-		// UPnPDeviceProfile & operator[] (const std::string & uuid);
 
 		// functionality
 		void setActionHandler(UTIL::AutoRef<UPnPActionHandler> actionHandler);

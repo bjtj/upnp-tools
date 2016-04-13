@@ -129,8 +129,10 @@ int main(int argc, char *args[]) {
 			if (cmd == "q") {
 				break;
 			} else if (cmd == "alive") {
+				server.getProfileManager().getDeviceProfileSessionWithUuid(uuid)->setEnable(true);
 				server.notifyAlive(deviceProfile);
 			} else if (cmd == "byebye") {
+				server.getProfileManager().getDeviceProfileSessionWithUuid(uuid)->setEnable(false);
 				server.notifyByeBye(deviceProfile);
 			} else if (cmd == "set-props") {
 				LinkedStringMap props;

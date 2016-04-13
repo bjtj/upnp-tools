@@ -81,8 +81,9 @@ static void test_device_profile() {
 	serviceProfile.controlUrl() = "/control?udn=" + uuid + "&serviceType=urn:schemas-dummy-com:service:Dummy:1";
 	serviceProfile.eventSubUrl() = "/event?udn=" + uuid + "&serviceType=urn:schemas-dummy-com:service:Dummy:1";
 	deviceProfile.serviceProfiles().push_back(serviceProfile);
-	// server[uuid] = deviceProfile;
+	
 	server.registerDeviceProfile(uuid, deviceProfile);
+	server.getProfileManager().getDeviceProfileSessionWithUuid(uuid)->setEnable(true);
 
 	LinkedStringMap props;
 	props["xxx"] = "";

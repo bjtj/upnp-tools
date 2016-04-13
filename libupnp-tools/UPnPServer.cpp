@@ -93,6 +93,13 @@ namespace UPNP {
 			string uri = request.getHeader().getPart2();
 
 			if (request.getPath() == "/device.xml") {
+
+				AutoRef<UPnPDeviceProfileSession> session = server.getProfileManager().getDeviceProfileSessionWithUuid(request.getParameter("udn"));
+				if (!session->isEnabled()) {
+					response.setStatusCode(404);
+					return;
+				}
+				
 				response.setStatusCode(200);
 				response.setContentType("text/xml");
 				// UPnPDeviceProfile profile = server.getDeviceProfileWithUuid(request.getParameter("udn")); // TODO: consider udn
