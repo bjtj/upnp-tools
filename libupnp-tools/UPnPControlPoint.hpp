@@ -73,6 +73,8 @@ namespace UPNP {
 		void subscribe(const std::string & udn, const std::string & serviceType);
 		void unsubscribe(const std::string & udn, const std::string & serviceType);
 		UPnPEventSubscriber prepareEventSubscriber(const std::string & udn, const std::string & serviceType);
+		UTIL::AutoRef<UPnPService> findService(UTIL::AutoRef<UPnPDevice> device, const std::string & serviceType);
+		UTIL::AutoRef<UPnPService> findServiceRecursive(UTIL::AutoRef<UPnPDevice> device, const std::string & serviceType);
 		UPnPNotificationServer * getNotificationServer();
 		UTIL::TimerLooperThread & getTimerThread();
 		void clearOudatedSessions();

@@ -69,7 +69,7 @@ namespace UPNP {
 		virtual void onMsearch(SSDPHeader & header) {
 		}
 		virtual void onNotify(SSDPHeader & header) {
-			OS::InetAddress addr = header.getRemoteAddr();
+			InetAddress addr = header.getRemoteAddr();
 			if (cp) {
 				if (header.isNotifyAlive()) {
 					cp->addDevice(header);
@@ -79,7 +79,7 @@ namespace UPNP {
 			}
 		}
 		virtual void onMsearchResponse(SSDPHeader & header) {
-			OS::InetAddress addr = header.getRemoteAddr();
+			InetAddress addr = header.getRemoteAddr();
 
 			Uuid uuid(header.getUsn());
 
@@ -187,7 +187,7 @@ namespace UPNP {
 		if (!session.nil()) {
 			return session->getRootDevice();
 		}
-		throw OS::Exception("not found device / name : " + udn, -1, 0);
+		throw Exception("not found device / name : " + udn, -1, 0);
 	}
 
 	void UPnPControlPoint::clearDevices() {
@@ -208,12 +208,15 @@ namespace UPNP {
 
 	AutoRef<UPnPService> UPnPControlPoint::getServiceWithUdnAndServiceType(const string & udn, const string & serviceType) {
 		AutoRef<UPnPDevice> device = getDevice(udn);
-		return device->getService(serviceType);
+		return findServiceRecursive(device, serviceType);
 	}
 
 	UPnPActionInvoker UPnPControlPoint::prepareActionInvoke(const string & udn, const string & serviceType) {
 		AutoRef<UPnPDevice> device = getDevice(udn);
-		AutoRef<UPnPService> service = device->getService(serviceType);
+		AutoRef<UPnPService> service = findServiceRecursive(device, serviceType);
+		if (service.nil()) {
+			throw Exception("service not found / type : " + serviceType);
+		}
 		return UPnPActionInvoker(device->baseUrl().relativePath(service->getControlUrl()));
 	}
 
@@ -222,7 +225,7 @@ namespace UPNP {
 			throw Exception("notification server is not working");
 		}
 
-		OS::InetAddress addr = NetworkUtil::selectDefaultAddress();
+		InetAddress addr = NetworkUtil::selectDefaultAddress();
 
 		UPnPEventSubscriber subscriber = prepareEventSubscriber(udn, serviceType);
 		UPnPEventSubscribeRequest request(notificationServer->getCallbackUrl(addr.getHost()), 300);
@@ -245,10 +248,32 @@ namespace UPNP {
 	}
 	UPnPEventSubscriber UPnPControlPoint::prepareEventSubscriber(const string & udn, const string & serviceType) {
 		AutoRef<UPnPDevice> device = getDevice(udn);
-		AutoRef<UPnPService> service = device->getService(serviceType);
+		AutoRef<UPnPService> service = findServiceRecursive(device, serviceType);
+		if (service.nil()) {
+			throw Exception("service not found / type : " + serviceType);
+		}
 		return UPnPEventSubscriber(device->baseUrl().relativePath(service->getEventSubUrl()));
 	}
+	AutoRef<UPnPService> UPnPControlPoint::findService(AutoRef<UPnPDevice> device, const string & serviceType) {
+		if (device->hasService(serviceType)) {
+			return device->getService(serviceType);
+		}
+		return AutoRef<UPnPService>();
+	}
+	AutoRef<UPnPService> UPnPControlPoint::findServiceRecursive(AutoRef<UPnPDevice> device, const string & serviceType) {
+		AutoRef<UPnPService> service = findService(device, serviceType);
+		if (!service.nil()) {
+			return service;
+		}
 
+		for (size_t i = 0; i < device->devices().size(); i++) {
+			AutoRef<UPnPService> service = findServiceRecursive(device->devices()[i], serviceType);
+			if (!service.nil()) {
+				return service;
+			}
+		}
+		return AutoRef<UPnPService>();
+	}
 	UPnPNotificationServer * UPnPControlPoint::getNotificationServer() {
 		return notificationServer;
 	}
