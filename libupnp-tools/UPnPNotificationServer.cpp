@@ -70,6 +70,8 @@ namespace UPNP {
 			if (listener) {
 				listener->onNotify(notify);
 			}
+
+			response.setStatusCode(200);
 		}	
 	};
 	
