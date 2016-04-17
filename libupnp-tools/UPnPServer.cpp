@@ -320,7 +320,7 @@ namespace UPNP {
 		timerThread.start();
 		timerThread.looper().interval(10 * 1000, AutoRef<TimerTask>(new UPnPServerLifetimeTask));
 
-		ssdpServer.setSSDPEventHandler(ssdpEventHandler);
+		ssdpServer.addSSDPEventHandler(ssdpEventHandler);
 		ssdpServer.startAsync();
 	}
 	

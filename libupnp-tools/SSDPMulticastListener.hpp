@@ -14,7 +14,7 @@ namespace SSDP {
 		std::string group;
 		OS::MulticastSocket sock;
 		OS::Selector selector;
-		UTIL::AutoRef<SSDPEventHandler> handler;
+		std::vector<UTIL::AutoRef<SSDPEventHandler> > handlers;
 
 	public:
 		SSDPMulticastListener(const std::string & group, int port);
@@ -25,7 +25,8 @@ namespace SSDP {
 		bool isRunning();
 		void poll(unsigned long timeout);
 		void onReceive(OS::DatagramPacket & packet);
-		void setSSDPEventHandler(UTIL::AutoRef<SSDPEventHandler> handler);
+		void addSSDPEventHandler(UTIL::AutoRef<SSDPEventHandler> handler);
+		void removeSSDPEventHandler(UTIL::AutoRef<SSDPEventHandler> handler);
 	};
 }
 

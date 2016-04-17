@@ -60,21 +60,21 @@ namespace SSDP {
 	}
 	UTIL::AutoRef<SSDPMsearchSender> SSDPServer::sendMsearch(const std::string & st, unsigned long timeoutSec) {
 		UTIL::AutoRef<SSDPMsearchSender> sender(new SSDPMsearchSender);
-		sender->setSSDPEventHandler(handler);
+		sender->addSSDPEventHandler(handler);
 		sender->sendMsearchAllInterfaces(st, timeoutSec, MCAST_HOST, MCAST_PORT);
 		return sender;
 	}
 	UTIL::AutoRef<SSDPMsearchSender> SSDPServer::sendMsearch(std::vector<std::string> & st, unsigned long timeoutSec) {
 		UTIL::AutoRef<SSDPMsearchSender> sender(new SSDPMsearchSender);
-		sender->setSSDPEventHandler(handler);
+		sender->addSSDPEventHandler(handler);
 		for (std::vector<std::string>::iterator iter = st.begin(); iter != st.end(); iter++) {
 			sender->sendMsearchAllInterfaces(*iter, timeoutSec, MCAST_HOST, MCAST_PORT);
 		}
 		return sender;
 	}
-	void SSDPServer::setSSDPEventHandler(UTIL::AutoRef<SSDPEventHandler> handler) {
+	void SSDPServer::addSSDPEventHandler(UTIL::AutoRef<SSDPEventHandler> handler) {
 		this->handler = handler;
-		mcastListener.setSSDPEventHandler(handler);
+		mcastListener.addSSDPEventHandler(handler);
 	}
 
 }

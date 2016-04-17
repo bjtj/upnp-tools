@@ -103,7 +103,7 @@ namespace UPNP {
 			return;
 		}
 		
-		ssdpServer.setSSDPEventHandler(ssdpHandler);
+		ssdpServer.addSSDPEventHandler(ssdpHandler);
 		ssdpServer.startAsync();
 
 		if (!notificationServer) {

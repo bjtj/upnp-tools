@@ -31,7 +31,7 @@ namespace SSDP {
 		void sendMsearchAndGather(std::vector<std::string> & st, unsigned long timeoutSec);
 		UTIL::AutoRef<SSDPMsearchSender> sendMsearch(const std::string & st, unsigned long timeoutSec);
 		UTIL::AutoRef<SSDPMsearchSender> sendMsearch(std::vector<std::string> & st, unsigned long timeoutSec);
-		void setSSDPEventHandler(UTIL::AutoRef<SSDPEventHandler> handler);
+		void addSSDPEventHandler(UTIL::AutoRef<SSDPEventHandler> handler);
 	};
 }
 

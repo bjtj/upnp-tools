@@ -145,8 +145,6 @@ public:
 };
 
 
-
-
 void printList(UPnPSessionManager & sessionManager) {
 	cout << " == Device List (" << sessionManager.getUdnS().size() << ") ==" << endl;
 	vector<string> lst = sessionManager.getUdnS();
@@ -328,11 +326,7 @@ int run(int argc, char *args[]) {
 		}
 	}
 
-	// eventServer.stop();
-
 	cp.stop();
 
-	// server.stop();
-    
     return 0;
 }

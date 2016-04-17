@@ -4,6 +4,7 @@ namespace SSDP {
 
 	using namespace std;
 	using namespace OS;
+	using namespace UTIL;
 	
 	SSDPMulticastListener::SSDPMulticastListener(const string & group, int port) : group(group), sock(port) {
 	}
@@ -32,16 +33,19 @@ namespace SSDP {
 	}
 	void SSDPMulticastListener::onReceive(OS::DatagramPacket & packet) {
 		SSDPHeader header(packet.getData(), packet.getRemoteAddr());
-
-		if (!handler.nil() && handler->filter(header)) {
-			if (header.isMsearch()) {
-				handler->onMsearch(header);
-			} else if (header.isNotify()) {
-				handler->onNotify(header);
-			}
+		for (vector<AutoRef<SSDPEventHandler> >::iterator iter = handlers.begin(); iter != handlers.end(); iter++) {
+			(*iter)->dispatch(header);
 		}
 	}
-	void SSDPMulticastListener::setSSDPEventHandler(UTIL::AutoRef<SSDPEventHandler> handler) {
-		this->handler = handler;
+	void SSDPMulticastListener::addSSDPEventHandler(UTIL::AutoRef<SSDPEventHandler> handler) {
+		handlers.push_back(handler);
+	}
+
+	void SSDPMulticastListener::removeSSDPEventHandler(UTIL::AutoRef<SSDPEventHandler> handler) {
+		for (vector<AutoRef<SSDPEventHandler> >::iterator iter = handlers.begin(); iter != handlers.end(); iter++) {
+			if ((*iter) == handler) {
+				iter = handlers.erase(iter);
+			}
+		}
 	}
 }

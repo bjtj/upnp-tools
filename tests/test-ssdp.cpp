@@ -60,7 +60,7 @@ static void test_discovery() {
 	AutoRef<SSDPEventHandler> handler(pHandler);
 
 	SSDPServer server;
-	server.setSSDPEventHandler(handler);
+	server.addSSDPEventHandler(handler);
 	server.startAsync();
 
 	idle(1000);

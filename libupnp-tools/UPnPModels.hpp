@@ -19,14 +19,11 @@ namespace UPNP {
 	 */
 	class UPnPModelObject {
 	private:
-		// UTIL::LinkedStringMap props;
 		UTIL::PropertyMap props;
 	public:
 		UPnPModelObject() {}
 		virtual ~UPnPModelObject() {}
-
 		UTIL::PropertyMap & getProperties() {return props;}
-
 		std::string & operator[] (const std::string & name) {
 			return props[name];
 		}
@@ -43,7 +40,7 @@ namespace UPNP {
 		std::string _dataType;
 		std::string _defValue;
 		std::vector<std::string> _allowedValueList;
-		// TODO: allowedValueRange
+		// TODO: implement allowedValueRange
 		std::string _minimum;
 		std::string _maximum;
 		std::string _step;
