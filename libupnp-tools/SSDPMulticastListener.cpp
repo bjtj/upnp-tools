@@ -42,9 +42,11 @@ namespace SSDP {
 	}
 
 	void SSDPMulticastListener::removeSSDPEventHandler(UTIL::AutoRef<SSDPEventHandler> handler) {
-		for (vector<AutoRef<SSDPEventHandler> >::iterator iter = handlers.begin(); iter != handlers.end(); iter++) {
+		for (vector<AutoRef<SSDPEventHandler> >::iterator iter = handlers.begin(); iter != handlers.end();) {
 			if ((*iter) == handler) {
 				iter = handlers.erase(iter);
+			} else {
+				iter++;
 			}
 		}
 	}
