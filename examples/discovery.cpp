@@ -144,10 +144,23 @@ public:
 	}
 };
 
+void filterSession(UPnPSessionManager & sessionManager, vector<string> & lst) {
+	for (vector<string>::iterator iter = lst.begin(); iter != lst.end();) {
+		if (!sessionManager[*iter]->completed()) {
+			iter = lst.erase(iter);
+		} else {
+			iter++;
+		}
+	}
+}
 
 void printList(UPnPSessionManager & sessionManager) {
-	cout << " == Device List (" << sessionManager.getUdnS().size() << ") ==" << endl;
+	
 	vector<string> lst = sessionManager.getUdnS();
+	filterSession(sessionManager, lst);
+
+	cout << " == Device List (" << lst.size() << ") ==" << endl;
+	
 	size_t i = 0;
 	for (vector<string>::iterator iter = lst.begin(); iter != lst.end(); iter++, i++) {
 		AutoRef<UPnPSession> session = sessionManager[*iter];
@@ -157,12 +170,14 @@ void printList(UPnPSessionManager & sessionManager) {
 }
 
 void selectDeviceByIndex(UPnPSessionManager & sessionManager, size_t idx) {
-	if (idx >= sessionManager.size()) {
+
+	vector<string> lst = sessionManager.getUdnS();
+	filterSession(sessionManager, lst);
+	if (idx >= lst.size()) {
 		return;
 	}
 
-	string udn = sessionManager.getUdnS()[idx];
-	AutoRef<UPnPSession> session = sessionManager[udn];
+	AutoRef<UPnPSession> session = sessionManager[lst[idx]];
 
 	UPnPSessionPrinter printer(*session);
 	cout << printer.toString() << endl;

@@ -43,6 +43,7 @@ namespace UPNP {
 		void buildDevice(SSDP::SSDPHeader & header);
 		std::string getFriendlyName();
 		bool completed();
+		void setCompleted(bool completed);
 		UTIL::AutoRef<UPnPDevice> getRootDevice();
 		unsigned long parseCacheControlMilli(const std::string & cacheControl, unsigned long def);
 	};

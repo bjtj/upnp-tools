@@ -66,10 +66,15 @@ namespace UPNP {
 		UPnPDeviceDeserializer deserializer;
 		rootDevice = deserializer.buildDevice(header.getLocation());
 		prolong(header.getCacheControl());
+		_completed = true;
 	}
 
 	bool UPnPSession::completed() {
 		return _completed;
+	}
+
+	void UPnPSession::setCompleted(bool completed) {
+		this->_completed = completed;
 	}
 
 	AutoRef<UPnPDevice> UPnPSession::getRootDevice() {
