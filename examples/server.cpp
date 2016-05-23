@@ -96,8 +96,7 @@ int main(int argc, char *args[]) {
 	UuidGeneratorDefault gen;
 	string uuid = gen.generate();
 
-	UPnPServerConfig config(9001);
-	UPnPServer server(config);
+	UPnPServer server(UPnPServer::Config(9001));
 	server.startAsync();
 
 	string dummy = "urn:schemas-dummy-com:service:Dummy:1";

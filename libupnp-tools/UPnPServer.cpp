@@ -295,10 +295,10 @@ namespace UPNP {
 
 	string UPnPServer::SERVER_INFO = "Net-OS 5.xx UPnP/1.0";
 	
-	UPnPServer::UPnPServer(UPnPServerConfig & config) : config(config), httpServer(NULL), notifyThread(notificationCenter), ssdpEventHandler(new UPnPServerSsdpHandler(*this)) {
+	UPnPServer::UPnPServer(const UPnPServer::Config & config) : config(config), httpServer(NULL), notifyThread(notificationCenter), ssdpEventHandler(new UPnPServerSsdpHandler(*this)) {
 	}
 
-	UPnPServer::UPnPServer(UPnPServerConfig & config, AutoRef<NetworkStateManager> networkStateManager) : networkStateManager(networkStateManager),  config(config), httpServer(NULL), notifyThread(notificationCenter), ssdpEventHandler(new UPnPServerSsdpHandler(*this)) {
+	UPnPServer::UPnPServer(const UPnPServer::Config & config, AutoRef<NetworkStateManager> networkStateManager) : networkStateManager(networkStateManager),  config(config), httpServer(NULL), notifyThread(notificationCenter), ssdpEventHandler(new UPnPServerSsdpHandler(*this)) {
 	}
 	
 	UPnPServer::~UPnPServer() {

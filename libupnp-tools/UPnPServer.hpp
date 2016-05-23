@@ -17,24 +17,23 @@
 namespace UPNP {
 
 	/**
-	 * @brief
-	 */
-	class UPnPServerConfig : public UTIL::Properties {
-	private:
-	public:
-		UPnPServerConfig(int port) { setProperty("listen.port", port); };
-		virtual ~UPnPServerConfig() {}
-	};
-
-	/**
 	 * @brief upnp server
 	 */
 	class UPnPServer {
+	public:
+		class Config : public UTIL::Properties {
+		public:
+			Config(int port) {
+				setProperty("listen.port", port);
+			}
+			virtual ~Config() {}
+		};
+
 	private:
 		static std::string SERVER_INFO;
 		
 		UTIL::AutoRef<NetworkStateManager> networkStateManager;
-		UPnPServerConfig config;
+		Config config;
 		UPnPDeviceProfileSessionManager profileManager;
 		HTTP::AnotherHttpServer * httpServer;
 		UTIL::AutoRef<UPnPActionHandler> actionHandler;
@@ -50,8 +49,8 @@ namespace UPNP {
 		UPnPServer & operator=(const UPnPServer & other);
 		
 	public:
-		UPnPServer(UPnPServerConfig & config);
-		UPnPServer(UPnPServerConfig & config, UTIL::AutoRef<NetworkStateManager> networkStateManager);
+		UPnPServer(const Config & config);
+		UPnPServer(const Config & config, UTIL::AutoRef<NetworkStateManager> networkStateManager);
 		virtual ~UPnPServer();
 		void startAsync();
 		void stop();

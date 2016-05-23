@@ -68,8 +68,7 @@ static void test_device_profile() {
 	notiServer.addNotificationListener(AutoRef<UPnPNotificationListener>(new MyNotifyHandler));
 	notiServer.startAsync();
 
-	UPnPServerConfig config(9001);
-	UPnPServer server(config);
+	UPnPServer server(UPnPServer::Config(9001));
 
 	UPnPDeviceProfile deviceProfile;
 	deviceProfile.uuid() = uuid;
