@@ -3,6 +3,7 @@ lib_LTLIBRARIES = libupnp-tools.la
 libupnp_toolsincdir = ${includedir}/libupnp-tools
 libupnp_toolsinc_HEADERS = \
 	HttpUtils.hpp \
+	NetworkStateManager.hpp \
 	NetworkUtil.hpp \
 	SSDPEventHandler.hpp \
 	SSDPHeader.hpp \
@@ -40,6 +41,8 @@ libupnp_toolsinc_HEADERS = \
 libupnp_tools_la_SOURCES = \
 	HttpUtils.cpp \
 	HttpUtils.hpp \
+	NetworkStateManager.cpp \
+	NetworkStateManager.hpp \
 	NetworkUtil.cpp \
 	NetworkUtil.hpp \
 	SSDPEventHandler.hpp \

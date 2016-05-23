@@ -12,6 +12,7 @@
 #include "UPnPDeviceProfileSessionManager.hpp"
 #include "UPnPActionHandler.hpp"
 #include "SSDPServer.hpp"
+#include "NetworkStateManager.hpp"
 
 namespace UPNP {
 
@@ -26,11 +27,13 @@ namespace UPNP {
 	};
 
 	/**
-	 * @breif upnp server
+	 * @brief upnp server
 	 */
 	class UPnPServer {
 	private:
 		static std::string SERVER_INFO;
+		
+		UTIL::AutoRef<NetworkStateManager> networkStateManager;
 		UPnPServerConfig config;
 		UPnPDeviceProfileSessionManager profileManager;
 		HTTP::AnotherHttpServer * httpServer;
@@ -48,6 +51,7 @@ namespace UPNP {
 		
 	public:
 		UPnPServer(UPnPServerConfig & config);
+		UPnPServer(UPnPServerConfig & config, UTIL::AutoRef<NetworkStateManager> networkStateManager);
 		virtual ~UPnPServer();
 		void startAsync();
 		void stop();

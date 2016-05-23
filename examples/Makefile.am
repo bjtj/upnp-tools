@@ -1,8 +1,8 @@
 # SUBDIRS=res
 
-noinst_PROGRAMS = discovery server
+noinst_PROGRAMS = controller server
 
-discovery_SOURCES = discovery.cpp
+controller_SOURCES = controller.cpp
 server_SOURCES = server.cpp
 
 AM_CPPFLAGS =-I$(top_srcdir)

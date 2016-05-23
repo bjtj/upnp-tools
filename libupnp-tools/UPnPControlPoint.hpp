@@ -10,6 +10,7 @@
 #include "UPnPActionInvoker.hpp"
 #include "UPnPEventSubscriber.hpp"
 #include "UPnPNotificationServer.hpp"
+#include "NetworkStateManager.hpp"
 
 namespace UPNP {
 
@@ -43,6 +44,7 @@ namespace UPNP {
 	 */
 	class UPnPControlPoint {
 	private:
+		UTIL::AutoRef<NetworkStateManager> networkStateManager;
 		UPnPControlPointConfig config;
 		UTIL::AutoRef<DeviceAddRemoveListener> deviceListener;
 		UTIL::AutoRef<SSDP::SSDPEventHandler> ssdpHandler;
@@ -52,9 +54,15 @@ namespace UPNP {
 		UTIL::TimerLooperThread timerThread;
 		bool started;
 		UTIL::TaskThreadPool deviceBuildTaskThreadPool;
+
+	private:
+		// do not allow copy or assign
+		UPnPControlPoint(const UPnPControlPoint & other);
+		UPnPControlPoint & operator=(const UPnPControlPoint & other);
 		
 	public:
 		UPnPControlPoint(UPnPControlPointConfig & config);
+		UPnPControlPoint(UPnPControlPointConfig & config, UTIL::AutoRef<NetworkStateManager> networkStateManager);
 		virtual ~UPnPControlPoint();
 		void startAsync();
 		void stop();

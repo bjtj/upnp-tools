@@ -10,6 +10,8 @@ AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([build-aux])
 
+AM_SILENT_RULES([yes])
+
 AM_INIT_AUTOMAKE
 LT_PREREQ([2.2])
 LT_INIT([dlopen])
@@ -48,7 +50,6 @@ AC_TYPE_SIZE_T
 # Checks for library functions.
 AC_FUNC_ERROR_AT_LINE
 AC_FUNC_LSTAT_FOLLOWS_SLASHED_SYMLINK
-AC_FUNC_MALLOC
 AC_CHECK_FUNCS([gettimeofday memset mkdir socket strcasecmp])
 
 AC_CONFIG_FILES([Makefile

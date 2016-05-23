@@ -297,6 +297,9 @@ namespace UPNP {
 	
 	UPnPServer::UPnPServer(UPnPServerConfig & config) : config(config), httpServer(NULL), notifyThread(notificationCenter), ssdpEventHandler(new UPnPServerSsdpHandler(*this)) {
 	}
+
+	UPnPServer::UPnPServer(UPnPServerConfig & config, AutoRef<NetworkStateManager> networkStateManager) : networkStateManager(networkStateManager),  config(config), httpServer(NULL), notifyThread(notificationCenter), ssdpEventHandler(new UPnPServerSsdpHandler(*this)) {
+	}
 	
 	UPnPServer::~UPnPServer() {
 	}
@@ -466,73 +469,6 @@ namespace UPNP {
 	void UPnPServer::registerDeviceProfile(const string & uuid, const UPnPDeviceProfile & profile) {
 		getProfileManager().registerProfile(uuid, profile);
 	}
-	
-	// vector<UPnPDeviceProfile> UPnPServer::searchProfiles(const string & st) {
-	// 	vector<UPnPDeviceProfile> ret;
-	// 	for (map<string, UPnPDeviceProfile>::iterator iter = deviceProfiles.begin(); iter != deviceProfiles.end(); iter++) {
-	// 		if (iter->second.match(st)) {
-	// 			ret.push_back(iter->second);
-	// 		}
-	// 	}
-	// 	return ret;
-	// }
-
-	// bool UPnPServer::hasDeviceProfileWithScpdUrl(const std::string & scpdUrl) {
-	// 	for (map<string, UPnPDeviceProfile>::iterator iter = deviceProfiles.begin(); iter != deviceProfiles.end(); iter++) {
-	// 		if (iter->second.hasServiceWithScpdUrl(scpdUrl)) {
-	// 			return true;
-	// 		}
-	// 	}
-	// 	return false;
-	// }
-
-	// bool UPnPServer::hasDeviceProfileWithControlUrl(const std::string & controlUrl) {
-	// 	for (map<string, UPnPDeviceProfile>::iterator iter = deviceProfiles.begin(); iter != deviceProfiles.end(); iter++) {
-	// 		if (iter->second.hasServiceWithControlUrl(controlUrl)) {
-	// 			return true;
-	// 		}
-	// 	}
-	// 	return false;
-	// }
-	// bool UPnPServer::hasDeviceProfileWithEventSubUrl(const std::string & eventSubUrl) {
-	// 	for (map<string, UPnPDeviceProfile>::iterator iter = deviceProfiles.begin(); iter != deviceProfiles.end(); iter++) {
-	// 		if (iter->second.hasServiceWithEventSubUrl(eventSubUrl)) {
-	// 			return true;
-	// 		}
-	// 	}
-	// 	return false;
-	// }
-
-	// UPnPDeviceProfile & UPnPServer::getDeviceProfileWithUuid(const string & uuid) {
-	// 	for (map<string, UPnPDeviceProfile>::iterator iter = deviceProfiles.begin(); iter != deviceProfiles.end(); iter++) {
-	// 		if (iter->second.uuid() == uuid) {
-	// 			return iter->second;
-	// 		}
-	// 	}
-	// 	throw OS::Exception("not found deivce profile", -1, 0);
-	// }
-
-	// UPnPDeviceProfile & UPnPServer::getDeviceProfileHasScpdUrl(const std::string & scpdUrl) {
-	// 	for (map<string, UPnPDeviceProfile>::iterator iter = deviceProfiles.begin(); iter != deviceProfiles.end(); iter++) {
-	// 		if (iter->second.hasServiceWithScpdUrl(scpdUrl)) {
-	// 			return iter->second;
-	// 		}
-	// 	}
-	// 	throw OS::Exception("not found deivce profile", -1, 0);
-	// }
-
-	// UPnPDeviceProfile & UPnPServer::getDeviceProfileHasEventSubUrl(const std::string & eventSubUrl) {
-	// 	for (map<string, UPnPDeviceProfile>::iterator iter = deviceProfiles.begin(); iter != deviceProfiles.end(); iter++) {
-	// 		if (iter->second.hasServiceWithEventSubUrl(eventSubUrl)) {
-	// 			return iter->second;
-	// 		}
-	// 	}
-	// 	throw OS::Exception("not found deivce profile", -1, 0);
-	// }
-	
-	// UPnPDeviceProfile & UPnPServer::operator[] (const string & uuid) {
-	// 	return deviceProfiles[uuid];
-	// }
 	
 	void UPnPServer::setActionHandler(AutoRef<UPnPActionHandler> actionHandler) {
 		this->actionHandler = actionHandler;

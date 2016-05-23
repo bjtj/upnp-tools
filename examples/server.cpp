@@ -139,6 +139,9 @@ int main(int argc, char *args[]) {
 				props["SourceProtocolInfo"] = "<sample sourc>";
 				props["SinkProtocolInfo"] = "<sample sink>";
 				server.getNotificationCenter().setProperties(uuid, dummy, props);
+			} else if (cmd == "load") {
+				// load mediaserver.lsp
+				
 			}
 		}
 	}

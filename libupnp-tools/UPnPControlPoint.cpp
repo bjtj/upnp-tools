@@ -93,6 +93,9 @@ namespace UPNP {
 	
 	UPnPControlPoint::UPnPControlPoint(UPnPControlPointConfig & config) : config(config), ssdpHandler(new ControlPointSSDPHandler(this)), notificationServer(NULL), started(false), deviceBuildTaskThreadPool(10) {
 	}
+
+	UPnPControlPoint::UPnPControlPoint(UPnPControlPointConfig & config, AutoRef<NetworkStateManager> networkStateManager) : networkStateManager(networkStateManager),  config(config), ssdpHandler(new ControlPointSSDPHandler(this)), notificationServer(NULL), started(false), deviceBuildTaskThreadPool(10) {
+	}
 	
 	UPnPControlPoint::~UPnPControlPoint() {
 	}

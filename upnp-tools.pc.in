@@ -8,3 +8,4 @@ Description: UPnP Tools C++ Library
 Version: @VERSION@
 Libs: -L${libdir} -lupnp-tools
 Cflags: -I${includedir}/libupnp-tools
+Requires.private: oslayer http-server
