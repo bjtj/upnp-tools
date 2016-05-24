@@ -79,11 +79,13 @@ namespace UPNP {
 		}
 		vector<XmlNode*> actions = doc.getRootNode()->getElementsByTagName("action");
 		for (vector<XmlNode*>::iterator iter = actions.begin(); iter != actions.end(); iter++) {
-			service.addAction(parseActionFromXmlNode(*iter));
+			UPnPAction action = parseActionFromXmlNode(*iter);
+			service.scpd().action(action.name()) = action;
 		}
 		vector<XmlNode*> stateVariables = doc.getRootNode()->getElementsByTagName("stateVariable");
 		for (vector<XmlNode*>::iterator iter = stateVariables.begin(); iter != stateVariables.end(); iter++) {
-			service.addStateVariable(parseStateVariableFromXmlNode(*iter));
+			UPnPStateVariable stateVariable = parseStateVariableFromXmlNode(*iter);
+			service.scpd().stateVariable(stateVariable.name()) = stateVariable;
 		}
 	}
 

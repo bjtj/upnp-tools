@@ -97,7 +97,7 @@ public:
 			str.append(depth, ' ');
 			str.append(" ** " + (*iter)->getServiceType());
 
-			vector<UPnPAction> actions = (*iter)->actions();
+			vector<UPnPAction> actions = (*iter)->scpd().actions();
 			for (vector<UPnPAction>::iterator aiter = actions.begin(); aiter != actions.end(); aiter++) {
 				str.append("\n");
 				str.append(depth, ' ');
@@ -105,7 +105,7 @@ public:
 			}
 		}
 			
-		vector<AutoRef<UPnPDevice> > & devices = device.devices();
+		vector<AutoRef<UPnPDevice> > & devices = device.embeddedDevices();
 		for (vector<AutoRef<UPnPDevice> >::iterator iter = devices.begin(); iter != devices.end(); iter++) {
 			str.append("\n");
 			str.append(toString(*(*iter), depth + 1));
@@ -135,7 +135,7 @@ public:
 			str.append(" ** " + (*iter)->getServiceType());
 		}
 			
-		vector<AutoRef<UPnPDevice> > & devices = device.devices();
+		vector<AutoRef<UPnPDevice> > & devices = device.embeddedDevices();
 		for (vector<AutoRef<UPnPDevice> >::iterator iter = devices.begin(); iter != devices.end(); iter++) {
 			str.append("\n");
 			str.append(toBriefString(*(*iter), depth + 1));
@@ -251,10 +251,11 @@ int run(int argc, char *args[]) {
 				try {
 					UPnPActionInvoker invoker = cp.prepareActionInvoke(selection.udn(), selection.serviceType());
 					AutoRef<UPnPService> service = cp.getServiceWithUdnAndServiceType(selection.udn(), selection.serviceType());
-					UPnPAction action = service->getAction(selection.action());
-					if (action.name().empty()) {
+					
+					if (!service->scpd().hasAction(selection.action())) {
 						throw "Error: no action found";
 					}
+					UPnPAction action = service->scpd().action(selection.action());
 					vector<UPnPArgument> & arguments = action.arguments();
 					UPnPActionRequest request;
 					request.serviceType() = service->getServiceType();
@@ -262,7 +263,7 @@ int run(int argc, char *args[]) {
 					for (vector<UPnPArgument>::iterator iter = arguments.begin(); iter != arguments.end(); iter++) {
 						if (iter->direction() == UPnPArgument::IN_DIRECTION) {
 							string allows = "";
-							UPnPStateVariable sv = service->getStateVariable(iter->relatedStateVariable());
+							UPnPStateVariable sv = service->scpd().stateVariable(iter->relatedStateVariable());
 							if (sv.hasAllowedValues()) {
 								for (vector<string>::iterator ai = sv.allowedValueList().begin(); ai != sv.allowedValueList().end(); ai++) {
 									if (allows.length() > 0) {

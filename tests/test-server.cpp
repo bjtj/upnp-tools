@@ -137,15 +137,13 @@ static void test_device_profile() {
 		UPnPService service;
 		UPnPDeviceDeserializer deserializer;
 		deserializer.parseScpdFromXml(service, scpd());
-		UPnPStateVariable stateVariable = service.getStateVariable("SourceProtocolInfo");
-		ASSERT(stateVariable.name(), ==, "SourceProtocolInfo");
+		ASSERT(service.scpd().hasStateVariable("SourceProtocolInfo"), ==, true);
 
-		stateVariable.addAllowedValue("hello");
-		ASSERT(stateVariable.hasAllowedValues(), ==, true);
+		service.scpd().stateVariable("SourceProtocolInfo").addAllowedValue("hello");
+		ASSERT(service.scpd().stateVariable("SourceProtocolInfo").hasAllowedValues(), ==, true);
 
-		stateVariable = service.getStateVariable("A_ARG_TYPE_BrowseFlag");
-		ASSERT(stateVariable.name(), ==, "A_ARG_TYPE_BrowseFlag");
-		ASSERT(stateVariable.hasAllowedValues(), ==, true);
+		ASSERT(service.scpd().hasStateVariable("A_ARG_TYPE_BrowseFlag"), ==, true);
+		ASSERT(service.scpd().stateVariable("A_ARG_TYPE_BrowseFlag").hasAllowedValues(), ==, true);
 	}
 
 	// action test

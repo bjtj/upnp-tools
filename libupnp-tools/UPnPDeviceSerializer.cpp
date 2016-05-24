@@ -76,12 +76,12 @@ namespace UPNP {
 
 		// embedded devices
 
-		if (device.devices().size() > 0) {
+		if (device.embeddedDevices().size() > 0) {
 			ret.append("<deviceList>");
 			ret.append(NEWLINE);
 
-			for (size_t i = 0; i < device.devices().size(); i++) {
-				ret.append(serializeDevice(*device.devices()[i]));
+			for (size_t i = 0; i < device.embeddedDevices().size(); i++) {
+				ret.append(serializeDevice(*device.embeddedDevices()[i]));
 			}
 			
 			ret.append("</deviceList>");
@@ -110,16 +110,16 @@ namespace UPNP {
 		
 		ret.append("<actionList>");
 		ret.append(NEWLINE);
-		for (size_t i = 0; i < service.actions().size(); i++) {
-			ret.append(serializeAction(service.actions()[i]));
+		for (size_t i = 0; i < service.scpd().actions().size(); i++) {
+			ret.append(serializeAction(service.scpd().actions()[i]));
 		}
 		ret.append("</actionList>");
 		ret.append(NEWLINE);
 
 		ret.append("<serviceStateTable>");
 		ret.append(NEWLINE);
-		for (size_t i = 0; i < service.stateVariables().size(); i++) {
-			ret.append(serializeStateVariable(service.stateVariables()[i]));
+		for (size_t i = 0; i < service.scpd().stateVariables().size(); i++) {
+			ret.append(serializeStateVariable(service.scpd().stateVariables()[i]));
 		}
 		ret.append("</serviceStateTable>");
 		ret.append(NEWLINE);

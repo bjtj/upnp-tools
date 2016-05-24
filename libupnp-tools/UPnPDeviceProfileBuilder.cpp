@@ -24,7 +24,7 @@ namespace UPNP {
 
 	vector<AutoRef<UPnPDevice> > UPnPDeviceProfileBuilder::selectAllDevices(AutoRef<UPnPDevice> device) {
 		vector<AutoRef<UPnPDevice> > ret;
-		vector<AutoRef<UPnPDevice> > & children = device->devices();
+		vector<AutoRef<UPnPDevice> > & children = device->embeddedDevices();
 		for (vector<AutoRef<UPnPDevice> >::iterator iter = children.begin(); iter != children.end(); iter++) {
 			ret.push_back(*iter);
 			vector<AutoRef<UPnPDevice> > lst = selectAllDevices(*iter);
@@ -73,8 +73,8 @@ namespace UPNP {
 
 	void UPnPDeviceProfileBuilder::setUdn(AutoRef<UPnPDevice> device, const string & udn) {
 		device->setUdn(udn);
-		for (size_t i = 0; i < device->devices().size(); i++) {
-			setUdn(device->devices()[i], udn);
+		for (size_t i = 0; i < device->embeddedDevices().size(); i++) {
+			setUdn(device->embeddedDevices()[i], udn);
 		}
 	}
 }

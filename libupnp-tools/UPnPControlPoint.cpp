@@ -269,8 +269,8 @@ namespace UPNP {
 			return service;
 		}
 
-		for (size_t i = 0; i < device->devices().size(); i++) {
-			AutoRef<UPnPService> service = findServiceRecursive(device->devices()[i], serviceType);
+		for (size_t i = 0; i < device->embeddedDevices().size(); i++) {
+			AutoRef<UPnPService> service = findServiceRecursive(device->embeddedDevices()[i], serviceType);
 			if (!service.nil()) {
 				return service;
 			}

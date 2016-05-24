@@ -46,6 +46,7 @@ namespace UPNP {
 		std::string _step;
 	public:
 		UPnPStateVariable() {}
+		UPnPStateVariable(const std::string & name) : _name(name) {}
 		virtual ~UPnPStateVariable() {}
 
 		bool & sendEvents() {return _sendEvents;}
@@ -93,6 +94,7 @@ namespace UPNP {
 	
 	public:
 		UPnPAction() {}
+		UPnPAction(const std::string & name) : _name(name) {}
 		virtual ~UPnPAction() {}
 
 		std::string & name() {
@@ -107,13 +109,33 @@ namespace UPNP {
 	};
 
 	/**
-	 *
+	 * @brief 
 	 */
-	class UPnPService : public UPnPModelObject{
+	class UPnPScpd : public UPnPModelObject {
 	private:
-		UPnPDevice * device;
 		std::vector<UPnPAction> _actions;
 		std::vector<UPnPStateVariable> _stateVariables;
+	public:
+		UPnPScpd();
+		virtual ~UPnPScpd();
+		std::vector<UPnPAction> & actions();
+		UPnPAction & action(const std::string & name);
+		bool hasAction(const std::string & name);
+		std::vector<UPnPStateVariable> & stateVariables();
+		UPnPStateVariable & stateVariable(const std::string & name);
+		bool hasStateVariable(const std::string & name);
+	};
+
+
+	/**
+	 *
+	 */
+	class UPnPService : public UPnPModelObject {
+	private:
+		UPnPDevice * device;
+		// std::vector<UPnPAction> _actions;
+		// std::vector<UPnPStateVariable> _stateVariables;
+		UPnPScpd _scpd;
 	public:
 		UPnPService();
 		UPnPService(UPnPDevice * device);
@@ -126,12 +148,13 @@ namespace UPNP {
 		void setDevice(UPnPDevice * device);
 		UPnPDevice * getDevice();
 		HTTP::Url makeScpdUrl();
-		std::vector<UPnPAction> & actions();
-		UPnPAction getAction(const std::string & actionName);
-		void addAction(UPnPAction action);
-		std::vector<UPnPStateVariable> & stateVariables();
-		UPnPStateVariable getStateVariable(const std::string & stateVariableName);
-		void addStateVariable(UPnPStateVariable stateVariable);
+		// std::vector<UPnPAction> & actions();
+		// UPnPAction getAction(const std::string & actionName);
+		// void addAction(UPnPAction action);
+		// std::vector<UPnPStateVariable> & stateVariables();
+		// UPnPStateVariable getStateVariable(const std::string & stateVariableName);
+		// void addStateVariable(UPnPStateVariable stateVariable);
+		UPnPScpd & scpd();
 	};
 
 	/**
@@ -140,7 +163,7 @@ namespace UPNP {
 	class UPnPDevice : public UPnPModelObject {
 	private:
 		UPnPDevice * parent;
-		std::vector<UTIL::AutoRef<UPnPDevice> > _devices;
+		std::vector<UTIL::AutoRef<UPnPDevice> > _embeddedDevices;
 		std::vector<UTIL::AutoRef<UPnPService> > _services;
 		HTTP::Url _baseUrl;
 		
@@ -154,8 +177,10 @@ namespace UPNP {
 		void addService(UTIL::AutoRef<UPnPService> service);
 		bool hasService(const std::string & serviceType);
 		UTIL::AutoRef<UPnPService> getService(const std::string & serviceType);
-		std::vector<UTIL::AutoRef<UPnPDevice> > & devices();
+		std::vector<UTIL::AutoRef<UPnPDevice> > & embeddedDevices();
 		std::vector<UTIL::AutoRef<UPnPService> > & services();
+		std::vector<UPnPDevice*> allDevices();
+		std::vector<UPnPService*> allServices();
 		std::string getUdn();
 		void setUdn(const std::string & udn);
 		std::string getFriendlyName();

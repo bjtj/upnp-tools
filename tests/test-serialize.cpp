@@ -76,7 +76,7 @@ static void test_deserialize() {
 	ASSERT(device->getFriendlyName(), ==, "UPnP Test Device");
 
 	ASSERT(device->hasService("urn:schemas-dummy-com:service:Dummy:1"), ==, true);
-	ASSERT(device->getService("urn:schemas-dummy-com:service:Dummy:1")->getAction("GetProtocolInfo").arguments().size(), ==, 2);
+	ASSERT(device->getService("urn:schemas-dummy-com:service:Dummy:1")->scpd().action("GetProtocolInfo").arguments().size(), ==, 2);
 
 	server.stop();
 }
@@ -101,7 +101,7 @@ static void test_filesystem_base_deserialize() {
 	ASSERT(device->getFriendlyName(), ==, "UPnP Test Device");
 
 	ASSERT(device->hasService("urn:schemas-dummy-com:service:Dummy:1"), ==, true);
-	ASSERT(device->getService("urn:schemas-dummy-com:service:Dummy:1")->getAction("GetProtocolInfo").arguments().size(), ==, 2);
+	ASSERT(device->getService("urn:schemas-dummy-com:service:Dummy:1")->scpd().action("GetProtocolInfo").arguments().size(), ==, 2);
 }
 
 static void test_serialize() {
@@ -119,7 +119,7 @@ static void test_serialize() {
 	ASSERT(device->getFriendlyName(), ==, "UPnP Test Device");
 
 	ASSERT(device->hasService("urn:schemas-dummy-com:service:Dummy:1"), ==, true);
-	ASSERT(device->getService("urn:schemas-dummy-com:service:Dummy:1")->getAction("GetProtocolInfo").arguments().size(), ==, 2);
+	ASSERT(device->getService("urn:schemas-dummy-com:service:Dummy:1")->scpd().action("GetProtocolInfo").arguments().size(), ==, 2);
 	
 	string dd = UPnPDeviceSerializer::serializeDeviceDescription(*device);
 
@@ -138,7 +138,7 @@ static void test_scpd_serialize() {
 	UPnPService service;
 	UPnPDeviceDeserializer deserializer;
 	deserializer.parseScpdFromXml(service, scpd());
-	UPnPAction action = service.getAction("GetProtocolInfo");
+	UPnPAction action = service.scpd().action("GetProtocolInfo");
 	ASSERT(action.name(), ==, "GetProtocolInfo");
 
 	string xml = UPnPDeviceSerializer::serializeScpd(service);
@@ -147,7 +147,7 @@ static void test_scpd_serialize() {
 	UPnPService newService;
 	deserializer.parseScpdFromXml(newService, xml);
 
-	action = newService.getAction("GetProtocolInfo");
+	action = newService.scpd().action("GetProtocolInfo");
 	ASSERT(action.arguments()[0].name(), ==, "Source");
 	ASSERT(action.arguments()[0].out(), ==, true);
 	ASSERT(action.arguments()[0].relatedStateVariable(), ==, "SourceProtocolInfo");

@@ -6,6 +6,53 @@ namespace UPNP {
 	using namespace HTTP;
 	using namespace UTIL;
 
+	UPnPScpd::UPnPScpd() {
+	}
+	UPnPScpd::~UPnPScpd() {
+	}
+	vector<UPnPAction> & UPnPScpd::actions() {
+		return _actions;
+	}
+	UPnPAction & UPnPScpd::action(const string & name) {
+		for (vector<UPnPAction>::iterator iter = _actions.begin(); iter != _actions.end(); iter++) {
+			if (iter->name() == name) {
+				return *iter;
+			}
+		}
+		_actions.push_back(UPnPAction(name));
+		return *_actions.rbegin();
+	}
+	bool UPnPScpd::hasAction(const string & name) {
+		for (vector<UPnPAction>::iterator iter = _actions.begin(); iter != _actions.end(); iter++) {
+			if (iter->name() == name) {
+				return true;
+			}
+		}
+		return false;
+	}
+	vector<UPnPStateVariable> & UPnPScpd::stateVariables() {
+		return _stateVariables;
+	}
+	UPnPStateVariable & UPnPScpd::stateVariable(const string & name) {
+		for (vector<UPnPStateVariable>::iterator iter = _stateVariables.begin(); iter != _stateVariables.end(); iter++) {
+			if (iter->name() == name) {
+				return *iter;
+			}
+		}
+
+		_stateVariables.push_back(UPnPStateVariable(name));
+		return *_stateVariables.rbegin();
+	}
+	bool UPnPScpd::hasStateVariable(const string & name) {
+		for (vector<UPnPStateVariable>::iterator iter = _stateVariables.begin(); iter != _stateVariables.end(); iter++) {
+			if (iter->name() == name) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	
 	
 	UPnPService::UPnPService() : device(NULL) {}
 	UPnPService::UPnPService(UPnPDevice * device) : device(device) {}
@@ -38,34 +85,39 @@ namespace UPNP {
 		}
 		return device->baseUrl().relativePath(getScpdUrl());
 	}
-	vector<UPnPAction> & UPnPService::actions() {
-		return _actions;
+
+	UPnPScpd & UPnPService::scpd() {
+		return _scpd;
 	}
-	UPnPAction UPnPService::getAction(const string & actionName) {
-		for (vector<UPnPAction>::iterator iter = _actions.begin(); iter != _actions.end(); iter++) {
-			if (iter->name() == actionName) {
-				return *iter;
-			}
-		}
-		throw OS::Exception("not found action / name: " + actionName, -1, 0);
-	}
-	void UPnPService::addAction(UPnPAction action) {
-		_actions.push_back(action);
-	}
-	vector<UPnPStateVariable> & UPnPService::stateVariables() {
-		return _stateVariables;
-	}
-	UPnPStateVariable UPnPService::getStateVariable(const string & stateVariableName) {
-		for (vector<UPnPStateVariable>::iterator iter = _stateVariables.begin(); iter != _stateVariables.end(); iter++) {
-			if (iter->name() == stateVariableName) {
-				return *iter;
-			}
-		}
-		throw OS::Exception("not found state variable / name: " + stateVariableName, -1, 0);
-	}
-	void UPnPService::addStateVariable(UPnPStateVariable stateVariable) {
-		_stateVariables.push_back(stateVariable);
-	}
+	
+	// vector<UPnPAction> & UPnPService::actions() {
+	// 	return _actions;
+	// }
+	// UPnPAction UPnPService::getAction(const string & actionName) {
+	// 	for (vector<UPnPAction>::iterator iter = _actions.begin(); iter != _actions.end(); iter++) {
+	// 		if (iter->name() == actionName) {
+	// 			return *iter;
+	// 		}
+	// 	}
+	// 	throw OS::Exception("not found action / name: " + actionName, -1, 0);
+	// }
+	// void UPnPService::addAction(UPnPAction action) {
+	// 	_actions.push_back(action);
+	// }
+	// vector<UPnPStateVariable> & UPnPService::stateVariables() {
+	// 	return _stateVariables;
+	// }
+	// UPnPStateVariable UPnPService::getStateVariable(const string & stateVariableName) {
+	// 	for (vector<UPnPStateVariable>::iterator iter = _stateVariables.begin(); iter != _stateVariables.end(); iter++) {
+	// 		if (iter->name() == stateVariableName) {
+	// 			return *iter;
+	// 		}
+	// 	}
+	// 	throw OS::Exception("not found state variable / name: " + stateVariableName, -1, 0);
+	// }
+	// void UPnPService::addStateVariable(UPnPStateVariable stateVariable) {
+	// 	_stateVariables.push_back(stateVariable);
+	// }
 
 
 
@@ -86,7 +138,7 @@ namespace UPNP {
 
 	void UPnPDevice::addDevice(AutoRef<UPnPDevice> device) {
 		device->setParent(this);
-		_devices.push_back(device);
+		_embeddedDevices.push_back(device);
 	}
 
 	void UPnPDevice::addService(AutoRef<UPnPService> service) {
@@ -112,12 +164,34 @@ namespace UPNP {
 		throw OS::Exception("not found service / name: " + serviceType, -1, 0);
 	}
 
-	vector<AutoRef<UPnPDevice> > & UPnPDevice::devices() {
-		return _devices;
+	vector<AutoRef<UPnPDevice> > & UPnPDevice::embeddedDevices() {
+		return _embeddedDevices;
 	}
 
 	vector<AutoRef<UPnPService> > & UPnPDevice::services() {
 		return _services;
+	}
+
+	vector<UPnPDevice*> UPnPDevice::allDevices() {
+		vector<UPnPDevice*> ret;
+		ret.push_back(this);
+		for (vector<AutoRef<UPnPDevice> >::iterator iter = _embeddedDevices.begin(); iter != _embeddedDevices.end(); iter++) {
+			vector<UPnPDevice*> v = (*iter)->allDevices();
+			ret.insert(ret.end(), v.begin(), v.end());
+		}
+		return ret;
+	}
+	
+	vector<UPnPService*> UPnPDevice::allServices() {
+		vector<UPnPService*> ret;
+		for (vector<AutoRef<UPnPService> >::iterator iter = _services.begin(); iter != _services.end(); iter++) {
+			ret.push_back(&(*iter));
+		}
+		for (vector<AutoRef<UPnPDevice> >::iterator iter = _embeddedDevices.begin(); iter != _embeddedDevices.end(); iter++) {
+			vector<UPnPService*> v = (*iter)->allServices();
+			ret.insert(ret.end(), v.begin(), v.end());
+		}
+		return ret;
 	}
 
 	string UPnPDevice::getUdn() {
