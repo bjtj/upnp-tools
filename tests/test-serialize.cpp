@@ -70,8 +70,9 @@ static void test_deserialize() {
 	server.startAsync();
 
 	UPnPDeviceDeserializer deserializer;
-	AutoRef<UPnPDevice> device = deserializer.buildDevice(Url("http://localhost:9999/device.xml"));
-
+	AutoRef<UPnPDevice> device = deserializer.build(Url("http://localhost:9999/device.xml"));
+	ASSERT(device.nil(), ==, false);
+	
 	ASSERT(device->getUdn(), ==, "uuid:" + udn);
 	ASSERT(device->getFriendlyName(), ==, "UPnP Test Device");
 
@@ -95,7 +96,7 @@ static void test_filesystem_base_deserialize() {
 	fs.close();
 
 	UPnPDeviceDeserializer deserializer;
-	AutoRef<UPnPDevice> device = deserializer.buildDevice(Url("file://" + File::getCwd() + "/device.xml"));
+	AutoRef<UPnPDevice> device = deserializer.build(Url("file://" + File::getCwd() + "/device.xml"));
 
 	ASSERT(device->getUdn(), ==, "uuid:" + udn);
 	ASSERT(device->getFriendlyName(), ==, "UPnP Test Device");
@@ -113,7 +114,7 @@ static void test_serialize() {
 	server.startAsync();
 
 	UPnPDeviceDeserializer deserializer;
-	AutoRef<UPnPDevice> device = deserializer.buildDevice(Url("http://localhost:9999/device.xml"));
+	AutoRef<UPnPDevice> device = deserializer.build(Url("http://localhost:9999/device.xml"));
 
 	ASSERT(device->getUdn(), ==, "uuid:" + udn);
 	ASSERT(device->getFriendlyName(), ==, "UPnP Test Device");
@@ -137,17 +138,17 @@ static void test_serialize() {
 static void test_scpd_serialize() {
 	UPnPService service;
 	UPnPDeviceDeserializer deserializer;
-	deserializer.parseScpdFromXml(service, scpd());
-	UPnPAction action = service.scpd().action("GetProtocolInfo");
+	UPnPScpd s = deserializer.parseScpdXml(scpd());
+	UPnPAction action = s.action("GetProtocolInfo");
 	ASSERT(action.name(), ==, "GetProtocolInfo");
 
-	string xml = UPnPDeviceSerializer::serializeScpd(service);
+	string xml = UPnPDeviceSerializer::serializeScpd(s);
 	ASSERT(xml.size(), >, 0);
 
 	UPnPService newService;
-	deserializer.parseScpdFromXml(newService, xml);
+	UPnPScpd scpd = deserializer.parseScpdXml(xml);
 
-	action = newService.scpd().action("GetProtocolInfo");
+	action = scpd.action("GetProtocolInfo");
 	ASSERT(action.arguments()[0].name(), ==, "Source");
 	ASSERT(action.arguments()[0].out(), ==, true);
 	ASSERT(action.arguments()[0].relatedStateVariable(), ==, "SourceProtocolInfo");

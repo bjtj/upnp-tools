@@ -15,7 +15,7 @@ namespace UPNP {
 
 		static std::string serializeDeviceDescription(UPnPDevice & device);
 		static std::string serializeDevice(UPnPDevice & device);
-		static std::string serializeScpd(UPnPService & service);
+		static std::string serializeScpd(UPnPScpd & scpd);
 		static std::string serializeAction(UPnPAction & action);
 		static std::string serializeArgument(UPnPArgument & argument);
 		static std::string serializeStateVariable(UPnPStateVariable & stateVariable);

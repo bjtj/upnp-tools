@@ -58,7 +58,7 @@ namespace UPNP {
 				AutoRef<UPnPService> service = *si;
 				UPnPServiceProfile serviceProfile;
 				
-				serviceProfile.scpd() = UPnPDeviceSerializer::serializeScpd(*service);
+				serviceProfile.scpd() = UPnPDeviceSerializer::serializeScpd(service->scpd());
 				serviceProfile.serviceType() = service->getServiceType();
 				serviceProfile.serviceId() = service->getServiceId();
 				serviceProfile.scpdUrl() = service->getScpdUrl();

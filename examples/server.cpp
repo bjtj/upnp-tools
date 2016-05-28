@@ -105,7 +105,7 @@ int main(int argc, char *args[]) {
 	UPnPResourceManager::properties()["/scpd.xml/" + uuid + "::" + dummy] = scpd();
 
 	UPnPDeviceDeserializer deserializer;
-	AutoRef<UPnPDevice> device = deserializer.buildDevice(Url("prop:///device.xml"));
+	AutoRef<UPnPDevice> device = deserializer.build(Url("prop:///device.xml"));
 	UPnPDeviceProfileBuilder builder(uuid, device);
 	UPnPDeviceProfile deviceProfile = builder.build();
 

@@ -94,7 +94,7 @@ namespace UPNP {
 		return ret;
 	}
 	
-	string UPnPDeviceSerializer::serializeScpd(UPnPService & service) {
+	string UPnPDeviceSerializer::serializeScpd(UPnPScpd & scpd) {
 		string ret = FIRSTLINE;
 		ret.append(NEWLINE);
 		ret.append("<scpd xmlns=\"urn:schemas-upnp-org:service-1-0\">");
@@ -110,16 +110,16 @@ namespace UPNP {
 		
 		ret.append("<actionList>");
 		ret.append(NEWLINE);
-		for (size_t i = 0; i < service.scpd().actions().size(); i++) {
-			ret.append(serializeAction(service.scpd().actions()[i]));
+		for (size_t i = 0; i < scpd.actions().size(); i++) {
+			ret.append(serializeAction(scpd.actions()[i]));
 		}
 		ret.append("</actionList>");
 		ret.append(NEWLINE);
 
 		ret.append("<serviceStateTable>");
 		ret.append(NEWLINE);
-		for (size_t i = 0; i < service.scpd().stateVariables().size(); i++) {
-			ret.append(serializeStateVariable(service.scpd().stateVariables()[i]));
+		for (size_t i = 0; i < scpd.stateVariables().size(); i++) {
+			ret.append(serializeStateVariable(scpd.stateVariables()[i]));
 		}
 		ret.append("</serviceStateTable>");
 		ret.append(NEWLINE);

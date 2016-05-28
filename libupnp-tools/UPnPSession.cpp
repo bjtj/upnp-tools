@@ -1,5 +1,4 @@
 #include "UPnPSession.hpp"
-
 #include "UPnPDeviceDeserializer.hpp"
 
 namespace UPNP {
@@ -64,7 +63,8 @@ namespace UPNP {
 
 	void UPnPSession::buildDevice(SSDP::SSDPHeader & header) {
 		UPnPDeviceDeserializer deserializer;
-		rootDevice = deserializer.buildDevice(header.getLocation());
+		// rootDevice = deserializer.buildDevice(header.getLocation());
+		rootDevice = deserializer.build(HTTP::Url(header.getLocation()));
 		prolong(header.getCacheControl());
 		_completed = true;
 	}

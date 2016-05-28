@@ -265,13 +265,16 @@ int run(int argc, char *args[]) {
 							string allows = "";
 							UPnPStateVariable sv = service->scpd().stateVariable(iter->relatedStateVariable());
 							if (sv.hasAllowedValues()) {
-								for (vector<string>::iterator ai = sv.allowedValueList().begin(); ai != sv.allowedValueList().end(); ai++) {
-									if (allows.length() > 0) {
-										allows.append(", ");
-									}
-									allows.append(*ai);
-								}
-								allows = " [" + allows + "]";
+
+								allows = " [" + Text::join(sv.allowedValueList(), ", ") + "]";
+								
+								// for (vector<string>::iterator ai = sv.allowedValueList().begin(); ai != sv.allowedValueList().end(); ai++) {
+								// 	if (allows.length() > 0) {
+								// 		allows.append(", ");
+								// 	}
+								// 	allows.append(*ai);
+								// }
+								// allows = " [" + allows + "]";
 							}
 							char param[1024] = {0,};
 							prompt(iter->name() + allows + " : ", param, sizeof(param));
@@ -286,10 +289,6 @@ int run(int argc, char *args[]) {
 
 						cout << " - " << name << " := " << value << endl;
 					}
-				} catch (const char * e) {
-					cout << "Error: " << e << endl;
-				} catch (const string & e) {
-					cout << "Error: " << e << endl;
 				} catch (OS::Exception & e) {
 					cout << "Error: " << e.getMessage() << endl;
 				}

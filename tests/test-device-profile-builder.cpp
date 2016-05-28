@@ -23,7 +23,7 @@ static void test_device_profile_builder() {
 	UPnPResourceManager::properties()["/scpd/urn:schemas-upnp-org:service:ConnectionManager:1"] = scpd_cm();
 
 	UPnPDeviceDeserializer deserializer;
-	AutoRef<UPnPDevice> device = deserializer.buildDevice(Url("prop:///device.xml"));
+	AutoRef<UPnPDevice> device = deserializer.build(Url("prop:///device.xml"));
 	UPnPDeviceProfileBuilder builder(uuid, device);
 	UPnPDeviceProfile profile = builder.build();
 
@@ -32,8 +32,7 @@ static void test_device_profile_builder() {
 	ASSERT(profile.serviceProfiles()[0].serviceType(), ==, "urn:schemas-upnp-org:service:ContentDirectory:1");
 	ASSERT(profile.serviceProfiles()[1].serviceType(), ==, "urn:schemas-upnp-org:service:ConnectionManager:1");
 
-	deserializer.withScpdBuild() = false;
-	device = deserializer.buildDeviceWithDescriptionXml(profile.deviceDescription(), Url());
+	device = deserializer.parseDeviceXml(profile.deviceDescription());
 	ASSERT(device->getUdn(), ==, "uuid:" + uuid);
 }
 
