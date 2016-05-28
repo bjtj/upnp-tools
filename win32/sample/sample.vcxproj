@@ -79,18 +79,6 @@ xcopy /y $(SolutionDir)\..\res $(ProjectDir)\res</Command>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\examples\discovery.cpp" />
-    <ClCompile Include="..\..\examples\ssdpServerTest.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\..\examples\upnpServer.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\..\http-server\win32\http-server.vcxproj">
       <Project>{a86aea6e-750b-7c94-4188-77b9d2fcd973}</Project>
     </ProjectReference>
@@ -100,6 +88,12 @@ xcopy /y $(SolutionDir)\..\res $(ProjectDir)\res</Command>
     <ProjectReference Include="..\upnp-tools.vcxproj">
       <Project>{a97bff5c-b08c-40bd-8243-d21270563918}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\examples\controller.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\examples\server.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
