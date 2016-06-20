@@ -5,7 +5,7 @@
 #include <map>
 #include <vector>
 #include <liboslayer/AutoRef.hpp>
-#include <liboslayer/StringElement.hpp>
+#include <liboslayer/StringElements.hpp>
 #include <liboslayer/PropertyMap.hpp>
 #include <libhttp-server/Url.hpp>
 

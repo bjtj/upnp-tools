@@ -3,7 +3,7 @@
 
 #include <string>
 #include <liboslayer/XmlParser.hpp>
-#include <liboslayer/StringElement.hpp>
+#include <liboslayer/StringElements.hpp>
 
 namespace UPNP {
 	class XmlUtils {
@@ -30,8 +30,8 @@ namespace UPNP {
 		}
 
 		static std::string toNameValueTag(const UTIL::NameValue & nv) {
-			std::string tag = XML::XmlEncoder::encode(nv.name_const());
-			std::string encodedContent = XML::XmlEncoder::encode(nv.value_const());
+			std::string tag = XML::XmlEncoder::encode(nv.const_name());
+			std::string encodedContent = XML::XmlEncoder::encode(nv.const_value());
 			return ("<" + tag + ">" + encodedContent + "</" + tag + ">");
 		}
 

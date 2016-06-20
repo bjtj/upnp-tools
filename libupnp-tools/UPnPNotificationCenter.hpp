@@ -2,7 +2,7 @@
 #define __UPNP_NOTIFICATION_CENTER_HPP__
 
 #include "UPnPEventSubscriptionSession.hpp"
-#include <liboslayer/StringElement.hpp>
+#include <liboslayer/StringElements.hpp>
 #include <liboslayer/os.hpp>
 #include <liboslayer/MessageQueue.hpp>
 

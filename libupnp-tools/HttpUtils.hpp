@@ -7,7 +7,7 @@
 #include <libhttp-server/AnotherHttpClient.hpp>
 #include <libhttp-server/HttpStatusCodes.hpp>
 #include <libhttp-server/Url.hpp>
-#include <liboslayer/StringElement.hpp>
+#include <liboslayer/StringElements.hpp>
 #include <libhttp-server/FixedTransfer.hpp>
 #include <libhttp-server/StringDataSink.hpp>
 

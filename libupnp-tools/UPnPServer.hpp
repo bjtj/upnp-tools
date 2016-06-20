@@ -5,7 +5,7 @@
 #include <map>
 #include <libhttp-server/AnotherHttpServer.hpp>
 #include <liboslayer/Properties.hpp>
-#include <liboslayer/StringElement.hpp>
+#include <liboslayer/StringElements.hpp>
 #include <liboslayer/Timer.hpp>
 #include "UPnPNotificationCenter.hpp"
 #include "UPnPDeviceProfileSession.hpp"

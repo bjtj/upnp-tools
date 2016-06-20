@@ -5,7 +5,7 @@
 #include <vector>
 #include <map>
 #include <liboslayer/os.hpp>
-#include <liboslayer/StringElement.hpp>
+#include <liboslayer/StringElements.hpp>
 #include <liboslayer/XmlParser.hpp>
 #include "SSDPHeader.hpp"
 #include "UPnPModels.hpp"
