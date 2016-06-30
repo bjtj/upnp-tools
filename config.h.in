@@ -101,6 +101,9 @@
 /* Version number of package */
 #undef VERSION
 
+/* use ncurses */
+#undef WITH_NCURSES
+
 /* Define to `int' if <sys/types.h> does not define. */
 #undef mode_t
 

@@ -28,7 +28,7 @@ build() {
 	mkdir -p $DIR_BUILD
 	mkdir -p $DIR_WORLD
 	cd $DIR_BUILD
-	$BASE/configure --enable-debug && make -k && make DESTDIR="$DIR_WORLD" install
+	$BASE/configure --enable-debug --with-ncurses && make -k && make DESTDIR="$DIR_WORLD" install
 }
 
 install() {

@@ -30,6 +30,16 @@ ACX_PTHREAD
 PKG_CHECK_MODULES([LIBOSLAYER], [oslayer])
 PKG_CHECK_MODULES([LIBHTTP_SERVER], [http-server])
 
+AC_ARG_WITH([ncurses], AS_HELP_STRING([--with-ncurses], [Build samples using ncurses]))
+
+AS_IF([test "x$with_ncurses" = "xyes"], [
+	PKG_CHECK_MODULES([NCURSES], [ncurses])
+	AM_CONDITIONAL(WITH_NCURSES, true)
+	AC_DEFINE(WITH_NCURSES,[],[use ncurses])
+	], [
+	AM_CONDITIONAL(WITH_NCURSES, false)
+])
+
 # Checks for header files.
 AC_CHECK_HEADERS([arpa/inet.h netdb.h netinet/in.h sys/socket.h sys/time.h unistd.h])
 
