@@ -152,7 +152,7 @@ namespace UPNP {
 					string timeout = request.getParameter("TIMEOUT");
 					unsigned long timeoutMilli = parseTimeout(timeout);
 
-					UuidGeneratorDefault gen;
+					UuidGeneratorVersion1 gen;
 					string sid = gen.generate();
 
 					UPnPEventSubscriptionSession session;

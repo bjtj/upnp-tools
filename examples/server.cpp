@@ -93,7 +93,7 @@ public:
 
 int main(int argc, char *args[]) {
 
-	UuidGeneratorDefault gen;
+	UuidGeneratorVersion1 gen;
 	string uuid = gen.generate();
 
 	UPnPServer server(UPnPServer::Config(9001));

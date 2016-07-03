@@ -62,7 +62,7 @@ public:
 
 static void test_deserialize() {
 	
-	UuidGeneratorDefault gen;
+	UuidGeneratorVersion1 gen;
 	string udn = gen.generate();
 	HttpServerConfig config(9999);
 	AnotherHttpServer server(config);
@@ -84,7 +84,7 @@ static void test_deserialize() {
 
 static void test_filesystem_base_deserialize() {
 
-	UuidGeneratorDefault gen;
+	UuidGeneratorVersion1 gen;
 	string udn = gen.generate();
 	
 	FileStream fs("device.xml", "wb");
@@ -106,7 +106,7 @@ static void test_filesystem_base_deserialize() {
 }
 
 static void test_serialize() {
-	UuidGeneratorDefault gen;
+	UuidGeneratorVersion1 gen;
 	string udn = gen.generate();
 	HttpServerConfig config(9999);
 	AnotherHttpServer server(config);

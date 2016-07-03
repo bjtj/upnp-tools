@@ -60,7 +60,7 @@ public:
 
 static void test_device_profile() {
 
-	UuidGeneratorDefault gen;
+	UuidGeneratorVersion1 gen;
 	string uuid = gen.generate();
 
 	UPnPNotificationServerConfig notiConfig(9998);

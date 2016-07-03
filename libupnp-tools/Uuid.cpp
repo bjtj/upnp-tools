@@ -95,35 +95,57 @@ namespace UPNP {
         return "uuid:" + uuid + (rest.empty() ? "" : "::" + rest);
     }
 
-	
+
+	/**
+	 * @brief 
+	 */
 	UuidGenerator::UuidGenerator() {
 	}
 	UuidGenerator::~UuidGenerator() {
 	}
 	
 
-	UuidGeneratorDefault::UuidGeneratorDefault() : nonce(0) {
+	/**
+	 * @brief 
+	 */
+	UuidGeneratorVersion1::UuidGeneratorVersion1()
+		: _clock_seq(0), _nodes(6) {
 	}
-	UuidGeneratorDefault::~UuidGeneratorDefault() {
+	UuidGeneratorVersion1::~UuidGeneratorVersion1() {
 	}
-	string UuidGeneratorDefault::generate() {
-		unsigned long num = nonce++;
-        
-        string part1(8, 'a');
-        string part2 = Text::toHexString(num);
-        if (part2.length() < 4) {
-            part2 = string(4 - part2.length(), '0') + part2;
-        } else if (part2.length() > 4) {
-            part2 = part2.substr(part2.length() - 4);
-        }
-        string part3(4, 'c');
-        string part4(4, 'd');
-        string part5 = Text::toHexString(tick_milli());
-        if (part5.length() < 12) {
-            part5 = string(12 - part5.length(), '0') + part5;
-        }
-        
-        string uuid = part1 + "-" + part2 + "-" + part3 + "-" + part4 + "-" + part5;
-        return uuid;
+	string UuidGeneratorVersion1::generate() {
+		
+		osl_time_t time = osl_get_time_unix();
+
+		/**
+		 * Unix base time (Jan. 1, 1970) to UUID base time (Oct. 15, 1582)
+		 */
+		uint64_t uuid_time = ((uint64_t)time.sec * 10000000)
+			+ ((uint64_t)time.nano * 10)
+			+ 0x01B21DD213814000LL;
+
+		uint32_t part1 = (uint32_t)(uuid_time & 0xffffffff);
+		uint16_t part2 = (uint16_t)((uuid_time >> 32) & 0xffff);
+		uint16_t part3 = (uint16_t)(((uuid_time >> 48) & 0x0fff) | 0x1fff);
+		uint16_t part4 = (uint16_t)((_clock_seq & 0x3fff) | 0x8000);
+
+		_clock_seq++;
+
+		string uuid = Text::format("%8.8x-%4.4x-%4.4x-%4.4x-", part1, part2, part3, part4);
+		for (size_t i = 0; i < 6; i++) {
+			if (i < _nodes.size()) {
+				uuid += Text::format("%2.2x", _nodes[i]);
+			} else {
+				uuid += "00";
+			}
+		}
+		
+		return uuid;
+	}
+	uint16_t & UuidGeneratorVersion1::clock_seq() {
+		return _clock_seq;
+	}
+	std::vector<uint8_t> & UuidGeneratorVersion1::nodes() {
+		return _nodes;
 	}
 }

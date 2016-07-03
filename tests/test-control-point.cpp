@@ -18,7 +18,7 @@ private:
 	string dummy;
 public:
     RequestHandler() {
-		UuidGeneratorDefault gen;
+		UuidGeneratorVersion1 gen;
 		_udn = gen.generate();
 		dummy = "urn:schemas-dummy-com:service:Dummy:1";
 	}

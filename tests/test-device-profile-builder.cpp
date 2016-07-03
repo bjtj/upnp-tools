@@ -15,7 +15,7 @@ static string scpd_cd();
 
 static void test_device_profile_builder() {
 	
-	UuidGeneratorDefault gen;
+	UuidGeneratorVersion1 gen;
 	string uuid = gen.generate();
 	
 	UPnPResourceManager::properties()["/device.xml"] = dd(uuid);
