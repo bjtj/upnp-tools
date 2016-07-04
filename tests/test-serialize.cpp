@@ -1,10 +1,10 @@
 #include "utils.hpp"
 #include <liboslayer/FileStream.hpp>
+#include <liboslayer/Uuid.hpp>
 #include <libhttp-server/AnotherHttpServer.hpp>
 #include <libhttp-server/StringDataSink.hpp>
 #include <libupnp-tools/UPnPDeviceDeserializer.hpp>
 #include <libupnp-tools/UPnPDeviceSerializer.hpp>
-#include <libupnp-tools/Uuid.hpp>
 
 using namespace std;
 using namespace OS;

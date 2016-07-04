@@ -1,6 +1,7 @@
 #include <iostream>
 #include <liboslayer/XmlParser.hpp>
 #include <liboslayer/MessageQueue.hpp>
+#include <liboslayer/Uuid.hpp>
 #include <libhttp-server/StringDataSink.hpp>
 #include "UPnPServer.hpp"
 #include "SSDPMsearchSender.hpp"
@@ -8,7 +9,6 @@
 #include "UPnPActionRequest.hpp"
 #include "UPnPActionResponse.hpp"
 #include "XmlUtils.hpp"
-#include "Uuid.hpp"
 
 namespace UPNP {
 

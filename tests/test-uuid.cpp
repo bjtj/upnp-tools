@@ -1,6 +1,6 @@
 #include <liboslayer/os.hpp>
 #include <liboslayer/TestSuite.hpp>
-#include <libupnp-tools/Uuid.hpp>
+#include <liboslayer/Uuid.hpp>
 
 using namespace std;
 using namespace OS;

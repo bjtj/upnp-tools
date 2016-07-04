@@ -35,7 +35,6 @@ libupnp_toolsinc_HEADERS = \
 	UPnPServiceProfile.hpp \
 	UPnPSession.hpp \
 	UPnPSessionManager.hpp \
-	Uuid.hpp \
 	XmlUtils.hpp
 
 libupnp_tools_la_SOURCES = \
@@ -101,8 +100,6 @@ libupnp_tools_la_SOURCES = \
 	UPnPSession.hpp \
 	UPnPSessionManager.cpp \
 	UPnPSessionManager.hpp \
-	Uuid.cpp \
-	Uuid.hpp \
 	XmlUtils.hpp
 
 libupnp_tools_la_CXXFLAGS = $(PTHREAD_CXXFLAGS) $(LIBOSLAYER_CFLAGS) $(LIBHTTP_SERVER_CFLAGS)

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <liboslayer/FileStream.hpp>
 #include <libhttp-server/AnotherHttpServer.hpp>
-#include <libupnp-tools/Uuid.hpp>
+#include <liboslayer/Uuid.hpp>
 #include <libupnp-tools/UPnPModels.hpp>
 #include <libupnp-tools/SSDPMsearchSender.hpp>
 #include <libupnp-tools/NetworkUtil.hpp>

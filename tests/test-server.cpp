@@ -1,7 +1,7 @@
 #include <iostream>
 #include <liboslayer/os.hpp>
+#include <liboslayer/Uuid.hpp>
 #include <libupnp-tools/UPnPServer.hpp>
-#include <libupnp-tools/Uuid.hpp>
 #include <libupnp-tools/HttpUtils.hpp>
 #include <libupnp-tools/XmlUtils.hpp>
 #include <libupnp-tools/UPnPSession.hpp>

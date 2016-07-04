@@ -1,8 +1,8 @@
 #include "utils.hpp"
+#include <liboslayer/Uuid.hpp>
 #include <libupnp-tools/UPnPDeviceDeserializer.hpp>
 #include <libupnp-tools/UPnPDeviceProfileBuilder.hpp>
 #include <libupnp-tools/UPnPResourceManager.hpp>
-#include <libupnp-tools/Uuid.hpp>
 
 using namespace std;
 using namespace UTIL;

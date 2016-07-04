@@ -1,5 +1,5 @@
 #include "UPnPControlPoint.hpp"
-#include "Uuid.hpp"
+#include <liboslayer/Uuid.hpp>
 #include "NetworkUtil.hpp"
 
 namespace UPNP {
