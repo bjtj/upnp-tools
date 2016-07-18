@@ -21,9 +21,6 @@
     <ClCompile Include="..\libupnp-tools\UPnPControlPoint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\libupnp-tools\Uuid.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\libupnp-tools\NetworkUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -111,9 +108,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPControlPoint.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\libupnp-tools\Uuid.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\SSDPHeader.hpp">

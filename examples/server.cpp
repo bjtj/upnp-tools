@@ -24,32 +24,44 @@ string readline() {
 
 string dd(const string & uuid) {
 	string dummy = "urn:schemas-dummy-com:service:Dummy:1";
-	string xml = "<?xml version=\"1.0\"?>\r\n"
-		"<root xmlns=\"urn:schemas-upnp-org:device-1-0\">"
-		"<specVersion>"
-		"<major>1</major>"
-		"<minor>0</minor>"
-		"</specVersion><device>"
-		"<deviceType>urn:schemas-upnp-org:device:InternetGatewayDevice:1</deviceType>"
-		"<friendlyName>UPnP Test Device</friendlyName>"
-		"<manufacturer>Testers</manufacturer>"
-		"<manufacturerURL>www.example.com</manufacturerURL>"
-		"<modelDescription>UPnP Test Device</modelDescription>"
-		"<modelName>UPnP Test Device</modelName>"
-		"<modelNumber>1</modelNumber>"
-		"<modelURL>www.example.com</modelURL>"
-		"<serialNumber>12345678</serialNumber>"
-		"<UDN>uuid:" + uuid + "</UDN>"
-		"<serviceList>"
-		"<service>"
-		"<serviceType>urn:schemas-dummy-com:service:Dummy:1</serviceType>"
-		"<serviceId>urn:dummy-com:serviceId:dummy1</serviceId>"
-		"<controlURL>/control/" + uuid + "::" + dummy + "</controlURL>"
-		"<eventSubURL>/event/" + uuid + "::" + dummy + "</eventSubURL>"
-		"<SCPDURL>/scpd.xml/" + uuid + "::" + dummy + "</SCPDURL>"
-		"</service></serviceList>"
-		"</device>"
-		"</root>";
+	string xml = "<?xml version=\"1.0\" charset=\"utf-8\"?>\r\n";
+	xml.append("<root xmlns=\"urn:schemas-upnp-org:device-1-0\">");
+	xml.append("<specVersion>");
+	xml.append("<major>1</major>");
+	xml.append("<minor>0</minor>");
+	xml.append("</specVersion><device>");
+	xml.append("<deviceType>urn:schemas-upnp-org:device:InternetGatewayDevice:1</deviceType>");
+	xml.append("<friendlyName>UPnP Test Device</friendlyName>");
+	xml.append("<manufacturer>Testers</manufacturer>");
+	xml.append("<manufacturerURL>www.example.com</manufacturerURL>");
+	xml.append("<modelDescription>UPnP Test Device</modelDescription>");
+	xml.append("<modelName>UPnP Test Device</modelName>");
+	xml.append("<modelNumber>1</modelNumber>");
+	xml.append("<modelURL>www.example.com</modelURL>");
+	xml.append("<serialNumber>12345678</serialNumber>");
+	xml.append("<UDN>uuid:" + uuid + "</UDN>");
+	xml.append("<serviceList>");
+	xml.append("<service>");
+	xml.append("<serviceType>urn:schemas-dummy-com:service:Dummy:1</serviceType>");
+	xml.append("<serviceId>urn:dummy-com:serviceId:dummy1</serviceId>");
+	xml.append("<controlURL>/control/");
+	xml.append(uuid);
+	xml.append("::");
+	xml.append(dummy);
+	xml.append("</controlURL>");
+	xml.append("<eventSubURL>/event/");
+	xml.append(uuid);
+	xml.append("::");
+	xml.append(dummy);
+	xml.append("</eventSubURL>");
+	xml.append("<SCPDURL>/scpd.xml/");
+	xml.append(uuid);
+	xml.append("::");
+	xml.append(dummy);
+	xml.append("</SCPDURL>");
+	xml.append("</service></serviceList>");
+	xml.append("</device>");
+	xml.append("</root>");
 
 	return xml;
 }
@@ -95,6 +107,7 @@ int main(int argc, char *args[]) {
 
 	UuidGeneratorVersion1 gen;
 	string uuid = gen.generate();
+	//string uuid = "xxxx";
 
 	UPnPServer server(UPnPServer::Config(9001));
 	server.startAsync();

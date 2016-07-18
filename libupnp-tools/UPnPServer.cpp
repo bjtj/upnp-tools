@@ -104,6 +104,7 @@ namespace UPNP {
 				response.setContentType("text/xml");
 				// UPnPDeviceProfile profile = server.getDeviceProfileWithUuid(request.getParameter("udn")); // TODO: consider udn
 				UPnPDeviceProfile profile = server.getProfileManager().getDeviceProfileSessionWithUuid(request.getParameter("udn"))->profile();
+
 				setFixedTransfer(response, profile.deviceDescription());
 				return;
 			}

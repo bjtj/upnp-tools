@@ -1,13 +1,14 @@
 #include "UPnPDeviceSerializer.hpp"
 #include "XmlUtils.hpp"
 #include <liboslayer/Text.hpp>
+#include <iostream>
 
 namespace UPNP {
 
 	using namespace std;
 	using namespace UTIL;
 
-	string UPnPDeviceSerializer::FIRSTLINE = "<?xml version=\"1.0\"?>";
+	string UPnPDeviceSerializer::FIRSTLINE = "<?xml version=\"1.0\"?>\r\n";
 	string UPnPDeviceSerializer::NEWLINE = "\r\n";
 	
 	UPnPDeviceSerializer::UPnPDeviceSerializer() {
@@ -16,8 +17,7 @@ namespace UPNP {
 	}
 
 	string UPnPDeviceSerializer::serializeDeviceDescription(UPnPDevice & device) {
-		string ret = FIRSTLINE;
-		ret.append(NEWLINE);
+		string ret = FIRSTLINE;		
 		ret.append("<root xmlns=\"urn:schemas-upnp-org:device-1-0\">");
 		ret.append(NEWLINE);
 		ret.append("<specVersion>");
@@ -30,10 +30,8 @@ namespace UPNP {
 		ret.append(NEWLINE);
 
 		ret.append(serializeDevice(device));
-		ret.append(NEWLINE);
 			
-		ret.append("</root>");
-		ret.append(NEWLINE);
+		ret.append("</root>");		
 		
 		return ret;
 	}

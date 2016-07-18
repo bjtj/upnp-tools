@@ -96,7 +96,6 @@
     <ClCompile Include="..\libupnp-tools\UPnPServer.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPSession.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPSessionManager.cpp" />
-    <ClCompile Include="..\libupnp-tools\Uuid.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\libupnp-tools\HttpUtils.hpp" />
@@ -132,7 +131,6 @@
     <ClInclude Include="..\libupnp-tools\UPnPServiceProfile.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPSession.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPSessionManager.hpp" />
-    <ClInclude Include="..\libupnp-tools\Uuid.hpp" />
     <ClInclude Include="..\libupnp-tools\XmlUtils.hpp" />
   </ItemGroup>
   <ItemGroup>
