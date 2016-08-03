@@ -17,11 +17,17 @@ using namespace HTTP;
 using namespace UPNP;
 using namespace UTIL;
 
+/**
+ * @brief 
+ */
 string readline() {
 	FileStream fs(stdin);
 	return fs.readline();
 }
 
+/**
+ * @brief 
+ */
 string dd(const string & uuid) {
 	string dummy = "urn:schemas-dummy-com:service:Dummy:1";
 	string xml = "<?xml version=\"1.0\" charset=\"utf-8\"?>\r\n";
@@ -66,6 +72,9 @@ string dd(const string & uuid) {
 	return xml;
 }
 
+/**
+ * @brief 
+ */
 string scpd() {
 
 	string xml = "<scpd xmlns=\"urn:schemas-upnp-org:service-1-0\">"
@@ -84,6 +93,9 @@ string scpd() {
 	return xml;
 }
 
+/**
+ * @brief 
+ */
 class MyActionHandler : public UPnPActionHandler {
 private:
 public:
@@ -103,15 +115,11 @@ public:
 	}
 };
 
-int main(int argc, char *args[]) {
-
-	UuidGeneratorVersion1 gen;
-	string uuid = gen.generate();
-	//string uuid = "xxxx";
-
-	UPnPServer server(UPnPServer::Config(9001));
-	server.startAsync();
-
+/**
+ * @brief 
+ */
+static void s_set_dummy(UPnPServer & server, const string & uuid) {
+	
 	string dummy = "urn:schemas-dummy-com:service:Dummy:1";
 
 	UPnPResourceManager::properties()["/device.xml"] = dd(uuid);
@@ -122,13 +130,26 @@ int main(int argc, char *args[]) {
 	UPnPDeviceProfileBuilder builder(uuid, device);
 	UPnPDeviceProfile deviceProfile = builder.build();
 
-	// server[uuid] = deviceProfile;
 	server.registerDeviceProfile(uuid, deviceProfile);
 
 	LinkedStringMap props;
 	props["SourceProtocolInfo"] = "<initial source>";
 	props["SinkProtocolInfo"] = "<initial sink>";
 	server.getNotificationCenter().registerService(uuid, dummy, props);
+}
+
+/**
+ * @brief 
+ */
+int main(int argc, char *args[]) {
+
+	UuidGeneratorVersion1 gen;
+	string uuid = gen.generate();
+
+	UPnPServer server(UPnPServer::Config(9001));
+	server.startAsync();
+
+	s_set_dummy(server, uuid);
 	
 	AutoRef<UPnPActionHandler> handler(new MyActionHandler);
 	server.setActionHandler(handler);
@@ -140,20 +161,42 @@ int main(int argc, char *args[]) {
 		if ((cmd = readline()).size() > 0) {
 			if (cmd == "q") {
 				break;
-			} else if (cmd == "alive") {
+			}
+
+			vector<string> tokens = Text::split(cmd, " ");
+
+			if (tokens.size() == 0) {
+				continue;
+			}
+
+			if (tokens[0] == "alive") {
+				cout << " * alive : " << uuid << endl;
 				server.getProfileManager().getDeviceProfileSessionWithUuid(uuid)->setEnable(true);
-				server.notifyAlive(deviceProfile);
-			} else if (cmd == "byebye") {
+				server.notifyAlive(server.getProfileManager().getDeviceProfileSessionWithUuid(uuid)->profile());
+			} else if (tokens[0] == "byebye") {
+				cout << " * byebye : " << uuid << endl;
 				server.getProfileManager().getDeviceProfileSessionWithUuid(uuid)->setEnable(false);
-				server.notifyByeBye(deviceProfile);
-			} else if (cmd == "set-props") {
+				server.notifyByeBye(server.getProfileManager().getDeviceProfileSessionWithUuid(uuid)->profile());
+			} else if (tokens[0] == "list") {
+				vector<AutoRef<UPnPDeviceProfileSession> > vec = server.getProfileManager().sessionList();
+				for (size_t i = 0; i < vec.size(); i++) {
+					cout << "[" << i << "] " << vec[i]->profile().uuid() << " ; " << (vec[i]->profile().deviceTypes().size() > 0 ? vec[i]->profile().deviceTypes()[0] : "") << endl;
+				}
+			} else if (tokens[0] == "set-props") {
 				LinkedStringMap props;
-				props["SourceProtocolInfo"] = "<sample sourc>";
+				props["SourceProtocolInfo"] = "<sample source>";
 				props["SinkProtocolInfo"] = "<sample sink>";
-				server.getNotificationCenter().setProperties(uuid, dummy, props);
-			} else if (cmd == "load") {
-				// load mediaserver.lsp
-				
+				server.getNotificationCenter().setProperties(uuid, "urn:schemas-dummy-com:service:Dummy:1", props);
+			} else if (tokens[0] == "load") {
+				if (tokens.size() < 2) {
+					continue;
+				}
+				string uri = tokens[1];
+			} else if (tokens[0] == "unload") {
+				if (tokens.size() < 2) {
+					continue;
+				}
+				string uuid = tokens[1];
 			}
 		}
 	}

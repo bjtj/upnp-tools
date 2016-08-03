@@ -12,9 +12,20 @@ namespace UPNP {
 	map<string, AutoRef<UPnPDeviceProfileSession> > & UPnPDeviceProfileSessionManager::sessions() {
 		return _sessions;
 	}
+	vector<UTIL::AutoRef<UPnPDeviceProfileSession> > UPnPDeviceProfileSessionManager::sessionList() {
+		vector<AutoRef<UPnPDeviceProfileSession> > ret;
+		for (map<string, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin(); iter != _sessions.end(); iter++) {
+			ret.push_back(iter->second);
+		}
+		return ret;
+	}
 
 	void UPnPDeviceProfileSessionManager::registerProfile(const string & uuid, const UPnPDeviceProfile & profile) {
 		_sessions[uuid] = AutoRef<UPnPDeviceProfileSession>(new UPnPDeviceProfileSession(profile));
+	}
+
+	void UPnPDeviceProfileSessionManager::unregisterProfile(const string & uuid) {
+		_sessions.erase(uuid);
 	}
 	
 	vector<AutoRef<UPnPDeviceProfileSession> > UPnPDeviceProfileSessionManager::searchProfileSessions(const string & st) {

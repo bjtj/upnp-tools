@@ -14,8 +14,10 @@ namespace UPNP {
 		UPnPDeviceProfileSessionManager();
 		virtual ~UPnPDeviceProfileSessionManager();
 		std::map<std::string, UTIL::AutoRef<UPnPDeviceProfileSession> > & sessions();
+		std::vector<UTIL::AutoRef<UPnPDeviceProfileSession> > sessionList();
 
 		void registerProfile(const std::string & uuid, const UPnPDeviceProfile & profile);
+		void unregisterProfile(const std::string & uuid);
 		std::vector<UTIL::AutoRef<UPnPDeviceProfileSession> > searchProfileSessions(const std::string & st);
 		bool hasDeviceProfileSessionWithScpdUrl(const std::string & scpdUrl);
 		bool hasDeviceProfileSessionWithControlUrl(const std::string & controlUrl);

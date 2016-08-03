@@ -470,6 +470,10 @@ namespace UPNP {
 	void UPnPServer::registerDeviceProfile(const string & uuid, const UPnPDeviceProfile & profile) {
 		getProfileManager().registerProfile(uuid, profile);
 	}
+
+	void UPnPServer::unregisterDeviceProfile(const std::string & uuid) {
+		getProfileManager().unregisterProfile(uuid);
+	}
 	
 	void UPnPServer::setActionHandler(AutoRef<UPnPActionHandler> actionHandler) {
 		this->actionHandler = actionHandler;

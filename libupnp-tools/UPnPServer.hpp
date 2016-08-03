@@ -56,7 +56,7 @@ namespace UPNP {
 		void stop();
 		std::string makeLocation(UPnPDeviceProfile & profile);
 
-		// announcing
+		// announce
 		void notifyAlive(UPnPDeviceProfile & profile);
 		void notifyAliveWithDeviceType(UPnPDeviceProfile & profile, const std::string & deviceType);
 		std::string makeNotifyAlive(const std::string & location, const std::string & uuid, const std::string & deviceType);
@@ -64,23 +64,24 @@ namespace UPNP {
 		void notifyByeByeWithDeviceType(UPnPDeviceProfile & profile, const std::string & deviceType);
 		std::string makeNotifyByeBye(const std::string & uuid, const std::string & deviceType);
 
-		// responding & searching
+		// m-search response
 		void respondMsearch(const std::string & st, OS::InetAddress & remoteAddr);
 		std::string makeMsearchResponse(const std::string & location, const std::string & uuid, const std::string & st);
 
-		// profile management
+		// device profile management
 		UPnPDeviceProfileSessionManager & getProfileManager();
 		void registerDeviceProfile(const std::string & uuid, const UPnPDeviceProfile & profile);
+		void unregisterDeviceProfile(const std::string & uuid);
 
 		// functionality
 		void setActionHandler(UTIL::AutoRef<UPnPActionHandler> actionHandler);
 		UTIL::AutoRef<UPnPActionHandler> getActionHandler();
 
-		// event notifying
+		// event notification
 		UPnPNotificationCenter & getNotificationCenter();
 		UPnPEventNotifyThread & getEventNotifyThread();
 
-		// session managin
+		// session timeout manager
 		UTIL::TimerLooperThread & getTimerThread();
 	};
 }
