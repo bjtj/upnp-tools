@@ -11,6 +11,7 @@ libupnp_toolsinc_HEADERS = \
 	SSDPMulticastListener.hpp \
 	SSDPMulticastSender.hpp \
 	SSDPServer.hpp \
+	SharedUPnPDeviceList.hpp \
 	UPnPActionErrorCodes.hpp \
 	UPnPActionHandler.hpp \
 	UPnPActionInvoker.hpp \
@@ -55,6 +56,8 @@ libupnp_tools_la_SOURCES = \
 	SSDPMulticastSender.hpp \
 	SSDPServer.cpp \
 	SSDPServer.hpp \
+	SharedUPnPDeviceList.cpp \
+	SharedUPnPDeviceList.hpp \
 	UPnPActionErrorCodes.cpp \
 	UPnPActionErrorCodes.hpp \
 	UPnPActionHandler.hpp \

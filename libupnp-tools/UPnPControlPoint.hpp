@@ -11,6 +11,7 @@
 #include "UPnPEventSubscriber.hpp"
 #include "UPnPNotificationServer.hpp"
 #include "NetworkStateManager.hpp"
+#include "SharedUPnPDeviceList.hpp"
 
 namespace UPNP {
 
@@ -54,6 +55,7 @@ namespace UPNP {
 		UTIL::TimerLooperThread timerThread;
 		bool started;
 		UTIL::TaskThreadPool deviceBuildTaskThreadPool;
+		std::vector<UTIL::AutoRef<SharedUPnPDeviceList> > sharedDeviceLists;
 
 	private:
 		// do not allow copy or assign
@@ -87,6 +89,10 @@ namespace UPNP {
 		UTIL::TimerLooperThread & getTimerThread();
 		void clearOudatedSessions();
 		unsigned long parseCacheControlMilli(const std::string & cacheControl, unsigned long def);
+		void addSharedDeviceList(UTIL::AutoRef<SharedUPnPDeviceList> list);
+		void removeSharedDeviceList(UTIL::AutoRef<SharedUPnPDeviceList> list);
+		void announceDeviceAdded(UTIL::AutoRef<UPnPDevice> device);
+		void announceDeviceRemoved(UTIL::AutoRef<UPnPDevice> device);
 	};
 }
 

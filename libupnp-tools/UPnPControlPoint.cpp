@@ -168,18 +168,14 @@ namespace UPNP {
 
 		if (!deviceListener.nil() && !_sessionManager[udn].nil()) {
 			AutoRef<UPnPDevice> device = _sessionManager[udn]->getRootDevice();
-			if (!device.nil()) {
-				deviceListener->onDeviceRemove(device);
-			}
+			announceDeviceRemoved(device);
 		}
 		
 		_sessionManager.remove(udn);
 	}
 
 	void UPnPControlPoint::onDeviceBuildCompleted(AutoRef<UPnPSession> session) {
-		if (!deviceListener.nil()) {
-			deviceListener->onDeviceAdd(session->getRootDevice());
-		}
+		announceDeviceAdded(session->getRootDevice());
 	}
 	void UPnPControlPoint::onDeviceBuildFailed(AutoRef<UPnPSession> session) {
 		_sessionManager.remove(session->udn());
@@ -288,8 +284,44 @@ namespace UPNP {
 		vector<AutoRef<UPnPSession> > sessions = _sessionManager.getOutdatedSessions();
 		for (vector<AutoRef<UPnPSession> >::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
 			AutoRef<UPnPDevice> device = (*iter)->getRootDevice();
-			deviceListener->onDeviceRemove(device);
+			announceDeviceRemoved(device);
 			_sessionManager.remove((*iter)->udn());
+		}
+	}
+
+	void UPnPControlPoint::addSharedDeviceList(AutoRef<SharedUPnPDeviceList> list) {
+		sharedDeviceLists.push_back(list);
+	}
+	void UPnPControlPoint::removeSharedDeviceList(AutoRef<SharedUPnPDeviceList> list) {
+		for (vector<AutoRef<SharedUPnPDeviceList> >::iterator iter = sharedDeviceLists.begin(); iter != sharedDeviceLists.end();) {
+			if ((*iter) == list) {
+				iter = sharedDeviceLists.erase(iter);
+			} else {
+				iter++;
+			}
+		}
+	}
+
+	void UPnPControlPoint::announceDeviceAdded(UTIL::AutoRef<UPnPDevice> device) {
+		if (device.nil()) {
+			return;
+		}
+		if (!deviceListener.nil()) {
+			deviceListener->onDeviceAdd(device);
+		}
+		for (vector<AutoRef<SharedUPnPDeviceList> >::iterator iter = sharedDeviceLists.begin(); iter != sharedDeviceLists.end(); iter++) {
+			(*iter)->add_s(device);
+		}
+	}
+	void UPnPControlPoint::announceDeviceRemoved(UTIL::AutoRef<UPnPDevice> device) {
+		if (device.nil()) {
+			return;
+		}
+		if (!deviceListener.nil()) {
+			deviceListener->onDeviceRemove(device);
+		}
+		for (vector<AutoRef<SharedUPnPDeviceList> >::iterator iter = sharedDeviceLists.begin(); iter != sharedDeviceLists.end(); iter++) {
+			(*iter)->remove_s(device);
 		}
 	}
 }

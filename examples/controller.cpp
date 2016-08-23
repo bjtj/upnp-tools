@@ -214,11 +214,14 @@ public:
 
 int run(int argc, char *args[]) {
 
+	AutoRef<SharedUPnPDeviceList> list(new SharedUPnPDeviceList);
+
 	Selection selection;
 
 	UPnPControlPointConfig config(9998);
 	UPnPControlPoint cp(config);
 
+	cp.addSharedDeviceList(list);
 	cp.setDeviceAddRemoveListener(AutoRef<DeviceAddRemoveListener>(new MyDeviceListener));
 	cp.startAsync();
 
@@ -265,16 +268,7 @@ int run(int argc, char *args[]) {
 							string allows = "";
 							UPnPStateVariable sv = service->scpd().stateVariable(iter->relatedStateVariable());
 							if (sv.hasAllowedValues()) {
-
 								allows = " [" + Text::join(sv.allowedValueList(), ", ") + "]";
-								
-								// for (vector<string>::iterator ai = sv.allowedValueList().begin(); ai != sv.allowedValueList().end(); ai++) {
-								// 	if (allows.length() > 0) {
-								// 		allows.append(", ");
-								// 	}
-								// 	allows.append(*ai);
-								// }
-								// allows = " [" + allows + "]";
 							}
 							char param[1024] = {0,};
 							prompt(iter->name() + allows + " : ", param, sizeof(param));
@@ -311,6 +305,14 @@ int run(int argc, char *args[]) {
 
 				cout << "Unsubscribe - " << selection.udn() << " .. " << selection.serviceType() << endl;
 				cp.unsubscribe(selection.udn(), selection.serviceType());
+
+			} else if (!strcmp(buffer, "shared")) {
+
+				vector<AutoRef<UPnPDevice> > devices = list->list_s();
+
+				for (vector<AutoRef<UPnPDevice> >::iterator iter = devices.begin(); iter != devices.end(); iter++) {
+					cout << " * " << (*iter)->getFriendlyName() << endl;
+				}
 
 			} else if (!strcmp(buffer, "dump")) {
 
