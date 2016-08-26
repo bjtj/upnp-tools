@@ -10,7 +10,7 @@
 #include "UPnPNotificationCenter.hpp"
 #include "UPnPDeviceProfileSession.hpp"
 #include "UPnPDeviceProfileSessionManager.hpp"
-#include "UPnPActionHandler.hpp"
+#include "UPnPActionRequestHandler.hpp"
 #include "SSDPServer.hpp"
 #include "NetworkStateManager.hpp"
 
@@ -36,7 +36,7 @@ namespace UPNP {
 		Config config;
 		UPnPDeviceProfileSessionManager profileManager;
 		HTTP::AnotherHttpServer * httpServer;
-		UTIL::AutoRef<UPnPActionHandler> actionHandler;
+		UTIL::AutoRef<UPnPActionRequestHandler> actionRequestHandler;
 		UPnPNotificationCenter notificationCenter;
 		UPnPEventNotifyThread notifyThread;
 		UTIL::TimerLooperThread timerThread;
@@ -74,8 +74,8 @@ namespace UPNP {
 		void unregisterDeviceProfile(const std::string & uuid);
 
 		// functionality
-		void setActionHandler(UTIL::AutoRef<UPnPActionHandler> actionHandler);
-		UTIL::AutoRef<UPnPActionHandler> getActionHandler();
+		void setActionRequestHandler(UTIL::AutoRef<UPnPActionRequestHandler> actionRequestHandler);
+		UTIL::AutoRef<UPnPActionRequestHandler> getActionRequestHandler();
 
 		// event notification
 		UPnPNotificationCenter & getNotificationCenter();

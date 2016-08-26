@@ -12,25 +12,44 @@
 
 namespace SSDP {
 
+	/**
+	 * @brief 
+	 */
 	class SSDPServer {
 	private:
+		UTIL::AutoRef<OS::Selector> selector;
 		SSDP::SSDPMulticastListener mcastListener;
 		UTIL::AutoRef<SSDP::SSDPEventHandler> handler;
-		OS::Thread * thread;
+		OS::Thread * pollingThread;
+		OS::Thread * msearchResponseListenerThread;
+
+	private:
+		// copy not allowed
+		SSDPServer(const SSDPServer & other);
+		SSDPServer & operator= (const SSDPServer & other);
 
 	public:
 		SSDPServer();
 		virtual ~SSDPServer();
-
 		void start();
 		void startAsync();
 		void stop();
         void poll(unsigned long timeout);
-
+		bool isPollingThreadRunning();
+		void startPollingThread();
+		void stopPollingThread();
+		bool isMSearchResponseListenerThreadRunning();
+		void startMSearchResponseListenerThread();
+		void stopMSearchResponseListenerThread();
+		void supportAsync(bool support);
+		void sendMsearchAsync(const std::string & st, unsigned long timeoutSec);
+		void sendMsearchAsync(const std::vector<std::string> & st, unsigned long timeoutSec);
 		void sendMsearchAndGather(const std::string & st, unsigned long timeoutSec);
 		void sendMsearchAndGather(std::vector<std::string> & st, unsigned long timeoutSec);
 		UTIL::AutoRef<SSDPMsearchSender> sendMsearch(const std::string & st, unsigned long timeoutSec);
-		UTIL::AutoRef<SSDPMsearchSender> sendMsearch(std::vector<std::string> & st, unsigned long timeoutSec);
+		UTIL::AutoRef<SSDPMsearchSender> sendMsearch(const std::string & st, unsigned long timeoutSec, UTIL::AutoRef<OS::Selector> selector);
+		UTIL::AutoRef<SSDPMsearchSender> sendMsearch(const std::vector<std::string> & st, unsigned long timeoutSec);
+		UTIL::AutoRef<SSDPMsearchSender> sendMsearch(const std::vector<std::string> & st, unsigned long timeoutSec, UTIL::AutoRef<OS::Selector> selector);
 		void addSSDPEventHandler(UTIL::AutoRef<SSDPEventHandler> handler);
 	};
 }

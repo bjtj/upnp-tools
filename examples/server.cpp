@@ -96,7 +96,7 @@ string scpd() {
 /**
  * @brief 
  */
-class MyActionHandler : public UPnPActionHandler {
+class MyActionHandler : public UPnPActionRequestHandler {
 private:
 public:
     MyActionHandler() {}
@@ -151,8 +151,8 @@ int main(int argc, char *args[]) {
 
 	s_set_dummy(server, uuid);
 	
-	AutoRef<UPnPActionHandler> handler(new MyActionHandler);
-	server.setActionHandler(handler);
+	AutoRef<UPnPActionRequestHandler> handler(new MyActionHandler);
+	server.setActionRequestHandler(handler);
 
 	cout << "uuid: " << uuid << endl;
 

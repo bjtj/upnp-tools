@@ -190,8 +190,8 @@ namespace UPNP {
 		}
 
 		void handleActionRequest(UPnPActionRequest & request, UPnPActionResponse & response) {
-			if (!server.getActionHandler().nil()) {
-				server.getActionHandler()->handleActionRequest(request, response);
+			if (!server.getActionRequestHandler().nil()) {
+				server.getActionRequestHandler()->handleActionRequest(request, response);
 			}
 		}
 
@@ -475,12 +475,12 @@ namespace UPNP {
 		getProfileManager().unregisterProfile(uuid);
 	}
 	
-	void UPnPServer::setActionHandler(AutoRef<UPnPActionHandler> actionHandler) {
-		this->actionHandler = actionHandler;
+	void UPnPServer::setActionRequestHandler(AutoRef<UPnPActionRequestHandler> actionRequestHandler) {
+		this->actionRequestHandler = actionRequestHandler;
 	}
 
-	AutoRef<UPnPActionHandler> UPnPServer::getActionHandler() {
-		return actionHandler;
+	AutoRef<UPnPActionRequestHandler> UPnPServer::getActionRequestHandler() {
+		return actionRequestHandler;
 	}
 
 	UPnPNotificationCenter & UPnPServer::getNotificationCenter() {

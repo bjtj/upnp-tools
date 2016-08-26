@@ -6,11 +6,11 @@
 
 namespace UPNP {
 	
-	class UPnPActionHandler {
+	class UPnPActionRequestHandler {
 	private:
 	public:
-		UPnPActionHandler() {}
-		virtual ~UPnPActionHandler() {}
+		UPnPActionRequestHandler() {}
+		virtual ~UPnPActionRequestHandler() {}
 		virtual void handleActionRequest(UPnPActionRequest & request, UPnPActionResponse & response) = 0;
 	};
 }

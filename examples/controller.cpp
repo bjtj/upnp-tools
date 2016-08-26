@@ -5,6 +5,7 @@
 #include <liboslayer/AutoRef.hpp>
 #include <liboslayer/Text.hpp>
 #include <liboslayer/XmlParser.hpp>
+#include <liboslayer/FileStream.hpp>
 #include <libupnp-tools/UPnPControlPoint.hpp>
 #include <libupnp-tools/UPnPActionInvoker.hpp>
 #include <libupnp-tools/UPnPActionRequest.hpp>
@@ -56,17 +57,14 @@ int main(int argc, char *args[]) {
 	return 0;
 }
 
-size_t readline(char * buffer, size_t max) {
-    if (fgets(buffer, (int)max - 1, stdin)) {
-		buffer[strlen(buffer) - 1] = 0;
-		return strlen(buffer);
-	}
-    return 0;
+string readline() {
+	FileStream fs(stdin);
+	return fs.readline();
 }
 
-size_t prompt(const string & msg, char * buffer, size_t max) {
+string prompt(const string & msg) {
 	cout << msg;
-	return readline(buffer, max);
+	return readline();
 }
 
 class UPnPSessionPrinter {
@@ -228,29 +226,29 @@ int run(int argc, char *args[]) {
 	cp.getNotificationServer()->addNotificationListener(AutoRef<UPnPNotificationListener>(new MyNotifyListener));
 
 	while (1) {
-		char buffer[1024] = {0,};
-		if (readline(buffer, sizeof(buffer)) > 0) {
-			if (!strcmp(buffer, "q")) {
+		string line;
+		if ((line = readline()).size() > 0) {
+			if (line == "q") {
 				break;
-			} else if (!strcmp(buffer, "clear")) {
+			} else if (line == "clear") {
 				cp.clearDevices();
-			} else if (string(buffer).find_first_not_of("0123456789") == string::npos) {
-				int idx = Text::toInt(buffer);
+			} else if (line.find_first_not_of("0123456789") == string::npos) {
+				int idx = Text::toInt(line);
 				cout << "idx : " << idx << endl;
 				selectDeviceByIndex(cp.sessionManager(), (size_t)idx);
-			} else if (!strncmp(buffer, "udn ", 4)) {
-				selection.udn() = string(buffer + 4);
-			} else if (!strcmp(buffer, "udn")) {
+			} else if (Text::startsWith(line, "udn ")) {
+				selection.udn() = line.substr(4);
+			} else if (line == "udn") {
 				cout << "UDN: " << selection.udn() << endl;
-			} else if (!strncmp(buffer, "service ", 8)) {
-				selection.serviceType() = string(buffer + 8);
-			} else if (!strcmp(buffer, "service")) {
+			} else if (Text::startsWith(line, "service ")) {
+				selection.serviceType() = line.substr(8);
+			} else if (line == "service") {
 				cout << "Service : " << selection.serviceType() << endl;
-			} else if (!strncmp(buffer, "action ", 7)) {
-				selection.action() = string(buffer + 7);
-			} else if (!strcmp(buffer, "action")) {
+			} else if (Text::startsWith(line, "action ")) {
+				selection.action() = line.substr(7);
+			} else if (line == "action") {
 				cout << "Action : " << selection.action() << endl;
-			} else if (!strcmp(buffer, "invoke")) {
+			} else if (line == "invoke") {
 				try {
 					UPnPActionInvoker invoker = cp.prepareActionInvoke(selection.udn(), selection.serviceType());
 					AutoRef<UPnPService> service = cp.getServiceWithUdnAndServiceType(selection.udn(), selection.serviceType());
@@ -270,9 +268,8 @@ int run(int argc, char *args[]) {
 							if (sv.hasAllowedValues()) {
 								allows = " [" + Text::join(sv.allowedValueList(), ", ") + "]";
 							}
-							char param[1024] = {0,};
-							prompt(iter->name() + allows + " : ", param, sizeof(param));
-							request[iter->name()] = string(param);
+							string param = prompt(iter->name() + allows + " : ");
+							request[iter->name()] = param;
 						}
 					}
 					UPnPActionResponse response = invoker.invoke(request);
@@ -286,9 +283,9 @@ int run(int argc, char *args[]) {
 				} catch (OS::Exception & e) {
 					cout << "Error: " << e.getMessage() << endl;
 				}
-			} else if (!strcmp(buffer, "subs")) {
+			} else if (line == "subs") {
 				// TODO: subscription list
-			} else if (!strcmp(buffer, "sub")) {
+			} else if (line == "sub") {
 
 				if (selection.udn().empty() || selection.serviceType().empty()) {
 					throw "Error: select udn and sevice first";
@@ -297,7 +294,7 @@ int run(int argc, char *args[]) {
 				cout << "Subscribe - " << selection.udn() << " .. " << selection.serviceType() << endl;
 				cp.subscribe(selection.udn(), selection.serviceType());
 
-			} else if (!strcmp(buffer, "unsub")) {
+			} else if (line == "unsub") {
 
 				if (selection.udn().empty() || selection.serviceType().empty()) {
 					throw "Error: select udn and sevice first";
@@ -306,7 +303,7 @@ int run(int argc, char *args[]) {
 				cout << "Unsubscribe - " << selection.udn() << " .. " << selection.serviceType() << endl;
 				cp.unsubscribe(selection.udn(), selection.serviceType());
 
-			} else if (!strcmp(buffer, "shared")) {
+			} else if (line == "shared") {
 
 				vector<AutoRef<UPnPDevice> > devices = list->list_s();
 
@@ -314,7 +311,7 @@ int run(int argc, char *args[]) {
 					cout << " * " << (*iter)->getFriendlyName() << endl;
 				}
 
-			} else if (!strcmp(buffer, "dump")) {
+			} else if (line == "dump") {
 
 				if (selection.udn().empty()) {
 					throw "Error: select udn first";
@@ -334,8 +331,8 @@ int run(int argc, char *args[]) {
 					}
 				}
 			} else {
-				cout << " -**- Searching... " << string(buffer) << " **" << endl;
-				cp.sendMsearchAndWait(buffer, 3);
+				cout << " -**- Searching... " << line << " **" << endl;
+				cp.sendMsearchAndWait(line, 3);
 				cout << " -**- Searching Done **" << endl;
 			}
 		} else {

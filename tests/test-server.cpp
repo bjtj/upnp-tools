@@ -23,7 +23,7 @@ using namespace HTTP;
 string dd(string uuid);
 string scpd();
 
-class MyActionHandler : public UPnPActionHandler {
+class MyActionHandler : public UPnPActionRequestHandler {
 private:
 public:
     MyActionHandler() {}
@@ -88,19 +88,17 @@ static void test_device_profile() {
 	props["xxx"] = "";
 	server.getNotificationCenter().registerService(uuid, "urn:schemas-dummy-com:service:Dummy:1", props);
 
-	AutoRef<UPnPActionHandler> handler(new MyActionHandler);
-	server.setActionHandler(handler);
+	AutoRef<UPnPActionRequestHandler> handler(new MyActionHandler);
+	server.setActionRequestHandler(handler);
 
 	server.startAsync();
 
 	// profile search check
 	{
 		string scpdUrl = "/scpd.xml?udn=" + uuid + "&serviceType=urn:schemas-dummy-com:service:Dummy:1";
-		// UPnPDeviceProfile deviceProfile = server.getDeviceProfileHasScpdUrl(scpdUrl);
 		UPnPDeviceProfile deviceProfile = server.getProfileManager().getDeviceProfileSessionHasScpdUrl(scpdUrl)->profile();
 		UPnPServiceProfile service = deviceProfile.getServiceProfileWithScpdUrl(scpdUrl);
 		ASSERT(service.serviceType(), ==, "urn:schemas-dummy-com:service:Dummy:1");
-		// ASSERT(server.hasDeviceProfileWithScpdUrl(scpdUrl), ==, true);
 		ASSERT(server.getProfileManager().hasDeviceProfileSessionWithScpdUrl(scpdUrl), ==, true);
 	}
 

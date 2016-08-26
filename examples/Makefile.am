@@ -1,17 +1,22 @@
 # SUBDIRS=res
 
-noinst_PROGRAMS = controller server
+noinst_PROGRAMS = controller server ssdp-discover
 
 if WITH_NCURSES
 noinst_PROGRAMS += tui-controller
 endif
 
+#
+
 controller_SOURCES = controller.cpp
 server_SOURCES = server.cpp
+ssdp_discover_SOURCES = ssdp-discover.cpp
 
 if WITH_NCURSES
 tui_controller_SOURCES = tui-controller.cpp
 endif
+
+#
 
 AM_CPPFLAGS =-I$(top_srcdir)
 AM_CXXFLAGS = $(PTHREAD_CXXFLAGS) $(LIBOSLAYER_CFLAGS) $(LIBHTTP_SERVER_CFLAGS)

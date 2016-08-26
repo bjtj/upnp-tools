@@ -13,9 +13,9 @@ libupnp_toolsinc_HEADERS = \
 	SSDPServer.hpp \
 	SharedUPnPDeviceList.hpp \
 	UPnPActionErrorCodes.hpp \
-	UPnPActionHandler.hpp \
 	UPnPActionInvoker.hpp \
 	UPnPActionRequest.hpp \
+	UPnPActionRequestHandler.hpp \
 	UPnPActionResponse.hpp \
 	UPnPControlPoint.hpp \
 	UPnPDeviceDeserializer.hpp \
@@ -60,10 +60,10 @@ libupnp_tools_la_SOURCES = \
 	SharedUPnPDeviceList.hpp \
 	UPnPActionErrorCodes.cpp \
 	UPnPActionErrorCodes.hpp \
-	UPnPActionHandler.hpp \
 	UPnPActionInvoker.hpp \
 	UPnPActionRequest.cpp \
 	UPnPActionRequest.hpp \
+	UPnPActionRequestHandler.hpp \
 	UPnPActionResponse.cpp \
 	UPnPActionResponse.hpp \
 	UPnPControlPoint.cpp \

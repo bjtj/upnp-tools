@@ -13,16 +13,22 @@ namespace SSDP {
 	class SSDPMulticastSender {
 	private:
 		OS::DatagramSocket sock;
-		OS::Selector selector;
+		UTIL::AutoRef<OS::Selector> selector;
 		std::vector<UTIL::AutoRef<SSDPEventHandler> > handlers;
 	public:
 		SSDPMulticastSender();
+		SSDPMulticastSender(UTIL::AutoRef<OS::Selector> selector);
 		SSDPMulticastSender(int port);
+		SSDPMulticastSender(int port, UTIL::AutoRef<OS::Selector> selector);
 		SSDPMulticastSender(OS::InetAddress & bindAddr);
+		SSDPMulticastSender(OS::InetAddress & bindAddr, UTIL::AutoRef<OS::Selector> selector);
 		virtual ~SSDPMulticastSender();
 		void init();
 		void close();
 		void poll(unsigned long timeout);
+		bool isReadable();
+		bool isReadable(OS::Selector & selector);
+		void procRead();
 		void onReceive(OS::DatagramPacket & packet);
 		void sendMcast(const std::string & content, const std::string & group, int port);
 		void sendMcastToAllInterfaces(const std::string & content, const std::string & group, int port);
