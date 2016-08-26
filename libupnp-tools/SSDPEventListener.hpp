@@ -1,5 +1,5 @@
-#ifndef __SSDP_EVENT_HANDLER_HPP__
-#define __SSDP_EVENT_HANDLER_HPP__
+#ifndef __SSDP_EVENT_LISTENER_HPP__
+#define __SSDP_EVENT_LISTENER_HPP__
 
 #include <libhttp-server/HttpHeader.hpp>
 #include "SSDPHeader.hpp"
@@ -9,11 +9,11 @@ namespace SSDP {
 	/**
 	 *
 	 */
-	class SSDPEventHandler {
+	class SSDPEventListener {
 	private:
 	public:
-		SSDPEventHandler() {}
-		virtual ~SSDPEventHandler() {}
+		SSDPEventListener() {}
+		virtual ~SSDPEventListener() {}
 
         virtual bool filter(SSDPHeader & header) {return true;}
 		virtual void onMsearch(SSDPHeader & header) {}

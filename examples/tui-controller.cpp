@@ -286,9 +286,8 @@ int main(int argc, char *args[]) {
 			done = true;
 			break;
 		case 's':
-			tui.toast(" ** searching **");
-			cp.sendMsearchAndWait("upnp:rootdevice", 3);
-			tui.toast(" ** searching : done **");
+			tui.toast(" ** searching :: upnp:rootdevice **");
+			cp.sendMsearchAsync("upnp:rootdevice", 3);
 			break;
 		case 'r':
 			tui.printDeviceList(cp.sessionManager());

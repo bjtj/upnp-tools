@@ -32,7 +32,7 @@ namespace UPNP {
 		}
 	};
 
-	class UPnPServerSsdpHandler : public SSDPEventHandler {
+	class UPnPServerSsdpHandler : public SSDPEventListener {
 	private:
 		UPnPServer & server;
 	public:
@@ -296,10 +296,19 @@ namespace UPNP {
 
 	string UPnPServer::SERVER_INFO = "Net-OS 5.xx UPnP/1.0";
 	
-	UPnPServer::UPnPServer(const UPnPServer::Config & config) : config(config), httpServer(NULL), notifyThread(notificationCenter), ssdpEventHandler(new UPnPServerSsdpHandler(*this)) {
+	UPnPServer::UPnPServer(const UPnPServer::Config & config)
+		: config(config),
+		  httpServer(NULL),
+		  notifyThread(notificationCenter),
+		  ssdpListener(new UPnPServerSsdpHandler(*this)) {
 	}
 
-	UPnPServer::UPnPServer(const UPnPServer::Config & config, AutoRef<NetworkStateManager> networkStateManager) : networkStateManager(networkStateManager),  config(config), httpServer(NULL), notifyThread(notificationCenter), ssdpEventHandler(new UPnPServerSsdpHandler(*this)) {
+	UPnPServer::UPnPServer(const UPnPServer::Config & config, AutoRef<NetworkStateManager> networkStateManager)
+		: networkStateManager(networkStateManager),
+		  config(config),
+		  httpServer(NULL),
+		  notifyThread(notificationCenter),
+		  ssdpListener(new UPnPServerSsdpHandler(*this)) {
 	}
 	
 	UPnPServer::~UPnPServer() {
@@ -324,7 +333,7 @@ namespace UPNP {
 		timerThread.start();
 		timerThread.looper().interval(10 * 1000, AutoRef<TimerTask>(new UPnPServerLifetimeTask));
 
-		ssdpServer.addSSDPEventHandler(ssdpEventHandler);
+		ssdpServer.addSSDPEventListener(ssdpListener);
 		ssdpServer.startAsync();
 	}
 	

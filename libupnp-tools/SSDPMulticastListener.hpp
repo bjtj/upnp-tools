@@ -5,7 +5,7 @@
 #include <liboslayer/os.hpp>
 #include <liboslayer/AutoRef.hpp>
 #include <liboslayer/DatagramSocket.hpp>
-#include "SSDPEventHandler.hpp"
+#include "SSDPEventListener.hpp"
 
 namespace SSDP {
 
@@ -14,7 +14,7 @@ namespace SSDP {
 		std::string group;
 		OS::MulticastSocket sock;
 		UTIL::AutoRef<OS::Selector> selector;
-		std::vector<UTIL::AutoRef<SSDPEventHandler> > handlers;
+		std::vector<UTIL::AutoRef<SSDPEventListener> > listeners;
 
 	public:
 		SSDPMulticastListener(const std::string & group, int port);
@@ -29,8 +29,8 @@ namespace SSDP {
 		bool isReadable(OS::Selector & selector);
 		void procRead();
 		void onReceive(OS::DatagramPacket & packet);
-		void addSSDPEventHandler(UTIL::AutoRef<SSDPEventHandler> handler);
-		void removeSSDPEventHandler(UTIL::AutoRef<SSDPEventHandler> handler);
+		void addSSDPEventListener(UTIL::AutoRef<SSDPEventListener> listener);
+		void removeSSDPEventListener(UTIL::AutoRef<SSDPEventListener> listener);
 	};
 }
 

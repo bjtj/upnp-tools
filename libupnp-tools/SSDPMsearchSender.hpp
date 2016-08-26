@@ -4,7 +4,7 @@
 #include <liboslayer/os.hpp>
 #include <liboslayer/AutoRef.hpp>
 #include <liboslayer/DatagramSocket.hpp>
-#include "SSDPEventHandler.hpp"
+#include "SSDPEventListener.hpp"
 #include "SSDPMulticastSender.hpp"
 
 namespace SSDP {

@@ -7,10 +7,10 @@ using namespace OS;
 using namespace UTIL;
 using namespace SSDP;
 
-class MySSDPEventHandler : public SSDPEventHandler {
+class MySSDPEventListener : public SSDPEventListener {
 public:
-	MySSDPEventHandler() {}
-	virtual ~MySSDPEventHandler() {}
+	MySSDPEventListener() {}
+	virtual ~MySSDPEventListener() {}
 
 	virtual void onMsearchResponse(SSDPHeader & header) {
 		cout << "RESP : " << header["LOCATION"] << endl;
@@ -28,7 +28,7 @@ int main(int argc, char *args[]) {
 	server.startAsync();
 	server.supportAsync(true);
 
-	server.addSSDPEventHandler(AutoRef<SSDPEventHandler>(new MySSDPEventHandler));
+	server.addSSDPEventListener(AutoRef<SSDPEventListener>(new MySSDPEventListener));
 
 	while (!done) {
 		FileStream fs(stdin);
@@ -39,15 +39,6 @@ int main(int argc, char *args[]) {
 		}
 
 		server.sendMsearchAsync(line, 3);
-		
-		// unsigned long tick = tick_milli();
-		// cout << " ++ m-search : " << line << endl;
-		// // server.sendMsearchAsync(line, 3);
-		// AutoRef<SSDPMsearchSender> sender = server.sendMsearch(line, 3, AutoRef<Selector>(new Selector));
-		// // AutoRef<SSDPMsearchSender> sender = server.sendMsearch(line, 3);
-		// sender->gather(3 * 1000);
-		// sender->close();
-		// cout << " -- m-search : " << line << "(" << tick_milli() - tick << " ms.)" << endl;
 	}
 
 	server.stop();

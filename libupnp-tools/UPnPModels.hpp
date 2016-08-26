@@ -133,8 +133,6 @@ namespace UPNP {
 	class UPnPService : public UPnPModelObject {
 	private:
 		UPnPDevice * device;
-		// std::vector<UPnPAction> _actions;
-		// std::vector<UPnPStateVariable> _stateVariables;
 		UPnPScpd _scpd;
 	public:
 		UPnPService();
@@ -148,12 +146,6 @@ namespace UPNP {
 		void setDevice(UPnPDevice * device);
 		UPnPDevice * getDevice();
 		HTTP::Url makeScpdUrl();
-		// std::vector<UPnPAction> & actions();
-		// UPnPAction getAction(const std::string & actionName);
-		// void addAction(UPnPAction action);
-		// std::vector<UPnPStateVariable> & stateVariables();
-		// UPnPStateVariable getStateVariable(const std::string & stateVariableName);
-		// void addStateVariable(UPnPStateVariable stateVariable);
 		UPnPScpd & scpd();
 	};
 

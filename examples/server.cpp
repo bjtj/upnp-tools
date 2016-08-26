@@ -6,7 +6,7 @@
 #include <libupnp-tools/SSDPMsearchSender.hpp>
 #include <libupnp-tools/NetworkUtil.hpp>
 #include <libupnp-tools/UPnPServer.hpp>
-#include <libupnp-tools/UPnPActionHandler.hpp>
+#include <libupnp-tools/UPnPActionRequestHandler.hpp>
 #include <libupnp-tools/UPnPDeviceDeserializer.hpp>
 #include <libupnp-tools/UPnPResourceManager.hpp>
 #include <libupnp-tools/UPnPDeviceProfileBuilder.hpp>
@@ -96,11 +96,11 @@ string scpd() {
 /**
  * @brief 
  */
-class MyActionHandler : public UPnPActionRequestHandler {
+class MyActionRequestHandler : public UPnPActionRequestHandler {
 private:
 public:
-    MyActionHandler() {}
-    virtual ~MyActionHandler() {}
+    MyActionRequestHandler() {}
+    virtual ~MyActionRequestHandler() {}
 
 	virtual void handleActionRequest(UPnPActionRequest & request, UPnPActionResponse & response) {
 
@@ -151,7 +151,7 @@ int main(int argc, char *args[]) {
 
 	s_set_dummy(server, uuid);
 	
-	AutoRef<UPnPActionRequestHandler> handler(new MyActionHandler);
+	AutoRef<UPnPActionRequestHandler> handler(new MyActionRequestHandler);
 	server.setActionRequestHandler(handler);
 
 	cout << "uuid: " << uuid << endl;
@@ -180,7 +180,9 @@ int main(int argc, char *args[]) {
 			} else if (tokens[0] == "list") {
 				vector<AutoRef<UPnPDeviceProfileSession> > vec = server.getProfileManager().sessionList();
 				for (size_t i = 0; i < vec.size(); i++) {
-					cout << "[" << i << "] " << vec[i]->profile().uuid() << " ; " << (vec[i]->profile().deviceTypes().size() > 0 ? vec[i]->profile().deviceTypes()[0] : "") << endl;
+					UPnPDeviceProfile & profile = vec[i]->profile();
+					cout << "[" << i << "] " << profile.uuid() << " ; " << (profile.deviceTypes().size() > 0 ? profile.deviceTypes()[0] : "") <<
+						 " / " << (vec[i]->isEnabled() ? "enabled" : "disabled") << endl;
 				}
 			} else if (tokens[0] == "set-props") {
 				LinkedStringMap props;
@@ -192,11 +194,13 @@ int main(int argc, char *args[]) {
 					continue;
 				}
 				string uri = tokens[1];
+				// TODO: implement dynamic load
 			} else if (tokens[0] == "unload") {
 				if (tokens.size() < 2) {
 					continue;
 				}
 				string uuid = tokens[1];
+				// TODO: implement dynamic unload
 			}
 		}
 	}

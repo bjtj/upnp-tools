@@ -16,12 +16,12 @@ static void mcast(const string & packet) {
 	sender.close();
 }
 
-class TestSSDPHandler : public SSDPEventHandler {
+class TestSSDPListener : public SSDPEventListener {
 private:
 	vector<SSDPHeader> _headers;
 public:
-    TestSSDPHandler() {}
-    virtual ~TestSSDPHandler() {}
+    TestSSDPListener() {}
+    virtual ~TestSSDPListener() {}
 
 	virtual bool filter(SSDPHeader & header) {
 		return true;
@@ -56,11 +56,11 @@ public:
 
 static void test_discovery() {
 
-	TestSSDPHandler * pHandler = new TestSSDPHandler;
-	AutoRef<SSDPEventHandler> handler(pHandler);
+	TestSSDPListener * pListener = new TestSSDPListener;
+	AutoRef<SSDPEventListener> listener(pListener);
 
 	SSDPServer server;
-	server.addSSDPEventHandler(handler);
+	server.addSSDPEventListener(listener);
 	server.startAsync();
 
 	idle(1000);
@@ -71,7 +71,7 @@ static void test_discovery() {
 
 	server.stop();
 
-	ASSERT(pHandler->hasHeaderWithRawPacket("NOTIFY * HTTP/1.1\r\n\r\n"), ==, true);
+	ASSERT(pListener->hasHeaderWithRawPacket("NOTIFY * HTTP/1.1\r\n\r\n"), ==, true);
 }
 
 int main(int argc, char *args[]) {

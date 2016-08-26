@@ -41,7 +41,7 @@ namespace UPNP {
 		UPnPEventNotifyThread notifyThread;
 		UTIL::TimerLooperThread timerThread;
 		SSDP::SSDPServer ssdpServer;
-		UTIL::AutoRef<SSDP::SSDPEventHandler> ssdpEventHandler;
+		UTIL::AutoRef<SSDP::SSDPEventListener> ssdpListener;
 
 	private:
 		// do not allow copy or assign

@@ -52,12 +52,12 @@ namespace UPNP {
 	/**
 	 * @brief
 	 */
-	class ControlPointSSDPHandler : public SSDPEventHandler {
+	class ControlPointSSDPListener : public SSDPEventListener {
 	private:
 		UPnPControlPoint * cp;
 	public:
-		ControlPointSSDPHandler(UPnPControlPoint * cp) : cp(cp) {}
-		virtual ~ControlPointSSDPHandler() {}
+		ControlPointSSDPListener(UPnPControlPoint * cp) : cp(cp) {}
+		virtual ~ControlPointSSDPListener() {}
 
 		void setControlPoint(UPnPControlPoint * cp) {
 			this->cp = cp;
@@ -91,10 +91,21 @@ namespace UPNP {
 
 	// 
 	
-	UPnPControlPoint::UPnPControlPoint(UPnPControlPointConfig & config) : config(config), ssdpHandler(new ControlPointSSDPHandler(this)), notificationServer(NULL), started(false), deviceBuildTaskThreadPool(10) {
+	UPnPControlPoint::UPnPControlPoint(UPnPControlPointConfig & config)
+		: config(config),
+		  ssdpListener(new ControlPointSSDPListener(this)),
+		  notificationServer(NULL),
+		  started(false),
+		  deviceBuildTaskThreadPool(10) {
 	}
 
-	UPnPControlPoint::UPnPControlPoint(UPnPControlPointConfig & config, AutoRef<NetworkStateManager> networkStateManager) : networkStateManager(networkStateManager),  config(config), ssdpHandler(new ControlPointSSDPHandler(this)), notificationServer(NULL), started(false), deviceBuildTaskThreadPool(10) {
+	UPnPControlPoint::UPnPControlPoint(UPnPControlPointConfig & config, AutoRef<NetworkStateManager> networkStateManager)
+		: networkStateManager(networkStateManager),
+		  config(config),
+		  ssdpListener(new ControlPointSSDPListener(this)),
+		  notificationServer(NULL),
+		  started(false),
+		  deviceBuildTaskThreadPool(10) {
 	}
 	
 	UPnPControlPoint::~UPnPControlPoint() {
@@ -106,8 +117,9 @@ namespace UPNP {
 			return;
 		}
 		
-		ssdpServer.addSSDPEventHandler(ssdpHandler);
+		ssdpServer.addSSDPEventListener(ssdpListener);
 		ssdpServer.startAsync();
+		ssdpServer.supportAsync(true);
 
 		if (!notificationServer) {
 			UPnPNotificationServerConfig notificationServerConfig(config.getIntegerProperty("listen.port"));
@@ -196,6 +208,10 @@ namespace UPNP {
 	void UPnPControlPoint::sendMsearchAndWait(const string & target, unsigned long timeoutSec) {
 		ssdpServer.sendMsearchAndGather(target, timeoutSec);
 	}
+	
+	void UPnPControlPoint::sendMsearchAsync(const string & target, unsigned long timeoutSec) {
+		ssdpServer.sendMsearchAsync(target, timeoutSec);
+	}
 
 	UPnPSessionManager & UPnPControlPoint::sessionManager() {
 		return _sessionManager;
@@ -238,7 +254,7 @@ namespace UPNP {
 	}
 	void UPnPControlPoint::unsubscribe(const string & udn, const string & serviceType) {
 		if (!notificationServer) {
-			throw Exception("notification server is not working");
+			throw Exception("notification server is not started");
 		}
 
 		UPnPEventSubscription subscription = notificationServer->findSubscriptionWithUdnAndServiceType(udn, serviceType);
@@ -313,6 +329,7 @@ namespace UPNP {
 			(*iter)->add_s(device);
 		}
 	}
+	
 	void UPnPControlPoint::announceDeviceRemoved(UTIL::AutoRef<UPnPDevice> device) {
 		if (device.nil()) {
 			return;

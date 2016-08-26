@@ -21,7 +21,7 @@ namespace UPNP {
 	bool UPnPEventSubscriptionRegistry::hasSubscription(const string & sid) {
 		return subscriptions.find(sid) != subscriptions.end();
 	}
-	UPnPEventSubscription & UPnPEventSubscriptionRegistry::findSubscriptionWithUdnAndServiceType(const std::string & udn, const std::string & serviceType) {
+	UPnPEventSubscription & UPnPEventSubscriptionRegistry::findSubscriptionWithUdnAndServiceType(const string & udn, const string & serviceType) {
 		for (map<string, UPnPEventSubscription>::iterator iter = subscriptions.begin(); iter != subscriptions.end(); iter++) {
 			if (iter->second.udn() == udn && iter->second.serviceType() == serviceType) {
 				return iter->second;

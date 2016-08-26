@@ -90,35 +90,6 @@ namespace UPNP {
 		return _scpd;
 	}
 	
-	// vector<UPnPAction> & UPnPService::actions() {
-	// 	return _actions;
-	// }
-	// UPnPAction UPnPService::getAction(const string & actionName) {
-	// 	for (vector<UPnPAction>::iterator iter = _actions.begin(); iter != _actions.end(); iter++) {
-	// 		if (iter->name() == actionName) {
-	// 			return *iter;
-	// 		}
-	// 	}
-	// 	throw OS::Exception("not found action / name: " + actionName, -1, 0);
-	// }
-	// void UPnPService::addAction(UPnPAction action) {
-	// 	_actions.push_back(action);
-	// }
-	// vector<UPnPStateVariable> & UPnPService::stateVariables() {
-	// 	return _stateVariables;
-	// }
-	// UPnPStateVariable UPnPService::getStateVariable(const string & stateVariableName) {
-	// 	for (vector<UPnPStateVariable>::iterator iter = _stateVariables.begin(); iter != _stateVariables.end(); iter++) {
-	// 		if (iter->name() == stateVariableName) {
-	// 			return *iter;
-	// 		}
-	// 	}
-	// 	throw OS::Exception("not found state variable / name: " + stateVariableName, -1, 0);
-	// }
-	// void UPnPService::addStateVariable(UPnPStateVariable stateVariable) {
-	// 	_stateVariables.push_back(stateVariable);
-	// }
-
 
 
 	UPnPDevice::UPnPDevice() : parent(NULL) {}

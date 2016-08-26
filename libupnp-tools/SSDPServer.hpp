@@ -8,7 +8,7 @@
 #include "SSDPHeader.hpp"
 #include "SSDPMsearchSender.hpp"
 #include "SSDPMulticastListener.hpp"
-#include "SSDPEventHandler.hpp"
+#include "SSDPEventListener.hpp"
 
 namespace SSDP {
 
@@ -19,7 +19,7 @@ namespace SSDP {
 	private:
 		UTIL::AutoRef<OS::Selector> selector;
 		SSDP::SSDPMulticastListener mcastListener;
-		UTIL::AutoRef<SSDP::SSDPEventHandler> handler;
+		UTIL::AutoRef<SSDP::SSDPEventListener> listener;
 		OS::Thread * pollingThread;
 		OS::Thread * msearchResponseListenerThread;
 
@@ -50,7 +50,7 @@ namespace SSDP {
 		UTIL::AutoRef<SSDPMsearchSender> sendMsearch(const std::string & st, unsigned long timeoutSec, UTIL::AutoRef<OS::Selector> selector);
 		UTIL::AutoRef<SSDPMsearchSender> sendMsearch(const std::vector<std::string> & st, unsigned long timeoutSec);
 		UTIL::AutoRef<SSDPMsearchSender> sendMsearch(const std::vector<std::string> & st, unsigned long timeoutSec, UTIL::AutoRef<OS::Selector> selector);
-		void addSSDPEventHandler(UTIL::AutoRef<SSDPEventHandler> handler);
+		void addSSDPEventListener(UTIL::AutoRef<SSDPEventListener> listener);
 	};
 }
 

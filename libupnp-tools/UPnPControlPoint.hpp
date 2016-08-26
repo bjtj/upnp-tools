@@ -48,7 +48,7 @@ namespace UPNP {
 		UTIL::AutoRef<NetworkStateManager> networkStateManager;
 		UPnPControlPointConfig config;
 		UTIL::AutoRef<DeviceAddRemoveListener> deviceListener;
-		UTIL::AutoRef<SSDP::SSDPEventHandler> ssdpHandler;
+		UTIL::AutoRef<SSDP::SSDPEventListener> ssdpListener;
 		SSDP::SSDPServer ssdpServer;
 		UPnPSessionManager _sessionManager;
 		UPnPNotificationServer * notificationServer;
@@ -76,6 +76,7 @@ namespace UPNP {
 		UTIL::AutoRef<UPnPDevice> getDevice(const std::string & udn);
 		void clearDevices();
 		void sendMsearchAndWait(const std::string & target, unsigned long timeoutSec);
+		void sendMsearchAsync(const std::string & target, unsigned long timeoutSec);
 		UPnPSessionManager & sessionManager();
 		HTTP::Url getBaseUrlWithUdn(const std::string & udn);
 		UTIL::AutoRef<UPnPService> getServiceWithUdnAndServiceType(const std::string & udn, const std::string & serviceType);

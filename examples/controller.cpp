@@ -332,8 +332,7 @@ int run(int argc, char *args[]) {
 				}
 			} else {
 				cout << " -**- Searching... " << line << " **" << endl;
-				cp.sendMsearchAndWait(line, 3);
-				cout << " -**- Searching Done **" << endl;
+				cp.sendMsearchAsync(line, 3);
 			}
 		} else {
 			printList(cp.sessionManager());

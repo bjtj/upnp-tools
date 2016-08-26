@@ -50,7 +50,6 @@ namespace SSDP {
 			}
 		}
 		void close() {
-			printf("close (%ld ms.)\n", tick_milli() - startTick);
 			sender->close();
 		}
 		bool equalsSender(const AutoRef<SSDPMsearchSender> & sender) {
@@ -231,9 +230,8 @@ namespace SSDP {
 	}
 	AutoRef<SSDPMsearchSender> SSDPServer::sendMsearch(const string & st, unsigned long timeoutSec, AutoRef<Selector> selector) {
 		AutoRef<SSDPMsearchSender> sender(new SSDPMsearchSender(selector));
-		sender->addSSDPEventHandler(handler);
+		sender->addSSDPEventListener(listener);
 		sender->sendMsearchAllInterfaces(st, timeoutSec, MCAST_HOST, MCAST_PORT);
-		// sender->sendMsearch(st, timeoutSec, MCAST_HOST, MCAST_PORT);
 		return sender;
 	}
 	AutoRef<SSDPMsearchSender> SSDPServer::sendMsearch(const vector<string> & st, unsigned long timeoutSec) {
@@ -241,16 +239,15 @@ namespace SSDP {
 	}
 	AutoRef<SSDPMsearchSender> SSDPServer::sendMsearch(const vector<string> & st, unsigned long timeoutSec, AutoRef<Selector> selector) {
 		AutoRef<SSDPMsearchSender> sender(new SSDPMsearchSender(selector));
-		sender->addSSDPEventHandler(handler);
+		sender->addSSDPEventListener(listener);
 		for (vector<string>::const_iterator iter = st.begin(); iter != st.end(); iter++) {
 			sender->sendMsearchAllInterfaces(*iter, timeoutSec, MCAST_HOST, MCAST_PORT);
-			// sender->sendMsearch(*iter, timeoutSec, MCAST_HOST, MCAST_PORT);
 		}
 		return sender;
 	}
-	void SSDPServer::addSSDPEventHandler(AutoRef<SSDPEventHandler> handler) {
-		this->handler = handler;
-		mcastListener.addSSDPEventHandler(handler);
+	void SSDPServer::addSSDPEventListener(AutoRef<SSDPEventListener> listener) {
+		this->listener = listener;
+		mcastListener.addSSDPEventListener(listener);
 	}
 
 }
