@@ -220,15 +220,11 @@ public:
 		win_status->draw();
 		win_device_list->draw();
 	}
-	void printDeviceList(UPnPSessionManager & sessionManager) {
+	void printDeviceList(const vector<AutoRef<UPnPDevice> > & devices) {
 		vector<string> fns;
-		vector<string> lst = sessionManager.getUdnS();
-		for (vector<string>::iterator iter = lst.begin(); iter != lst.end(); iter++) {
-			AutoRef<UPnPSession> session = sessionManager[*iter];
-			if (session->completed()) {
-				string fn = session->getRootDevice()->getFriendlyName();
-				fns.push_back(fn);
-			}
+		for (vector<AutoRef<UPnPDevice> >::const_iterator iter = devices.begin(); iter != devices.end(); iter++) {
+			string fn = (*iter)->getFriendlyName();
+			fns.push_back(fn);
 		}
 		win_device_list->clearContents();
 		win_device_list->appendLines(fns);
@@ -247,12 +243,12 @@ public:
 
 	virtual void onDeviceAdd(AutoRef<UPnPDevice> device) {
 		tui.toast(" ** Added: " + device->getFriendlyName());
-		tui.printDeviceList(cp.sessionManager());
+		tui.printDeviceList(cp.getDevices());
 	}
 
 	virtual void onDeviceRemove(AutoRef<UPnPDevice> device) {
 		tui.toast(" ** Removed: " + device->getFriendlyName());
-		tui.printDeviceList(cp.sessionManager());
+		tui.printDeviceList(cp.getDevices());
 	}
 };
 
@@ -290,7 +286,7 @@ int main(int argc, char *args[]) {
 			cp.sendMsearchAsync("upnp:rootdevice", 3);
 			break;
 		case 'r':
-			tui.printDeviceList(cp.sessionManager());
+			tui.printDeviceList(cp.getDevices());
 			tui.draw();
 			break;
 		default:

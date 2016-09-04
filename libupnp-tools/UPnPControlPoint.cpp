@@ -1,6 +1,7 @@
 #include "UPnPControlPoint.hpp"
 #include <liboslayer/Uuid.hpp>
 #include "NetworkUtil.hpp"
+#include "UPnPDeviceDeserializer.hpp"
 
 namespace UPNP {
 
@@ -9,6 +10,64 @@ namespace UPNP {
 	using namespace SSDP;
 	using namespace std;
 	using namespace OS;
+
+
+	UPnPDeviceSession::UPnPDeviceSession(const string & udn) :
+		_udn(udn), _completed(false), creationTime(0), updateTime(0), sessionTimeout(0) {
+		updateTime = creationTime = OS::tick_milli();
+	}
+	UPnPDeviceSession::~UPnPDeviceSession() {
+	}
+
+	string & UPnPDeviceSession::udn() {
+		return _udn;
+	}
+
+	void UPnPDeviceSession::setCreationTime(unsigned long creationTime) {
+		this->creationTime = creationTime;
+	}
+
+	void UPnPDeviceSession::setUpdateTime(unsigned long updateTime) {
+		this->updateTime = updateTime;
+	}
+
+	void UPnPDeviceSession::setSessionTimeout(unsigned long sessionTimeout) {
+		this->sessionTimeout = sessionTimeout;
+	}
+
+	unsigned long UPnPDeviceSession::lifetimeFromCreation() {
+		return (OS::tick_milli() - creationTime);
+	}
+
+	unsigned long UPnPDeviceSession::lifetimeFromLastUpdate() {
+		return (OS::tick_milli() - updateTime);
+	}
+
+	bool UPnPDeviceSession::outdated() {
+		return (lifetimeFromLastUpdate() >= sessionTimeout);
+	}
+	
+	void UPnPDeviceSession::prolong(unsigned long timeout) {
+		this->updateTime = OS::tick_milli();
+		this->sessionTimeout = timeout;
+	}
+
+	bool UPnPDeviceSession::isCompleted() {
+		return _completed;
+	}
+
+	void UPnPDeviceSession::setCompleted(bool completed) {
+		this->_completed = completed;
+	}
+
+	AutoRef<UPnPDevice> UPnPDeviceSession::getRootDevice() {
+		return rootDevice;
+	}
+
+	void UPnPDeviceSession::setRootDevice(AutoRef<UPnPDevice> device) {
+		rootDevice = device;
+	}
+	
 
 	/**
 	 * @brief
@@ -24,21 +83,76 @@ namespace UPNP {
 		}
 	};
 
+
+
+	UPnPDeviceSessionManager::UPnPDeviceSessionManager() {
+	}
+	UPnPDeviceSessionManager::~UPnPDeviceSessionManager() {
+	}
+
+	bool UPnPDeviceSessionManager::has(const string & udn) {
+		return (sessions.find(udn) != sessions.end());
+	}
+	void UPnPDeviceSessionManager::clear() {
+		sessions.clear();
+	}
+	AutoRef<UPnPDeviceSession> UPnPDeviceSessionManager::prepareSession(const string & udn) {
+		if (!has(udn)) {
+			sessions[udn] = AutoRef<UPnPDeviceSession>(new UPnPDeviceSession(udn));
+		}
+		return sessions[udn];
+	}
+	void UPnPDeviceSessionManager::remove(const string & udn) {
+		sessions.erase(udn);
+	}
+	size_t UPnPDeviceSessionManager::size() {
+		return sessions.size();
+	}
+	vector<string> UPnPDeviceSessionManager::getUdnS() {
+		vector<string> ret;
+		for (map<string, AutoRef<UPnPDeviceSession> >::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
+			ret.push_back(iter->first);
+		}
+		return ret;
+	}
+	vector<AutoRef<UPnPDeviceSession> > UPnPDeviceSessionManager::getSessions() {
+		vector<AutoRef<UPnPDeviceSession> > ret;
+		for (map<string, AutoRef<UPnPDeviceSession> >::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
+			ret.push_back(iter->second);
+		}
+		return ret;
+	}
+	AutoRef<UPnPDeviceSession> UPnPDeviceSessionManager::operator[] (const string & udn) {
+		return sessions[udn];
+	}
+	vector<AutoRef<UPnPDeviceSession> > UPnPDeviceSessionManager::getOutdatedSessions() {
+		vector<AutoRef<UPnPDeviceSession> > ret;
+		for (map<string, AutoRef<UPnPDeviceSession> >::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
+			if (iter->second->outdated()) {
+				ret.push_back(iter->second);
+			}
+		}
+		return ret;
+	}
+
+	
+
 	/**
 	 * @brief
 	 */
 	class DeviceBuildTask : public Task {
 	private:
 		UPnPControlPoint & cp;
-		AutoRef<UPnPSession> session;
+		AutoRef<UPnPDeviceSession> session;
 		SSDPHeader header;
 	public:
-		DeviceBuildTask(UPnPControlPoint & cp, AutoRef<UPnPSession> session, SSDPHeader & header) : cp(cp), session(session), header(header) {}
+		DeviceBuildTask(UPnPControlPoint & cp, AutoRef<UPnPDeviceSession> session, SSDPHeader & header) : cp(cp), session(session), header(header) {}
 		virtual ~DeviceBuildTask() {}
 
 		virtual void doTask() {
 			try {
-				session->buildDevice(header);
+				session->setRootDevice(cp.buildDevice(header));
+				session->setCompleted(true);
 				cp.onDeviceBuildCompleted(session);
 			} catch (Exception & e) {
 				cp.onDeviceBuildFailed(session);
@@ -167,10 +281,11 @@ namespace UPNP {
 		string udn = uuid.getUuid();
 		InetAddress addr = header.getRemoteAddr();
 		if (!_sessionManager.has(udn)) {
-			AutoRef<UPnPSession> session = _sessionManager.prepareSession(udn);
+			AutoRef<UPnPDeviceSession> session = _sessionManager.prepareSession(udn);
+			session->prolong(parseCacheControlMilli(header.getCacheControl()));
 			deviceBuildTaskThreadPool.setTask(AutoRef<Task>(new DeviceBuildTask(*this, session, header)));
 		} else {
-			_sessionManager[udn]->prolong(header.getCacheControl());
+			_sessionManager[udn]->prolong(parseCacheControlMilli(header.getCacheControl()));
 		}
 	}
 
@@ -186,15 +301,21 @@ namespace UPNP {
 		_sessionManager.remove(udn);
 	}
 
-	void UPnPControlPoint::onDeviceBuildCompleted(AutoRef<UPnPSession> session) {
+	AutoRef<UPnPDevice> UPnPControlPoint::buildDevice(SSDPHeader & header) {
+		UPnPDeviceDeserializer deserializer;
+		return deserializer.build(Url(header.getLocation()));
+	}
+
+	void UPnPControlPoint::onDeviceBuildCompleted(AutoRef<UPnPDeviceSession> session) {
 		announceDeviceAdded(session->getRootDevice());
 	}
-	void UPnPControlPoint::onDeviceBuildFailed(AutoRef<UPnPSession> session) {
+	
+	void UPnPControlPoint::onDeviceBuildFailed(AutoRef<UPnPDeviceSession> session) {
 		_sessionManager.remove(session->udn());
 	}
 
 	AutoRef<UPnPDevice> UPnPControlPoint::getDevice(const string & udn) {
-		AutoRef<UPnPSession> session = _sessionManager[udn];
+		AutoRef<UPnPDeviceSession> session = _sessionManager[udn];
 		if (!session.nil()) {
 			return session->getRootDevice();
 		}
@@ -213,8 +334,17 @@ namespace UPNP {
 		ssdpServer.sendMsearchAsync(target, timeoutSec);
 	}
 
-	UPnPSessionManager & UPnPControlPoint::sessionManager() {
+	UPnPDeviceSessionManager & UPnPControlPoint::sessionManager() {
 		return _sessionManager;
+	}
+	
+	vector<AutoRef<UPnPDevice> > UPnPControlPoint::getDevices() {
+		vector<AutoRef<UPnPDevice> > ret;
+		vector<AutoRef<UPnPDeviceSession> > sessions = _sessionManager.getSessions();
+		for (vector<AutoRef<UPnPDeviceSession> >::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
+			ret.push_back((*iter)->getRootDevice());
+		}
+		return ret;
 	}
 
 	Url UPnPControlPoint::getBaseUrlWithUdn(const string & udn) {
@@ -293,12 +423,12 @@ namespace UPNP {
 		return notificationServer;
 	}
 
-	UTIL::TimerLooperThread & UPnPControlPoint::getTimerThread() {
+	TimerLooperThread & UPnPControlPoint::getTimerThread() {
 		return timerThread;
 	}
 	void UPnPControlPoint::clearOudatedSessions() {
-		vector<AutoRef<UPnPSession> > sessions = _sessionManager.getOutdatedSessions();
-		for (vector<AutoRef<UPnPSession> >::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
+		vector<AutoRef<UPnPDeviceSession> > sessions = _sessionManager.getOutdatedSessions();
+		for (vector<AutoRef<UPnPDeviceSession> >::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
 			AutoRef<UPnPDevice> device = (*iter)->getRootDevice();
 			announceDeviceRemoved(device);
 			_sessionManager.remove((*iter)->udn());
@@ -318,7 +448,7 @@ namespace UPNP {
 		}
 	}
 
-	void UPnPControlPoint::announceDeviceAdded(UTIL::AutoRef<UPnPDevice> device) {
+	void UPnPControlPoint::announceDeviceAdded(AutoRef<UPnPDevice> device) {
 		if (device.nil()) {
 			return;
 		}
@@ -330,7 +460,7 @@ namespace UPNP {
 		}
 	}
 	
-	void UPnPControlPoint::announceDeviceRemoved(UTIL::AutoRef<UPnPDevice> device) {
+	void UPnPControlPoint::announceDeviceRemoved(AutoRef<UPnPDevice> device) {
 		if (device.nil()) {
 			return;
 		}
@@ -340,5 +470,13 @@ namespace UPNP {
 		for (vector<AutoRef<SharedUPnPDeviceList> >::iterator iter = sharedDeviceLists.begin(); iter != sharedDeviceLists.end(); iter++) {
 			(*iter)->remove_s(device);
 		}
+	}
+
+	unsigned long UPnPControlPoint::parseCacheControlMilli(const string & cacheControl) {
+		string maxAgePrefix = "max-age=";
+		if (!Text::startsWith(cacheControl, maxAgePrefix)) {
+			return DEFAULT_DEVICE_SESSION_TIMEOUT;
+		}
+		return (unsigned long)Text::toLong(cacheControl.substr(maxAgePrefix.size())) * 1000;
 	}
 }

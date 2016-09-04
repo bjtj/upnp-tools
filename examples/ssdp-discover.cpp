@@ -12,6 +12,14 @@ public:
 	MySSDPEventListener() {}
 	virtual ~MySSDPEventListener() {}
 
+	virtual void onMsearch(SSDPHeader & header) {
+		cout << "M-SEARCH : " << header["ST"] << endl;
+	}
+
+	virtual void onNotify(SSDPHeader & header) {
+		cout << "NOTIFY : " << header["NTS"] << " - " << header["LOCATION"] << endl;
+	}
+
 	virtual void onMsearchResponse(SSDPHeader & header) {
 		cout << "RESP : " << header["LOCATION"] << endl;
 	}

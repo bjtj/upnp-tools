@@ -67,33 +67,32 @@ string prompt(const string & msg) {
 	return readline();
 }
 
-class UPnPSessionPrinter {
+class UPnPDevicePrinter {
 private:
-	UPnPSession & session;
+	AutoRef<UPnPDevice> device;
 public:
-    UPnPSessionPrinter(UPnPSession & session) : session(session) {}
-    virtual ~UPnPSessionPrinter() {}
+    UPnPDevicePrinter(AutoRef<UPnPDevice> device) : device(device) {}
+    virtual ~UPnPDevicePrinter() {}
 	
 	string toString() {
-		if (session.getRootDevice().nil()) {
+		if (device.nil()) {
 			return "(null)";
 		}
-		return toString(*(session.getRootDevice()), 0);
+		return toString(device, 0);
 	}
 
-	string toString(UPnPDevice & device, int depth) {
+	string toString(AutoRef<UPnPDevice> device, int depth) {
 		string str;
 
 		str.append(depth, ' ');
 		if (depth > 0) { str.append(" - "); }
-		str.append(device.getUdn() + " (" + device.getFriendlyName() + ")");
-		str.append(" - " + Text::toString(session.lifetimeFromLastUpdate()) + " ms.");
+		str.append(device->getUdn() + " (" + device->getFriendlyName() + ")");
 
-		vector<AutoRef<UPnPService> > services = device.services();
+		vector<AutoRef<UPnPService> > services = device->services();
 		for (vector<AutoRef<UPnPService> >::iterator iter = services.begin(); iter != services.end(); iter++) {
 			str.append("\n");
 			str.append(depth, ' ');
-			str.append(" ** " + (*iter)->getServiceType());
+			str.append(" <> " + (*iter)->getServiceType());
 
 			vector<UPnPAction> actions = (*iter)->scpd().actions();
 			for (vector<UPnPAction>::iterator aiter = actions.begin(); aiter != actions.end(); aiter++) {
@@ -103,81 +102,55 @@ public:
 			}
 		}
 			
-		vector<AutoRef<UPnPDevice> > & devices = device.embeddedDevices();
+		vector<AutoRef<UPnPDevice> > & devices = device->embeddedDevices();
 		for (vector<AutoRef<UPnPDevice> >::iterator iter = devices.begin(); iter != devices.end(); iter++) {
 			str.append("\n");
-			str.append(toString(*(*iter), depth + 1));
+			str.append(toString((*iter), depth + 1));
 		}
 		return str;
 	}
 
 	string toBriefString() {
-		if (session.getRootDevice().nil()) {
+		if (device.nil()) {
 			return "";
 		}
-		return toBriefString(*(session.getRootDevice()), 0);
+		return toBriefString(device, 0);
 	}
 
-	string toBriefString(UPnPDevice & device, int depth) {
+	string toBriefString(AutoRef<UPnPDevice> device, int depth) {
 		string str;
 
 		str.append(depth, ' ');
-		if (depth > 0) { str.append(" - "); }
-		str.append(device.getUdn() + " (" + device.getFriendlyName() + ")");
-		str.append(" - " + Text::toString(session.lifetimeFromLastUpdate()) + " ms.");
+		if (depth > 0) { str.append("  - "); }
+		str.append(device->getUdn() + " (" + device->getFriendlyName() + ")");
 
-		vector<AutoRef<UPnPService> > services = device.services();
-		for (vector<AutoRef<UPnPService> >::iterator iter = services.begin(); iter != services.end(); iter++) {
-			str.append("\n");
-			str.append(depth, ' ');
-			str.append(" ** " + (*iter)->getServiceType());
-		}
-			
-		vector<AutoRef<UPnPDevice> > & devices = device.embeddedDevices();
+		vector<AutoRef<UPnPDevice> > & devices = device->embeddedDevices();
 		for (vector<AutoRef<UPnPDevice> >::iterator iter = devices.begin(); iter != devices.end(); iter++) {
 			str.append("\n");
-			str.append(toBriefString(*(*iter), depth + 1));
+			str.append(toBriefString((*iter), depth + 1));
 		}
 		return str;
 	}
 };
 
-void filterSession(UPnPSessionManager & sessionManager, vector<string> & lst) {
-	for (vector<string>::iterator iter = lst.begin(); iter != lst.end();) {
-		if (!sessionManager[*iter]->completed()) {
-			iter = lst.erase(iter);
-		} else {
-			iter++;
-		}
-	}
-}
+void printList(const vector<AutoRef<UPnPDevice> > & devices) {
 
-void printList(UPnPSessionManager & sessionManager) {
-	
-	vector<string> lst = sessionManager.getUdnS();
-	filterSession(sessionManager, lst);
-
-	cout << " == Device List (" << lst.size() << ") ==" << endl;
+	cout << " == Device List (" << devices.size() << ") ==" << endl;
 	
 	size_t i = 0;
-	for (vector<string>::iterator iter = lst.begin(); iter != lst.end(); iter++, i++) {
-		AutoRef<UPnPSession> session = sessionManager[*iter];
-		UPnPSessionPrinter printer(*session);
+	for (vector<AutoRef<UPnPDevice> >::const_iterator iter = devices.begin(); iter != devices.end(); iter++, i++) {
+		UPnPDevicePrinter printer(*iter);
 		cout << "[" << i << "] " << printer.toBriefString() << endl;
 	}
 }
 
-void selectDeviceByIndex(UPnPSessionManager & sessionManager, size_t idx) {
+void selectDeviceByIndex(const vector<AutoRef<UPnPDevice> > & devices, size_t idx) {
 
-	vector<string> lst = sessionManager.getUdnS();
-	filterSession(sessionManager, lst);
-	if (idx >= lst.size()) {
+	if (idx >= devices.size()) {
 		return;
 	}
 
-	AutoRef<UPnPSession> session = sessionManager[lst[idx]];
-
-	UPnPSessionPrinter printer(*session);
+	UPnPDevicePrinter printer(devices[idx]);
 	cout << printer.toString() << endl;
 }
 
@@ -235,7 +208,7 @@ int run(int argc, char *args[]) {
 			} else if (line.find_first_not_of("0123456789") == string::npos) {
 				int idx = Text::toInt(line);
 				cout << "idx : " << idx << endl;
-				selectDeviceByIndex(cp.sessionManager(), (size_t)idx);
+				selectDeviceByIndex(cp.getDevices(), (size_t)idx);
 			} else if (Text::startsWith(line, "udn ")) {
 				selection.udn() = line.substr(4);
 			} else if (line == "udn") {
@@ -335,7 +308,7 @@ int run(int argc, char *args[]) {
 				cp.sendMsearchAsync(line, 3);
 			}
 		} else {
-			printList(cp.sessionManager());
+			printList(cp.getDevices());
 		}
 	}
 
