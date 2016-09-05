@@ -24,13 +24,11 @@ libupnp_toolsinc_HEADERS = \
 	UPnPDeviceProfileSession.hpp \
 	UPnPDeviceProfileSessionManager.hpp \
 	UPnPDeviceSerializer.hpp \
+	UPnPEventReceiver.hpp \
 	UPnPEventSubscriber.hpp \
 	UPnPEventSubscription.hpp \
-	UPnPEventSubscriptionRegistry.hpp \
-	UPnPEventSubscriptionSession.hpp \
 	UPnPModels.hpp \
-	UPnPNotificationCenter.hpp \
-	UPnPNotificationServer.hpp \
+	UPnPPropertyManager.hpp \
 	UPnPResourceManager.hpp \
 	UPnPServer.hpp \
 	UPnPServiceProfile.hpp \
@@ -78,20 +76,16 @@ libupnp_tools_la_SOURCES = \
 	UPnPDeviceProfileSessionManager.hpp \
 	UPnPDeviceSerializer.cpp \
 	UPnPDeviceSerializer.hpp \
+	UPnPEventReceiver.cpp \
+	UPnPEventReceiver.hpp \
 	UPnPEventSubscriber.cpp \
 	UPnPEventSubscriber.hpp \
 	UPnPEventSubscription.cpp \
 	UPnPEventSubscription.hpp \
-	UPnPEventSubscriptionRegistry.cpp \
-	UPnPEventSubscriptionRegistry.hpp \
-	UPnPEventSubscriptionSession.cpp \
-	UPnPEventSubscriptionSession.hpp \
 	UPnPModels.cpp \
 	UPnPModels.hpp \
-	UPnPNotificationCenter.cpp \
-	UPnPNotificationCenter.hpp \
-	UPnPNotificationServer.cpp \
-	UPnPNotificationServer.hpp \
+	UPnPPropertyManager.cpp \
+	UPnPPropertyManager.hpp \
 	UPnPResourceManager.cpp \
 	UPnPResourceManager.hpp \
 	UPnPServer.cpp \

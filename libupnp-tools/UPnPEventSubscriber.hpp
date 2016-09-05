@@ -35,18 +35,6 @@ namespace UPNP {
 	/**
 	 * @brief
 	 */
-	class UPnPNotificationListener {
-	private:
-	public:
-		UPnPNotificationListener();
-		virtual ~UPnPNotificationListener();
-		virtual void onNotify(UPnPNotify & notify) = 0;
-	};
-
-
-	/**
-	 * @brief
-	 */
 	class UPnPEventSubscribeRequest {
 	private:
 		std::vector<std::string> _callbackUrls;

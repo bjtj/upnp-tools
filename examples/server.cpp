@@ -135,7 +135,7 @@ static void s_set_dummy(UPnPServer & server, const string & uuid) {
 	LinkedStringMap props;
 	props["SourceProtocolInfo"] = "<initial source>";
 	props["SinkProtocolInfo"] = "<initial sink>";
-	server.getNotificationCenter().registerService(uuid, dummy, props);
+	server.getPropertyManager().registerService(uuid, dummy, props);
 }
 
 /**
@@ -188,7 +188,7 @@ int main(int argc, char *args[]) {
 				LinkedStringMap props;
 				props["SourceProtocolInfo"] = "<sample source>";
 				props["SinkProtocolInfo"] = "<sample sink>";
-				server.getNotificationCenter().setProperties(uuid, "urn:schemas-dummy-com:service:Dummy:1", props);
+				server.getPropertyManager().setProperties(uuid, "urn:schemas-dummy-com:service:Dummy:1", props);
 			} else if (tokens[0] == "load") {
 				if (tokens.size() < 2) {
 					continue;

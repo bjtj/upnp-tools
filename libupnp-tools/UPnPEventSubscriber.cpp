@@ -46,15 +46,6 @@ namespace UPNP {
 	 *
 	 */
 
-	UPnPNotificationListener::UPnPNotificationListener() {
-	}
-	UPnPNotificationListener::~UPnPNotificationListener() {
-	}
-
-	/**
-	 *
-	 */
-
 	UPnPEventSubscribeRequest::UPnPEventSubscribeRequest() : _timeoutSec(0) {
 	}
 	UPnPEventSubscribeRequest::UPnPEventSubscribeRequest(std::vector<std::string> & callbackUrls, unsigned long timeoutSec) : _callbackUrls(callbackUrls), _timeoutSec(timeoutSec) {

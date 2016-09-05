@@ -10,7 +10,7 @@
 #include "UPnPModels.hpp"
 #include "UPnPActionInvoker.hpp"
 #include "UPnPEventSubscriber.hpp"
-#include "UPnPNotificationServer.hpp"
+#include "UPnPEventReceiver.hpp"
 #include "NetworkStateManager.hpp"
 #include "SharedUPnPDeviceList.hpp"
 
@@ -105,7 +105,7 @@ namespace UPNP {
 		SSDP::SSDPServer ssdpServer;
 		UPnPDeviceSessionManager _sessionManager;
 		UTIL::TimebaseList<UTIL::AutoRef<UPnPDevice> > _sessions;
-		UPnPNotificationServer * notificationServer;
+		UPnPEventReceiver * eventReceiver;
 		UTIL::TimerLooperThread timerThread;
 		bool started;
 		UTIL::TaskThreadPool deviceBuildTaskThreadPool;
@@ -142,7 +142,7 @@ namespace UPNP {
 		UPnPEventSubscriber prepareEventSubscriber(const std::string & udn, const std::string & serviceType);
 		UTIL::AutoRef<UPnPService> findService(UTIL::AutoRef<UPnPDevice> device, const std::string & serviceType);
 		UTIL::AutoRef<UPnPService> findServiceRecursive(UTIL::AutoRef<UPnPDevice> device, const std::string & serviceType);
-		UPnPNotificationServer * getNotificationServer();
+		UPnPEventReceiver * getEventReceiver();
 		UTIL::TimerLooperThread & getTimerThread();
 		void clearOudatedSessions();
 		unsigned long parseCacheControlMilli(const std::string & cacheControl, unsigned long def);

@@ -23,12 +23,16 @@ namespace UPNP {
 	 */
 	class UPnPServerLifetimeTask : public TimerTask {
 	private:
+		UPnPServer & server;
 	public:
-		UPnPServerLifetimeTask() {}
+		UPnPServerLifetimeTask(UPnPServer & server) : server(server) {}
 		virtual ~UPnPServerLifetimeTask() {}
 		virtual void doTask() {
+			
 			// TODO: notify alive profiles
+			
 			// TODO: check outdated resources
+			server.collectOutdated();
 		}
 	};
 
@@ -145,7 +149,7 @@ namespace UPNP {
 				// UPnPDeviceProfile deviceProfile = server.getDeviceProfileHasEventSubUrl(uri);
 				UPnPDeviceProfile deviceProfile = server.getProfileManager().getDeviceProfileSessionHasEventSubUrl(uri)->profile();
 				UPnPServiceProfile serviceProfile = deviceProfile.getServiceProfileWithEventSubUrl(uri);
-				UPnPNotificationCenter & nc = server.getNotificationCenter();
+				UPnPPropertyManager & nc = server.getPropertyManager();
 
 				if (request.getMethod() == "SUBSCRIBE") {
 					string callbackUrls = request.getHeaderFieldIgnoreCase("CALLBACK");
@@ -165,7 +169,7 @@ namespace UPNP {
 
 					nc.addSubscriptionSession(session);
 
-					server.getEventNotifyThread().delayNotify(100, sid);
+					server.delayNotifyEvent(sid, 100);
 
 					response.setStatusCode(200);
 					response.setContentType("text/xml");
@@ -299,7 +303,7 @@ namespace UPNP {
 	UPnPServer::UPnPServer(const UPnPServer::Config & config)
 		: config(config),
 		  httpServer(NULL),
-		  notifyThread(notificationCenter),
+		  notificationThread(propertyManager),
 		  ssdpListener(new UPnPServerSsdpHandler(*this)) {
 	}
 
@@ -307,7 +311,7 @@ namespace UPNP {
 		: networkStateManager(networkStateManager),
 		  config(config),
 		  httpServer(NULL),
-		  notifyThread(notificationCenter),
+		  notificationThread(propertyManager),
 		  ssdpListener(new UPnPServerSsdpHandler(*this)) {
 	}
 	
@@ -328,10 +332,10 @@ namespace UPNP {
 		httpServer->registerRequestHandler("/*", handler);
 		httpServer->startAsync();
 
-		notifyThread.start();
+		notificationThread.start();
 		
 		timerThread.start();
-		timerThread.looper().interval(10 * 1000, AutoRef<TimerTask>(new UPnPServerLifetimeTask));
+		timerThread.looper().interval(10 * 1000, AutoRef<TimerTask>(new UPnPServerLifetimeTask(*this)));
 
 		ssdpServer.addSSDPEventListener(ssdpListener);
 		ssdpServer.startAsync();
@@ -348,8 +352,8 @@ namespace UPNP {
 		timerThread.stop();
 		timerThread.join();
 		
-		notifyThread.interrupt();
-		notifyThread.join();
+		notificationThread.interrupt();
+		notificationThread.join();
 		
 		httpServer->stop();
 		delete httpServer;
@@ -492,15 +496,23 @@ namespace UPNP {
 		return actionRequestHandler;
 	}
 
-	UPnPNotificationCenter & UPnPServer::getNotificationCenter() {
-		return notificationCenter;
+	UPnPPropertyManager & UPnPServer::getPropertyManager() {
+		return propertyManager;
 	}
 
-	UPnPEventNotifyThread & UPnPServer::getEventNotifyThread() {
-		return notifyThread;
+	void UPnPServer::notifyEvent(const string & sid) {
+		notificationThread.notify(sid);
+	}
+	
+	void UPnPServer::delayNotifyEvent(const string & sid, unsigned long delay) {
+		notificationThread.delayNotify(sid, delay);
 	}
 
 	TimerLooperThread & UPnPServer::getTimerThread() {
 		return timerThread;
+	}
+
+	void UPnPServer::collectOutdated() {
+		propertyManager.collectOutdated();
 	}
 }

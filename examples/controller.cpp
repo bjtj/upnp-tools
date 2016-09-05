@@ -21,11 +21,11 @@ using namespace UPNP;
 using namespace HTTP;
 using namespace XML;
 
-class MyNotifyListener : public UPnPNotificationListener {
+class MyEventListener : public UPnPEventListener {
 private:
 public:
-    MyNotifyListener() {}
-    virtual ~MyNotifyListener() {}
+    MyEventListener() {}
+    virtual ~MyEventListener() {}
 	virtual void onNotify(UPnPNotify & notify) {
 		cout << "Notify : " << notify.sid() << endl;
 		vector<string> names = notify.propertyNames();
@@ -196,7 +196,7 @@ int run(int argc, char *args[]) {
 	cp.setDeviceAddRemoveListener(AutoRef<DeviceAddRemoveListener>(new MyDeviceListener));
 	cp.startAsync();
 
-	cp.getNotificationServer()->addNotificationListener(AutoRef<UPnPNotificationListener>(new MyNotifyListener));
+	cp.getEventReceiver()->addEventListener(AutoRef<UPnPEventListener>(new MyEventListener));
 
 	while (1) {
 		string line;

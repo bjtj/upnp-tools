@@ -7,7 +7,7 @@
 #include <liboslayer/Properties.hpp>
 #include <liboslayer/StringElements.hpp>
 #include <liboslayer/Timer.hpp>
-#include "UPnPNotificationCenter.hpp"
+#include "UPnPPropertyManager.hpp"
 #include "UPnPDeviceProfileSession.hpp"
 #include "UPnPDeviceProfileSessionManager.hpp"
 #include "UPnPActionRequestHandler.hpp"
@@ -37,8 +37,8 @@ namespace UPNP {
 		UPnPDeviceProfileSessionManager profileManager;
 		HTTP::AnotherHttpServer * httpServer;
 		UTIL::AutoRef<UPnPActionRequestHandler> actionRequestHandler;
-		UPnPNotificationCenter notificationCenter;
-		UPnPEventNotifyThread notifyThread;
+		UPnPPropertyManager propertyManager;
+		UPnPEventNotificationThread notificationThread;
 		UTIL::TimerLooperThread timerThread;
 		SSDP::SSDPServer ssdpServer;
 		UTIL::AutoRef<SSDP::SSDPEventListener> ssdpListener;
@@ -78,11 +78,14 @@ namespace UPNP {
 		UTIL::AutoRef<UPnPActionRequestHandler> getActionRequestHandler();
 
 		// event notification
-		UPnPNotificationCenter & getNotificationCenter();
-		UPnPEventNotifyThread & getEventNotifyThread();
+		UPnPPropertyManager & getPropertyManager();
+		void notifyEvent(const std::string & sid);
+		void delayNotifyEvent(const std::string & sid, unsigned long delay);
 
 		// session timeout manager
 		UTIL::TimerLooperThread & getTimerThread();
+
+		void collectOutdated();
 	};
 }
 

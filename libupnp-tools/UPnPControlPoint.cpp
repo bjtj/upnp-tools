@@ -208,7 +208,7 @@ namespace UPNP {
 	UPnPControlPoint::UPnPControlPoint(UPnPControlPointConfig & config)
 		: config(config),
 		  ssdpListener(new ControlPointSSDPListener(this)),
-		  notificationServer(NULL),
+		  eventReceiver(NULL),
 		  started(false),
 		  deviceBuildTaskThreadPool(10) {
 	}
@@ -217,7 +217,7 @@ namespace UPNP {
 		: networkStateManager(networkStateManager),
 		  config(config),
 		  ssdpListener(new ControlPointSSDPListener(this)),
-		  notificationServer(NULL),
+		  eventReceiver(NULL),
 		  started(false),
 		  deviceBuildTaskThreadPool(10) {
 	}
@@ -235,10 +235,10 @@ namespace UPNP {
 		ssdpServer.startAsync();
 		ssdpServer.supportAsync(true);
 
-		if (!notificationServer) {
-			UPnPNotificationServerConfig notificationServerConfig(config.getIntegerProperty("listen.port"));
-			notificationServer = new UPnPNotificationServer(notificationServerConfig);
-			notificationServer->startAsync();
+		if (!eventReceiver) {
+			UPnPEventReceiverConfig eventReceiverConfig(config.getIntegerProperty("listen.port"));
+			eventReceiver = new UPnPEventReceiver(eventReceiverConfig);
+			eventReceiver->startAsync();
 		}
 
 		timerThread.start();
@@ -260,10 +260,10 @@ namespace UPNP {
 		timerThread.stop();
 		timerThread.join();
 		
-		if (notificationServer) {
-			notificationServer->stop();
-			delete notificationServer;
-			notificationServer = NULL;
+		if (eventReceiver) {
+			eventReceiver->stop();
+			delete eventReceiver;
+			eventReceiver = NULL;
 		}
 		
 		ssdpServer.stop();
@@ -366,28 +366,28 @@ namespace UPNP {
 	}
 
 	void UPnPControlPoint::subscribe(const string & udn, const string & serviceType) {
-		if (!notificationServer) {
-			throw Exception("notification server is not working");
+		if (!eventReceiver) {
+			throw Exception("event receiver is stopped");
 		}
 
 		InetAddress addr = NetworkUtil::selectDefaultAddress();
 
 		UPnPEventSubscriber subscriber = prepareEventSubscriber(udn, serviceType);
-		UPnPEventSubscribeRequest request(notificationServer->getCallbackUrl(addr.getHost()), 300);
+		UPnPEventSubscribeRequest request(eventReceiver->getCallbackUrl(addr.getHost()), 300);
 		UPnPEventSubscribeResponse response = subscriber.subscribe(request);
 
 		UPnPEventSubscription subscription(response.sid());
 		subscription.udn() = udn;
 		subscription.serviceType() = serviceType;
-		notificationServer->addSubscription(subscription);
+		eventReceiver->addSubscription(subscription);
 		
 	}
 	void UPnPControlPoint::unsubscribe(const string & udn, const string & serviceType) {
-		if (!notificationServer) {
-			throw Exception("notification server is not started");
+		if (!eventReceiver) {
+			throw Exception("event receiver is stopped");
 		}
 
-		UPnPEventSubscription subscription = notificationServer->findSubscriptionWithUdnAndServiceType(udn, serviceType);
+		UPnPEventSubscription subscription = eventReceiver->findSubscriptionWithUdnAndServiceType(udn, serviceType);
 		UPnPEventSubscriber subscriber = prepareEventSubscriber(udn, serviceType);
 		subscriber.unsubscribe(subscription.sid());
 	}
@@ -419,8 +419,8 @@ namespace UPNP {
 		}
 		return AutoRef<UPnPService>();
 	}
-	UPnPNotificationServer * UPnPControlPoint::getNotificationServer() {
-		return notificationServer;
+	UPnPEventReceiver * UPnPControlPoint::getEventReceiver() {
+		return eventReceiver;
 	}
 
 	TimerLooperThread & UPnPControlPoint::getTimerThread() {
