@@ -4,12 +4,11 @@
 #include <libupnp-tools/UPnPServer.hpp>
 #include <libupnp-tools/HttpUtils.hpp>
 #include <libupnp-tools/XmlUtils.hpp>
-#include <libupnp-tools/UPnPSession.hpp>
 #include <libupnp-tools/UPnPActionInvoker.hpp>
 #include <libupnp-tools/UPnPActionHandler.hpp>
 #include <libupnp-tools/UPnPDeviceDeserializer.hpp>
 #include <libupnp-tools/UPnPEventSubscriber.hpp>
-#include <libupnp-tools/UPnPNotificationServer.hpp>
+#include <libupnp-tools/UPnPEventReceiver.hpp>
 #include <liboslayer/XmlParser.hpp>
 #include "utils.hpp"
 
@@ -39,7 +38,7 @@ public:
 
 static UPnPNotify s_notify;
 
-class MyNotifyHandler: public UPnPNotificationListener {
+class MyNotifyHandler: public UPnPEventListener {
 private:
 public:
     MyNotifyHandler() {}
@@ -63,9 +62,9 @@ static void test_device_profile() {
 	UuidGeneratorVersion1 gen;
 	string uuid = gen.generate();
 
-	UPnPNotificationServerConfig notiConfig(9998);
-	UPnPNotificationServer notiServer(notiConfig);
-	notiServer.addNotificationListener(AutoRef<UPnPNotificationListener>(new MyNotifyHandler));
+	UPnPEventReceiverConfig notiConfig(9998);
+	UPnPEventReceiver notiServer(notiConfig);
+	notiServer.addEventListener(AutoRef<UPnPEventListener>(new MyNotifyHandler));
 	notiServer.startAsync();
 
 	UPnPServer server(UPnPServer::Config(9001));
@@ -86,7 +85,7 @@ static void test_device_profile() {
 
 	LinkedStringMap props;
 	props["xxx"] = "";
-	server.getNotificationCenter().registerService(uuid, "urn:schemas-dummy-com:service:Dummy:1", props);
+	server.getPropertyManager().registerService(uuid, "urn:schemas-dummy-com:service:Dummy:1", props);
 
 	AutoRef<UPnPActionRequestHandler> handler(new MyActionHandler);
 	server.setActionRequestHandler(handler);

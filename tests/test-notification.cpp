@@ -1,8 +1,7 @@
 #include <iostream>
 #include "utils.hpp"
 #include <liboslayer/os.hpp>
-#include <libupnp-tools/UPnPEventSubscriptionRegistry.hpp>
-#include <libupnp-tools/UPnPNotificationServer.hpp>
+#include <libupnp-tools/UPnPEventReceiver.hpp>
 #include <libupnp-tools/HttpUtils.hpp>
 
 using namespace std;
@@ -13,7 +12,7 @@ using namespace HTTP;
 
 static UPnPNotify s_notify;
 
-class NotificationListener : public UPnPNotificationListener {
+class NotificationListener : public UPnPEventListener {
 private:
 public:
     NotificationListener() {
@@ -44,12 +43,12 @@ static void send_notify(Url url) {
 
 static void test_notification_server() {
 
-	UPnPNotificationServerConfig config(9998);
-	UPnPNotificationServer server(config);
+	UPnPEventReceiverConfig config(9998);
+	UPnPEventReceiver server(config);
 	
 	server.startAsync();
-	AutoRef<UPnPNotificationListener> listener(new NotificationListener);
-	server.addNotificationListener(listener);
+	AutoRef<UPnPEventListener> listener(new NotificationListener);
+	server.addEventListener(listener);
 
 	UPnPEventSubscription subscription("uuid:xxxxx");
 	server.addSubscription(subscription);
