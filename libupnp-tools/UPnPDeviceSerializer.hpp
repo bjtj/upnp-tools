@@ -5,6 +5,9 @@
 
 namespace UPNP {
 
+	/**
+	 * @brief 
+	 */
 	class UPnPDeviceSerializer {
 	private:
 		static std::string FIRSTLINE;

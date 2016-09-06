@@ -1,7 +1,8 @@
+#include <liboslayer/Object.hpp>
+#include <liboslayer/Uuid.hpp>
 #include "UPnPPropertyManager.hpp"
 #include "HttpUtils.hpp"
 #include "XmlUtils.hpp"
-#include <liboslayer/Object.hpp>
 
 namespace UPNP {
 
@@ -11,23 +12,12 @@ namespace UPNP {
 
 
 	UPnPEventSubscriptionSession::UPnPEventSubscriptionSession() {
-		creationTick = lastUpdatedTick = tick_milli();
 	}
 	UPnPEventSubscriptionSession::~UPnPEventSubscriptionSession() {
 	}
 	vector<string> & UPnPEventSubscriptionSession::callbackUrls() {
 		return _callbackUrls;
 	}
-	void UPnPEventSubscriptionSession::setTimeout(unsigned long timeoutTick) {
-		this->timeoutTick = timeoutTick;
-	}
-	void UPnPEventSubscriptionSession::prolong() {
-		lastUpdatedTick = tick_milli();
-	}
-	bool UPnPEventSubscriptionSession::outdated() {
-		return (tick_milli() - lastUpdatedTick >= timeoutTick);
-	}
-	
 
 	/**
 	 * @brief
@@ -99,57 +89,69 @@ namespace UPNP {
 	}
 	UPnPPropertyManager::~UPnPPropertyManager() {
 	}
+	string UPnPPropertyManager::makeKey(const string & udn, const string serviceType) {
+		Uuid uuid(udn);
+		return uuid.getUuid() + "::" + serviceType;
+	}
 	void UPnPPropertyManager::clear() {
 		registry.clear();
 		sessions.clear();
 	}
-	void UPnPPropertyManager::registerService(const std::string & udn, const std::string serviceType, LinkedStringMap & props) {
-		string key = udn + "::" + serviceType;
-		registry[key] = props;
+	bool UPnPPropertyManager::isRegisteredService(const string & udn, const string serviceType) {
+		return registry.find(makeKey(udn, serviceType)) != registry.end();
 	}
-	void UPnPPropertyManager::addSubscriptionSession(UPnPEventSubscriptionSession & session) {
-		sessions[session.sid()] = session;
+	void UPnPPropertyManager::registerService(const std::string & udn, const std::string serviceType, const LinkedStringMap & props) {
+		registry[makeKey(udn, serviceType)] = props;
+	}
+	void UPnPPropertyManager::addSubscriptionSession(const AutoRef<UPnPEventSubscriptionSession> session) {
+		sessions[session->sid()] = session;
 	}
 	void UPnPPropertyManager::removeSubscriptionSession(const string & sid) {
 		sessions.erase(sid);
 	}
-	UPnPEventSubscriptionSession & UPnPPropertyManager::getSession(const string & sid) {
+	AutoRef<UPnPEventSubscriptionSession> UPnPPropertyManager::getSession(const string & sid) {
 		return sessions[sid];
 	}
-	UPnPEventSubscriptionSession & UPnPPropertyManager::getSessionWithUdnAndServiceType(const string & udn, const string & serviceType) {
-		for (map<string, UPnPEventSubscriptionSession>::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
-			if (iter->second.udn() == udn && iter->second.serviceType() == serviceType) {
-				return iter->second;
+	
+	vector<AutoRef<UPnPEventSubscriptionSession> > UPnPPropertyManager::getSessionsByUdnAndServiceType(const string & udn, const string & serviceType) {
+		vector<AutoRef<UPnPEventSubscriptionSession> > ret;
+		for (map<string, AutoRef<UPnPEventSubscriptionSession> >::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
+			if (iter->second->udn() == udn && iter->second->serviceType() == serviceType) {
+				ret.push_back(iter->second);
 			}
 		}
-		throw OS::Exception("no sessions found");
+		return ret;
 	}
-	void UPnPPropertyManager::setProperties(const string & udn, const string & serviceType, LinkedStringMap & props) {
-		string key = udn + "::" + serviceType;
-		registry[key] = props;
-		
-		notify(getSessionWithUdnAndServiceType(udn, serviceType), props);
+	
+	void UPnPPropertyManager::setProperties(const string & udn, const string & serviceType, const LinkedStringMap & props) {
+		registry[makeKey(udn, serviceType)] = props;
+		notify(getSessionsByUdnAndServiceType(udn, serviceType), props);
 	}
 
 	LinkedStringMap & UPnPPropertyManager::getProperties(const string & udn, const string & serviceType) {
-		string key = udn + "::" + serviceType;
-		return registry[key];
+		return registry[makeKey(udn, serviceType)];
 	}
-	LinkedStringMap & UPnPPropertyManager::getPropertiesWithSid(const string & sid) {
-		UPnPEventSubscriptionSession & session = getSession(sid);
-		string key = session.udn() + "::" + session.serviceType();
-		return registry[key];
+	
+	LinkedStringMap & UPnPPropertyManager::getPropertiesBySid(const string & sid) {
+		AutoRef<UPnPEventSubscriptionSession> session = getSession(sid);
+		return registry[makeKey(session->udn(), session->serviceType())];
 	}
 
 	void UPnPPropertyManager::notify(const string & sid) {
-		notify(getSession(sid), getPropertiesWithSid(sid));
+		notify(getSession(sid), getPropertiesBySid(sid));
 	}
 
-	void UPnPPropertyManager::notify(UPnPEventSubscriptionSession & session, LinkedStringMap & props) {
-		vector<string> urls = session.callbackUrls();
+	void UPnPPropertyManager::notify(const vector<AutoRef<UPnPEventSubscriptionSession> > & sessions, const LinkedStringMap & props) {
+		for (vector<AutoRef<UPnPEventSubscriptionSession> >::const_iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
+			notify(*iter, props);
+		}
+	}
+
+	void UPnPPropertyManager::notify(AutoRef<UPnPEventSubscriptionSession> session, const LinkedStringMap & props) {
+		vector<string> urls = session->callbackUrls();
 		LinkedStringMap headers;
-		headers["SID"] = session.sid();
-		headers["SEQ"] = Text::toString(session.lastSeq()++);
+		headers["SID"] = session->sid();
+		headers["SEQ"] = Text::toString(session->lastSeq()++);
 		headers["Content-Type"] = "text/xml";
 		string content = makePropertiesXml(props);
 		for (vector<string>::iterator iter = urls.begin(); iter != urls.end(); iter++) {
@@ -157,7 +159,9 @@ namespace UPNP {
 		}
 	}
 
-	string UPnPPropertyManager::makePropertiesXml(LinkedStringMap & props) {
+	
+
+	string UPnPPropertyManager::makePropertiesXml(const LinkedStringMap & props) {
 		string content;
 		content.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n");
 		content.append("<e:propertyset xmlns:e=\"urn:schemas-upnp-org:event-1-0\">\r\n");
@@ -172,8 +176,8 @@ namespace UPNP {
 	}
 
 	void UPnPPropertyManager::collectOutdated() {
-		for (map<string, UPnPEventSubscriptionSession>::iterator iter = sessions.begin(); iter != sessions.end();) {
-			if (iter->second.outdated()) {
+		for (map<string, AutoRef<UPnPEventSubscriptionSession> >::iterator iter = sessions.begin(); iter != sessions.end();) {
+			if (iter->second->outdated()) {
 				sessions.erase(iter++);
 			} else {
 				iter++;

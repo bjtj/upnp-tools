@@ -121,21 +121,15 @@ public:
 static void s_set_dummy(UPnPServer & server, const string & uuid) {
 	
 	string dummy = "urn:schemas-dummy-com:service:Dummy:1";
-
 	UPnPResourceManager::properties()["/device.xml"] = dd(uuid);
 	UPnPResourceManager::properties()["/scpd.xml/" + uuid + "::" + dummy] = scpd();
 
-	UPnPDeviceDeserializer deserializer;
-	AutoRef<UPnPDevice> device = deserializer.build(Url("prop:///device.xml"));
-	UPnPDeviceProfileBuilder builder(uuid, device);
-	UPnPDeviceProfile deviceProfile = builder.build();
-
-	server.registerDeviceProfile(uuid, deviceProfile);
+	server.registerDeviceProfile(uuid, Url("prop:///device.xml"));
 
 	LinkedStringMap props;
 	props["SourceProtocolInfo"] = "<initial source>";
 	props["SinkProtocolInfo"] = "<initial sink>";
-	server.getPropertyManager().registerService(uuid, dummy, props);
+	server.setProperties(uuid, dummy, props);
 }
 
 /**
@@ -171,12 +165,10 @@ int main(int argc, char *args[]) {
 
 			if (tokens[0] == "alive") {
 				cout << " * alive : " << uuid << endl;
-				server.getProfileManager().getDeviceProfileSessionWithUuid(uuid)->setEnable(true);
-				server.notifyAlive(server.getProfileManager().getDeviceProfileSessionWithUuid(uuid)->profile());
+				server.setEnableDevice(uuid, true);
 			} else if (tokens[0] == "byebye") {
 				cout << " * byebye : " << uuid << endl;
-				server.getProfileManager().getDeviceProfileSessionWithUuid(uuid)->setEnable(false);
-				server.notifyByeBye(server.getProfileManager().getDeviceProfileSessionWithUuid(uuid)->profile());
+				server.setEnableDevice(uuid, false);
 			} else if (tokens[0] == "list") {
 				vector<AutoRef<UPnPDeviceProfileSession> > vec = server.getProfileManager().sessionList();
 				for (size_t i = 0; i < vec.size(); i++) {
@@ -188,7 +180,7 @@ int main(int argc, char *args[]) {
 				LinkedStringMap props;
 				props["SourceProtocolInfo"] = "<sample source>";
 				props["SinkProtocolInfo"] = "<sample sink>";
-				server.getPropertyManager().setProperties(uuid, "urn:schemas-dummy-com:service:Dummy:1", props);
+				server.setProperties(uuid, "urn:schemas-dummy-com:service:Dummy:1", props);
 			} else if (tokens[0] == "load") {
 				if (tokens.size() < 2) {
 					continue;

@@ -11,7 +11,13 @@ namespace UPNP {
 	string & UPnPDeviceProfile::uuid() {
 		return _uuid;
 	}
+	string UPnPDeviceProfile::const_uuid() const {
+		return _uuid;
+	}
 	string & UPnPDeviceProfile::deviceDescription() {
+		return _deviceDescription;
+	}
+	string UPnPDeviceProfile::const_deviceDescription() const {
 		return _deviceDescription;
 	}
 	vector<string> & UPnPDeviceProfile::deviceTypes() {
@@ -24,7 +30,7 @@ namespace UPNP {
 		return _serviceProfiles;
 	}
 	string & UPnPDeviceProfile::scpd(const string & serviceType) {
-		return getServiceProfileWithServiceType(serviceType).scpd();
+		return getServiceProfileByServiceType(serviceType).scpd();
 	}
 	bool UPnPDeviceProfile::match(const string & st) {
 		if (st == "upnp:rootdevice") {
@@ -45,7 +51,7 @@ namespace UPNP {
 		
 		return false;
 	}
-	bool UPnPDeviceProfile::hasServiceWithServiceType(const string & serviceType) {
+	bool UPnPDeviceProfile::hasServiceByServiceType(const string & serviceType) {
 		for (vector<UPnPServiceProfile>::iterator iter = _serviceProfiles.begin(); iter != _serviceProfiles.end(); iter++) {
 			if (iter->serviceType() == serviceType) {
 				return true;
@@ -53,7 +59,7 @@ namespace UPNP {
 		}
 		return false;
 	}
-	bool UPnPDeviceProfile::hasServiceWithScpdUrl(const string & scpdUrl) {
+	bool UPnPDeviceProfile::hasServiceByScpdUrl(const string & scpdUrl) {
 		for (vector<UPnPServiceProfile>::iterator iter = _serviceProfiles.begin(); iter != _serviceProfiles.end(); iter++) {
 			if (iter->scpdUrl() == scpdUrl) {
 				return true;
@@ -61,7 +67,7 @@ namespace UPNP {
 		}
 		return false;
 	}
-	bool UPnPDeviceProfile::hasServiceWithControlUrl(const string & controlUrl) {
+	bool UPnPDeviceProfile::hasServiceByControlUrl(const string & controlUrl) {
 		for (vector<UPnPServiceProfile>::iterator iter = _serviceProfiles.begin(); iter != _serviceProfiles.end(); iter++) {
 			if (iter->controlUrl() == controlUrl) {
 				return true;
@@ -69,7 +75,7 @@ namespace UPNP {
 		}
 		return false;
 	}
-	bool UPnPDeviceProfile::hasServiceWithEventSubUrl(const string & eventSubUrl) {
+	bool UPnPDeviceProfile::hasServiceByEventSubUrl(const string & eventSubUrl) {
 		for (vector<UPnPServiceProfile>::iterator iter = _serviceProfiles.begin(); iter != _serviceProfiles.end(); iter++) {
 			if (iter->eventSubUrl() == eventSubUrl) {
 				return true;
@@ -77,7 +83,7 @@ namespace UPNP {
 		}
 		return false;
 	}
-	UPnPServiceProfile & UPnPDeviceProfile::getServiceProfileWithServiceType(const string & serviceType) {
+	UPnPServiceProfile & UPnPDeviceProfile::getServiceProfileByServiceType(const string & serviceType) {
 		for (vector<UPnPServiceProfile>::iterator iter = _serviceProfiles.begin(); iter != _serviceProfiles.end(); iter++) {
 			if (iter->serviceType() == serviceType) {
 				return *iter;
@@ -85,7 +91,7 @@ namespace UPNP {
 		}
 		throw OS::Exception("not found service", -1, 0);
 	}
-	UPnPServiceProfile & UPnPDeviceProfile::getServiceProfileWithScpdUrl(const string & scpdUrl) {
+	UPnPServiceProfile & UPnPDeviceProfile::getServiceProfileByScpdUrl(const string & scpdUrl) {
 		for (vector<UPnPServiceProfile>::iterator iter = _serviceProfiles.begin(); iter != _serviceProfiles.end(); iter++) {
 			if (iter->scpdUrl() == scpdUrl) {
 				return *iter;
@@ -93,7 +99,7 @@ namespace UPNP {
 		}
 		throw OS::Exception("not found service", -1, 0);
 	}
-	UPnPServiceProfile & UPnPDeviceProfile::getServiceProfileWithControlUrl(const string & controlUrl) {
+	UPnPServiceProfile & UPnPDeviceProfile::getServiceProfileByControlUrl(const string & controlUrl) {
 		for (vector<UPnPServiceProfile>::iterator iter = _serviceProfiles.begin(); iter != _serviceProfiles.end(); iter++) {
 			if (iter->controlUrl() == controlUrl) {
 				return *iter;
@@ -101,7 +107,7 @@ namespace UPNP {
 		}
 		throw OS::Exception("not found service", -1, 0);
 	}
-	UPnPServiceProfile & UPnPDeviceProfile::getServiceProfileWithEventSubUrl(const string & eventSubUrl) {
+	UPnPServiceProfile & UPnPDeviceProfile::getServiceProfileByEventSubUrl(const string & eventSubUrl) {
 		for (vector<UPnPServiceProfile>::iterator iter = _serviceProfiles.begin(); iter != _serviceProfiles.end(); iter++) {
 			if (iter->eventSubUrl() == eventSubUrl) {
 				return *iter;

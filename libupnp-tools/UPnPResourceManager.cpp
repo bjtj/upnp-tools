@@ -14,24 +14,26 @@ namespace UPNP {
 	
 	UPnPResourceManager::UPnPResourceManager() {
 	}
+	
 	UPnPResourceManager::~UPnPResourceManager() {
 	}
+	
 	string UPnPResourceManager::getResource(const Url & url) {
 		if (url.getScheme() == "http") {
+			
 			return HttpUtils::httpGet(url);
+			
 		} else if (url.getScheme() == "file") {
+			
 			FileStream fstream(url.getPath(), "rb");
-			size_t len = 0;
-			string ret;
-			char buffer[1024] = {0,};
-			while ((len = fstream.read(buffer, sizeof(buffer))) > 0) {
-				ret.append(buffer, len);
-			}
+			string ret = fstream.readFullAsString();
 			fstream.close();
 			return ret;
+			
 		} else if (url.getScheme() == "prop") {
 			return props[url.getPath()];
 		}
+		
 		throw Exception("UPnPResourceManager :: unknown scheme - " + url.getScheme());
 	}
 

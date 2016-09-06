@@ -6,7 +6,10 @@
 #include "UPnPModels.hpp"
 
 namespace UPNP {
-	
+
+	/**
+	 * @brief 
+	 */
 	class UPnPActionResponse {
 	private:
 		int _errorCode;

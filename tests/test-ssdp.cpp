@@ -36,7 +36,7 @@ public:
 	vector<SSDPHeader> & headers() {
 		return _headers;
 	}
-	SSDPHeader & findHeaderWithRawPacket(const string & rawPacket) {
+	SSDPHeader & findHeaderByRawPacket(const string & rawPacket) {
 		for (vector<SSDPHeader>::iterator iter = _headers.begin(); iter != _headers.end(); iter++) {
 			if (iter->getRawPacket() == rawPacket) {
 				return *iter;
@@ -44,7 +44,7 @@ public:
 		}
 		throw Exception("not found");
 	}
-	bool hasHeaderWithRawPacket(const string & rawPacket) {
+	bool hasHeaderByRawPacket(const string & rawPacket) {
 		for (vector<SSDPHeader>::iterator iter = _headers.begin(); iter != _headers.end(); iter++) {
 			if (iter->getRawPacket() == rawPacket) {
 				return true;
@@ -71,7 +71,7 @@ static void test_discovery() {
 
 	server.stop();
 
-	ASSERT(pListener->hasHeaderWithRawPacket("NOTIFY * HTTP/1.1\r\n\r\n"), ==, true);
+	ASSERT(pListener->hasHeaderByRawPacket("NOTIFY * HTTP/1.1\r\n\r\n"), ==, true);
 }
 
 int main(int argc, char *args[]) {

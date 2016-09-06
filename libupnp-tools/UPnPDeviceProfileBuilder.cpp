@@ -1,13 +1,18 @@
+#include <liboslayer/XmlParser.hpp>
+#include <liboslayer/Uuid.hpp>
 #include "UPnPDeviceProfileBuilder.hpp"
 #include "UPnPDeviceDeserializer.hpp"
 #include "UPnPDeviceSerializer.hpp"
-#include <liboslayer/XmlParser.hpp>
+
 
 namespace UPNP {
 
 	using namespace std;
 	using namespace OS;
 	using namespace UTIL;
+
+	UPnPDeviceProfileBuilder::UPnPDeviceProfileBuilder(AutoRef<UPnPDevice> device) : _device(device) {
+	}
 
 	UPnPDeviceProfileBuilder::UPnPDeviceProfileBuilder(const string uuid, AutoRef<UPnPDevice> device) : _uuid(uuid), _device(device) {
 	}
@@ -40,8 +45,14 @@ namespace UPNP {
 		}
 
 		UPnPDeviceProfile deviceProfile;
+		if (_uuid.empty()) {
+			Uuid uuid(_device->getUdn());
+			_uuid = uuid.getUuid();
+		} else {
+			setUdnRecursive(_device, "uuid:" + _uuid);
+		}
 		deviceProfile.uuid() = _uuid;
-		setUdn(_device, "uuid:" + _uuid);
+		
 		deviceProfile.deviceDescription() = UPnPDeviceSerializer::serializeDeviceDescription(*_device);
 
 		vector<AutoRef<UPnPDevice> > devices;
@@ -71,10 +82,10 @@ namespace UPNP {
 		return deviceProfile;
 	}
 
-	void UPnPDeviceProfileBuilder::setUdn(AutoRef<UPnPDevice> device, const string & udn) {
+	void UPnPDeviceProfileBuilder::setUdnRecursive(AutoRef<UPnPDevice> device, const string & udn) {
 		device->setUdn(udn);
 		for (size_t i = 0; i < device->embeddedDevices().size(); i++) {
-			setUdn(device->embeddedDevices()[i], udn);
+			setUdnRecursive(device->embeddedDevices()[i], udn);
 		}
 	}
 }

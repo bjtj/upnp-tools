@@ -23,7 +23,7 @@ namespace UPNP {
 		void addSubscription(UPnPEventSubscription & subscription);
 		void removeSubscription(const std::string & sid);
 		bool hasSubscription(const std::string & sid);
-		UPnPEventSubscription & findSubscriptionWithUdnAndServiceType(const std::string & udn, const std::string & serviceType);
+		UPnPEventSubscription & findSubscriptionByUdnAndServiceType(const std::string & udn, const std::string & serviceType);
 		UPnPEventSubscription & operator[] (const std::string & sid);
 	};
 
@@ -67,7 +67,7 @@ namespace UPNP {
 		void addSubscription(UPnPEventSubscription & subscription);
 		void removeSubscription(UPnPEventSubscription & subscription);
 		void addEventListener(UTIL::AutoRef<UPnPEventListener> listener);
-		UPnPEventSubscription & findSubscriptionWithUdnAndServiceType(const std::string & udn, const std::string & serviceType);
+		UPnPEventSubscription & findSubscriptionByUdnAndServiceType(const std::string & udn, const std::string & serviceType);
 		virtual void onNotify(UPnPNotify & notify);
 		std::string getCallbackUrl(const std::string & host);
 		std::map<std::string, std::string> parseEventNotify(const std::string & xml);

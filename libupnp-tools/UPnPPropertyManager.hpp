@@ -5,6 +5,7 @@
 #include <liboslayer/os.hpp>
 #include <liboslayer/MessageQueue.hpp>
 #include "UPnPEventSubscription.hpp"
+#include "UPnPCache.hpp"
 
 namespace UPNP {
 
@@ -13,19 +14,14 @@ namespace UPNP {
 	/**
 	 * @brief 
 	 */
-	class UPnPEventSubscriptionSession : public UPnPEventSubscription {
+	class UPnPEventSubscriptionSession : public UPnPEventSubscription, public UPnPCache {
 	private:
 		std::vector<std::string> _callbackUrls;
-		unsigned long creationTick;
-		unsigned long lastUpdatedTick;
-		unsigned long timeoutTick;
+		
 	public:
 		UPnPEventSubscriptionSession();
 		virtual ~UPnPEventSubscriptionSession();
 		std::vector<std::string> & callbackUrls();
-		void setTimeout(unsigned long timeoutTick);
-		void prolong();
-		bool outdated();
 	};
 	
 
@@ -36,6 +32,7 @@ namespace UPNP {
 	private:
 		UTIL::MessageQueue messageQueue;
 		UPnPPropertyManager & propertyManager;
+		
 	public:
 		UPnPEventNotificationThread(UPnPPropertyManager & propertyManager);
 		virtual ~UPnPEventNotificationThread();
@@ -50,22 +47,28 @@ namespace UPNP {
 	class UPnPPropertyManager {
 	private:
 		std::map<std::string, UTIL::LinkedStringMap> registry;
-		std::map<std::string, UPnPEventSubscriptionSession> sessions;
+		std::map<std::string, UTIL::AutoRef<UPnPEventSubscriptionSession> > sessions;
+
+	private:
+		std::string makeKey(const std::string & udn, const std::string serviceType);
+		
 	public:
 		UPnPPropertyManager();
 		virtual ~UPnPPropertyManager();
 		void clear();
-		void registerService(const std::string & udn, const std::string serviceType, UTIL::LinkedStringMap & props);
-		void addSubscriptionSession(UPnPEventSubscriptionSession & session);
+		bool isRegisteredService(const std::string & udn, const std::string serviceType);
+		void registerService(const std::string & udn, const std::string serviceType, const UTIL::LinkedStringMap & props);
+		void addSubscriptionSession(const UTIL::AutoRef<UPnPEventSubscriptionSession> session);
 		void removeSubscriptionSession(const std::string & sid);
-		UPnPEventSubscriptionSession & getSession(const std::string & sid);
-		UPnPEventSubscriptionSession & getSessionWithUdnAndServiceType(const std::string & udn, const std::string & serviceType);
-		void setProperties(const std::string & udn, const std::string & serviceyType, UTIL::LinkedStringMap & props);
+		UTIL::AutoRef<UPnPEventSubscriptionSession> getSession(const std::string & sid);
+		std::vector<UTIL::AutoRef<UPnPEventSubscriptionSession> > getSessionsByUdnAndServiceType(const std::string & udn, const std::string & serviceType);
+		void setProperties(const std::string & udn, const std::string & serviceType, const UTIL::LinkedStringMap & props);
 		UTIL::LinkedStringMap & getProperties(const std::string & udn, const std::string & serviceType);
-		UTIL::LinkedStringMap & getPropertiesWithSid(const std::string & sid);
+		UTIL::LinkedStringMap & getPropertiesBySid(const std::string & sid);
 		void notify(const std::string & sid);
-		void notify(UPnPEventSubscriptionSession & session, UTIL::LinkedStringMap & props);
-		std::string makePropertiesXml(UTIL::LinkedStringMap & props);
+		void notify(const std::vector<UTIL::AutoRef<UPnPEventSubscriptionSession> > & sessions, const UTIL::LinkedStringMap & props);
+		void notify(UTIL::AutoRef<UPnPEventSubscriptionSession> session, const UTIL::LinkedStringMap & props);
+		std::string makePropertiesXml(const UTIL::LinkedStringMap & props);
 		void collectOutdated();
 	};
 }

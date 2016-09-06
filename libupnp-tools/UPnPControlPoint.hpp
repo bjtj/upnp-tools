@@ -3,7 +3,6 @@
 
 #include <liboslayer/AutoRef.hpp>
 #include <liboslayer/Condition.hpp>
-#include <liboslayer/Timebase.hpp>
 #include <liboslayer/Timer.hpp>
 #include <liboslayer/TaskThreadPool.hpp>
 #include "SSDPServer.hpp"
@@ -13,29 +12,22 @@
 #include "UPnPEventReceiver.hpp"
 #include "NetworkStateManager.hpp"
 #include "SharedUPnPDeviceList.hpp"
+#include "UPnPCache.hpp"
 
 namespace UPNP {
 
-	class UPnPDeviceSession {
+	/**
+	 * @brief 
+	 */
+	class UPnPDeviceSession : public UPnPCache {
 	private:
 		std::string _udn;
 		bool _completed;
 		UTIL::AutoRef<UPnPDevice> rootDevice;
-		unsigned long creationTime;
-		unsigned long updateTime;
-		unsigned long sessionTimeout;
-	
 	public:
 		UPnPDeviceSession(const std::string & udn);
 		virtual ~UPnPDeviceSession();
 		std::string & udn();
-		void setCreationTime(unsigned long creationTime);
-		void setUpdateTime(unsigned long updateTime);
-		void setSessionTimeout(unsigned long sessionTimeout);
-		unsigned long lifetimeFromCreation();
-		unsigned long lifetimeFromLastUpdate();
-		bool outdated();
-		void prolong(unsigned long timeout);
 		bool isCompleted();
 		void setCompleted(bool completed);
 		UTIL::AutoRef<UPnPDevice> getRootDevice();
@@ -47,8 +39,21 @@ namespace UPNP {
 	 * @brief 
 	 */
 	class UPnPDeviceSessionManager {
+	public:
+
+		/**
+		 * @brief 
+		 */
+		class OnSessionOutdatedListener {
+		public:
+			OnSessionOutdatedListener() {}
+			virtual ~OnSessionOutdatedListener() {}
+			virtual void onSessionOutdated(UTIL::AutoRef<UPnPDeviceSession> session) = 0;
+		};
+
 	private:
 		std::map<std::string, UTIL::AutoRef<UPnPDeviceSession> > sessions;
+		UTIL::AutoRef<OnSessionOutdatedListener> onSessionOutdatedListener;
 		
 	public:
 		UPnPDeviceSessionManager();
@@ -59,9 +64,13 @@ namespace UPNP {
 		void remove(const std::string & udn);
 		size_t size();
 		std::vector<std::string> getUdnS();
+		UTIL::AutoRef<UPnPDevice> getDevice(const std::string & udn);
 		std::vector<UTIL::AutoRef<UPnPDeviceSession> > getSessions();
+		std::vector<UTIL::AutoRef<UPnPDevice> > getDevices();
 		UTIL::AutoRef<UPnPDeviceSession> operator[] (const std::string & udn);
-		std::vector<UTIL::AutoRef<UPnPDeviceSession> > getOutdatedSessions();
+		void collectOutdated();
+		void setOnSessionOutdatedListener(UTIL::AutoRef<OnSessionOutdatedListener> onSessionOutdatedListener);
+		UTIL::AutoRef<OnSessionOutdatedListener> getOnSessionOutdatedListener();
 	};
 	
 
@@ -104,7 +113,6 @@ namespace UPNP {
 		UTIL::AutoRef<SSDP::SSDPEventListener> ssdpListener;
 		SSDP::SSDPServer ssdpServer;
 		UPnPDeviceSessionManager _sessionManager;
-		UTIL::TimebaseList<UTIL::AutoRef<UPnPDevice> > _sessions;
 		UPnPEventReceiver * eventReceiver;
 		UTIL::TimerLooperThread timerThread;
 		bool started;
@@ -115,6 +123,9 @@ namespace UPNP {
 		// do not allow copy or assign
 		UPnPControlPoint(const UPnPControlPoint & other);
 		UPnPControlPoint & operator=(const UPnPControlPoint & other);
+
+	private:
+		void init();
 		
 	public:
 		UPnPControlPoint(UPnPControlPointConfig & config);
@@ -134,8 +145,8 @@ namespace UPNP {
 		void sendMsearchAsync(const std::string & target, unsigned long timeoutSec);
 		UPnPDeviceSessionManager & sessionManager();
 		std::vector<UTIL::AutoRef<UPnPDevice> > getDevices();
-		HTTP::Url getBaseUrlWithUdn(const std::string & udn);
-		UTIL::AutoRef<UPnPService> getServiceWithUdnAndServiceType(const std::string & udn, const std::string & serviceType);
+		HTTP::Url getBaseUrlByUdn(const std::string & udn);
+		UTIL::AutoRef<UPnPService> getServiceByUdnAndServiceType(const std::string & udn, const std::string & serviceType);
 		UPnPActionInvoker prepareActionInvoke(const std::string & udn, const std::string & serviceType);
 		void subscribe(const std::string & udn, const std::string & serviceType);
 		void unsubscribe(const std::string & udn, const std::string & serviceType);
@@ -144,7 +155,7 @@ namespace UPNP {
 		UTIL::AutoRef<UPnPService> findServiceRecursive(UTIL::AutoRef<UPnPDevice> device, const std::string & serviceType);
 		UPnPEventReceiver * getEventReceiver();
 		UTIL::TimerLooperThread & getTimerThread();
-		void clearOudatedSessions();
+		void collectOutdated();
 		unsigned long parseCacheControlMilli(const std::string & cacheControl, unsigned long def);
 		void addSharedDeviceList(UTIL::AutoRef<SharedUPnPDeviceList> list);
 		void removeSharedDeviceList(UTIL::AutoRef<SharedUPnPDeviceList> list);

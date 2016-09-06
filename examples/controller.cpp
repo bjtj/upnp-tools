@@ -224,7 +224,7 @@ int run(int argc, char *args[]) {
 			} else if (line == "invoke") {
 				try {
 					UPnPActionInvoker invoker = cp.prepareActionInvoke(selection.udn(), selection.serviceType());
-					AutoRef<UPnPService> service = cp.getServiceWithUdnAndServiceType(selection.udn(), selection.serviceType());
+					AutoRef<UPnPService> service = cp.getServiceByUdnAndServiceType(selection.udn(), selection.serviceType());
 					
 					if (!service->scpd().hasAction(selection.action())) {
 						throw "Error: no action found";
@@ -264,7 +264,7 @@ int run(int argc, char *args[]) {
 					throw "Error: select udn and sevice first";
 				}
 
-				cout << "Subscribe - " << selection.udn() << " .. " << selection.serviceType() << endl;
+				cout << "Subscribe - " << selection.udn() << " // " << selection.serviceType() << endl;
 				cp.subscribe(selection.udn(), selection.serviceType());
 
 			} else if (line == "unsub") {
@@ -290,14 +290,14 @@ int run(int argc, char *args[]) {
 					throw "Error: select udn first";
 				}
 
-				Url url = cp.getBaseUrlWithUdn(selection.udn());
+				Url url = cp.getBaseUrlByUdn(selection.udn());
 				string dd = HttpUtils::httpGet(url);
 				cout << dd << endl;
 
 				if (!selection.serviceType().empty()) {
-					AutoRef<UPnPService> service = cp.getServiceWithUdnAndServiceType(selection.udn(), selection.serviceType());
+					AutoRef<UPnPService> service = cp.getServiceByUdnAndServiceType(selection.udn(), selection.serviceType());
 					if (!service.nil()) {
-						url = cp.getBaseUrlWithUdn(selection.udn()).relativePath(service->getScpdUrl());
+						url = cp.getBaseUrlByUdn(selection.udn()).relativePath(service->getScpdUrl());
 						cout << "GET SCPD : " << url.toString() << endl;
 						dd = HttpUtils::httpGet(url);
 						cout << dd << endl;

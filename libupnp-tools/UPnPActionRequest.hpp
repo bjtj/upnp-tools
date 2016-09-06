@@ -4,7 +4,10 @@
 #include "UPnPModels.hpp"
 
 namespace UPNP {
-	
+
+	/**
+	 * @brief 
+	 */
 	class UPnPActionRequest {
 	private:
 		std::string _serviceType;

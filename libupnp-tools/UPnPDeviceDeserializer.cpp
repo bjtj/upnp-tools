@@ -141,7 +141,6 @@ namespace UPNP {
 		}
 	}
 
-
 	AutoRef<UPnPDevice> UPnPDeviceDeserializer::build(const Url & url) {
 		AutoRef<UPnPDevice> device = parseDeviceXml(UPnPResourceManager::getResource(url));
 		device->baseUrl() = url;

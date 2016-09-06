@@ -17,12 +17,11 @@ libupnp_toolsinc_HEADERS = \
 	UPnPActionRequest.hpp \
 	UPnPActionRequestHandler.hpp \
 	UPnPActionResponse.hpp \
+	UPnPCache.hpp \
 	UPnPControlPoint.hpp \
 	UPnPDeviceDeserializer.hpp \
 	UPnPDeviceProfile.hpp \
 	UPnPDeviceProfileBuilder.hpp \
-	UPnPDeviceProfileSession.hpp \
-	UPnPDeviceProfileSessionManager.hpp \
 	UPnPDeviceSerializer.hpp \
 	UPnPEventReceiver.hpp \
 	UPnPEventSubscriber.hpp \
@@ -33,6 +32,7 @@ libupnp_toolsinc_HEADERS = \
 	UPnPServer.hpp \
 	UPnPServiceProfile.hpp \
 	XmlUtils.hpp
+
 
 libupnp_tools_la_SOURCES = \
 	HttpUtils.cpp \
@@ -62,6 +62,8 @@ libupnp_tools_la_SOURCES = \
 	UPnPActionRequestHandler.hpp \
 	UPnPActionResponse.cpp \
 	UPnPActionResponse.hpp \
+	UPnPCache.cpp \
+	UPnPCache.hpp \
 	UPnPControlPoint.cpp \
 	UPnPControlPoint.hpp \
 	UPnPDeviceDeserializer.cpp \
@@ -70,10 +72,6 @@ libupnp_tools_la_SOURCES = \
 	UPnPDeviceProfile.hpp \
 	UPnPDeviceProfileBuilder.cpp \
 	UPnPDeviceProfileBuilder.hpp \
-	UPnPDeviceProfileSession.cpp \
-	UPnPDeviceProfileSession.hpp \
-	UPnPDeviceProfileSessionManager.cpp \
-	UPnPDeviceProfileSessionManager.hpp \
 	UPnPDeviceSerializer.cpp \
 	UPnPDeviceSerializer.hpp \
 	UPnPEventReceiver.cpp \
@@ -92,6 +90,7 @@ libupnp_tools_la_SOURCES = \
 	UPnPServer.hpp \
 	UPnPServiceProfile.hpp \
 	XmlUtils.hpp
+
 
 libupnp_tools_la_CXXFLAGS = $(PTHREAD_CXXFLAGS) $(LIBOSLAYER_CFLAGS) $(LIBHTTP_SERVER_CFLAGS)
 libupnp_tools_la_LDFLAGS = $(PTHREAD_CFLAGS)

@@ -7,7 +7,10 @@
 #include "UPnPModels.hpp"
 
 namespace UPNP {
-	
+
+	/**
+	 * @brief 
+	 */
 	class UPnPDeviceDeserializer {
 	private:
 	public:
@@ -24,10 +27,9 @@ namespace UPNP {
 		UPnPStateVariable parseStateVariableFromXmlNode(XML::XmlNode * stateVariableXml);
 		void parsePropertiesFromXmlNode(XML::XmlNode * node, UPnPModelObject & obj);
 
-		UTIL::AutoRef<UPnPDevice> build(const HTTP::Url & url);
-		UTIL::AutoRef<UPnPDevice> buildWithDescriptionXml(const std::string & descriptionXml, const HTTP::Url & url);
-		UTIL::AutoRef<UPnPDevice> parseDeviceXml(const std::string & deviceXml);
-		UPnPScpd parseScpdXml(const std::string & scpdXml);
+		virtual UTIL::AutoRef<UPnPDevice> build(const HTTP::Url & url);
+		virtual UTIL::AutoRef<UPnPDevice> parseDeviceXml(const std::string & deviceXml);
+		virtual UPnPScpd parseScpdXml(const std::string & scpdXml);
 	};
 }
 

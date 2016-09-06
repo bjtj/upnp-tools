@@ -14,6 +14,7 @@ namespace UPNP {
 		std::string _udn;
 		std::string _serviceType;
 		unsigned long _lastSeq;
+		
 	public:
 		UPnPEventSubscription();
 		UPnPEventSubscription(const std::string & sid);
