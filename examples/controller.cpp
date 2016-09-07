@@ -12,7 +12,6 @@
 #include <libupnp-tools/UPnPActionResponse.hpp>
 #include <libupnp-tools/NetworkUtil.hpp>
 #include <libupnp-tools/UPnPEventSubscriber.hpp>
-#include <libupnp-tools/UPnPNotificationServer.hpp>
 #include <libhttp-server/AnotherHttpServer.hpp>
 
 using namespace std;
