@@ -19,6 +19,7 @@ libupnp_toolsinc_HEADERS = \
 	UPnPActionResponse.hpp \
 	UPnPCache.hpp \
 	UPnPControlPoint.hpp \
+	UPnPDebug.hpp \
 	UPnPDeviceDeserializer.hpp \
 	UPnPDeviceProfile.hpp \
 	UPnPDeviceProfileBuilder.hpp \
@@ -32,7 +33,6 @@ libupnp_toolsinc_HEADERS = \
 	UPnPServer.hpp \
 	UPnPServiceProfile.hpp \
 	XmlUtils.hpp
-
 
 libupnp_tools_la_SOURCES = \
 	HttpUtils.cpp \
@@ -66,6 +66,8 @@ libupnp_tools_la_SOURCES = \
 	UPnPCache.hpp \
 	UPnPControlPoint.cpp \
 	UPnPControlPoint.hpp \
+	UPnPDebug.cpp \
+	UPnPDebug.hpp \
 	UPnPDeviceDeserializer.cpp \
 	UPnPDeviceDeserializer.hpp \
 	UPnPDeviceProfile.cpp \
@@ -90,7 +92,6 @@ libupnp_tools_la_SOURCES = \
 	UPnPServer.hpp \
 	UPnPServiceProfile.hpp \
 	XmlUtils.hpp
-
 
 libupnp_tools_la_CXXFLAGS = $(PTHREAD_CXXFLAGS) $(LIBOSLAYER_CFLAGS) $(LIBHTTP_SERVER_CFLAGS)
 libupnp_tools_la_LDFLAGS = $(PTHREAD_CFLAGS)

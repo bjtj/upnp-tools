@@ -24,6 +24,13 @@ namespace UPNP {
 		std::string & scpdUrl() {return _scpdUrl;}
 		std::string & controlUrl() {return _controlUrl;}
 		std::string & eventSubUrl() {return _eventSubUrl;}
+
+		std::string const_serviceType() const {return _serviceType;}
+		std::string const_serviceId() const {return _serviceId;}
+		std::string const_scpd() const {return _scpd;}
+		std::string const_scpdUrl() const {return _scpdUrl;}
+		std::string const_controlUrl() const {return _controlUrl;}
+		std::string const_eventSubUrl() const {return _eventSubUrl;}
 	};
 
 	

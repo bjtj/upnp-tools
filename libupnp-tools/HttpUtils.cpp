@@ -31,7 +31,7 @@ namespace UPNP {
 		client.setRecvTimeout(soTimeout);
     
 		HttpUtils::DumpResponseHandler handler;
-		client.setOnResponseListener(&handler);
+		client.setOnHttpResponseListener(&handler);
     
 		client.setFollowRedirect(true);
 		client.setUrl(url);
@@ -49,7 +49,7 @@ namespace UPNP {
 		client.setRecvTimeout(soTimeout);
     
 		DumpResponseHandler handler;
-		client.setOnResponseListener(&handler);
+		client.setOnHttpResponseListener(&handler);
 		client.setFollowRedirect(true);
 		client.setUrl(url);
 		client.setRequest("GET", LinkedStringMap());
@@ -71,7 +71,7 @@ namespace UPNP {
 		client.setRecvTimeout(soTimeout);
 		
 		DumpResponseHandler handler;
-		client.setOnResponseListener(&handler);
+		client.setOnHttpResponseListener(&handler);
 		client.setFollowRedirect(true);
 		client.setUrl(url);
 

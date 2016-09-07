@@ -135,18 +135,52 @@ static void s_set_dummy(UPnPServer & server, const string & uuid) {
 /**
  * @brief 
  */
+class OutdatedListener : public OnSubscriptionOutdatedListener {
+public:
+	OutdatedListener() {}
+	virtual ~OutdatedListener() {}
+	virtual void onSessionOutdated(UPnPEventSubscriptionSession & session) {
+		cout << "session outdated / " << session.sid() << endl;
+	}
+};
+
+class PrintDebugInfo : public OnDebugInfoListener {
+private:
+	FileStream & stream;
+public:
+	PrintDebugInfo(FileStream & stream) : stream(stream) {
+	}
+	virtual ~PrintDebugInfo() {
+	}
+	virtual void onDebugInfo(const UPnPDebugInfo & info) {
+		stream.writeline(info.const_packet());
+	}
+};
+
+
+/**
+ * @brief 
+ */
 int main(int argc, char *args[]) {
+
+	FileStream out("./out", "wb");
+
+	AutoRef<UPnPDebug> debug(new UPnPDebug);
+	debug->setOnDebugInfoListener(AutoRef<OnDebugInfoListener>(new PrintDebugInfo(out)));
 
 	UuidGeneratorVersion1 gen;
 	string uuid = gen.generate();
 
 	UPnPServer server(UPnPServer::Config(9001));
+	server.setDebug(debug);
 	server.startAsync();
 
 	s_set_dummy(server, uuid);
 	
 	AutoRef<UPnPActionRequestHandler> handler(new MyActionRequestHandler);
 	server.setActionRequestHandler(handler);
+
+	server.getPropertyManager().setOnSubscriptionOutdatedListener(AutoRef<OnSubscriptionOutdatedListener>(new OutdatedListener));
 
 	cout << "uuid: " << uuid << endl;
 
@@ -198,6 +232,8 @@ int main(int argc, char *args[]) {
 	}
 
 	server.stop();
+
+	out.close();
     
     return 0;
 }

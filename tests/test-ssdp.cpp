@@ -63,11 +63,11 @@ static void test_discovery() {
 	server.addSSDPEventListener(listener);
 	server.startAsync();
 
-	idle(1000);
+	idle(500);
 
 	mcast("NOTIFY * HTTP/1.1\r\n\r\n");
 
-	idle(1000);
+	idle(500);
 
 	server.stop();
 

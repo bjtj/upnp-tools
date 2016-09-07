@@ -90,6 +90,8 @@ static void test_device_profile() {
 	AutoRef<UPnPActionRequestHandler> handler(new MyActionHandler);
 	server.setActionRequestHandler(handler);
 
+	ASSERT(server.parseTimeout("Second-300"), ==, 300000);
+
 	server.startAsync();
 
 	// profile search check

@@ -13,6 +13,7 @@
 #include "SSDPServer.hpp"
 #include "NetworkStateManager.hpp"
 #include "UPnPDeviceProfile.hpp"
+#include "UPnPDebug.hpp"
 
 namespace UPNP {
 
@@ -85,6 +86,7 @@ namespace UPNP {
 		UTIL::TimerLooperThread timerThread;
 		SSDP::SSDPServer ssdpServer;
 		UTIL::AutoRef<SSDP::SSDPEventListener> ssdpListener;
+		UTIL::AutoRef<UPnPDebug> _debug;
 
 	private:
 		
@@ -132,11 +134,20 @@ namespace UPNP {
 		void setProperties(const std::string & udn, const std::string & serviceyType, UTIL::LinkedStringMap & props);
 		void notifyEvent(const std::string & sid);
 		void delayNotifyEvent(const std::string & sid, unsigned long delay);
+		std::string onSubscribe(const UPnPDeviceProfile & device, const UPnPServiceProfile & service, const std::vector<std::string> & callbacks, unsigned long timeout);
+		void onRenewSubscription(const std::string & sid, unsigned long timeout);
+		void onUnsubscribe(const std::string & sid);
+		std::vector<std::string> parseCallbackUrls(const std::string & urls);
+		unsigned long parseTimeout(const std::string & phrase);
 
 		// session timeout manager
 		UTIL::TimerLooperThread & getTimerThread();
 
 		void collectOutdated();
+
+		void debug(const std::string & tag, const std::string & packet);
+		void debug(const UPnPDebugInfo & info);
+		void setDebug(UTIL::AutoRef<UPnPDebug> debug);
 	};
 }
 

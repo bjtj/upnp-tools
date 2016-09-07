@@ -159,8 +159,6 @@ namespace UPNP {
 		}
 	}
 
-	
-
 	string UPnPPropertyManager::makePropertiesXml(const LinkedStringMap & props) {
 		string content;
 		content.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n");
@@ -178,10 +176,17 @@ namespace UPNP {
 	void UPnPPropertyManager::collectOutdated() {
 		for (map<string, AutoRef<UPnPEventSubscriptionSession> >::iterator iter = sessions.begin(); iter != sessions.end();) {
 			if (iter->second->outdated()) {
+				if (!outdatedListener.nil()) {
+					outdatedListener->onSessionOutdated(*(iter->second));
+				}
 				sessions.erase(iter++);
 			} else {
 				iter++;
 			}
 		}
+	}
+
+	void UPnPPropertyManager::setOnSubscriptionOutdatedListener(UTIL::AutoRef<OnSubscriptionOutdatedListener> listener) {
+		outdatedListener = listener;
 	}
 }

@@ -17,6 +17,7 @@ namespace UPNP {
 		unsigned long & timeout();
 		unsigned long lifetimeRecent();
 		unsigned long lifetimeFull();
+		unsigned long lifetimeRemaining();
 		bool outdated();
 		void prolong();
 		void prolong(unsigned long newTimeout);

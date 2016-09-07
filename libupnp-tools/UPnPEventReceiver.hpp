@@ -59,6 +59,7 @@ namespace UPNP {
 		UPnPEventSubscriptionRegistry registry;
 		std::vector<UTIL::AutoRef<UPnPEventListener> > listeners;
 		HTTP::AnotherHttpServer * server;
+		
 	public:
 		UPnPEventReceiver(UPnPEventReceiverConfig & config);
 		virtual ~UPnPEventReceiver();

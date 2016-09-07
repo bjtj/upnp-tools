@@ -156,6 +156,7 @@ namespace UPNP {
 		UPnPServerSsdpHandler(UPnPServer & server) : server(server) {}
 		virtual ~UPnPServerSsdpHandler() {}
 		virtual bool filter(SSDPHeader & header) {
+			server.debug("ssdp", header.toString());
 			return true;
 		}
 		/**
@@ -204,93 +205,92 @@ namespace UPNP {
 			string uri = request.getHeader().getPart2();
 
 			if (request.getPath() == "/device.xml") {
-
-				AutoRef<UPnPDeviceProfileSession> session = server.getProfileManager().getDeviceProfileSessionByUuid(request.getParameter("udn"));
-				if (!session->isEnabled()) {
-					response.setStatusCode(404);
-					return;
-				}
-				
-				response.setStatusCode(200);
-				response.setContentType("text/xml");
-				UPnPDeviceProfile profile = server.getProfileManager().getDeviceProfileSessionByUuid(request.getParameter("udn"))->profile();
-
-				setFixedTransfer(response, profile.deviceDescription());
+				onDeviceDescriptionRequest(request, response, uri);
 				return;
 			}
 			
-			// if (server.hasDeviceProfileByScpdUrl(uri)) {
 			if (server.getProfileManager().hasDeviceProfileSessionByScpdUrl(uri)) {
-				UPnPDeviceProfile deviceProfile = server.getProfileManager().getDeviceProfileSessionHasScpdUrl(uri)->profile();
-				response.setStatusCode(200);
-				response.setContentType("text/xml");
-				UPnPServiceProfile serviceProfile = deviceProfile.getServiceProfileByScpdUrl(uri);
-				setFixedTransfer(response, serviceProfile.scpd());
+				onScpdRequest(request, response, uri);
 				return;
 			}
 			
-			// if (server.hasDeviceProfileByControlUrl(uri)) {
 			if (server.getProfileManager().hasDeviceProfileSessionByControlUrl(uri)) {
-				
-				// TODO: recognize specific device and service
-				
-				UPnPActionRequest actionRequest = parseActionRequest(request);
-				UPnPActionResponse actionResponse;
-				actionResponse.actionName() = actionRequest.actionName();
-				actionResponse.serviceType() = actionRequest.serviceType();
-				handleActionRequest(actionRequest, actionResponse);
-
-				response.setStatusCode(200);
-				response.setContentType("text/xml");
-				setFixedTransfer(response, makeSoapResponseContent(actionResponse));
+				onControlRequest(request, response, uri);
 				return;
 			}
 
-			// if (server.hasDeviceProfileByEventSubUrl(uri)) {
 			if (server.getProfileManager().hasDeviceProfileSessionByEventSubUrl(uri)) {
-				
-				// event sub/unsub
-
-				UPnPDeviceProfile deviceProfile = server.getProfileManager().getDeviceProfileSessionHasEventSubUrl(uri)->profile();
-				UPnPServiceProfile serviceProfile = deviceProfile.getServiceProfileByEventSubUrl(uri);
-				UPnPPropertyManager & nc = server.getPropertyManager();
-
-				if (request.getMethod() == "SUBSCRIBE") {
-					string callbackUrls = request.getHeaderFieldIgnoreCase("CALLBACK");
-					vector<string> urls = parseCallbackUrls(callbackUrls);
-					string timeout = request.getParameter("TIMEOUT");
-					unsigned long timeoutMilli = parseTimeout(timeout);
-
-					UuidGeneratorVersion1 gen;
-					string sid = gen.generate();
-
-					AutoRef<UPnPEventSubscriptionSession> session(new UPnPEventSubscriptionSession);
-					session->sid() = sid;
-					session->callbackUrls() = urls;
-					session->prolong(timeoutMilli);
-					session->udn() = deviceProfile.uuid();
-					session->serviceType() = serviceProfile.serviceType();
-
-					nc.addSubscriptionSession(session);
-
-					server.delayNotifyEvent(sid, 100);
-
-					response.setStatusCode(200);
-					response.setContentType("text/xml");
-					response.getHeader().setHeaderField("SID", sid);
-					return;
-					
-				} else if (request.getMethod() == "UNSUBSCRIBE") {
-					string sid = request.getParameter("SID");
-					nc.removeSubscriptionSession(sid);
-					response.setStatusCode(200);
-					return;
-				}
+				server.debug("event", request.getHeader().toString());
+				onEventSubscriptionRequest(request, response, uri);
+				return;
 			}
 
 			response.setStatusCode(404);
 			response.setContentType("text/plain");
 			setFixedTransfer(response, "Not found");
+		}
+
+		void onDeviceDescriptionRequest(HttpRequest & request, HttpResponse & response, const string & uri) {
+			AutoRef<UPnPDeviceProfileSession> session = server.getProfileManager().getDeviceProfileSessionByUuid(request.getParameter("udn"));
+			if (!session->isEnabled()) {
+				response.setStatusCode(404);
+				return;
+			}
+				
+			response.setStatusCode(200);
+			response.setContentType("text/xml");
+			UPnPDeviceProfile profile = server.getProfileManager().getDeviceProfileSessionByUuid(request.getParameter("udn"))->profile();
+
+			setFixedTransfer(response, profile.deviceDescription());
+		}
+		
+		void onScpdRequest(HttpRequest & request, HttpResponse & response, const string & uri) {
+			UPnPDeviceProfile deviceProfile = server.getProfileManager().getDeviceProfileSessionHasScpdUrl(uri)->profile();
+			response.setStatusCode(200);
+			response.setContentType("text/xml");
+			UPnPServiceProfile serviceProfile = deviceProfile.getServiceProfileByScpdUrl(uri);
+			setFixedTransfer(response, serviceProfile.scpd());
+		}
+		
+		void onControlRequest(HttpRequest & request, HttpResponse & response, const string & uri) {
+			// TODO: recognize specific device and service
+			UPnPActionRequest actionRequest = parseActionRequest(request);
+			UPnPActionResponse actionResponse;
+			actionResponse.actionName() = actionRequest.actionName();
+			actionResponse.serviceType() = actionRequest.serviceType();
+			handleActionRequest(actionRequest, actionResponse);
+
+			response.setStatusCode(200);
+			response.setContentType("text/xml");
+			setFixedTransfer(response, makeSoapResponseContent(actionResponse));
+		}
+		
+		void onEventSubscriptionRequest(HttpRequest & request, HttpResponse & response, const string & uri) {
+			
+			UPnPDeviceProfile deviceProfile = server.getProfileManager().getDeviceProfileSessionHasEventSubUrl(uri)->profile();
+			UPnPServiceProfile serviceProfile = deviceProfile.getServiceProfileByEventSubUrl(uri);
+
+			if (request.getMethod() == "SUBSCRIBE") {
+
+				if (request.getHeaderFieldIgnoreCase("SID").empty()) {
+					vector<string> callbacks = server.parseCallbackUrls(request.getHeaderFieldIgnoreCase("CALLBACK"));
+					unsigned long timeout = server.parseTimeout(request.getHeaderFieldIgnoreCase("TIMEOUT"));
+					string sid = server.onSubscribe(deviceProfile, serviceProfile, callbacks, timeout);
+					response.setStatusCode(200);
+					response.setContentType("text/xml");
+					response.getHeader().setHeaderField("SID", sid);
+				} else {
+					string sid = request.getHeaderFieldIgnoreCase("SID");
+					unsigned long timeout = server.parseTimeout(request.getHeaderFieldIgnoreCase("TIMEOUT"));
+					server.onRenewSubscription(sid, timeout);
+					response.setStatusCode(200);
+				}
+			} else if (request.getMethod() == "UNSUBSCRIBE") {
+				server.onUnsubscribe(request.getHeaderFieldIgnoreCase("SID"));
+				response.setStatusCode(200);
+			} else {
+				throw Exception("wrong event subscription request");
+			}
 		}
 
 		void scheduleNotifyEvent(const string & sid) {
@@ -361,29 +361,6 @@ namespace UPNP {
 			xml.append("</s:Body>\r\n");
 			xml.append("</s:Envelope>");
 			return xml;
-		}
-
-		vector<string> parseCallbackUrls(const string & urls) {
-			vector<string> ret;
-			string buffer;
-			for (string::const_iterator iter = urls.begin(); iter != urls.end(); iter++) {
-				if (*iter == '<') {
-					buffer = "";
-					for (iter++; iter != urls.end() && *iter != '>'; iter++) {
-						buffer.append(1, *iter);
-					}
-					ret.push_back(buffer);
-				}
-			}
-			return ret;
-		}
-
-		unsigned long parseTimeout(const string & phrase) {
-			size_t p = phrase.find("Second-"); // TODO: case insensitive
-			if (p == string::npos) {
-				return 0; // parsing failed
-			}
-			return Text::toLong(phrase.substr(p + 7));
 		}
 
 		string unwrapQuotes(const string & text) {
@@ -654,11 +631,77 @@ namespace UPNP {
 		notificationThread.delayNotify(sid, delay);
 	}
 
+	string UPnPServer::onSubscribe(const UPnPDeviceProfile & device, const UPnPServiceProfile & service, const vector<string> & callbacks, unsigned long timeout) {
+		
+		UuidGeneratorVersion1 gen;
+		string sid = gen.generate();
+
+		AutoRef<UPnPEventSubscriptionSession> session(new UPnPEventSubscriptionSession);
+		session->sid() = sid;
+		session->callbackUrls() = callbacks;
+		session->prolong(timeout);
+		session->udn() = device.const_uuid();
+		session->serviceType() = service.const_serviceType();
+
+		propertyManager.addSubscriptionSession(session);
+
+		delayNotifyEvent(sid, 100);
+
+		return sid;
+	}
+
+	void UPnPServer::onRenewSubscription(const string & sid, unsigned long timeout) {
+		propertyManager.getSession(sid)->prolong(timeout);
+	}
+	
+	void UPnPServer::onUnsubscribe(const string & sid) {
+		propertyManager.removeSubscriptionSession(sid);
+	}
+
+	vector<string> UPnPServer::parseCallbackUrls(const string & urls) {
+		vector<string> ret;
+		string buffer;
+		for (string::const_iterator iter = urls.begin(); iter != urls.end(); iter++) {
+			if (*iter == '<') {
+				buffer = "";
+				for (iter++; iter != urls.end() && *iter != '>'; iter++) {
+					buffer.append(1, *iter);
+				}
+				ret.push_back(buffer);
+			}
+		}
+		return ret;
+	}
+
+	unsigned long UPnPServer::parseTimeout(const string & phrase) {
+		if (Text::startsWithIgnoreCase(phrase, "Second-")) {
+			return Text::toLong(phrase.substr(string("Second-").size())) * 1000;
+		}
+		return 0;
+	}
+
 	TimerLooperThread & UPnPServer::getTimerThread() {
 		return timerThread;
 	}
 
 	void UPnPServer::collectOutdated() {
 		propertyManager.collectOutdated();
+	}
+
+	void UPnPServer::debug(const string & tag, const string & packet) {
+		UPnPDebugInfo info;
+		info.tag() = tag;
+		info.packet() = packet;
+		debug(info);
+	}
+
+	void UPnPServer::debug(const UPnPDebugInfo & info) {
+		if (!_debug.nil()) {
+			_debug->debug(info);
+		}
+	}
+
+	void UPnPServer::setDebug(AutoRef<UPnPDebug> debug) {
+		this->_debug = debug;
 	}
 }

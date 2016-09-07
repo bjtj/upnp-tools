@@ -19,7 +19,7 @@ namespace UPNP {
 		static unsigned long connectionTimeout;
 		static unsigned long soTimeout;
 
-		class DumpResponseHandler : public HTTP::OnResponseListener {
+		class DumpResponseHandler : public HTTP::OnHttpResponseListener {
 		private:
 			HTTP::HttpResponseHeader responseHeader;
 			std::string dump;

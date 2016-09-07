@@ -23,7 +23,16 @@ namespace UPNP {
 		virtual ~UPnPEventSubscriptionSession();
 		std::vector<std::string> & callbackUrls();
 	};
-	
+
+	/**
+	 * @brief 
+	 */
+	class OnSubscriptionOutdatedListener {
+	public:
+		OnSubscriptionOutdatedListener() {}
+		virtual ~OnSubscriptionOutdatedListener() {}
+		virtual void onSessionOutdated(UPnPEventSubscriptionSession & session) = 0;
+	};
 
 	/**
 	 * @brief notify thread
@@ -48,6 +57,7 @@ namespace UPNP {
 	private:
 		std::map<std::string, UTIL::LinkedStringMap> registry;
 		std::map<std::string, UTIL::AutoRef<UPnPEventSubscriptionSession> > sessions;
+		UTIL::AutoRef<OnSubscriptionOutdatedListener> outdatedListener;
 
 	private:
 		std::string makeKey(const std::string & udn, const std::string serviceType);
@@ -70,6 +80,7 @@ namespace UPNP {
 		void notify(UTIL::AutoRef<UPnPEventSubscriptionSession> session, const UTIL::LinkedStringMap & props);
 		std::string makePropertiesXml(const UTIL::LinkedStringMap & props);
 		void collectOutdated();
+		void setOnSubscriptionOutdatedListener(UTIL::AutoRef<OnSubscriptionOutdatedListener> listener);
 	};
 }
 
