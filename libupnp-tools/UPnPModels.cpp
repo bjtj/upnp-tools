@@ -58,19 +58,19 @@ namespace UPNP {
 	UPnPService::UPnPService(UPnPDevice * device) : device(device) {}
 	UPnPService::~UPnPService() {}
 	
-	string UPnPService::getServiceType() {
+	string & UPnPService::serviceType() {
 		return getProperties()["serviceType"];
 	}
-	string UPnPService::getServiceId() {
+	string & UPnPService::serviceId() {
 		return getProperties()["serviceId"];
 	}
-	string UPnPService::getScpdUrl() {
+	string & UPnPService::scpdUrl() {
 		return getProperties()["SCPDURL"];
 	}
-	string UPnPService::getControlUrl() {
+	string & UPnPService::controlUrl() {
 		return getProperties()["controlURL"];
 	}
-	string UPnPService::getEventSubUrl() {
+	string & UPnPService::eventSubUrl() {
 		return getProperties()["eventSubURL"];
 	}
 	void UPnPService::setDevice(UPnPDevice * device) {
@@ -83,7 +83,7 @@ namespace UPNP {
 		if (!device) {
 			throw OS::Exception("no device", -1, 0);
 		}
-		return device->baseUrl().relativePath(getScpdUrl());
+		return device->baseUrl().relativePath(scpdUrl());
 	}
 
 	UPnPScpd & UPnPService::scpd() {
@@ -119,7 +119,7 @@ namespace UPNP {
 
 	bool UPnPDevice::hasService(const string & serviceType) {
 		for (vector<AutoRef<UPnPService> >::iterator iter = _services.begin(); iter != _services.end(); iter++) {
-			if ((*iter)->getServiceType() == serviceType) {
+			if ((*iter)->serviceType() == serviceType) {
 				return true;
 			}
 		}
@@ -128,7 +128,7 @@ namespace UPNP {
 	
 	AutoRef<UPnPService> UPnPDevice::getService(const string & serviceType) {
 		for (vector<AutoRef<UPnPService> >::iterator iter = _services.begin(); iter != _services.end(); iter++) {
-			if ((*iter)->getServiceType() == serviceType) {
+			if ((*iter)->serviceType() == serviceType) {
 				return *iter;
 			}
 		}
@@ -171,6 +171,13 @@ namespace UPNP {
 
 	void UPnPDevice::setUdn(const string & udn) {
 		getProperties()["UDN"] = udn;
+	}
+
+	void UPnPDevice::setUdnRecursive(const std::string & udn) {
+		setUdn(udn);
+		for (vector<AutoRef<UPnPDevice> >::iterator iter = _embeddedDevices.begin(); iter != _embeddedDevices.end(); iter++) {
+			(*iter)->setUdnRecursive(udn);
+		}
 	}
 	
 	string UPnPDevice::getFriendlyName() {

@@ -102,6 +102,7 @@ namespace UPNP {
 		std::string makeLocation(UPnPDeviceProfile & profile);
 
 		void setEnableDevice(const std::string & udn, bool enable);
+		void setEnableAllDevices(bool enable);
 
 		// announce
 		void notifyAliveAll();

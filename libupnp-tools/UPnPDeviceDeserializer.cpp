@@ -146,12 +146,15 @@ namespace UPNP {
 		device->baseUrl() = url;
 		vector<UPnPService*> services = device->allServices();
 		for (vector<UPnPService*>::iterator iter = services.begin(); iter != services.end(); iter++) {
-			(*iter)->scpd() = parseScpdXml(UPnPResourceManager::getResource(url.relativePath((*iter)->getScpdUrl())));
+			(*iter)->scpd() = parseScpdXml(UPnPResourceManager::getResource(url.relativePath((*iter)->scpdUrl())));
 		}
 		return device;
 	}
 
 	AutoRef<UPnPDevice> UPnPDeviceDeserializer::parseDeviceXml(const string & deviceXml) {
+
+		debug("upnp", deviceXml);
+		
 		AutoRef<UPnPDevice> device(new UPnPDevice);
 		XmlDocument doc = DomParser::parse(deviceXml);
 		parseDeviceXmlNode(doc.getRootNode()->getElementByTagName("device"), *device);
@@ -159,6 +162,9 @@ namespace UPNP {
 	}
 	
 	UPnPScpd UPnPDeviceDeserializer::parseScpdXml(const string & scpdXml) {
+
+		debug("upnp", scpdXml);
+		
 		UPnPScpd scpd;
 		XmlDocument doc = DomParser::parse(scpdXml);
 		if (doc.getRootNode().nil()) {

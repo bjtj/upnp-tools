@@ -66,4 +66,8 @@ namespace UPNP {
 	void UPnPDebuggable::setDebug(AutoRef<UPnPDebug> debug) {
 		this->_debug = debug;
 	}
+
+	AutoRef<UPnPDebug> UPnPDebuggable::getDebug() {
+		return _debug;
+	}
 }

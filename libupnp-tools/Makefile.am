@@ -27,6 +27,7 @@ libupnp_toolsinc_HEADERS = \
 	UPnPEventReceiver.hpp \
 	UPnPEventSubscriber.hpp \
 	UPnPEventSubscription.hpp \
+	UPnPLocationResolver.hpp \
 	UPnPModels.hpp \
 	UPnPPropertyManager.hpp \
 	UPnPResourceManager.hpp \
@@ -82,6 +83,8 @@ libupnp_tools_la_SOURCES = \
 	UPnPEventSubscriber.hpp \
 	UPnPEventSubscription.cpp \
 	UPnPEventSubscription.hpp \
+	UPnPLocationResolver.cpp \
+	UPnPLocationResolver.hpp \
 	UPnPModels.cpp \
 	UPnPModels.hpp \
 	UPnPPropertyManager.cpp \

@@ -78,6 +78,7 @@ namespace UPNP {
 		void debug(const std::string & tag, const std::string & packet);
 		void debug(const UPnPDebugInfo & info);
 		void setDebug(UTIL::AutoRef<UPnPDebug> debug);
+		UTIL::AutoRef<UPnPDebug> getDebug();
 	};
 
 }

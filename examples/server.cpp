@@ -50,6 +50,12 @@ string dd(const string & uuid) {
 	xml.append("<service>");
 	xml.append("<serviceType>urn:schemas-dummy-com:service:Dummy:1</serviceType>");
 	xml.append("<serviceId>urn:dummy-com:serviceId:dummy1</serviceId>");
+	xml.append("<SCPDURL>");
+	xml.append("/scpd.xml/");
+	xml.append(uuid);
+	xml.append("::");
+	xml.append(dummy);
+	xml.append("</SCPDURL>");
 	xml.append("<controlURL>/control/");
 	xml.append(uuid);
 	xml.append("::");
@@ -60,11 +66,6 @@ string dd(const string & uuid) {
 	xml.append("::");
 	xml.append(dummy);
 	xml.append("</eventSubURL>");
-	xml.append("<SCPDURL>/scpd.xml/");
-	xml.append(uuid);
-	xml.append("::");
-	xml.append(dummy);
-	xml.append("</SCPDURL>");
 	xml.append("</service></serviceList>");
 	xml.append("</device>");
 	xml.append("</root>");

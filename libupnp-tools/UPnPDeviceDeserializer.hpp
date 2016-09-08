@@ -5,13 +5,14 @@
 #include <liboslayer/XmlParser.hpp>
 #include "SSDPHeader.hpp"
 #include "UPnPModels.hpp"
+#include "UPnPDebug.hpp"
 
 namespace UPNP {
 
 	/**
 	 * @brief 
 	 */
-	class UPnPDeviceDeserializer {
+	class UPnPDeviceDeserializer : public UPnPDebuggable {
 	private:
 	public:
 		UPnPDeviceDeserializer();

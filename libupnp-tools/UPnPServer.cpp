@@ -215,12 +215,13 @@ namespace UPNP {
 			}
 			
 			if (server.getProfileManager().hasDeviceProfileSessionByControlUrl(uri)) {
+				server.debug("upnp:control", request.getHeader().toString());
 				onControlRequest(request, response, uri);
 				return;
 			}
 
 			if (server.getProfileManager().hasDeviceProfileSessionByEventSubUrl(uri)) {
-				server.debug("event", request.getHeader().toString());
+				server.debug("upnp:event", request.getHeader().toString());
 				onEventSubscriptionRequest(request, response, uri);
 				return;
 			}
@@ -458,6 +459,18 @@ namespace UPNP {
 			notifyAlive(getProfileManager().getDeviceProfileSessionByUuid(uuid.getUuid())->profile());
 		} else {
 			notifyByeBye(getProfileManager().getDeviceProfileSessionByUuid(uuid.getUuid())->profile());
+		}
+	}
+
+	void UPnPServer::setEnableAllDevices(bool enable) {
+		vector<AutoRef<UPnPDeviceProfileSession> > profiles = getProfileManager().sessionList();
+		for (vector<AutoRef<UPnPDeviceProfileSession> >::iterator iter = profiles.begin(); iter != profiles.end(); iter++) {
+			(*iter)->setEnable(enable);
+			if (enable) {
+				notifyAlive((*iter)->profile());
+			} else {
+				notifyByeBye((*iter)->profile());
+			}
 		}
 	}
 

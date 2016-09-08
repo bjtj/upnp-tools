@@ -19,13 +19,13 @@ namespace UPNP {
 	 */
 	class UPnPModelObject {
 	private:
-		UTIL::PropertyMap props;
+		UTIL::PropertyMap _props;
 	public:
 		UPnPModelObject() {}
 		virtual ~UPnPModelObject() {}
-		UTIL::PropertyMap & getProperties() {return props;}
+		UTIL::PropertyMap & getProperties() {return _props;}
 		std::string & operator[] (const std::string & name) {
-			return props[name];
+			return _props[name];
 		}
 	};
 
@@ -138,11 +138,11 @@ namespace UPNP {
 		UPnPService();
 		UPnPService(UPnPDevice * device);
 		virtual ~UPnPService();
-		std::string getServiceType();
-		std::string getServiceId();
-		std::string getScpdUrl();
-		std::string getControlUrl();
-		std::string getEventSubUrl();
+		std::string & serviceType();
+		std::string & serviceId();
+		std::string & scpdUrl();
+		std::string & controlUrl();
+		std::string & eventSubUrl();
 		void setDevice(UPnPDevice * device);
 		UPnPDevice * getDevice();
 		HTTP::Url makeScpdUrl();
@@ -175,6 +175,7 @@ namespace UPNP {
 		std::vector<UPnPService*> allServices();
 		std::string getUdn();
 		void setUdn(const std::string & udn);
+		void setUdnRecursive(const std::string & udn);
 		std::string getFriendlyName();
 		void setFriendlyName(const std::string & friendlyName);
 		std::string getDeviceType();

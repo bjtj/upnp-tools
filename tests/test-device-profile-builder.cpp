@@ -1,10 +1,12 @@
 #include "utils.hpp"
+#include <liboslayer/os.hpp>
 #include <liboslayer/Uuid.hpp>
 #include <libupnp-tools/UPnPDeviceDeserializer.hpp>
 #include <libupnp-tools/UPnPDeviceProfileBuilder.hpp>
 #include <libupnp-tools/UPnPResourceManager.hpp>
 
 using namespace std;
+using namespace OS;
 using namespace UTIL;
 using namespace HTTP;
 using namespace UPNP;
@@ -36,9 +38,42 @@ static void test_device_profile_builder() {
 	ASSERT(device->getUdn(), ==, "uuid:" + uuid);
 }
 
+static void test_build_from_file() {
+	
+	UPnPDeviceDeserializer deserializer;
+	AutoRef<UPnPDevice> device = deserializer.build(Url("file://" + File::mergePaths(DATA_PATH, "/dms.xml")));
+	UPnPDeviceProfileBuilder builder(device);
+	UPnPDeviceProfile profile = builder.build();
+
+	vector<UPnPServiceProfile> services = profile.serviceProfiles();
+	for (vector<UPnPServiceProfile>::iterator iter = services.begin(); iter != services.end(); iter++) {
+		cout << iter->scpdUrl() << endl;
+		cout << iter->controlUrl() << endl;
+		cout << iter->eventSubUrl() << endl;
+	}
+}
+
+static void test_builder() {
+
+	Url url("file://" + File::mergePaths(DATA_PATH, "/dms.xml"));
+
+	UPnPDeviceDeserializer deserializer;
+	UPnPDeviceProfileBuilder builder(deserializer.build(url));
+	UPnPDeviceProfile profile = builder.build();
+
+	vector<UPnPServiceProfile> profiles = profile.serviceProfiles();
+	for (vector<UPnPServiceProfile>::iterator iter = profiles.begin(); iter != profiles.end(); iter++) {
+		cout << iter->scpdUrl() << endl;
+		cout << iter->controlUrl() << endl;
+		cout << iter->eventSubUrl() << endl;
+	}
+}
+
 int main(int argc, char *args[]) {
 
 	test_device_profile_builder();
+	test_build_from_file();
+	test_builder();
     
     return 0;
 }

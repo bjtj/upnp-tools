@@ -5,9 +5,10 @@
 #include <liboslayer/AutoRef.hpp>
 #include "UPnPDeviceProfile.hpp"
 #include "UPnPModels.hpp"
+#include "UPnPLocationResolver.hpp"
 
 namespace UPNP {
-	
+
 	/**
 	 * @brief 
 	 */
@@ -15,6 +16,7 @@ namespace UPNP {
 	private:
 		std::string _uuid;
 		UTIL::AutoRef<UPnPDevice> _device;
+		UTIL::AutoRef<UPnPLocationResolver> _locationResolver;
 		
 	public:
 		UPnPDeviceProfileBuilder(UTIL::AutoRef<UPnPDevice> device);
@@ -24,7 +26,7 @@ namespace UPNP {
 		UTIL::AutoRef<UPnPDevice> device();
 		std::vector<UTIL::AutoRef<UPnPDevice> > selectAllDevices(UTIL::AutoRef<UPnPDevice> device);
 		UPnPDeviceProfile build();
-		void setUdnRecursive(UTIL::AutoRef<UPnPDevice> device, const std::string & udn);
+		void setLocationResolver(UTIL::AutoRef<UPnPLocationResolver> locationResolver);
 	};
 }
 

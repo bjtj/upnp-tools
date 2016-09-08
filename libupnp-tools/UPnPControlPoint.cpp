@@ -307,6 +307,7 @@ namespace UPNP {
 
 	AutoRef<UPnPDevice> UPnPControlPoint::buildDevice(SSDPHeader & header) {
 		UPnPDeviceDeserializer deserializer;
+		deserializer.setDebug(getDebug());
 		return deserializer.build(Url(header.getLocation()));
 	}
 
@@ -357,7 +358,7 @@ namespace UPNP {
 		if (service.nil()) {
 			throw Exception("service not found / type : " + serviceType);
 		}
-		return UPnPActionInvoker(device->baseUrl().relativePath(service->getControlUrl()));
+		return UPnPActionInvoker(device->baseUrl().relativePath(service->controlUrl()));
 	}
 
 	void UPnPControlPoint::subscribe(const string & udn, const string & serviceType) {
@@ -392,7 +393,7 @@ namespace UPNP {
 		if (service.nil()) {
 			throw Exception("service not found / type : " + serviceType);
 		}
-		return UPnPEventSubscriber(device->baseUrl().relativePath(service->getEventSubUrl()));
+		return UPnPEventSubscriber(device->baseUrl().relativePath(service->eventSubUrl()));
 	}
 	AutoRef<UPnPService> UPnPControlPoint::findService(AutoRef<UPnPDevice> device, const string & serviceType) {
 		if (device->hasService(serviceType)) {

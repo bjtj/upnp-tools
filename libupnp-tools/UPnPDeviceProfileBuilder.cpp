@@ -11,10 +11,12 @@ namespace UPNP {
 	using namespace OS;
 	using namespace UTIL;
 
-	UPnPDeviceProfileBuilder::UPnPDeviceProfileBuilder(AutoRef<UPnPDevice> device) : _device(device) {
+	UPnPDeviceProfileBuilder::UPnPDeviceProfileBuilder(AutoRef<UPnPDevice> device)
+		: _device(device), _locationResolver(new UPnPLocationResolver) {
 	}
 
-	UPnPDeviceProfileBuilder::UPnPDeviceProfileBuilder(const string uuid, AutoRef<UPnPDevice> device) : _uuid(uuid), _device(device) {
+	UPnPDeviceProfileBuilder::UPnPDeviceProfileBuilder(const string uuid, AutoRef<UPnPDevice> device)
+		: _uuid(uuid), _device(device), _locationResolver(new UPnPLocationResolver) {
 	}
 	UPnPDeviceProfileBuilder::~UPnPDeviceProfileBuilder() {
 	}
@@ -49,10 +51,12 @@ namespace UPNP {
 			Uuid uuid(_device->getUdn());
 			_uuid = uuid.getUuid();
 		} else {
-			setUdnRecursive(_device, "uuid:" + _uuid);
+			_device->setUdnRecursive("uuid:" + _uuid);
 		}
+
+		_locationResolver->resolveRecursive(_device);
+
 		deviceProfile.uuid() = _uuid;
-		
 		deviceProfile.deviceDescription() = UPnPDeviceSerializer::serializeDeviceDescription(*_device);
 
 		vector<AutoRef<UPnPDevice> > devices;
@@ -61,20 +65,23 @@ namespace UPNP {
 		devices.insert(devices.end(), embeds.begin(), embeds.end());
 		
 		for (vector<AutoRef<UPnPDevice> >::iterator iter = devices.begin(); iter != devices.end(); iter++) {
-			deviceProfile.deviceTypes().push_back((*iter)->getDeviceType());
 
-			vector<AutoRef<UPnPService> > & services = (*iter)->services();
+			AutoRef<UPnPDevice> device = (*iter);
+			deviceProfile.deviceTypes().push_back(device->getDeviceType());
+			vector<AutoRef<UPnPService> > & services = device->services();
+			
 			for (vector<AutoRef<UPnPService> >::iterator si = services.begin(); si != services.end(); si++) {
 
 				AutoRef<UPnPService> service = *si;
 				UPnPServiceProfile serviceProfile;
 				
 				serviceProfile.scpd() = UPnPDeviceSerializer::serializeScpd(service->scpd());
-				serviceProfile.serviceType() = service->getServiceType();
-				serviceProfile.serviceId() = service->getServiceId();
-				serviceProfile.scpdUrl() = service->getScpdUrl();
-				serviceProfile.controlUrl() = service->getControlUrl();
-				serviceProfile.eventSubUrl() = service->getEventSubUrl();
+				serviceProfile.serviceType() = service->serviceType();
+				serviceProfile.serviceId() = service->serviceId();
+				serviceProfile.scpdUrl() = service->scpdUrl();
+				serviceProfile.controlUrl() = service->controlUrl();
+				serviceProfile.eventSubUrl() = service->eventSubUrl();
+				
 				deviceProfile.serviceProfiles().push_back(serviceProfile);
 			}
 		}
@@ -82,10 +89,7 @@ namespace UPNP {
 		return deviceProfile;
 	}
 
-	void UPnPDeviceProfileBuilder::setUdnRecursive(AutoRef<UPnPDevice> device, const string & udn) {
-		device->setUdn(udn);
-		for (size_t i = 0; i < device->embeddedDevices().size(); i++) {
-			setUdnRecursive(device->embeddedDevices()[i], udn);
-		}
+	void UPnPDeviceProfileBuilder::setLocationResolver(UTIL::AutoRef<UPnPLocationResolver> locationResolver) {
+		this->_locationResolver = locationResolver;
 	}
 }

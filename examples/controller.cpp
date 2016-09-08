@@ -91,7 +91,7 @@ public:
 		for (vector<AutoRef<UPnPService> >::iterator iter = services.begin(); iter != services.end(); iter++) {
 			str.append("\n");
 			str.append(depth, ' ');
-			str.append(" <> " + (*iter)->getServiceType());
+			str.append(" <> " + (*iter)->serviceType());
 
 			vector<UPnPAction> actions = (*iter)->scpd().actions();
 			for (vector<UPnPAction>::iterator aiter = actions.begin(); aiter != actions.end(); aiter++) {
@@ -253,7 +253,7 @@ int run(int argc, char *args[]) {
 					UPnPAction action = service->scpd().action(selection.action());
 					vector<UPnPArgument> & arguments = action.arguments();
 					UPnPActionRequest request;
-					request.serviceType() = service->getServiceType();
+					request.serviceType() = service->serviceType();
 					request.action() = action;
 					for (vector<UPnPArgument>::iterator iter = arguments.begin(); iter != arguments.end(); iter++) {
 						if (iter->direction() == UPnPArgument::IN_DIRECTION) {
@@ -318,7 +318,7 @@ int run(int argc, char *args[]) {
 				if (!selection.serviceType().empty()) {
 					AutoRef<UPnPService> service = cp.getServiceByUdnAndServiceType(selection.udn(), selection.serviceType());
 					if (!service.nil()) {
-						url = cp.getBaseUrlByUdn(selection.udn()).relativePath(service->getScpdUrl());
+						url = cp.getBaseUrlByUdn(selection.udn()).relativePath(service->scpdUrl());
 						cout << "GET SCPD : " << url.toString() << endl;
 						dd = HttpUtils::httpGet(url);
 						cout << dd << endl;
