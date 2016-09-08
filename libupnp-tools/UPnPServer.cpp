@@ -688,20 +688,4 @@ namespace UPNP {
 		propertyManager.collectOutdated();
 	}
 
-	void UPnPServer::debug(const string & tag, const string & packet) {
-		UPnPDebugInfo info;
-		info.tag() = tag;
-		info.packet() = packet;
-		debug(info);
-	}
-
-	void UPnPServer::debug(const UPnPDebugInfo & info) {
-		if (!_debug.nil()) {
-			_debug->debug(info);
-		}
-	}
-
-	void UPnPServer::setDebug(AutoRef<UPnPDebug> debug) {
-		this->_debug = debug;
-	}
 }

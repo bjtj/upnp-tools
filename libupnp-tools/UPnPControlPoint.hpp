@@ -13,6 +13,7 @@
 #include "NetworkStateManager.hpp"
 #include "SharedUPnPDeviceList.hpp"
 #include "UPnPCache.hpp"
+#include "UPnPDebug.hpp"
 
 namespace UPNP {
 
@@ -102,7 +103,7 @@ namespace UPNP {
 	/**
 	 * @brief upnp control point
 	 */
-	class UPnPControlPoint {
+	class UPnPControlPoint : public UPnPDebuggable {
 	private:
 
 		static const unsigned long DEFAULT_DEVICE_SESSION_TIMEOUT = 1800 * 1000; 

@@ -3,6 +3,11 @@
 namespace UPNP {
 
 	using namespace std;
+	using namespace UTIL;
+
+	/**
+	 * @brief 
+	 */
 
 	UPnPDebug::UPnPDebug() : _max_history(1024) {
 	}
@@ -33,5 +38,32 @@ namespace UPNP {
 
 	void UPnPDebug::setOnDebugInfoListener(UTIL::AutoRef<OnDebugInfoListener> listener) {
 		_listener = listener;
+	}
+
+	/**
+	 * @brief 
+	 */
+
+	UPnPDebuggable::UPnPDebuggable() {
+	}
+	
+	UPnPDebuggable::~UPnPDebuggable() {
+	}
+
+	void UPnPDebuggable::debug(const string & tag, const string & packet) {
+		UPnPDebugInfo info;
+		info.tag() = tag;
+		info.packet() = packet;
+		debug(info);
+	}
+
+	void UPnPDebuggable::debug(const UPnPDebugInfo & info) {
+		if (!_debug.nil()) {
+			_debug->debug(info);
+		}
+	}
+
+	void UPnPDebuggable::setDebug(AutoRef<UPnPDebug> debug) {
+		this->_debug = debug;
 	}
 }

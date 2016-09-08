@@ -163,7 +163,7 @@ public:
  */
 int main(int argc, char *args[]) {
 
-	FileStream out("./out", "wb");
+	FileStream out("./.server.log", "wb");
 
 	AutoRef<UPnPDebug> debug(new UPnPDebug);
 	debug->setOnDebugInfoListener(AutoRef<OnDebugInfoListener>(new PrintDebugInfo(out)));
@@ -177,8 +177,7 @@ int main(int argc, char *args[]) {
 
 	s_set_dummy(server, uuid);
 	
-	AutoRef<UPnPActionRequestHandler> handler(new MyActionRequestHandler);
-	server.setActionRequestHandler(handler);
+	server.setActionRequestHandler(AutoRef<UPnPActionRequestHandler>(new MyActionRequestHandler));
 
 	server.getPropertyManager().setOnSubscriptionOutdatedListener(AutoRef<OnSubscriptionOutdatedListener>(new OutdatedListener));
 

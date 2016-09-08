@@ -162,38 +162,29 @@ namespace UPNP {
 	 */
 	class ControlPointSSDPListener : public SSDPEventListener {
 	private:
-		UPnPControlPoint * cp;
+		UPnPControlPoint & cp;
 	public:
-		ControlPointSSDPListener(UPnPControlPoint * cp) : cp(cp) {}
+		ControlPointSSDPListener(UPnPControlPoint & cp) : cp(cp) {}
 		virtual ~ControlPointSSDPListener() {}
-
-		void setControlPoint(UPnPControlPoint * cp) {
-			this->cp = cp;
-		}
 	
 		virtual bool filter(SSDPHeader & header) {
+			cp.debug("ssdp", header.toString());
 			return true;
 		}
-		virtual void onMsearch(SSDPHeader & header) {
-		}
+		
 		virtual void onNotify(SSDPHeader & header) {
 			InetAddress addr = header.getRemoteAddr();
-			if (cp) {
-				if (header.isNotifyAlive()) {
-					cp->addDevice(header);
-				} else {
-					cp->removeDevice(header);
-				}
+			if (header.isNotifyAlive()) {
+				cp.addDevice(header);
+			} else {
+				cp.removeDevice(header);
 			}
 		}
+		
 		virtual void onMsearchResponse(SSDPHeader & header) {
 			InetAddress addr = header.getRemoteAddr();
-
 			Uuid uuid(header.getUsn());
-
-			if (cp) {
-				cp->addDevice(header);
-			}
+			cp.addDevice(header);
 		}
 	};
 
@@ -201,7 +192,7 @@ namespace UPNP {
 	
 	UPnPControlPoint::UPnPControlPoint(UPnPControlPointConfig & config)
 		: config(config),
-		  ssdpListener(new ControlPointSSDPListener(this)),
+		  ssdpListener(new ControlPointSSDPListener(*this)),
 		  eventReceiver(NULL),
 		  started(false),
 		  deviceBuildTaskThreadPool(10) {
@@ -212,7 +203,7 @@ namespace UPNP {
 	UPnPControlPoint::UPnPControlPoint(UPnPControlPointConfig & config, AutoRef<NetworkStateManager> networkStateManager)
 		: networkStateManager(networkStateManager),
 		  config(config),
-		  ssdpListener(new ControlPointSSDPListener(this)),
+		  ssdpListener(new ControlPointSSDPListener(*this)),
 		  eventReceiver(NULL),
 		  started(false),
 		  deviceBuildTaskThreadPool(10) {
@@ -293,12 +284,12 @@ namespace UPNP {
 		string udn = uuid.getUuid();
 		InetAddress addr = header.getRemoteAddr();
 		unsigned long timeout = parseCacheControlMilli(header.getCacheControl());
-		if (!_sessionManager.has(udn)) {
+		if (_sessionManager.has(udn)) {
+			_sessionManager[udn]->prolong(timeout);
+		} else {
 			AutoRef<UPnPDeviceSession> session = _sessionManager.prepareSession(udn);
 			session->prolong(timeout);
 			deviceBuildTaskThreadPool.setTask(AutoRef<Task>(new DeviceBuildTask(*this, session, header)));
-		} else {
-			_sessionManager[udn]->prolong(timeout);
 		}
 	}
 
@@ -473,10 +464,9 @@ namespace UPNP {
 	}
 
 	unsigned long UPnPControlPoint::parseCacheControlMilli(const string & cacheControl) {
-		string maxAgePrefix = "max-age=";
-		if (!Text::startsWith(cacheControl, maxAgePrefix)) {
-			return DEFAULT_DEVICE_SESSION_TIMEOUT;
+		if (Text::startsWithIgnoreCase(cacheControl, "max-age=")) {
+			return Text::toLong(cacheControl.substr(string("max-age=").size())) * 1000;
 		}
-		return (unsigned long)Text::toLong(cacheControl.substr(maxAgePrefix.size())) * 1000;
+		return DEFAULT_DEVICE_SESSION_TIMEOUT;
 	}
 }

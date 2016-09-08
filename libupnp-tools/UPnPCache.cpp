@@ -30,17 +30,17 @@ namespace UPNP {
 	}
 
 	unsigned long UPnPCache::lifetimeRecent() {
-		return (tick_milli() - _creationTime);
+		return (tick_milli() - _lastUpdateTime);
 	}
 
 	unsigned long UPnPCache::lifetimeFull() {
-		return (tick_milli() - _lastUpdateTime);
+		return (tick_milli() - _creationTime);
 	}
 	
 	unsigned long UPnPCache::lifetimeRemaining() {
 		unsigned long curr = tick_milli();
-		if (curr < _creationTime + _timeout) {
-			return (_creationTime + _timeout) - curr;
+		if (curr < _lastUpdateTime + _timeout) {
+			return (_lastUpdateTime + _timeout) - curr;
 		}
 		return 0;
 	}

@@ -182,7 +182,28 @@ public:
 	string & action() {return _action;}
 };
 
+/**
+ * @brief 
+ */
+class PrintDebugInfo : public OnDebugInfoListener {
+private:
+	FileStream & stream;
+public:
+	PrintDebugInfo(FileStream & stream) : stream(stream) {
+	}
+	virtual ~PrintDebugInfo() {
+	}
+	virtual void onDebugInfo(const UPnPDebugInfo & info) {
+		stream.writeline(info.const_packet());
+	}
+};
+
 int run(int argc, char *args[]) {
+
+	FileStream out("./.controller.log", "wb");
+
+	AutoRef<UPnPDebug> debug(new UPnPDebug);
+	debug->setOnDebugInfoListener(AutoRef<OnDebugInfoListener>(new PrintDebugInfo(out)));
 
 	AutoRef<SharedUPnPDeviceList> list(new SharedUPnPDeviceList);
 
@@ -190,6 +211,7 @@ int run(int argc, char *args[]) {
 
 	UPnPControlPointConfig config(9998);
 	UPnPControlPoint cp(config);
+	cp.setDebug(debug);
 
 	cp.addSharedDeviceList(list);
 	cp.setDeviceAddRemoveListener(AutoRef<DeviceAddRemoveListener>(new MyDeviceListener));

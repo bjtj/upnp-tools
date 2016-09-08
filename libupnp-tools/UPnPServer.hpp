@@ -58,7 +58,7 @@ namespace UPNP {
 	/**
 	 * @brief upnp server
 	 */
-	class UPnPServer {
+	class UPnPServer : public UPnPDebuggable {
 	public:
 
 		/**
@@ -86,7 +86,6 @@ namespace UPNP {
 		UTIL::TimerLooperThread timerThread;
 		SSDP::SSDPServer ssdpServer;
 		UTIL::AutoRef<SSDP::SSDPEventListener> ssdpListener;
-		UTIL::AutoRef<UPnPDebug> _debug;
 
 	private:
 		
@@ -144,10 +143,6 @@ namespace UPNP {
 		UTIL::TimerLooperThread & getTimerThread();
 
 		void collectOutdated();
-
-		void debug(const std::string & tag, const std::string & packet);
-		void debug(const UPnPDebugInfo & info);
-		void setDebug(UTIL::AutoRef<UPnPDebug> debug);
 	};
 }
 

@@ -63,6 +63,23 @@ namespace UPNP {
 		std::deque<UPnPDebugInfo> & history();
 		void setOnDebugInfoListener(UTIL::AutoRef<OnDebugInfoListener> listener);
 	};
+
+	/**
+	 * @brief 
+	 */
+	class UPnPDebuggable {
+	private:
+		UTIL::AutoRef<UPnPDebug> _debug;
+		
+	public:
+		UPnPDebuggable();
+		virtual ~UPnPDebuggable();
+
+		void debug(const std::string & tag, const std::string & packet);
+		void debug(const UPnPDebugInfo & info);
+		void setDebug(UTIL::AutoRef<UPnPDebug> debug);
+	};
+
 }
 
 #endif
