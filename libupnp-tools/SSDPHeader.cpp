@@ -5,7 +5,8 @@ namespace SSDP {
 
 	using namespace std;
 	
-	SSDPHeader::SSDPHeader(const string & headerString, OS::InetAddress & remoteAddr) : remoteAddr(remoteAddr) {
+	SSDPHeader::SSDPHeader(const string & headerString, OS::InetAddress & remoteAddr)
+		: remoteAddr(remoteAddr) {
 		HTTP::HttpHeaderReader reader;
 		reader.read(headerString.c_str(), headerString.length());
 		this->setHeader(reader.getHeader());
@@ -14,7 +15,8 @@ namespace SSDP {
 	SSDPHeader::~SSDPHeader() {
 	}
 	bool SSDPHeader::isSSDPRequest() const {
-		if (UTIL::Text::equalsIgnoreCase(getMethod(), "NOTIFY") || UTIL::Text::equalsIgnoreCase(getMethod(), "M-SEARCH")) {
+		if (UTIL::Text::equalsIgnoreCase(getMethod(), "NOTIFY") ||
+			UTIL::Text::equalsIgnoreCase(getMethod(), "M-SEARCH")) {
 			return true;
 		}
 		return false;
@@ -26,19 +28,22 @@ namespace SSDP {
 		return false;
 	}
 	bool SSDPHeader::isNotifyAlive() const {
-		if (UTIL::Text::equalsIgnoreCase(getMethod(), "NOTIFY") && UTIL::Text::equalsIgnoreCase(getNts(), "ssdp:alive")) {
+		if (UTIL::Text::equalsIgnoreCase(getMethod(), "NOTIFY") &&
+			UTIL::Text::equalsIgnoreCase(getNts(), "ssdp:alive")) {
 			return true;
 		}
 		return false;
 	}
 	bool SSDPHeader::isNotifyByebye() const {
-		if (UTIL::Text::equalsIgnoreCase(getMethod(), "NOTIFY") && UTIL::Text::equalsIgnoreCase(getNts(), "ssdp:byebye")) {
+		if (UTIL::Text::equalsIgnoreCase(getMethod(), "NOTIFY") &&
+			UTIL::Text::equalsIgnoreCase(getNts(), "ssdp:byebye")) {
 			return true;
 		}
 		return false;
 	}
 	bool SSDPHeader::isNotifyUpdate() const {
-		if (UTIL::Text::equalsIgnoreCase(getMethod(), "NOTIFY") && UTIL::Text::equalsIgnoreCase(getNts(), "ssdp:update")) {
+		if (UTIL::Text::equalsIgnoreCase(getMethod(), "NOTIFY") &&
+			UTIL::Text::equalsIgnoreCase(getNts(), "ssdp:update")) {
 			return true;
 		}
 		return false;

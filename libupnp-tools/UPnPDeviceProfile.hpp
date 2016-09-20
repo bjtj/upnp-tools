@@ -30,7 +30,7 @@ namespace UPNP {
 		std::string rootDeviceType();
 		std::vector<UPnPServiceProfile> & serviceProfiles();
 		std::string & scpd(const std::string & serviceType);
-		bool match(const std::string & st);
+		bool hasDeviceType(const std::string & deviceType);
 		bool hasServiceByServiceType(const std::string & serviceType);
 		bool hasServiceByScpdUrl(const std::string & scpdUrl);
 		bool hasServiceByControlUrl(const std::string & controlUrl);

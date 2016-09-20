@@ -105,6 +105,7 @@ namespace UPNP {
 		void setEnableAllDevices(bool enable);
 
 		// announce
+		void delayNotify(unsigned long delay, int type, const UPnPDeviceProfile & profile);
 		void notifyAliveAll();
 		void notifyAlive(UPnPDeviceProfile & profile);
 		void notifyAliveByDeviceType(UPnPDeviceProfile & profile, const std::string & deviceType);
