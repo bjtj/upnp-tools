@@ -99,6 +99,7 @@ namespace UPNP {
 		headers["TIMEOUT"] = string("Second-") + Text::toString(request.timeoutSec()) ;
 		HttpResponseHeader header = HttpUtils::dumpHttpRequest(eventSubUrl, "SUBSCRIBE", headers).getResponseHeader();
 		response.sid() = header["SID"];
+		// TODO: use TIMEOUT value in response
 		return response;
 	}
 	void UPnPEventSubscriber::unsubscribe(const std::string & sid) {

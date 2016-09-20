@@ -70,7 +70,11 @@ namespace UPNP {
 			while (size-- > 0) {
 				if (NotificationRequestObject::prepared(messageQueue.front())) {
 					string sid = NotificationRequestObject::sid(messageQueue.dequeue());
-					propertyManager.notify(sid);
+					try {
+						propertyManager.notify(sid);
+					} catch (Exception e) {
+						// TODO: handle error
+					}
 				}
 			}
 		}
@@ -110,6 +114,9 @@ namespace UPNP {
 		sessions.erase(sid);
 	}
 	AutoRef<UPnPEventSubscriptionSession> UPnPPropertyManager::getSession(const string & sid) {
+		if (sessions.find(sid) == sessions.end()) {
+			throw Exception("no session found with sid : " + sid);
+		}
 		return sessions[sid];
 	}
 	

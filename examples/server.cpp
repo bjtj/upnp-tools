@@ -170,7 +170,8 @@ int main(int argc, char *args[]) {
 	debug->setOnDebugInfoListener(AutoRef<OnDebugInfoListener>(new PrintDebugInfo(out)));
 
 	UuidGeneratorVersion1 gen;
-	string uuid = gen.generate();
+	// string uuid = gen.generate();
+	string uuid = "e399855c-7ecb-1fff-8000-000000000000";
 
 	UPnPServer server(UPnPServer::Config(9001));
 	server.setDebug(debug);

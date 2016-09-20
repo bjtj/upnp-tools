@@ -280,6 +280,7 @@ namespace UPNP {
 					response.setStatusCode(200);
 					response.setContentType("text/xml");
 					response.getHeader().setHeaderField("SID", sid);
+					// TODO: set TIMEOUT (Second-n, n should be greater than or equal to 1800)
 				} else {
 					string sid = request.getHeaderFieldIgnoreCase("SID");
 					unsigned long timeout = server.parseTimeout(request.getHeaderFieldIgnoreCase("TIMEOUT"));
@@ -380,7 +381,7 @@ namespace UPNP {
 	 *
 	 */
 
-	string UPnPServer::DEFAULT_SERVER_INFO = "Cross-Platform/0.x UPnP/1.0";
+	string UPnPServer::DEFAULT_SERVER_INFO = "Cross-Platform/0 UPnP/1.0 App/0";
 	
 	UPnPServer::UPnPServer(const UPnPServer::Config & config)
 		: config(config),
