@@ -46,7 +46,8 @@ namespace UPNP {
 		void registerProfile(const UPnPDeviceProfile & profile);
 		void registerProfile(const std::string & uuid, const UPnPDeviceProfile & profile);
 		void unregisterProfile(const std::string & uuid);
-		std::vector<UTIL::AutoRef<UPnPDeviceProfileSession> > searchProfileSessions(const std::string & st);
+		std::vector<std::string> getAllTypes();
+		std::vector<std::string> getTypes(const std::string & st);
 		bool hasDeviceProfileSessionByScpdUrl(const std::string & scpdUrl);
 		bool hasDeviceProfileSessionByControlUrl(const std::string & controlUrl);
 		bool hasDeviceProfileSessionByEventSubUrl(const std::string & eventSubUrl);
@@ -99,7 +100,7 @@ namespace UPNP {
 		virtual ~UPnPServer();
 		void startAsync();
 		void stop();
-		std::string makeLocation(UPnPDeviceProfile & profile);
+		std::string makeLocation(const std::string & uuid);
 
 		void setEnableDevice(const std::string & udn, bool enable);
 		void setEnableAllDevices(bool enable);

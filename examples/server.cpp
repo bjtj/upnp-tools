@@ -1,4 +1,6 @@
 #include <iostream>
+#include <liboslayer/os.hpp>
+#include <liboslayer/ArgumentParser.hpp>
 #include <liboslayer/FileStream.hpp>
 #include <libhttp-server/AnotherHttpServer.hpp>
 #include <liboslayer/Uuid.hpp>
@@ -12,6 +14,7 @@
 #include <libupnp-tools/UPnPDeviceProfileBuilder.hpp>
 
 using namespace std;
+using namespace OS;
 using namespace SSDP;
 using namespace HTTP;
 using namespace UPNP;
@@ -154,34 +157,36 @@ public:
 	virtual ~PrintDebugInfo() {
 	}
 	virtual void onDebugInfo(const UPnPDebugInfo & info) {
+		stream.writeline("[" + Date::format("%Y-%c-%d %H:%i:%s.%f", Date::now()) + "]");
 		stream.writeline(info.const_packet());
 	}
 };
 
-
 /**
  * @brief 
  */
-int main(int argc, char *args[]) {
+int main(int argc, char * args[]) {
 
-	FileStream out("./.server.log", "wb");
+	Arguments arguments = ArgumentParser::parse(argc, args);
+	FileStream out;
 
-	AutoRef<UPnPDebug> debug(new UPnPDebug);
-	debug->setOnDebugInfoListener(AutoRef<OnDebugInfoListener>(new PrintDebugInfo(out)));
-
-	UuidGeneratorVersion1 gen;
+	// UuidGeneratorVersion1 gen;
 	// string uuid = gen.generate();
 	string uuid = "e399855c-7ecb-1fff-8000-000000000000";
-
-	UPnPServer server(UPnPServer::Config(9001));
-	server.setDebug(debug);
-	server.startAsync();
-
-	s_set_dummy(server, uuid);
 	
+	UPnPServer server(UPnPServer::Config(9001));
+	if (arguments.varAsBoolean("debug", false)) {
+		out = FileStream("./.server.log", "wb");
+		AutoRef<UPnPDebug> debug(new UPnPDebug);
+		debug->setOnDebugInfoListener(AutoRef<OnDebugInfoListener>(new PrintDebugInfo(out)));
+		server.setDebug(debug);
+	}
+	
+	server.startAsync();
+	s_set_dummy(server, uuid);
 	server.setActionRequestHandler(AutoRef<UPnPActionRequestHandler>(new MyActionRequestHandler));
-
-	server.getPropertyManager().setOnSubscriptionOutdatedListener(AutoRef<OnSubscriptionOutdatedListener>(new OutdatedListener));
+	server.getPropertyManager().
+		setOnSubscriptionOutdatedListener(AutoRef<OnSubscriptionOutdatedListener>(new OutdatedListener));
 
 	cout << "uuid: " << uuid << endl;
 
