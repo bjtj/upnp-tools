@@ -267,11 +267,11 @@ int run(int argc, char *args[]) {
 						}
 					}
 					UPnPActionResponse response = invoker.invoke(request);
-					map<string, string> & params = response.parameters();
-					for (map<string, string>::iterator iter = params.begin(); iter != params.end(); iter++) {
-						string name = iter->first;
-						string & value = iter->second;
-
+					LinkedStringMap & params = response.parameters();
+					for (size_t i = 0; i < params.size(); i++) {
+						NameValue & nv = params[i];
+						string name = nv.name();
+						string & value = nv.value();
 						cout << " - " << name << " := " << value << endl;
 					}
 				} catch (OS::Exception & e) {

@@ -15,7 +15,7 @@ namespace UPNP {
 		int _errorCode;
 		std::string _serviceType;
 		std::string _actionName;
-		std::map<std::string, std::string> _params;
+		UTIL::LinkedStringMap _params;
 		
 	public:
 		UPnPActionResponse();
@@ -24,7 +24,7 @@ namespace UPNP {
 		int errorCode();
 		std::string & serviceType();
 		std::string & actionName();
-		std::map<std::string, std::string> & parameters();
+		UTIL::LinkedStringMap & parameters();
 		std::string & operator[] (const std::string & name);
 	};
 }

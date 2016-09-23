@@ -284,40 +284,55 @@ namespace UPNP {
 	class UPnPServerHttpRequestHandler : public HttpRequestHandler {
 	private:
 		UPnPServer & server;
+		
 	public:
-		UPnPServerHttpRequestHandler(UPnPServer & server) : server(server) {}
-		virtual ~UPnPServerHttpRequestHandler() {}
+		UPnPServerHttpRequestHandler(UPnPServer & server) : server(server) { /**/ }
+		virtual ~UPnPServerHttpRequestHandler() { /**/ }
 
 		virtual AutoRef<DataSink> getDataSink() {
 			return AutoRef<DataSink>(new StringDataSink);
 		}
 
-		virtual void onHttpResponseTransferCompleted(HttpRequest & request, HttpResponse & response) {
-			// after work -- connection not closed yet
-		}
-
-		virtual void onHttpRequestContentCompleted(HttpRequest & request, AutoRef<DataSink> sink, HttpResponse & response) {
-			
+		virtual void onHttpRequestContentCompleted(HttpRequest & request,
+												   AutoRef<DataSink> sink,
+												   HttpResponse & response) {
 			string uri = request.getHeader().getPart2();
-
 			if (request.getPath() == "/device.xml") {
+				server.debug("upnp:device-description", request.getHeader().toString());
+				if (request.getMethod() != "GET") {
+					response.setStatusCode(405);
+					return;
+				}
+				prepareCommonResponse(request, response);
 				onDeviceDescriptionRequest(request, response, uri);
 				return;
 			}
 			
 			if (server.getProfileManager().hasDeviceProfileSessionByScpdUrl(uri)) {
+				server.debug("upnp:scpd", request.getHeader().toString());
+				if (request.getMethod() != "GET") {
+					response.setStatusCode(405);
+					return;
+				}
+				prepareCommonResponse(request, response);
 				onScpdRequest(request, response, uri);
 				return;
 			}
 			
 			if (server.getProfileManager().hasDeviceProfileSessionByControlUrl(uri)) {
 				server.debug("upnp:control", request.getHeader().toString());
+				if (request.getMethod() != "POST") {
+					response.setStatusCode(405);
+					return;
+				}
+				prepareCommonResponse(request, response);
 				onControlRequest(request, response, uri);
 				return;
 			}
 
 			if (server.getProfileManager().hasDeviceProfileSessionByEventSubUrl(uri)) {
 				server.debug("upnp:event", request.getHeader().toString());
+				prepareCommonResponse(request, response);
 				onEventSubscriptionRequest(request, response, uri);
 				return;
 			}
@@ -327,16 +342,26 @@ namespace UPNP {
 			setFixedTransfer(response, "Not found");
 		}
 
+		void prepareCommonResponse(HttpRequest & request, HttpResponse & response) {
+			response.getHeader().setHeaderField("Ext", "");
+			if (request.getHeader().hasHeaderFieldIgnoreCase("ACCEPT-LANGUAGE")) {
+				response.getHeader().setHeaderField("CONTENT-LANGUAGE", "en");
+			}
+		}
+
 		void onDeviceDescriptionRequest(HttpRequest & request, HttpResponse & response, const string & uri) {
-			AutoRef<UPnPDeviceProfileSession> session = server.getProfileManager().getDeviceProfileSessionByUuid(request.getParameter("udn"));
+			AutoRef<UPnPDeviceProfileSession> session = server.
+				getProfileManager().
+				getDeviceProfileSessionByUuid(request.getParameter("udn"));
 			if (!session->isEnabled()) {
 				response.setStatusCode(404);
 				return;
 			}
 				
 			response.setStatusCode(200);
-			response.setContentType("text/xml");
-			UPnPDeviceProfile profile = server.getProfileManager().getDeviceProfileSessionByUuid(request.getParameter("udn"))->profile();
+			response.setContentType("text/xml; charset=\"utf-8\"");
+			UPnPDeviceProfile profile = server.getProfileManager().
+				getDeviceProfileSessionByUuid(request.getParameter("udn"))->profile();
 
 			setFixedTransfer(response, profile.deviceDescription());
 		}
@@ -344,7 +369,7 @@ namespace UPNP {
 		void onScpdRequest(HttpRequest & request, HttpResponse & response, const string & uri) {
 			UPnPDeviceProfile deviceProfile = server.getProfileManager().getDeviceProfileSessionHasScpdUrl(uri)->profile();
 			response.setStatusCode(200);
-			response.setContentType("text/xml");
+			response.setContentType("text/xml; charset=\"utf-8\"");
 			UPnPServiceProfile serviceProfile = deviceProfile.getServiceProfileByScpdUrl(uri);
 			setFixedTransfer(response, serviceProfile.scpd());
 		}
@@ -358,7 +383,7 @@ namespace UPNP {
 			handleActionRequest(actionRequest, actionResponse);
 
 			response.setStatusCode(200);
-			response.setContentType("text/xml");
+			response.setContentType("text/xml; charset=\"utf-8\"");
 			setFixedTransfer(response, makeSoapResponseContent(actionResponse));
 		}
 		
@@ -383,13 +408,20 @@ namespace UPNP {
 					response.setContentType("text/xml"); // TODO: ?
 					response.getHeader().setHeaderField("SID", sid);
 					// TODO: set TIMEOUT (Second-n, n should be greater than or equal to 1800)
-				} else {
+
+					server.delayNotifyEvent(sid, 500);
+					
+				} else { // re-subscribe
+					
 					string
 						sid = request.getHeaderFieldIgnoreCase("SID");
 					unsigned long
 						timeout = server.parseTimeout(request.getHeaderFieldIgnoreCase("TIMEOUT"));
 					server.onRenewSubscription(sid, timeout);
 					response.setStatusCode(200);
+					// TODO: set TIMEOUT (Second-n, n should be greater than or equal to 1800)
+					
+					server.delayNotifyEvent(sid, 500);
 				}
 			} else if (request.getMethod() == "UNSUBSCRIBE") {
 				server.onUnsubscribe(request.getHeaderFieldIgnoreCase("SID"));
@@ -450,7 +482,7 @@ namespace UPNP {
 
 			string actionName = response.actionName();
 			string serviceType = response.serviceType();
-			map<string, string> & parameters = response.parameters();
+		    LinkedStringMap & parameters = response.parameters();
 			
 			string xml;
 			xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n";
@@ -458,9 +490,10 @@ namespace UPNP {
 					   "xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">\r\n");
 			xml.append("<s:Body>\r\n");
 			xml.append("<u:" + actionName + "Response xmlns:u=\"" + serviceType + "\">\r\n");
-			for (map<string, string>::iterator iter = parameters.begin(); iter != parameters.end(); iter++) {
-				string name = XML::XmlEncoder::encode(iter->first);
-				string value = XML::XmlEncoder::encode(iter->second);
+			for (size_t i = 0; i < parameters.size(); i++) {
+				NameValue & nv = parameters[i];
+				string name = XML::XmlEncoder::encode(nv.name());
+				string value = XML::XmlEncoder::encode(nv.value());
 				xml.append("<" + name + ">" + value + "</" + name + ">\r\n");
 			}
 			xml.append("</u:" + actionName + "Response>");
@@ -625,15 +658,19 @@ namespace UPNP {
 		}
 		sender.close();
 	}
+	
 	void UPnPServer::notifyAliveByDeviceType(UPnPDeviceProfile & profile, const string & deviceType) {
 
 		string uuid = profile.uuid();
 		string location = makeLocation(profile.uuid());
 		
 		SSDPMsearchSender sender;
-		sender.sendMcastToAllInterfaces(makeNotifyAlive(location, uuid, deviceType), "239.255.255.250", 1900);
+		string packet = makeNotifyAlive(location, uuid, deviceType);
+		debug("ssdp:notify-alive", packet);
+		sender.sendMcastToAllInterfaces(packet, "239.255.255.250", 1900);
 		sender.close();
 	}
+	
 	string UPnPServer::makeNotifyAlive(const string & location, const string & uuid, const string & deviceType) {
 
 		Uuid u(uuid);
@@ -677,7 +714,9 @@ namespace UPNP {
 		string uuid = profile.uuid();
 		
 		SSDPMsearchSender sender;
-		sender.sendMcastToAllInterfaces(makeNotifyByeBye(uuid, deviceType), "239.255.255.250", 1900);
+		string packet = makeNotifyByeBye(uuid, deviceType);
+		debug("ssdp:notify-byebye", packet);
+		sender.sendMcastToAllInterfaces(packet, "239.255.255.250", 1900);
 		sender.close();
 	}
 	string UPnPServer::makeNotifyByeBye(const string & uuid, const string & deviceType) {
@@ -703,7 +742,9 @@ namespace UPNP {
 		for (vector<string>::iterator iter = types.begin(); iter != types.end(); iter++) {
 			Uuid uuid(*iter);
 			string location = makeLocation(uuid.getUuid());
-			sender.unicast(makeMsearchResponse(location, uuid.getUuid(), uuid.getRest()), remoteAddr);
+			string packet = makeMsearchResponse(location, uuid.getUuid(), uuid.getRest());
+			debug("ssdp:response-msearch", packet);
+			sender.unicast(packet, remoteAddr);
 		}
 		sender.close();
 	}
@@ -720,6 +761,7 @@ namespace UPNP {
 			"Server: " + config.getProperty("server.info", DEFAULT_SERVER_INFO) + "\r\n"
 			"USN: " + u.toString() + "\r\n"
 			"Ext: \r\n"
+			"Date: " + Date::formatRfc1123(Date::now()) + "\r\n"
 			"\r\n";
 	}
 
@@ -777,7 +819,10 @@ namespace UPNP {
 		notificationThread.delayNotify(sid, delay);
 	}
 
-	string UPnPServer::onSubscribe(const UPnPDeviceProfile & device, const UPnPServiceProfile & service, const vector<string> & callbacks, unsigned long timeout) {
+	string UPnPServer::onSubscribe(const UPnPDeviceProfile & device,
+								   const UPnPServiceProfile & service,
+								   const vector<string> & callbacks,
+								   unsigned long timeout) {
 		
 		UuidGeneratorVersion1 gen;
 		string sid = Uuid(gen.generate()).toString();
@@ -790,8 +835,6 @@ namespace UPNP {
 		session->serviceType() = service.const_serviceType();
 
 		propertyManager.addSubscriptionSession(session);
-
-		delayNotifyEvent(sid, 100);
 
 		return sid;
 	}

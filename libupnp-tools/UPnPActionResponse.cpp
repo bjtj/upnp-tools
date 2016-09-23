@@ -3,9 +3,11 @@
 namespace UPNP {
 
 	using namespace std;
+	using namespace UTIL;
 	
 	UPnPActionResponse::UPnPActionResponse() {
 	}
+	
 	UPnPActionResponse::~UPnPActionResponse() {
 	}
 
@@ -18,7 +20,7 @@ namespace UPNP {
 	string & UPnPActionResponse::actionName() {
 		return _actionName;
 	}
-	map<string, string> & UPnPActionResponse::parameters() {
+	LinkedStringMap & UPnPActionResponse::parameters() {
 		return _params;
 	}
 	string & UPnPActionResponse::operator[] (const string & name) {
