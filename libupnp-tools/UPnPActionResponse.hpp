@@ -21,7 +21,7 @@ namespace UPNP {
 		UPnPActionResponse();
 		virtual ~UPnPActionResponse();
 
-		int errorCode();
+		int & errorCode();
 		std::string & serviceType();
 		std::string & actionName();
 		UTIL::LinkedStringMap & parameters();

@@ -289,10 +289,6 @@ namespace UPNP {
 		UPnPServerHttpRequestHandler(UPnPServer & server) : server(server) { /**/ }
 		virtual ~UPnPServerHttpRequestHandler() { /**/ }
 
-		virtual AutoRef<DataSink> getDataSink() {
-			return AutoRef<DataSink>(new StringDataSink);
-		}
-
 		virtual void onHttpRequestContentCompleted(HttpRequest & request,
 												   AutoRef<DataSink> sink,
 												   HttpResponse & response) {
@@ -320,7 +316,7 @@ namespace UPNP {
 			}
 			
 			if (server.getProfileManager().hasDeviceProfileSessionByControlUrl(uri)) {
-				server.debug("upnp:control", request.getHeader().toString());
+				server.debug("upnp:control", request.getHeader().toString() + (sink.nil() ? "" : ((StringDataSink*)&sink)->data()));
 				if (request.getMethod() != "POST") {
 					response.setStatusCode(405);
 					return;
@@ -331,7 +327,7 @@ namespace UPNP {
 			}
 
 			if (server.getProfileManager().hasDeviceProfileSessionByEventSubUrl(uri)) {
-				server.debug("upnp:event", request.getHeader().toString());
+				server.debug("upnp:event", request.getHeader().toString() + (sink.nil() ? "" : ((StringDataSink*)&sink)->data()));
 				prepareCommonResponse(request, response);
 				onEventSubscriptionRequest(request, response, uri);
 				return;
@@ -347,6 +343,7 @@ namespace UPNP {
 			if (request.getHeader().hasHeaderFieldIgnoreCase("ACCEPT-LANGUAGE")) {
 				response.getHeader().setHeaderField("CONTENT-LANGUAGE", "en");
 			}
+			response.getHeader().setHeaderField("Date", Date::formatRfc1123(Date::now()));
 		}
 
 		void onDeviceDescriptionRequest(HttpRequest & request, HttpResponse & response, const string & uri) {
@@ -378,13 +375,16 @@ namespace UPNP {
 			// TODO: recognize specific device and service
 			UPnPActionRequest actionRequest = parseActionRequest(request);
 			UPnPActionResponse actionResponse;
+			actionResponse.errorCode() = 200;
 			actionResponse.actionName() = actionRequest.actionName();
 			actionResponse.serviceType() = actionRequest.serviceType();
-			handleActionRequest(actionRequest, actionResponse);
-
-			response.setStatusCode(200);
-			response.setContentType("text/xml; charset=\"utf-8\"");
-			setFixedTransfer(response, makeSoapResponseContent(actionResponse));
+			if (handleActionRequest(actionRequest, actionResponse)) {
+				response.setStatusCode(actionResponse.errorCode());
+				response.setContentType("text/xml; charset=\"utf-8\"");				
+				setFixedTransfer(response, makeSoapResponseContent(actionResponse));
+			} else {
+				response.setStatusCode(500);
+			}
 		}
 		
 		void onEventSubscriptionRequest(HttpRequest & request, HttpResponse & response, const string & uri) {
@@ -435,10 +435,11 @@ namespace UPNP {
 			// TODO: add to queue
 		}
 
-		void handleActionRequest(UPnPActionRequest & request, UPnPActionResponse & response) {
+		bool handleActionRequest(UPnPActionRequest & request, UPnPActionResponse & response) {
 			if (!server.getActionRequestHandler().nil()) {
-				server.getActionRequestHandler()->handleActionRequest(request, response);
+				return server.getActionRequestHandler()->handleActionRequest(request, response);
 			}
+			return false;
 		}
 
 		UPnPActionRequest parseActionRequest(HttpRequest & request) {

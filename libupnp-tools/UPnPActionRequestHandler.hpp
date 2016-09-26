@@ -11,7 +11,7 @@ namespace UPNP {
 	public:
 		UPnPActionRequestHandler() {}
 		virtual ~UPnPActionRequestHandler() {}
-		virtual void handleActionRequest(UPnPActionRequest & request, UPnPActionResponse & response) = 0;
+		virtual bool handleActionRequest(UPnPActionRequest & request, UPnPActionResponse & response) = 0;
 	};
 }
 

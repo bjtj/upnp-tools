@@ -11,7 +11,7 @@ namespace UPNP {
 	UPnPActionResponse::~UPnPActionResponse() {
 	}
 
-	int UPnPActionResponse::errorCode() {
+	int & UPnPActionResponse::errorCode() {
 		return _errorCode;
 	}
 	string & UPnPActionResponse::serviceType() {
