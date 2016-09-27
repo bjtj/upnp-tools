@@ -289,9 +289,22 @@ namespace UPNP {
 		UPnPServerHttpRequestHandler(UPnPServer & server) : server(server) { /**/ }
 		virtual ~UPnPServerHttpRequestHandler() { /**/ }
 
+		virtual void onHttpRequestHeaderCompleted(HttpRequest & request, HttpResponse & response) {
+			// https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+			if (request.getHeaderFieldIgnoreCase("Expect") == "100-continue") {
+				request.clearTransfer();
+				response.setStatusCode(100); // 100 continue, 417 expectation failed
+			}
+		}
+
 		virtual void onHttpRequestContentCompleted(HttpRequest & request,
 												   AutoRef<DataSink> sink,
 												   HttpResponse & response) {
+
+			if (response.getStatusCode() == 100 || response.getStatusCode() == 417) {
+				return;
+			}
+
 			string uri = request.getHeader().getPart2();
 			if (request.getPath() == "/device.xml") {
 				server.debug("upnp:device-description", request.getHeader().toString());
@@ -316,7 +329,8 @@ namespace UPNP {
 			}
 			
 			if (server.getProfileManager().hasDeviceProfileSessionByControlUrl(uri)) {
-				server.debug("upnp:control", request.getHeader().toString() + (sink.nil() ? "" : ((StringDataSink*)&sink)->data()));
+				server.debug("upnp:control", request.getHeader().toString() +
+							 (sink.nil() ? "" : ((StringDataSink*)&sink)->data()));
 				if (request.getMethod() != "POST") {
 					response.setStatusCode(405);
 					return;
@@ -327,7 +341,8 @@ namespace UPNP {
 			}
 
 			if (server.getProfileManager().hasDeviceProfileSessionByEventSubUrl(uri)) {
-				server.debug("upnp:event", request.getHeader().toString() + (sink.nil() ? "" : ((StringDataSink*)&sink)->data()));
+				server.debug("upnp:event", request.getHeader().toString() +
+							 (sink.nil() ? "" : ((StringDataSink*)&sink)->data()));
 				prepareCommonResponse(request, response);
 				onEventSubscriptionRequest(request, response, uri);
 				return;
