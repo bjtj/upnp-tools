@@ -48,10 +48,11 @@ namespace UPNP {
 		void unregisterProfile(const std::string & uuid);
 		std::vector<std::string> getAllTypes();
 		std::vector<std::string> getTypes(const std::string & st);
+		bool hasDeviceProfileSessionByUuid(const std::string & uuid);
 		bool hasDeviceProfileSessionByScpdUrl(const std::string & scpdUrl);
 		bool hasDeviceProfileSessionByControlUrl(const std::string & controlUrl);
 		bool hasDeviceProfileSessionByEventSubUrl(const std::string & eventSubUrl);
-		UTIL::AutoRef<UPnPDeviceProfileSession> getDeviceProfileSessionByUuid(const std::string & udn);
+		UTIL::AutoRef<UPnPDeviceProfileSession> getDeviceProfileSessionByUuid(const std::string & uuid);
 		UTIL::AutoRef<UPnPDeviceProfileSession> getDeviceProfileSessionHasScpdUrl(const std::string & scpdUrl);
 		UTIL::AutoRef<UPnPDeviceProfileSession> getDeviceProfileSessionHasEventSubUrl(const std::string & eventSubUrl);
 	};

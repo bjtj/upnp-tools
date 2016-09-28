@@ -122,6 +122,17 @@ namespace UPNP {
 		}
 		return types;
 	}
+
+	bool UPnPDeviceProfileSessionManager::hasDeviceProfileSessionByUuid(const string & uuid) {
+		for (map<string, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin();
+			 iter != _sessions.end(); iter++) {
+			AutoRef<UPnPDeviceProfileSession> session = iter->second;
+			if (session->profile().uuid() == uuid) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	bool UPnPDeviceProfileSessionManager::hasDeviceProfileSessionByScpdUrl(const string & scpdUrl) {
 		for (map<string, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin();
@@ -290,6 +301,9 @@ namespace UPNP {
 		virtual ~UPnPServerHttpRequestHandler() { /**/ }
 
 		virtual void onHttpRequestHeaderCompleted(HttpRequest & request, HttpResponse & response) {
+
+			response.setContentLength(0);
+			
 			// https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 			if (request.getHeaderFieldIgnoreCase("Expect") == "100-continue") {
 				request.clearTransfer();
@@ -362,6 +376,10 @@ namespace UPNP {
 		}
 
 		void onDeviceDescriptionRequest(HttpRequest & request, HttpResponse & response, const string & uri) {
+			if (!server.getProfileManager().hasDeviceProfileSessionByUuid(request.getParameter("udn"))) {
+				response.setStatusCode(404);
+				return;
+			}
 			AutoRef<UPnPDeviceProfileSession> session = server.
 				getProfileManager().
 				getDeviceProfileSessionByUuid(request.getParameter("udn"));
