@@ -147,6 +147,9 @@ namespace UPNP {
 		UTIL::TimerLooperThread & getTimerThread();
 
 		void collectOutdated();
+
+		// information
+		std::string getServerInfo();
 	};
 }
 

@@ -372,6 +372,7 @@ namespace UPNP {
 			if (request.getHeader().hasHeaderFieldIgnoreCase("ACCEPT-LANGUAGE")) {
 				response.getHeader().setHeaderField("CONTENT-LANGUAGE", "en");
 			}
+			response.getHeader().setHeaderField("Server", server.getServerInfo());
 			response.getHeader().setHeaderField("Date", Date::formatRfc1123(Date::now()));
 		}
 
@@ -440,8 +441,8 @@ namespace UPNP {
 					response.setStatusCode(200);
 					response.setContentType("text/xml"); // TODO: ?
 					response.getHeader().setHeaderField("SID", sid);
-					// TODO: set TIMEOUT (Second-n, n should be greater than or equal to 1800)
-
+					response.getHeader().setHeaderField("TIMEOUT", "Second-1800");
+					
 					server.delayNotifyEvent(sid, 500);
 					
 				} else { // re-subscribe
@@ -452,7 +453,7 @@ namespace UPNP {
 						timeout = server.parseTimeout(request.getHeaderFieldIgnoreCase("TIMEOUT"));
 					server.onRenewSubscription(sid, timeout);
 					response.setStatusCode(200);
-					// TODO: set TIMEOUT (Second-n, n should be greater than or equal to 1800)
+					response.getHeader().setHeaderField("TIMEOUT", "Second-1800");
 					
 					server.delayNotifyEvent(sid, 500);
 				}
@@ -911,4 +912,7 @@ namespace UPNP {
 		propertyManager.collectOutdated();
 	}
 
+	string UPnPServer::getServerInfo() {
+		return config.getProperty("server.info", DEFAULT_SERVER_INFO);
+	}
 }
