@@ -2,10 +2,12 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <liboslayer/os.hpp>
 #include <liboslayer/AutoRef.hpp>
 #include <liboslayer/Text.hpp>
 #include <liboslayer/XmlParser.hpp>
 #include <liboslayer/FileStream.hpp>
+#include <liboslayer/Uuid.hpp>
 #include <libupnp-tools/UPnPControlPoint.hpp>
 #include <libupnp-tools/UPnPActionInvoker.hpp>
 #include <libupnp-tools/UPnPActionRequest.hpp>
@@ -15,6 +17,7 @@
 #include <libhttp-server/AnotherHttpServer.hpp>
 
 using namespace std;
+using namespace OS;
 using namespace UTIL;
 using namespace UPNP;
 using namespace HTTP;
@@ -168,15 +171,14 @@ public:
 	}
 };
 
-class Selection {
+class Session {
 private:
 	string _udn;
 	string _serviceType;
 	string _action;
 public:
-    Selection() {}
-    virtual ~Selection() {}
-
+    Session() {}
+    virtual ~Session() {}
 	string & udn() {return _udn;}
 	string & serviceType() {return _serviceType;}
 	string & action() {return _action;}
@@ -207,7 +209,7 @@ int run(int argc, char *args[]) {
 
 	AutoRef<SharedUPnPDeviceList> list(new SharedUPnPDeviceList);
 
-	Selection selection;
+	Session session;
 
 	UPnPControlPointConfig config(9998);
 	UPnPControlPoint cp(config);
@@ -231,26 +233,26 @@ int run(int argc, char *args[]) {
 				cout << "idx : " << idx << endl;
 				selectDeviceByIndex(cp.getDevices(), (size_t)idx);
 			} else if (Text::startsWith(line, "udn ")) {
-				selection.udn() = line.substr(4);
+				session.udn() = Uuid(line.substr(4)).getUuid();
 			} else if (line == "udn") {
-				cout << "UDN: " << selection.udn() << endl;
+				cout << "UDN: " << session.udn() << endl;
 			} else if (Text::startsWith(line, "service ")) {
-				selection.serviceType() = line.substr(8);
+				session.serviceType() = line.substr(8);
 			} else if (line == "service") {
-				cout << "Service : " << selection.serviceType() << endl;
+				cout << "Service : " << session.serviceType() << endl;
 			} else if (Text::startsWith(line, "action ")) {
-				selection.action() = line.substr(7);
+				session.action() = line.substr(7);
 			} else if (line == "action") {
-				cout << "Action : " << selection.action() << endl;
+				cout << "Action : " << session.action() << endl;
 			} else if (line == "invoke") {
 				try {
-					UPnPActionInvoker invoker = cp.prepareActionInvoke(selection.udn(), selection.serviceType());
-					AutoRef<UPnPService> service = cp.getServiceByUdnAndServiceType(selection.udn(), selection.serviceType());
+					UPnPActionInvoker invoker = cp.prepareActionInvoke(session.udn(), session.serviceType());
+					AutoRef<UPnPService> service = cp.getServiceByUdnAndServiceType(session.udn(), session.serviceType());
 					
-					if (!service->scpd().hasAction(selection.action())) {
+					if (!service->scpd().hasAction(session.action())) {
 						throw "Error: no action found";
 					}
-					UPnPAction action = service->scpd().action(selection.action());
+					UPnPAction action = service->scpd().action(session.action());
 					vector<UPnPArgument> & arguments = action.arguments();
 					UPnPActionRequest request;
 					request.serviceType() = service->serviceType();
@@ -266,7 +268,9 @@ int run(int argc, char *args[]) {
 							request[iter->name()] = param;
 						}
 					}
+					unsigned long tick = tick_milli();
 					UPnPActionResponse response = invoker.invoke(request);
+					cout << " ** invoke action : " << tick_milli() - tick << " ms." << endl;
 					LinkedStringMap & params = response.parameters();
 					for (size_t i = 0; i < params.size(); i++) {
 						NameValue & nv = params[i];
@@ -281,21 +285,21 @@ int run(int argc, char *args[]) {
 				// TODO: subscription list
 			} else if (line == "sub") {
 
-				if (selection.udn().empty() || selection.serviceType().empty()) {
+				if (session.udn().empty() || session.serviceType().empty()) {
 					throw "Error: select udn and sevice first";
 				}
 
-				cout << "Subscribe - " << selection.udn() << " // " << selection.serviceType() << endl;
-				cp.subscribe(selection.udn(), selection.serviceType());
+				cout << "Subscribe - " << session.udn() << " // " << session.serviceType() << endl;
+				cp.subscribe(session.udn(), session.serviceType());
 
 			} else if (line == "unsub") {
 
-				if (selection.udn().empty() || selection.serviceType().empty()) {
+				if (session.udn().empty() || session.serviceType().empty()) {
 					throw "Error: select udn and sevice first";
 				}
 
-				cout << "Unsubscribe - " << selection.udn() << " .. " << selection.serviceType() << endl;
-				cp.unsubscribe(selection.udn(), selection.serviceType());
+				cout << "Unsubscribe - " << session.udn() << " .. " << session.serviceType() << endl;
+				cp.unsubscribe(session.udn(), session.serviceType());
 
 			} else if (line == "shared") {
 
@@ -307,18 +311,18 @@ int run(int argc, char *args[]) {
 
 			} else if (line == "dump") {
 
-				if (selection.udn().empty()) {
+				if (session.udn().empty()) {
 					throw "Error: select udn first";
 				}
 
-				Url url = cp.getBaseUrlByUdn(selection.udn());
+				Url url = cp.getBaseUrlByUdn(session.udn());
 				string dd = HttpUtils::httpGet(url);
 				cout << dd << endl;
 
-				if (!selection.serviceType().empty()) {
-					AutoRef<UPnPService> service = cp.getServiceByUdnAndServiceType(selection.udn(), selection.serviceType());
+				if (!session.serviceType().empty()) {
+					AutoRef<UPnPService> service = cp.getServiceByUdnAndServiceType(session.udn(), session.serviceType());
 					if (!service.nil()) {
-						url = cp.getBaseUrlByUdn(selection.udn()).relativePath(service->scpdUrl());
+						url = cp.getBaseUrlByUdn(session.udn()).relativePath(service->scpdUrl());
 						cout << "GET SCPD : " << url.toString() << endl;
 						dd = HttpUtils::httpGet(url);
 						cout << dd << endl;

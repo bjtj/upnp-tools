@@ -13,6 +13,7 @@ namespace UPNP {
 	class UPnPActionResponse {
 	private:
 		int _errorCode;
+		std::string _errorString;
 		std::string _serviceType;
 		std::string _actionName;
 		UTIL::LinkedStringMap _params;
@@ -21,7 +22,10 @@ namespace UPNP {
 		UPnPActionResponse();
 		virtual ~UPnPActionResponse();
 
+		void setError(int errorCode);
+		void setError(int errorCode, const std::string & errorString);
 		int & errorCode();
+		std::string & errorString();
 		std::string & serviceType();
 		std::string & actionName();
 		UTIL::LinkedStringMap & parameters();

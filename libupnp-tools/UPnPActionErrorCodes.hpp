@@ -14,8 +14,6 @@ namespace UPNP {
 		virtual ~UPnPActionErrorCodes();
 		static std::string getDescription(int code);
 	};
-
-	
 }
 
 #endif

@@ -141,7 +141,7 @@ namespace UPNP {
 		void onRenewSubscription(const std::string & sid, unsigned long timeout);
 		void onUnsubscribe(const std::string & sid);
 		std::vector<std::string> parseCallbackUrls(const std::string & urls);
-		unsigned long parseTimeout(const std::string & phrase);
+		unsigned long parseTimeout(const std::string & phrase, unsigned long unit);
 
 		// session timeout manager
 		UTIL::TimerLooperThread & getTimerThread();

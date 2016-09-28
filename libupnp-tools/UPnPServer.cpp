@@ -2,6 +2,7 @@
 #include <liboslayer/MessageQueue.hpp>
 #include <liboslayer/Uuid.hpp>
 #include <libhttp-server/StringDataSink.hpp>
+#include "UPnPActionErrorCodes.hpp"
 #include "UPnPDeviceDeserializer.hpp"
 #include "UPnPDeviceProfileBuilder.hpp"
 #include "UPnPServer.hpp"
@@ -409,15 +410,23 @@ namespace UPNP {
 			// TODO: recognize specific device and service
 			UPnPActionRequest actionRequest = parseActionRequest(request);
 			UPnPActionResponse actionResponse;
-			actionResponse.errorCode() = 200;
 			actionResponse.actionName() = actionRequest.actionName();
 			actionResponse.serviceType() = actionRequest.serviceType();
 			if (handleActionRequest(actionRequest, actionResponse)) {
-				response.setStatusCode(actionResponse.errorCode());
-				response.setContentType("text/xml; charset=\"utf-8\"");				
-				setFixedTransfer(response, makeSoapResponseContent(actionResponse));
+				if (actionResponse.errorCode() == 0) {
+					response.setStatusCode(200);
+					response.setContentType("text/xml; charset=\"utf-8\"");
+					setFixedTransfer(response, makeSoapResponseContent(actionResponse));
+				} else {
+					response.setStatusCode(500);
+					response.setContentType("text/xml; charset=\"utf-8\"");
+					setFixedTransfer(response, makeSoapErrorResponseContent(actionResponse.errorCode(),
+																			actionResponse.errorString()));
+				}
 			} else {
 				response.setStatusCode(500);
+				response.setContentType("text/xml; charset=\"utf-8\"");
+				setFixedTransfer(response, makeSoapErrorResponseContent(401));
 			}
 		}
 		
@@ -433,28 +442,23 @@ namespace UPNP {
 						callbacks = server.
 						parseCallbackUrls(request.getHeaderFieldIgnoreCase("CALLBACK"));
 					unsigned long
-						timeout = server.
-						parseTimeout(request.getHeaderFieldIgnoreCase("TIMEOUT"));
+						timeoutMilli = server.
+						parseTimeout(request.getHeaderFieldIgnoreCase("TIMEOUT"), 1000);
 					string
 						sid = server.
-						onSubscribe(deviceProfile, serviceProfile, callbacks, timeout);
+						onSubscribe(deviceProfile, serviceProfile, callbacks, timeoutMilli);
 					response.setStatusCode(200);
-					response.setContentType("text/xml"); // TODO: ?
 					response.getHeader().setHeaderField("SID", sid);
-					response.getHeader().setHeaderField("TIMEOUT", "Second-1800");
-					
+					setSubscribeTimeout(response, timeoutMilli);
 					server.delayNotifyEvent(sid, 500);
-					
 				} else { // re-subscribe
-					
 					string
 						sid = request.getHeaderFieldIgnoreCase("SID");
 					unsigned long
-						timeout = server.parseTimeout(request.getHeaderFieldIgnoreCase("TIMEOUT"));
-					server.onRenewSubscription(sid, timeout);
+						timeoutMilli = server.parseTimeout(request.getHeaderFieldIgnoreCase("TIMEOUT"), 1000);
+					server.onRenewSubscription(sid, timeoutMilli);
 					response.setStatusCode(200);
-					response.getHeader().setHeaderField("TIMEOUT", "Second-1800");
-					
+					setSubscribeTimeout(response, timeoutMilli);
 					server.delayNotifyEvent(sid, 500);
 				}
 			} else if (request.getMethod() == "UNSUBSCRIBE") {
@@ -465,8 +469,13 @@ namespace UPNP {
 			}
 		}
 
-		void scheduleNotifyEvent(const string & sid) {
-			// TODO: add to queue
+		void setSubscribeTimeout(HttpResponse & response, unsigned long timeoutMilli) {
+			unsigned long timeout = timeoutMilli / 1000;
+			if (timeout <= 1800) {
+				response.getHeader().setHeaderField("TIMEOUT", "Second-1800");
+			} else {
+				response.getHeader().setHeaderField("TIMEOUT", "Second-" + Text::toString(timeout));
+			}
 		}
 
 		bool handleActionRequest(UPnPActionRequest & request, UPnPActionResponse & response) {
@@ -532,6 +541,31 @@ namespace UPNP {
 				xml.append("<" + name + ">" + value + "</" + name + ">\r\n");
 			}
 			xml.append("</u:" + actionName + "Response>");
+			xml.append("</s:Body>\r\n");
+			xml.append("</s:Envelope>");
+			return xml;
+		}
+
+		string makeSoapErrorResponseContent(int errorCode) {
+			return makeSoapErrorResponseContent(errorCode, UPnPActionErrorCodes::getDescription(errorCode));
+		}
+
+		string makeSoapErrorResponseContent(int errorCode, const string & errorString) {
+			string xml;
+			xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n";
+			xml.append("<s:Envelope s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\" "
+					   "xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">\r\n");
+			xml.append("<s:Body>\r\n");
+			xml.append("<s:Fault>");
+			xml.append("<faultcode>s:Client</faultcode>");
+			xml.append("<faultstring>UPnPError</faultstring>");
+			xml.append("<detail>");
+			xml.append("<UPnPError xmlns=\"urn:schemas-upnp-org:control-1-0\">");
+			xml.append("<errorCode>" + Text::toString(errorCode) + "</errorCode>");
+			xml.append("<errorDescription>" + errorString + "</errorDescription>");
+			xml.append("</UPnPError>");
+			xml.append("</detail>");
+			xml.append("</s:Fault>");
 			xml.append("</s:Body>\r\n");
 			xml.append("</s:Envelope>");
 			return xml;
@@ -897,9 +931,9 @@ namespace UPNP {
 		return ret;
 	}
 
-	unsigned long UPnPServer::parseTimeout(const string & phrase) {
+	unsigned long UPnPServer::parseTimeout(const string & phrase, unsigned long unit) {
 		if (Text::startsWithIgnoreCase(phrase, "Second-")) {
-			return Text::toLong(phrase.substr(string("Second-").size())) * 1000;
+			return Text::toLong(phrase.substr(string("Second-").size())) * unit;
 		}
 		return 0;
 	}
