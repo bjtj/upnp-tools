@@ -437,44 +437,72 @@ namespace UPNP {
 				profile();
 			UPnPServiceProfile serviceProfile = deviceProfile.getServiceProfileByEventSubUrl(uri);
 			if (request.getMethod() == "SUBSCRIBE") {
+				if (!request.getHeaderFieldIgnoreCase("SID").empty() &&
+					(!request.getHeaderFieldIgnoreCase("NT").empty() ||
+					 !request.getHeaderFieldIgnoreCase("CALLBACK").empty())) {
+					response.setStatusCode(400, "Incompatible header fields");
+					return;
+				}
 				if (request.getHeaderFieldIgnoreCase("SID").empty()) {
-					vector<string>
+					if (request.getHeaderFieldIgnoreCase("CALLBACK").empty() ||
+						request.getHeaderFieldIgnoreCase("NT") != "upnp:event") {
+						response.setStatusCode(412, "Precondition Failed");
+						return;
+					}
+					vector<string> callbacks;
+					try {
 						callbacks = server.
-						parseCallbackUrls(request.getHeaderFieldIgnoreCase("CALLBACK"));
+							parseCallbackUrls(request.getHeaderFieldIgnoreCase("CALLBACK"));
+					} catch (Exception e) {
+						response.setStatusCode(412, "Precondition Failed");
+						return;
+					}
 					unsigned long
 						timeoutMilli = server.
-						parseTimeout(request.getHeaderFieldIgnoreCase("TIMEOUT"), 1000);
+						parseTimeoutMilli(request.getHeaderFieldIgnoreCase("TIMEOUT"));
+					if (timeoutMilli <= 1800 * 1000) {
+						timeoutMilli = 1800 * 1000;
+					}
 					string
 						sid = server.
 						onSubscribe(deviceProfile, serviceProfile, callbacks, timeoutMilli);
 					response.setStatusCode(200);
 					response.getHeader().setHeaderField("SID", sid);
-					setSubscribeTimeout(response, timeoutMilli);
+					response.getHeader().setHeaderField("TIMEOUT",
+														"Second-" + Text::toString(timeoutMilli / 1000));
 					server.delayNotifyEvent(sid, 500);
 				} else { // re-subscribe
 					string
 						sid = request.getHeaderFieldIgnoreCase("SID");
 					unsigned long
-						timeoutMilli = server.parseTimeout(request.getHeaderFieldIgnoreCase("TIMEOUT"), 1000);
-					server.onRenewSubscription(sid, timeoutMilli);
-					response.setStatusCode(200);
-					setSubscribeTimeout(response, timeoutMilli);
-					server.delayNotifyEvent(sid, 500);
+						timeoutMilli = server.parseTimeoutMilli(request.getHeaderFieldIgnoreCase("TIMEOUT"));
+					if (timeoutMilli <= 1800 * 1000) {
+						timeoutMilli = 1800 * 1000;
+					}
+					if (server.onRenewSubscription(sid, timeoutMilli)) {
+						response.setStatusCode(200);
+						response.getHeader().setHeaderField("TIMEOUT",
+															"Second-" + Text::toString(timeoutMilli / 1000));
+						server.delayNotifyEvent(sid, 500);
+					} else {
+						response.setStatusCode(412, "Precondition Failed");
+					}
 				}
 			} else if (request.getMethod() == "UNSUBSCRIBE") {
-				server.onUnsubscribe(request.getHeaderFieldIgnoreCase("SID"));
-				response.setStatusCode(200);
+				if (!request.getHeaderFieldIgnoreCase("SID").empty() &&
+					(!request.getHeaderFieldIgnoreCase("NT").empty() ||
+					 !request.getHeaderFieldIgnoreCase("CALLBACK").empty())) {
+					response.setStatusCode(400, "Incompatible header fields");
+					return;
+				}
+				if (server.onUnsubscribe(request.getHeaderFieldIgnoreCase("SID"))) {
+					response.setStatusCode(200);
+				} else {
+					response.setStatusCode(412, "Precondition Failed");
+				}
+				
 			} else {
 				throw Exception("wrong event subscription request");
-			}
-		}
-
-		void setSubscribeTimeout(HttpResponse & response, unsigned long timeoutMilli) {
-			unsigned long timeout = timeoutMilli / 1000;
-			if (timeout <= 1800) {
-				response.getHeader().setHeaderField("TIMEOUT", "Second-1800");
-			} else {
-				response.getHeader().setHeaderField("TIMEOUT", "Second-" + Text::toString(timeout));
 			}
 		}
 
@@ -908,34 +936,50 @@ namespace UPNP {
 		return sid;
 	}
 
-	void UPnPServer::onRenewSubscription(const string & sid, unsigned long timeout) {
-		propertyManager.getSession(sid)->prolong(timeout);
+	bool UPnPServer::onRenewSubscription(const string & sid, unsigned long timeout) {
+		if (propertyManager.hasSubscriptionSession(sid)) {
+			propertyManager.getSession(sid)->prolong(timeout);
+			return true;
+		}
+		return false;
 	}
 	
-	void UPnPServer::onUnsubscribe(const string & sid) {
-		propertyManager.removeSubscriptionSession(sid);
+	bool UPnPServer::onUnsubscribe(const string & sid) {
+		if (propertyManager.hasSubscriptionSession(sid)) {
+			propertyManager.removeSubscriptionSession(sid);
+			return true;
+		}
+		return false;
 	}
 
 	vector<string> UPnPServer::parseCallbackUrls(const string & urls) {
 		vector<string> ret;
 		string buffer;
+		if (urls.empty()) {
+			throw Exception("empty callback string");
+		}
 		for (string::const_iterator iter = urls.begin(); iter != urls.end(); iter++) {
 			if (*iter == '<') {
 				buffer = "";
 				for (iter++; iter != urls.end() && *iter != '>'; iter++) {
 					buffer.append(1, *iter);
 				}
+				Url url(buffer); // test valid url
 				ret.push_back(buffer);
 			}
+		}
+		if (ret.empty()) {
+			throw Exception("no parsed callback - maybe wrong format");
 		}
 		return ret;
 	}
 
-	unsigned long UPnPServer::parseTimeout(const string & phrase, unsigned long unit) {
+	unsigned long UPnPServer::parseTimeoutMilli(const string & phrase) {
+		unsigned long timeout = 0;
 		if (Text::startsWithIgnoreCase(phrase, "Second-")) {
-			return Text::toLong(phrase.substr(string("Second-").size())) * unit;
+			timeout = (unsigned long)Text::toLong(phrase.substr(string("Second-").size())) * 1000;
 		}
-		return 0;
+		return timeout;
 	}
 
 	TimerLooperThread & UPnPServer::getTimerThread() {

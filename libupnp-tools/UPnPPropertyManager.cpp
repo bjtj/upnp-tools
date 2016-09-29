@@ -110,14 +110,17 @@ namespace UPNP {
 	void UPnPPropertyManager::addSubscriptionSession(const AutoRef<UPnPEventSubscriptionSession> session) {
 		sessions[session->sid()] = session;
 	}
+	bool UPnPPropertyManager::hasSubscriptionSession(const string & sid) {
+		return (sessions.find(sid) != sessions.end());
+	}
 	void UPnPPropertyManager::removeSubscriptionSession(const string & sid) {
 		sessions.erase(sid);
 	}
 	AutoRef<UPnPEventSubscriptionSession> UPnPPropertyManager::getSession(const string & sid) {
-		if (sessions.find(sid) == sessions.end()) {
-			throw Exception("no session found with sid : " + sid);
+		if (hasSubscriptionSession(sid)) {
+			return sessions[sid];
 		}
-		return sessions[sid];
+		throw Exception("no session found with sid : " + sid);
 	}
 	
 	vector<AutoRef<UPnPEventSubscriptionSession> > UPnPPropertyManager::getSessionsByUdnAndServiceType(const string & udn, const string & serviceType) {

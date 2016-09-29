@@ -69,6 +69,7 @@ namespace UPNP {
 		bool isRegisteredService(const std::string & udn, const std::string serviceType);
 		void registerService(const std::string & udn, const std::string serviceType, const UTIL::LinkedStringMap & props);
 		void addSubscriptionSession(const UTIL::AutoRef<UPnPEventSubscriptionSession> session);
+		bool hasSubscriptionSession(const std::string & sid);
 		void removeSubscriptionSession(const std::string & sid);
 		UTIL::AutoRef<UPnPEventSubscriptionSession> getSession(const std::string & sid);
 		std::vector<UTIL::AutoRef<UPnPEventSubscriptionSession> > getSessionsByUdnAndServiceType(const std::string & udn, const std::string & serviceType);

@@ -138,10 +138,10 @@ namespace UPNP {
 		void notifyEvent(const std::string & sid);
 		void delayNotifyEvent(const std::string & sid, unsigned long delay);
 		std::string onSubscribe(const UPnPDeviceProfile & device, const UPnPServiceProfile & service, const std::vector<std::string> & callbacks, unsigned long timeout);
-		void onRenewSubscription(const std::string & sid, unsigned long timeout);
-		void onUnsubscribe(const std::string & sid);
+		bool onRenewSubscription(const std::string & sid, unsigned long timeout);
+		bool onUnsubscribe(const std::string & sid);
 		std::vector<std::string> parseCallbackUrls(const std::string & urls);
-		unsigned long parseTimeout(const std::string & phrase, unsigned long unit);
+		unsigned long parseTimeoutMilli(const std::string & phrase);
 
 		// session timeout manager
 		UTIL::TimerLooperThread & getTimerThread();
