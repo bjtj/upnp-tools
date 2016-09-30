@@ -84,7 +84,7 @@ namespace UPNP {
 
 			receiver.onNotify(notify);
 
-			response.setStatusCode(200);
+			response.setStatus(200);
 		}	
 	};
 	

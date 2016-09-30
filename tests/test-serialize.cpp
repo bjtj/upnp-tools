@@ -33,15 +33,15 @@ public:
 	virtual void onHttpRequestContentCompleted(HttpRequest & request, AutoRef<DataSink> sink, HttpResponse & response) {
 		cout << " ** path : " << request.getHeader().getPart2() << endl;
 		if (request.getPath() == "/device.xml") {
-			response.setStatusCode(200);
+			response.setStatus(200);
 			response.setContentType("text/xml");
 			setFixedTransfer(response, dd(_udn));
 		} else if (request.getHeader().getPart2() == "/scpd.xml?udn=" + _udn + "&serviceType=" + dummy) {
-			response.setStatusCode(200);
+			response.setStatus(200);
 			response.setContentType("text/xml");
 			setFixedTransfer(response, scpd());
 		} else {
-			response.setStatusCode(404);
+			response.setStatus(404);
 		}
 	}
 	string udn() {

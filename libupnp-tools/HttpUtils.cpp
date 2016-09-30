@@ -89,7 +89,7 @@ namespace UPNP {
 	void HttpUtils::testHttpError(int code) {
 		if (code / 100 != 2) {
 			string codeString = Text::toString(code);
-			string msg = HttpStatusCodes::getMessage(code);
+			string msg = HttpStatusCodes::getStatusString(code);
 			string errorMessage = "http error - " + codeString + " / " + msg;
 			throw Exception(errorMessage);
 		}

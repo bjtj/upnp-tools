@@ -28,11 +28,13 @@ public:
     MyActionHandler() {}
     virtual ~MyActionHandler() {}
 
-	virtual void handleActionRequest(UPnPActionRequest & request, UPnPActionResponse & response) {
+	virtual bool handleActionRequest(UPnPActionRequest & request, UPnPActionResponse & response) {
 		if (request.actionName() == "GetProtocolInfo") {
 			response["Source"] = "<sample source>";
 			response["Sink"] = "<sample sink>";
+			return true;
 		}
+		return false;
 	}
 };
 
@@ -90,7 +92,7 @@ static void test_device_profile() {
 	AutoRef<UPnPActionRequestHandler> handler(new MyActionHandler);
 	server.setActionRequestHandler(handler);
 
-	ASSERT(server.parseTimeout("Second-300"), ==, 300000);
+	ASSERT(server.parseTimeoutMilli("Second-300"), ==, 300000);
 
 	server.startAsync();
 

@@ -308,7 +308,7 @@ namespace UPNP {
 			// https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 			if (request.getHeaderFieldIgnoreCase("Expect") == "100-continue") {
 				request.clearTransfer();
-				response.setStatusCode(100); // 100 continue, 417 expectation failed
+				response.setStatus(100); // 100 continue, 417 expectation failed
 			}
 		}
 
@@ -324,7 +324,7 @@ namespace UPNP {
 			if (request.getPath() == "/device.xml") {
 				server.debug("upnp:device-description", request.getHeader().toString());
 				if (request.getMethod() != "GET") {
-					response.setStatusCode(405);
+					response.setStatus(405);
 					return;
 				}
 				prepareCommonResponse(request, response);
@@ -335,7 +335,7 @@ namespace UPNP {
 			if (server.getProfileManager().hasDeviceProfileSessionByScpdUrl(uri)) {
 				server.debug("upnp:scpd", request.getHeader().toString());
 				if (request.getMethod() != "GET") {
-					response.setStatusCode(405);
+					response.setStatus(405);
 					return;
 				}
 				prepareCommonResponse(request, response);
@@ -347,7 +347,7 @@ namespace UPNP {
 				server.debug("upnp:control", request.getHeader().toString() +
 							 (sink.nil() ? "" : ((StringDataSink*)&sink)->data()));
 				if (request.getMethod() != "POST") {
-					response.setStatusCode(405);
+					response.setStatus(405);
 					return;
 				}
 				prepareCommonResponse(request, response);
@@ -363,7 +363,7 @@ namespace UPNP {
 				return;
 			}
 
-			response.setStatusCode(404);
+			response.setStatus(404);
 			response.setContentType("text/plain");
 			setFixedTransfer(response, "Not found");
 		}
@@ -379,18 +379,18 @@ namespace UPNP {
 
 		void onDeviceDescriptionRequest(HttpRequest & request, HttpResponse & response, const string & uri) {
 			if (!server.getProfileManager().hasDeviceProfileSessionByUuid(request.getParameter("udn"))) {
-				response.setStatusCode(404);
+				response.setStatus(404);
 				return;
 			}
 			AutoRef<UPnPDeviceProfileSession> session = server.
 				getProfileManager().
 				getDeviceProfileSessionByUuid(request.getParameter("udn"));
 			if (!session->isEnabled()) {
-				response.setStatusCode(404);
+				response.setStatus(404);
 				return;
 			}
 				
-			response.setStatusCode(200);
+			response.setStatus(200);
 			response.setContentType("text/xml; charset=\"utf-8\"");
 			UPnPDeviceProfile profile = server.getProfileManager().
 				getDeviceProfileSessionByUuid(request.getParameter("udn"))->profile();
@@ -400,7 +400,7 @@ namespace UPNP {
 		
 		void onScpdRequest(HttpRequest & request, HttpResponse & response, const string & uri) {
 			UPnPDeviceProfile deviceProfile = server.getProfileManager().getDeviceProfileSessionHasScpdUrl(uri)->profile();
-			response.setStatusCode(200);
+			response.setStatus(200);
 			response.setContentType("text/xml; charset=\"utf-8\"");
 			UPnPServiceProfile serviceProfile = deviceProfile.getServiceProfileByScpdUrl(uri);
 			setFixedTransfer(response, serviceProfile.scpd());
@@ -414,17 +414,17 @@ namespace UPNP {
 			actionResponse.serviceType() = actionRequest.serviceType();
 			if (handleActionRequest(actionRequest, actionResponse)) {
 				if (actionResponse.errorCode() == 0) {
-					response.setStatusCode(200);
+					response.setStatus(200);
 					response.setContentType("text/xml; charset=\"utf-8\"");
 					setFixedTransfer(response, makeSoapResponseContent(actionResponse));
 				} else {
-					response.setStatusCode(500);
+					response.setStatus(500);
 					response.setContentType("text/xml; charset=\"utf-8\"");
 					setFixedTransfer(response, makeSoapErrorResponseContent(actionResponse.errorCode(),
 																			actionResponse.errorString()));
 				}
 			} else {
-				response.setStatusCode(500);
+				response.setStatus(500);
 				response.setContentType("text/xml; charset=\"utf-8\"");
 				setFixedTransfer(response, makeSoapErrorResponseContent(401));
 			}
@@ -440,13 +440,13 @@ namespace UPNP {
 				if (!request.getHeaderFieldIgnoreCase("SID").empty() &&
 					(!request.getHeaderFieldIgnoreCase("NT").empty() ||
 					 !request.getHeaderFieldIgnoreCase("CALLBACK").empty())) {
-					response.setStatusCode(400, "Incompatible header fields");
+					response.setStatus(400, "Incompatible header fields");
 					return;
 				}
 				if (request.getHeaderFieldIgnoreCase("SID").empty()) {
 					if (request.getHeaderFieldIgnoreCase("CALLBACK").empty() ||
 						request.getHeaderFieldIgnoreCase("NT") != "upnp:event") {
-						response.setStatusCode(412, "Precondition Failed");
+						response.setStatus(412, "Precondition Failed");
 						return;
 					}
 					vector<string> callbacks;
@@ -454,7 +454,7 @@ namespace UPNP {
 						callbacks = server.
 							parseCallbackUrls(request.getHeaderFieldIgnoreCase("CALLBACK"));
 					} catch (Exception e) {
-						response.setStatusCode(412, "Precondition Failed");
+						response.setStatus(412, "Precondition Failed");
 						return;
 					}
 					unsigned long
@@ -466,7 +466,7 @@ namespace UPNP {
 					string
 						sid = server.
 						onSubscribe(deviceProfile, serviceProfile, callbacks, timeoutMilli);
-					response.setStatusCode(200);
+					response.setStatus(200);
 					response.getHeader().setHeaderField("SID", sid);
 					response.getHeader().setHeaderField("TIMEOUT",
 														"Second-" + Text::toString(timeoutMilli / 1000));
@@ -480,25 +480,25 @@ namespace UPNP {
 						timeoutMilli = 1800 * 1000;
 					}
 					if (server.onRenewSubscription(sid, timeoutMilli)) {
-						response.setStatusCode(200);
+						response.setStatus(200);
 						response.getHeader().setHeaderField("TIMEOUT",
 															"Second-" + Text::toString(timeoutMilli / 1000));
 						server.delayNotifyEvent(sid, 500);
 					} else {
-						response.setStatusCode(412, "Precondition Failed");
+						response.setStatus(412, "Precondition Failed");
 					}
 				}
 			} else if (request.getMethod() == "UNSUBSCRIBE") {
 				if (!request.getHeaderFieldIgnoreCase("SID").empty() &&
 					(!request.getHeaderFieldIgnoreCase("NT").empty() ||
 					 !request.getHeaderFieldIgnoreCase("CALLBACK").empty())) {
-					response.setStatusCode(400, "Incompatible header fields");
+					response.setStatus(400, "Incompatible header fields");
 					return;
 				}
 				if (server.onUnsubscribe(request.getHeaderFieldIgnoreCase("SID"))) {
-					response.setStatusCode(200);
+					response.setStatus(200);
 				} else {
-					response.setStatusCode(412, "Precondition Failed");
+					response.setStatus(412, "Precondition Failed");
 				}
 				
 			} else {
