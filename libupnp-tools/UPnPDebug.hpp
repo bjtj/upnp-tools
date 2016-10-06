@@ -76,6 +76,8 @@ namespace UPNP {
 		virtual ~UPnPDebuggable();
 
 		void debug(const std::string & tag, const std::string & packet);
+		void debug(const std::string & tag, const std::string & packet,
+				   const OS::InetAddress & from, const OS::InetAddress & to);
 		void debug(const UPnPDebugInfo & info);
 		void setDebug(UTIL::AutoRef<UPnPDebug> debug);
 		UTIL::AutoRef<UPnPDebug> getDebug();

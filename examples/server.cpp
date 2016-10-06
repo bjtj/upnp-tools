@@ -285,7 +285,8 @@ public:
 	virtual ~PrintDebugInfo() {
 	}
 	virtual void onDebugInfo(const UPnPDebugInfo & info) {
-		stream.writeline("[" + Date::format(Date::now(), "%Y-%c-%d %H:%i:%s.%f") + "]");
+		stream.writeline("[" + Date::format(Date::now(), "%Y-%c-%d %H:%i:%s.%f") + "] - " +
+						 info.const_tag());
 		stream.writeline(info.const_packet());
 	}
 };

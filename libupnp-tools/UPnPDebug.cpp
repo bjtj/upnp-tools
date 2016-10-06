@@ -3,6 +3,7 @@
 namespace UPNP {
 
 	using namespace std;
+	using namespace OS;
 	using namespace UTIL;
 
 	/**
@@ -54,6 +55,16 @@ namespace UPNP {
 		UPnPDebugInfo info;
 		info.tag() = tag;
 		info.packet() = packet;
+		debug(info);
+	}
+
+	void UPnPDebuggable::debug(const string & tag, const string & packet,
+							   const InetAddress & from, const InetAddress & to) {
+		UPnPDebugInfo info;
+		info.tag() = tag;
+		info.packet() = packet;
+		info.from() = from;
+		info.to() = to;
 		debug(info);
 	}
 
