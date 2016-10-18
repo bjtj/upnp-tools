@@ -24,8 +24,8 @@ public:
 
 		cache.prolong(1000);
 		ASSERT(cache.outdated(), ==, false);
-		ASSERT(cache.lifetimeFull(), >, 1500);
-		ASSERT(cache.lifetimeRecent(), <, 1500);
+		ASSERT(cache.lifetimeFull(), >=, 1500);
+		ASSERT(cache.lifetimeRecent(), <=, 1500);
 	}
 };
 
