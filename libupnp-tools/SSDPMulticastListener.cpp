@@ -33,10 +33,10 @@ namespace SSDP {
 		}
 	}
 	bool SSDPMulticastListener::isReadable() {
-		return sock.isReadableSelected(*selector);
+		return sock.isReadable(*selector);
 	}
 	bool SSDPMulticastListener::isReadable(Selector & selector) {
-		return sock.isReadableSelected(selector);
+		return sock.isReadable(selector);
 	}
 	void SSDPMulticastListener::procRead() {
 		char buffer[4096] = {0,};

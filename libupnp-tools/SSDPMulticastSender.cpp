@@ -41,10 +41,10 @@ namespace SSDP {
 		}
 	}
 	bool SSDPMulticastSender::isReadable() {
-		return sock.isReadableSelected(*selector);
+		return sock.isReadable(*selector);
 	}
 	bool SSDPMulticastSender::isReadable(Selector & selector) {
-		return sock.isReadableSelected(selector);
+		return sock.isReadable(selector);
 	}
 	void SSDPMulticastSender::procRead() {
 		char buffer[4096] = {0,};
