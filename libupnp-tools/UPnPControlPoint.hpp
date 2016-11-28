@@ -129,8 +129,8 @@ namespace UPNP {
 		void init();
 		
 	public:
-		UPnPControlPoint(UPnPControlPointConfig & config);
-		UPnPControlPoint(UPnPControlPointConfig & config, UTIL::AutoRef<NetworkStateManager> networkStateManager);
+		UPnPControlPoint(const UPnPControlPointConfig & config);
+		UPnPControlPoint(const UPnPControlPointConfig & config, UTIL::AutoRef<NetworkStateManager> networkStateManager);
 		virtual ~UPnPControlPoint();
 		void startAsync();
 		void stop();

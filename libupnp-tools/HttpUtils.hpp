@@ -19,6 +19,7 @@ namespace UPNP {
 		static unsigned long connectionTimeout;
 		static unsigned long soTimeout;
 
+	public:
 		class DumpResponseHandler : public HTTP::OnHttpResponseListener {
 		private:
 			HTTP::HttpResponseHeader responseHeader;
@@ -55,11 +56,14 @@ namespace UPNP {
 		static void setConnectionTimeout(unsigned long connectionTimeout);
 		static unsigned long getConnectionTimeout();
 
-		static DumpResponseHandler dumpHttpRequest(const HTTP::Url & url, const std::string & method, const UTIL::LinkedStringMap & headers);
 		static std::string httpGet(const HTTP::Url & url);
 		static std::string httpPost(const HTTP::Url & url, const UTIL::LinkedStringMap & headers, const std::string & content);
 		static std::string httpPost(const std::string & method, const HTTP::Url & url, const UTIL::LinkedStringMap & headers, const std::string & content);
-		static void testHttpError(int code);
+		static DumpResponseHandler httpRequest(const HTTP::Url & url, const std::string & method);
+		static DumpResponseHandler httpRequest(const HTTP::Url & url, const std::string & method, const UTIL::LinkedStringMap & headers);
+		static DumpResponseHandler httpRequest(const HTTP::Url & url, const std::string & method, const UTIL::LinkedStringMap & headers, const std::string & content);
+		
+		static void testHttpErrorCode(int code);
 	};
 }
 

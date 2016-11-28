@@ -41,7 +41,7 @@ namespace SSDP {
 		bool isMSearchResponseListenerThreadRunning();
 		void startMSearchResponseListenerThread();
 		void stopMSearchResponseListenerThread();
-		void supportAsync(bool support);
+		void supportMsearchAsync(bool support);
 		void sendMsearchAsync(const std::string & st, unsigned long timeoutSec);
 		void sendMsearchAsync(const std::vector<std::string> & st, unsigned long timeoutSec);
 		void sendMsearchAndGather(const std::string & st, unsigned long timeoutSec);

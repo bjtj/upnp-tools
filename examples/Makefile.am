@@ -1,6 +1,6 @@
 # SUBDIRS=res
 
-noinst_PROGRAMS = controller server ssdp-discover
+noinst_PROGRAMS = controller server ssdp-discover dial-discover
 
 if WITH_NCURSES
 noinst_PROGRAMS += tui-controller
@@ -11,6 +11,7 @@ endif
 controller_SOURCES = controller.cpp
 server_SOURCES = server.cpp
 ssdp_discover_SOURCES = ssdp-discover.cpp
+dial_discover_SOURCES = dial-discover.cpp
 
 if WITH_NCURSES
 tui_controller_SOURCES = tui-controller.cpp

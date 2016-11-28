@@ -20,10 +20,12 @@ namespace UPNP {
 	class UPnPModelObject {
 	private:
 		UTIL::PropertyMap _props;
+		UTIL::LinkedStringMap _meta;
 	public:
 		UPnPModelObject() {}
 		virtual ~UPnPModelObject() {}
-		UTIL::PropertyMap & getProperties() {return _props;}
+		UTIL::PropertyMap & getProperties() {return _props; }
+		UTIL::LinkedStringMap & meta() { return _meta; }
 		std::string & operator[] (const std::string & name) {
 			return _props[name];
 		}

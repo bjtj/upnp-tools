@@ -187,7 +187,7 @@ namespace SSDP {
 		}
 	}
 
-	void SSDPServer::supportAsync(bool support) {
+	void SSDPServer::supportMsearchAsync(bool support) {
 		if (support) {
 			startMSearchResponseListenerThread();
 		} else {

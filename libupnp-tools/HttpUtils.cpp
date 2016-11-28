@@ -25,7 +25,23 @@ namespace UPNP {
 		return HttpUtils::connectionTimeout;
 	}
 
-	HttpUtils::DumpResponseHandler HttpUtils::dumpHttpRequest(const Url & url, const string & method, const LinkedStringMap & headers) {
+	string HttpUtils::httpGet(const Url & url) {
+		return httpRequest(url, "GET", LinkedStringMap()).getDump();
+	}
+
+	string HttpUtils::httpPost(const Url & url, const LinkedStringMap & headers, const string & content) {
+		return httpPost("POST", url, headers, content);
+	}
+
+	string HttpUtils::httpPost(const string & method, const Url & url, const LinkedStringMap & headers, const string & content) {
+		return httpRequest(url, method, headers, content).getDump();
+	}
+
+	HttpUtils::DumpResponseHandler HttpUtils::httpRequest(const Url & url, const string & method) {
+		return httpRequest(url, method, LinkedStringMap());
+	}
+
+	HttpUtils::DumpResponseHandler HttpUtils::httpRequest(const Url & url, const string & method, const LinkedStringMap & headers) {
 		AnotherHttpClient client;
 		client.setConnectionTimeout(connectionTimeout);
 		client.setRecvTimeout(soTimeout);
@@ -38,55 +54,32 @@ namespace UPNP {
 		client.setRequest(method, headers);
 		client.execute();
 
-		testHttpError(handler.getResponseHeader().getStatusCode());
+		testHttpErrorCode(handler.getResponseHeader().getStatusCode());
 
 		return handler;
 	}
 
-	string HttpUtils::httpGet(const Url & url) {
+	HttpUtils::DumpResponseHandler HttpUtils::httpRequest(const Url & url, const string & method, const LinkedStringMap & headers, const string & content) {
 		AnotherHttpClient client;
 		client.setConnectionTimeout(connectionTimeout);
 		client.setRecvTimeout(soTimeout);
     
-		DumpResponseHandler handler;
+		HttpUtils::DumpResponseHandler handler;
 		client.setOnHttpResponseListener(&handler);
+    
 		client.setFollowRedirect(true);
 		client.setUrl(url);
-		client.setRequest("GET", LinkedStringMap());
-		client.execute();
-
-		testHttpError(handler.getResponseHeader().getStatusCode());
-
-		return handler.getDump();
-	}
-
-	string HttpUtils::httpPost(const Url & url, const LinkedStringMap & headers, const string & content) {
-		return httpPost("POST", url, headers, content);
-	}
-
-	string HttpUtils::httpPost(const string & method, const Url & url, const LinkedStringMap & headers, const string & content) {
-		
-		AnotherHttpClient client;
-		client.setConnectionTimeout(connectionTimeout);
-		client.setRecvTimeout(soTimeout);
-		
-		DumpResponseHandler handler;
-		client.setOnHttpResponseListener(&handler);
-		client.setFollowRedirect(true);
-		client.setUrl(url);
-
 		AutoRef<DataSource> source(new StringDataSource(content));
 		AutoRef<DataTransfer> transfer(new FixedTransfer(source, content.size()));
 		client.setRequestWithFixedTransfer(method, headers, transfer, content.size());
-		
 		client.execute();
 
-		testHttpError(handler.getResponseHeader().getStatusCode());
-			
-		return handler.getDump();
+		testHttpErrorCode(handler.getResponseHeader().getStatusCode());
+
+		return handler;
 	}
 
-	void HttpUtils::testHttpError(int code) {
+	void HttpUtils::testHttpErrorCode(int code) {
 		if (code / 100 != 2) {
 			string codeString = Text::toString(code);
 			string msg = HttpStatusCodes::getStatusString(code);

@@ -4,6 +4,7 @@
 #include <string>
 #include <liboslayer/Properties.hpp>
 #include <libhttp-server/Url.hpp>
+#include <liboslayer/StringElements.hpp>
 
 namespace UPNP {
 	
@@ -14,6 +15,7 @@ namespace UPNP {
 		UPnPResourceManager();
 		virtual ~UPnPResourceManager();
 		static std::string getResource(const HTTP::Url & url);
+		static std::string getResourceWithMeta(const HTTP::Url & url, UTIL::LinkedStringMap & out_meta);
 		static UTIL::Properties & properties();
 	};
 }

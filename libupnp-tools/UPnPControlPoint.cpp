@@ -190,7 +190,7 @@ namespace UPNP {
 
 	// 
 	
-	UPnPControlPoint::UPnPControlPoint(UPnPControlPointConfig & config)
+	UPnPControlPoint::UPnPControlPoint(const UPnPControlPointConfig & config)
 		: config(config),
 		  ssdpListener(new ControlPointSSDPListener(*this)),
 		  eventReceiver(NULL),
@@ -200,7 +200,7 @@ namespace UPNP {
 		init();
 	}
 
-	UPnPControlPoint::UPnPControlPoint(UPnPControlPointConfig & config, AutoRef<NetworkStateManager> networkStateManager)
+	UPnPControlPoint::UPnPControlPoint(const UPnPControlPointConfig & config, AutoRef<NetworkStateManager> networkStateManager)
 		: networkStateManager(networkStateManager),
 		  config(config),
 		  ssdpListener(new ControlPointSSDPListener(*this)),
@@ -237,7 +237,7 @@ namespace UPNP {
 		
 		ssdpServer.addSSDPEventListener(ssdpListener);
 		ssdpServer.startAsync();
-		ssdpServer.supportAsync(true);
+		ssdpServer.supportMsearchAsync(true);
 
 		if (!eventReceiver) {
 			UPnPEventReceiverConfig eventReceiverConfig(config.getIntegerProperty("listen.port"));

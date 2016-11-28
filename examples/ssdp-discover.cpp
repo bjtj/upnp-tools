@@ -34,7 +34,7 @@ int main(int argc, char *args[]) {
 	SSDPServer server;
 
 	server.startAsync();
-	server.supportAsync(true);
+	server.supportMsearchAsync(true);
 
 	server.addSSDPEventListener(AutoRef<SSDPEventListener>(new MySSDPEventListener));
 
