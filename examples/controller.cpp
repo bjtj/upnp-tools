@@ -146,14 +146,16 @@ void printList(const vector<AutoRef<UPnPDevice> > & devices) {
 	}
 }
 
-void selectDeviceByIndex(const vector<AutoRef<UPnPDevice> > & devices, size_t idx) {
+AutoRef<UPnPDevice> selectDeviceByIndex(const vector<AutoRef<UPnPDevice> > & devices, size_t idx) {
 
 	if (idx >= devices.size()) {
-		return;
+		return AutoRef<UPnPDevice>();
 	}
 
 	UPnPDevicePrinter printer(devices[idx]);
 	cout << printer.toString() << endl;
+
+	return devices[idx];
 }
 
 class MyDeviceListener : public DeviceAddRemoveListener {
@@ -231,7 +233,11 @@ int run(int argc, char *args[]) {
 			} else if (line.find_first_not_of("0123456789") == string::npos) {
 				int idx = Text::toInt(line);
 				cout << "idx : " << idx << endl;
-				selectDeviceByIndex(cp.getDevices(), (size_t)idx);
+				AutoRef<UPnPDevice> device = selectDeviceByIndex(cp.getDevices(), (size_t)idx);
+				if (device.nil() == false) {
+					session.udn() = Uuid(device->getUdn()).getUuid();
+					cout << "SET UDN: " << session.udn() << endl;
+				}
 			} else if (Text::startsWith(line, "udn ")) {
 				session.udn() = Uuid(line.substr(4)).getUuid();
 			} else if (line == "udn") {
@@ -244,7 +250,7 @@ int run(int argc, char *args[]) {
 				session.action() = line.substr(7);
 			} else if (line == "action") {
 				cout << "Action : " << session.action() << endl;
-			} else if (line == "invoke") {
+			} else if (line == "invoke" || line == "i") {
 				try {
 					UPnPActionInvoker invoker = cp.prepareActionInvoke(session.udn(), session.serviceType());
 					AutoRef<UPnPService> service = cp.getServiceByUdnAndServiceType(session.udn(), session.serviceType());
