@@ -668,10 +668,10 @@ namespace UPNP {
 		ssdpServer.stop();
 
 		timerThread.stop();
-		timerThread.join();
+		timerThread.wait();
 		
 		notificationThread.interrupt();
-		notificationThread.join();
+		notificationThread.wait();
 		
 		httpServer->stop();
 		delete httpServer;

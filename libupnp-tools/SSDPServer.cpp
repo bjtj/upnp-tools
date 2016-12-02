@@ -163,7 +163,7 @@ namespace SSDP {
 	void SSDPServer::stopPollingThread() {
 		if (isPollingThreadRunning()) {
 			pollingThread->interrupt();
-			pollingThread->join();
+			pollingThread->wait();
 			delete pollingThread;
 			pollingThread = NULL;
 		}
@@ -181,7 +181,7 @@ namespace SSDP {
 	void SSDPServer::stopMSearchResponseListenerThread() {
 		if (isMSearchResponseListenerThreadRunning()) {
 			msearchResponseListenerThread->interrupt();
-			msearchResponseListenerThread->join();
+			msearchResponseListenerThread->wait();
 			delete msearchResponseListenerThread;
 			msearchResponseListenerThread = NULL;
 		}

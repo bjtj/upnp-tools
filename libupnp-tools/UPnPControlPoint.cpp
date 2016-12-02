@@ -262,7 +262,7 @@ namespace UPNP {
 		deviceBuildTaskThreadPool.stop();
 
 		timerThread.stop();
-		timerThread.join();
+		timerThread.wait();
 		
 		if (eventReceiver) {
 			eventReceiver->stop();
