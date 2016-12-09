@@ -55,6 +55,8 @@ namespace UPNP {
 
 		static void setConnectionTimeout(unsigned long connectionTimeout);
 		static unsigned long getConnectionTimeout();
+		static void setRecvTimeout(unsigned long readTimeout);
+		static unsigned long getRecvTimeout();
 
 		static std::string httpGet(const HTTP::Url & url);
 		static std::string httpPost(const HTTP::Url & url, const UTIL::LinkedStringMap & headers, const std::string & content);

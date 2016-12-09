@@ -25,6 +25,14 @@ namespace UPNP {
 		return HttpUtils::connectionTimeout;
 	}
 
+	void HttpUtils::setRecvTimeout(unsigned long recvTimeout) {
+		HttpUtils::soTimeout = recvTimeout;
+	}
+	
+	unsigned long HttpUtils::getRecvTimeout() {
+		return HttpUtils::soTimeout;
+	}
+
 	string HttpUtils::httpGet(const Url & url) {
 		return httpRequest(url, "GET", LinkedStringMap()).getDump();
 	}

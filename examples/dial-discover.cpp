@@ -72,6 +72,9 @@ void printList(vector<DialDevice> & devices) {
  */
 int main(int argc, char *args[]) {
 
+	HttpUtils::setConnectionTimeout(30000);
+	HttpUtils::setRecvTimeout(30000);
+
 	UPnPControlPoint cp(UPnPControlPointConfig(9998));
 	cp.setDeviceAddRemoveListener(AutoRef<DeviceAddRemoveListener>(new DeviceListener));
 	cp.startAsync();
@@ -94,18 +97,30 @@ int main(int argc, char *args[]) {
 			int idx = Text::toInt(toks[1]) - 1;
 			string appName = toks[2];
 			string url = dialDevices[idx].applicationUrl() + appName;
-			cout << "GET:" << HttpUtils::httpGet(Url(url)) << endl;
+			try {
+				cout << "[GET]" << endl << HttpUtils::httpGet(Url(url)) << endl;
+			} catch (Exception e) {
+				cout << "GET/Err: " << e.getMessage() << endl;
+			}
 		} else if (toks[0] == "launch") {
 			int idx = Text::toInt(toks[1]) - 1;
 			string appName = toks[2];
 			string url = dialDevices[idx].applicationUrl() + appName;
 			string payload = "";
-			cout << "POST: " << HttpUtils::httpRequest(Url(url), "POST", LinkedStringMap(), payload).getResponseHeader().getStatusCode() << endl;
+			try {
+				cout << "[POST]" << endl << HttpUtils::httpRequest(Url(url), "POST", LinkedStringMap(), payload).getResponseHeader().getStatusCode() << endl;
+			} catch (Exception e) {
+				cout << "POST/Err: " << e.getMessage() << endl;
+			}
 		} else if (toks[0] == "stop") {
 			int idx = Text::toInt(toks[1]) - 1;
 			string appName = toks[2];
 			string url = dialDevices[idx].applicationUrl() + appName;
-			cout << "DELETE: " << HttpUtils::httpRequest(Url(url), "DELETE").getResponseHeader().getStatusCode() << endl;
+			try {
+				cout << "[DELETE]" << endl << HttpUtils::httpRequest(Url(url), "DELETE").getResponseHeader().getStatusCode() << endl;
+			} catch (Exception e) {
+				cout << "DELETE/Err: " << e.getMessage() << endl;
+			}
 		} else {
 			cout << "no operation for '" << line << "'" << endl;
 		}
