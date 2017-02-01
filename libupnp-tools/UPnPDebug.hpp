@@ -2,6 +2,7 @@
 #define __UPNP_DEBUG_HPP__
 
 #include <liboslayer/os.hpp>
+#include <liboslayer/Network.hpp>
 #include <liboslayer/AutoRef.hpp>
 #include <string>
 #include <deque>

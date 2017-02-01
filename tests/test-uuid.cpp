@@ -1,4 +1,5 @@
 #include <liboslayer/os.hpp>
+#include <liboslayer/Network.hpp>
 #include <liboslayer/TestSuite.hpp>
 #include <liboslayer/Uuid.hpp>
 

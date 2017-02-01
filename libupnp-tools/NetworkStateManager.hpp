@@ -5,6 +5,7 @@
 #include <vector>
 #include <liboslayer/os.hpp>
 #include <liboslayer/Observer.hpp>
+#include <liboslayer/Network.hpp>
 
 namespace UPNP {
 	

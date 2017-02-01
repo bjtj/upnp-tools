@@ -2,6 +2,7 @@
 #define __SSDP_HEADER_HPP__
 
 #include <liboslayer/os.hpp>
+#include <liboslayer/Network.hpp>
 #include <libhttp-server/HttpHeader.hpp>
 #include <libhttp-server/HttpHeaderReader.hpp>
 
