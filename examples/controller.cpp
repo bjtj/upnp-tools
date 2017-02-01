@@ -343,6 +343,7 @@ int run(int argc, char *args[]) {
 		}
 	}
 
+	out.close();
 	cp.stop();
 
     return 0;
