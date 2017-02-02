@@ -66,6 +66,9 @@ case $OPT in
 		prepare
 		build
 		;;
+	tags)
+		cd $DIR_BUILD && make tags
+		;;
 	make)
 		cd $DIR_BUILD && make && make install
 		;;

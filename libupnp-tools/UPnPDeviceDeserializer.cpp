@@ -143,12 +143,13 @@ namespace UPNP {
 
 	AutoRef<UPnPDevice> UPnPDeviceDeserializer::build(const Url & url) {
 		LinkedStringMap meta;
-		AutoRef<UPnPDevice> device = parseDeviceXml(UPnPResourceManager::getResourceWithMeta(url, meta));
-		device->meta() = meta;
+		UPnPResource res = UPnPResourceManager::getResource(url);
+		AutoRef<UPnPDevice> device = parseDeviceXml(res.content());
+		device->meta() = res.meta();
 		device->baseUrl() = url;
 		vector<UPnPService*> services = device->allServices();
 		for (vector<UPnPService*>::iterator iter = services.begin(); iter != services.end(); iter++) {
-			(*iter)->scpd() = parseScpdXml(UPnPResourceManager::getResource(url.relativePath((*iter)->scpdUrl())));
+			(*iter)->scpd() = parseScpdXml(UPnPResourceManager::getResourceContent(url.relativePath((*iter)->scpdUrl())));
 		}
 		return device;
 	}

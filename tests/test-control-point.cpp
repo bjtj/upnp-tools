@@ -144,8 +144,7 @@ static void test_control_point() {
 	server.registerRequestHandler("/*", handler);
 	server.startAsync();
 
-	UPnPControlPointConfig cpConfig(9999);
-	UPnPControlPoint cp(cpConfig);
+	UPnPControlPoint cp(UPnPControlPoint::Config(9999));
 	cp.setDeviceAddRemoveListener(AutoRef<DeviceAddRemoveListener>(new DeviceListener));
 	cp.startAsync();
 

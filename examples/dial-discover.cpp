@@ -75,7 +75,7 @@ int main(int argc, char *args[]) {
 	HttpUtils::setConnectionTimeout(30000);
 	HttpUtils::setRecvTimeout(30000);
 
-	UPnPControlPoint cp(UPnPControlPointConfig(9998));
+	UPnPControlPoint cp(UPnPControlPoint::Config(9998));
 	cp.setDeviceAddRemoveListener(AutoRef<DeviceAddRemoveListener>(new DeviceListener));
 	cp.startAsync();
 

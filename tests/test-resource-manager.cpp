@@ -21,7 +21,7 @@ static void test_resource_manager() {
 
 	ASSERT(Url("file://" + cwd + "/test.txt").getPath(), ==, cwd + "/test.txt");
 	
-	string data = UPnPResourceManager::getResource(Url("file://" + cwd + "/test.txt"));
+	string data = UPnPResourceManager::getResourceContent(Url("file://" + cwd + "/test.txt"));
 	
 	ASSERT(data, ==, text);
 
@@ -31,7 +31,7 @@ static void test_resource_manager() {
 }
 
 static void test_web_resource() {
-	string dump = UPnPResourceManager::getResource(Url("http://www.google.com"));
+	string dump = UPnPResourceManager::getResourceContent(Url("http://www.google.com"));
 	cout << dump << endl;
 }
 

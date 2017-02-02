@@ -7,15 +7,33 @@
 #include <liboslayer/StringElements.hpp>
 
 namespace UPNP {
-	
+
+	/**
+	 * 
+	 */
+	class UPnPResource {
+	private:
+		UTIL::LinkedStringMap _meta;
+		std::string _content;
+	public:
+		UPnPResource();
+		UPnPResource(const std::string & content);
+		virtual ~UPnPResource();
+		UTIL::LinkedStringMap & meta();
+		std::string & content();
+	};
+
+	/**
+	 * 
+	 */
 	class UPnPResourceManager {
 	private:
 		static UTIL::Properties props;
 	public:
 		UPnPResourceManager();
 		virtual ~UPnPResourceManager();
-		static std::string getResource(const HTTP::Url & url);
-		static std::string getResourceWithMeta(const HTTP::Url & url, UTIL::LinkedStringMap & out_meta);
+		static std::string getResourceContent(const HTTP::Url & url);
+		static UPnPResource getResource(const HTTP::Url & url);
 		static UTIL::Properties & properties();
 	};
 }

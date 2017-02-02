@@ -73,18 +73,6 @@ namespace UPNP {
 		void setOnSessionOutdatedListener(UTIL::AutoRef<OnSessionOutdatedListener> onSessionOutdatedListener);
 		UTIL::AutoRef<OnSessionOutdatedListener> getOnSessionOutdatedListener();
 	};
-	
-
-	/**
-	 * @brief
-	 */
-	class UPnPControlPointConfig : public UTIL::Properties {
-	private:
-	public:
-		UPnPControlPointConfig() {}
-		UPnPControlPointConfig(int port) {setProperty("listen.port", port);}
-		virtual ~UPnPControlPointConfig() {}
-	};
 
 
 	/**
@@ -104,17 +92,25 @@ namespace UPNP {
 	 * @brief upnp control point
 	 */
 	class UPnPControlPoint : public UPnPDebuggable {
-	private:
-
-		static const unsigned long DEFAULT_DEVICE_SESSION_TIMEOUT = 1800 * 1000; 
+	public:
+		class Config : public UTIL::Properties {
+		public:
+			Config() {/**/}
+			Config(int port) {
+				setProperty("listen.port", port);
+			}
+			virtual ~Config() {/**/}
+		};
 		
+	private:
+		static const unsigned long DEFAULT_DEVICE_SESSION_TIMEOUT = 1800 * 1000; 
 		UTIL::AutoRef<NetworkStateManager> networkStateManager;
-		UPnPControlPointConfig config;
+		Config config;
 		UTIL::AutoRef<DeviceAddRemoveListener> deviceListener;
 		UTIL::AutoRef<SSDP::SSDPEventListener> ssdpListener;
 		SSDP::SSDPServer ssdpServer;
 		UPnPDeviceSessionManager _sessionManager;
-		UPnPEventReceiver * eventReceiver;
+		UTIL::AutoRef<UPnPEventReceiver> eventReceiver;
 		UTIL::TimerLooperThread timerThread;
 		bool started;
 		UTIL::TaskThreadPool deviceBuildTaskThreadPool;
@@ -124,14 +120,16 @@ namespace UPNP {
 		// do not allow copy or assign
 		UPnPControlPoint(const UPnPControlPoint & other);
 		UPnPControlPoint & operator=(const UPnPControlPoint & other);
-
-	private:
-		void init();
 		
 	public:
-		UPnPControlPoint(const UPnPControlPointConfig & config);
-		UPnPControlPoint(const UPnPControlPointConfig & config, UTIL::AutoRef<NetworkStateManager> networkStateManager);
+		UPnPControlPoint(const Config & config);
+		UPnPControlPoint(const Config & config, UTIL::AutoRef<NetworkStateManager> networkStateManager);
 		virtual ~UPnPControlPoint();
+		
+	private:
+		void _init();
+		
+	public:
 		void startAsync();
 		void stop();
 		void setDeviceAddRemoveListener(UTIL::AutoRef<DeviceAddRemoveListener> deviceListener);
@@ -154,7 +152,7 @@ namespace UPNP {
 		UPnPEventSubscriber prepareEventSubscriber(const std::string & udn, const std::string & serviceType);
 		UTIL::AutoRef<UPnPService> findService(UTIL::AutoRef<UPnPDevice> device, const std::string & serviceType);
 		UTIL::AutoRef<UPnPService> findServiceRecursive(UTIL::AutoRef<UPnPDevice> device, const std::string & serviceType);
-		UPnPEventReceiver * getEventReceiver();
+		UTIL::AutoRef<UPnPEventReceiver> getEventReceiver();
 		UTIL::TimerLooperThread & getTimerThread();
 		void collectOutdated();
 		unsigned long parseCacheControlMilli(const std::string & cacheControl, unsigned long def);

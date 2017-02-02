@@ -213,8 +213,8 @@ int run(int argc, char *args[]) {
 
 	Session session;
 
-	UPnPControlPointConfig config(9998);
-	UPnPControlPoint cp(config);
+	// UPnPControlPointConfig config(9998);
+	UPnPControlPoint cp(UPnPControlPoint::Config(9998));
 	cp.setDebug(debug);
 
 	cp.addSharedDeviceList(list);

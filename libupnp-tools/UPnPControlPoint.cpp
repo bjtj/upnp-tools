@@ -190,37 +190,40 @@ namespace UPNP {
 
 	// 
 	
-	UPnPControlPoint::UPnPControlPoint(const UPnPControlPointConfig & config)
+	UPnPControlPoint::UPnPControlPoint(const UPnPControlPoint::Config & config)
 		: config(config),
 		  ssdpListener(new ControlPointSSDPListener(*this)),
-		  eventReceiver(NULL),
 		  started(false),
 		  deviceBuildTaskThreadPool(10) {
 
-		init();
+		_init();
 	}
 
-	UPnPControlPoint::UPnPControlPoint(const UPnPControlPointConfig & config, AutoRef<NetworkStateManager> networkStateManager)
+	UPnPControlPoint::UPnPControlPoint(const UPnPControlPoint::Config & config, AutoRef<NetworkStateManager> networkStateManager)
 		: networkStateManager(networkStateManager),
 		  config(config),
 		  ssdpListener(new ControlPointSSDPListener(*this)),
-		  eventReceiver(NULL),
 		  started(false),
 		  deviceBuildTaskThreadPool(10) {
 
-		init();
+		_init();
 	}
 	
 	UPnPControlPoint::~UPnPControlPoint() {
+		/* destructor */
 	}
 
-	void UPnPControlPoint::init() {
+	void UPnPControlPoint::_init() {
+
+		/**
+		 * session outdated listener
+		 */
 		class CPOnSessionOutdatedListener : public UPnPDeviceSessionManager::OnSessionOutdatedListener {
 		private:
 			UPnPControlPoint & cp;
 		public:
-			CPOnSessionOutdatedListener(UPnPControlPoint & cp) : cp(cp) {}
-			virtual ~CPOnSessionOutdatedListener() {}
+			CPOnSessionOutdatedListener(UPnPControlPoint & cp) : cp(cp) {/**/}
+			virtual ~CPOnSessionOutdatedListener() {/**/}
 			virtual void onSessionOutdated(AutoRef<UPnPDeviceSession> session) {
 				cp.announceDeviceRemoved(session->getRootDevice());
 			}
@@ -239,9 +242,9 @@ namespace UPNP {
 		ssdpServer.startAsync();
 		ssdpServer.supportMsearchAsync(true);
 
-		if (!eventReceiver) {
+		if (eventReceiver.nil()) {
 			UPnPEventReceiverConfig eventReceiverConfig(config.getIntegerProperty("listen.port"));
-			eventReceiver = new UPnPEventReceiver(eventReceiverConfig);
+			eventReceiver = AutoRef<UPnPEventReceiver>(new UPnPEventReceiver(eventReceiverConfig));
 			eventReceiver->startAsync();
 		}
 
@@ -264,9 +267,8 @@ namespace UPNP {
 		timerThread.stop();
 		timerThread.wait();
 		
-		if (eventReceiver) {
+		if (eventReceiver.nil() == false) {
 			eventReceiver->stop();
-			delete eventReceiver;
 			eventReceiver = NULL;
 		}
 		
@@ -363,7 +365,7 @@ namespace UPNP {
 
 	void UPnPControlPoint::subscribe(const string & udn, const string & serviceType) {
 		
-		if (!eventReceiver) {
+		if (eventReceiver.nil()) {
 			throw Exception("event receiver is stopped");
 		}
 
@@ -379,7 +381,7 @@ namespace UPNP {
 		eventReceiver->addSubscription(subscription);
 	}
 	void UPnPControlPoint::unsubscribe(const string & udn, const string & serviceType) {
-		if (!eventReceiver) {
+		if (eventReceiver.nil()) {
 			throw Exception("event receiver is stopped");
 		}
 
@@ -415,7 +417,7 @@ namespace UPNP {
 		}
 		return AutoRef<UPnPService>();
 	}
-	UPnPEventReceiver * UPnPControlPoint::getEventReceiver() {
+	AutoRef<UPnPEventReceiver> UPnPControlPoint::getEventReceiver() {
 		return eventReceiver;
 	}
 
