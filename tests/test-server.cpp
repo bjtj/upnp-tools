@@ -123,14 +123,14 @@ static void test_device_profile() {
 		XML::XmlDocument doc = XML::DomParser::parse(scpd());
 		ASSERT(doc.getRootNode().nil(), ==, false);
 
-		vector<XmlNode*> actions = doc.getRootNode()->getElementsByTagName("action");
-		for (vector<XmlNode*>::iterator iter = actions.begin(); iter != actions.end(); iter++) {
+		vector<AutoRef<XmlNode> > actions = doc.getRootNode()->getElementsByTagName("action");
+		for (vector<AutoRef<XmlNode> >::iterator iter = actions.begin(); iter != actions.end(); iter++) {
 			UPnPDeviceDeserializer deserializer;
 			UPnPAction action = deserializer.parseActionFromXmlNode(*iter);
 			ASSERT(action.name(), ==, "GetProtocolInfo");
 		}
 		
-		vector<XmlNode*> stateVariables = doc.getRootNode()->getElementsByTagName("stateVariable");
+		vector<AutoRef<XmlNode> > stateVariables = doc.getRootNode()->getElementsByTagName("stateVariable");
 	}
 
 	// parsing test

@@ -12,21 +12,21 @@ namespace UPNP {
 		XmlUtils() {}
 		virtual ~XmlUtils() {}
 
-		static UTIL::NameValue toNameValue(XML::XmlNode * node) {
+		static UTIL::NameValue toNameValue(UTIL::AutoRef<XML::XmlNode> node) {
 
-			if (!node) {
+			if (node.nil()) {
 				throw OS::Exception("node null", -1, 0);
 			}
 			
 			UTIL::NameValue nv;
 			nv.name() = node->tagName();
-			nv.value() = (node->getFirstChild() ? node->getFirstChild()->text() : "");
+			nv.value() = (node->getFirstChild().nil() == false ? node->getFirstChild()->text() : "");
 			return nv;
 		}
 
-		static bool testNameValueXmlNode(XML::XmlNode * node) {
-			return node && node->isElement() && node->childrenCount() == 1 &&
-				node->getFirstChild() && node->getFirstChild()->isText();
+		static bool testNameValueXmlNode(UTIL::AutoRef<XML::XmlNode> node) {
+			return (node.nil() == false && node->isElement() && node->childrenCount() == 1 &&
+					node->getFirstChild().nil() == false && node->getFirstChild()->isText());
 		}
 
 		static std::string toNameValueTag(const UTIL::NameValue & nv) {

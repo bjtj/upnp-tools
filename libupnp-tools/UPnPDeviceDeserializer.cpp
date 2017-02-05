@@ -17,58 +17,58 @@ namespace UPNP {
 
 	void UPnPDeviceDeserializer::parseDeviceXml(const string & xml, UPnPDevice & device) {
 		XmlDocument doc = DomParser::parse(xml);
-		XmlNode * deviceNode = doc.getRootNode()->getElementByTagName("device");
-		if (!deviceNode) {
+		AutoRef<XmlNode> deviceNode = doc.getRootNode()->getElementByTagName("device");
+		if (deviceNode.nil()) {
 			throw OS::Exception("cannot build device / wrong device description");
 		}
 		
 		parseDeviceXmlNode(deviceNode, device);
 	}
 
-	void UPnPDeviceDeserializer::parseDeviceXmlNode(XmlNode * deviceXml, UPnPDevice & device) {
+	void UPnPDeviceDeserializer::parseDeviceXmlNode(AutoRef<XmlNode> deviceXml, UPnPDevice & device) {
 		parseDevicePropertiesFromDeviceXmlNode(deviceXml, device);
 		parseServiceListFromDeviceXmlNode(deviceXml, device);
-		vector<XmlNode*> devices =  deviceXml->getElementsByTagNameInDepth("device", 2);
-		for (vector<XmlNode*>::iterator iter = devices.begin(); iter != devices.end(); iter++) {
+		vector<AutoRef<XmlNode> > devices =  deviceXml->getElementsByTagNameInDepth("device", 2);
+		for (vector<AutoRef<XmlNode> >::iterator iter = devices.begin(); iter != devices.end(); iter++) {
 			parseDeviceXmlNode(*iter, *device.prepareDevice());
 		}
 	}
 
-	void UPnPDeviceDeserializer::parseDevicePropertiesFromDeviceXmlNode(XmlNode * deviceXml, UPnPDevice & device) {
+	void UPnPDeviceDeserializer::parseDevicePropertiesFromDeviceXmlNode(AutoRef<XmlNode> deviceXml, UPnPDevice & device) {
 		parsePropertiesFromXmlNode(deviceXml, device);
 	}
 
-	void UPnPDeviceDeserializer::parseServiceListFromDeviceXmlNode(XmlNode * deviceXml, UPnPDevice & device) {
-		vector<XmlNode*> services = deviceXml->getElementsByTagNameInDepth("service", 2);
-		for (vector<XmlNode*>::iterator iter = services.begin(); iter != services.end(); iter++) {
+	void UPnPDeviceDeserializer::parseServiceListFromDeviceXmlNode(AutoRef<XmlNode> deviceXml, UPnPDevice & device) {
+		vector<AutoRef<XmlNode> > services = deviceXml->getElementsByTagNameInDepth("service", 2);
+		for (vector<AutoRef<XmlNode> >::iterator iter = services.begin(); iter != services.end(); iter++) {
 			AutoRef<UPnPService> service(new UPnPService(NULL));
 			parseServicePropertiesFromServiceXmlNode(*iter, &service);
 			device.addService(service);
 		}
 	}
 
-	void UPnPDeviceDeserializer::parseServicePropertiesFromServiceXmlNode(XmlNode * serviceXml, UPnPService * service) {
+	void UPnPDeviceDeserializer::parseServicePropertiesFromServiceXmlNode(AutoRef<XmlNode> serviceXml, UPnPService * service) {
 		parsePropertiesFromXmlNode(serviceXml, *service);
 	}
 
-	UPnPAction UPnPDeviceDeserializer::parseActionFromXmlNode(XmlNode * actionXml) {
+	UPnPAction UPnPDeviceDeserializer::parseActionFromXmlNode(AutoRef<XmlNode> actionXml) {
 		UPnPAction action;
-		XmlNode * name = actionXml->getElementByTagName("name");
+		AutoRef<XmlNode> name = actionXml->getElementByTagName("name");
 		if (XmlUtils::testNameValueXmlNode(name)) {
 			NameValue nv = XmlUtils::toNameValue(name);
 			action.name() = nv.value();
 		}
-		vector<XmlNode*> arguments = actionXml->getElementsByTagName("argument");
-		for (vector<XmlNode*>::iterator iter = arguments.begin(); iter != arguments.end(); iter++) {
+		vector<AutoRef<XmlNode> > arguments = actionXml->getElementsByTagName("argument");
+		for (vector<AutoRef<XmlNode> >::iterator iter = arguments.begin(); iter != arguments.end(); iter++) {
 			action.addArgument(parseArgumentFromXmlNode(*iter));
 		}
 		return action;
 	}
 
-	UPnPArgument UPnPDeviceDeserializer::parseArgumentFromXmlNode(XmlNode * argumentXml) {
+	UPnPArgument UPnPDeviceDeserializer::parseArgumentFromXmlNode(AutoRef<XmlNode> argumentXml) {
 		UPnPArgument arg;
-		vector<XmlNode*> children = argumentXml->children();
-		for (vector<XmlNode*>::iterator iter = children.begin(); iter != children.end(); iter++) {
+		vector<AutoRef<XmlNode> > children = argumentXml->children();
+		for (vector<AutoRef<XmlNode> >::iterator iter = children.begin(); iter != children.end(); iter++) {
 			if (XmlUtils::testNameValueXmlNode(*iter)) {
 				NameValue nv = XmlUtils::toNameValue(*iter);
 				if (nv.name() == "name") {
@@ -82,7 +82,7 @@ namespace UPNP {
 		}
 		return arg;
 	}
-	UPnPStateVariable UPnPDeviceDeserializer::parseStateVariableFromXmlNode(XmlNode * stateVariableXml) {
+	UPnPStateVariable UPnPDeviceDeserializer::parseStateVariableFromXmlNode(AutoRef<XmlNode> stateVariableXml) {
 		UPnPStateVariable stateVariable;
 
 		// send events
@@ -99,8 +99,8 @@ namespace UPNP {
 			stateVariable.multicast() = false;
 		}
 		
-		vector<XmlNode*> children = stateVariableXml->children();
-		for (vector<XmlNode*>::iterator iter = children.begin(); iter != children.end(); iter++) {
+		vector<AutoRef<XmlNode> > children = stateVariableXml->children();
+		for (vector<AutoRef<XmlNode> >::iterator iter = children.begin(); iter != children.end(); iter++) {
 			if ((*iter)->isElement()) {
 				
 				// single arguments
@@ -114,8 +114,8 @@ namespace UPNP {
 				}
 				// allowed value list
 				if ((*iter)->tagName() == "allowedValueList") {
-					vector<XmlNode*> values = (*iter)->children();
-					for (vector<XmlNode*>::iterator vi = values.begin(); vi != values.end(); vi++) {
+					vector<AutoRef<XmlNode> > values = (*iter)->children();
+					for (vector<AutoRef<XmlNode> >::iterator vi = values.begin(); vi != values.end(); vi++) {
 						if (XmlUtils::testNameValueXmlNode(*vi)) {
 							NameValue anv = XmlUtils::toNameValue(*vi);
 							if (anv.name() == "allowedValue") {
@@ -129,9 +129,9 @@ namespace UPNP {
 		}
 		return stateVariable;
 	}
-	void UPnPDeviceDeserializer::parsePropertiesFromXmlNode(XmlNode * node, UPnPModelObject & obj) {
-		vector<XmlNode*> children = node->children();
-		for (vector<XmlNode*>::iterator iter = children.begin(); iter != children.end(); iter++) {
+	void UPnPDeviceDeserializer::parsePropertiesFromXmlNode(AutoRef<XmlNode> node, UPnPModelObject & obj) {
+		vector<AutoRef<XmlNode> > children = node->children();
+		for (vector<AutoRef<XmlNode> >::iterator iter = children.begin(); iter != children.end(); iter++) {
 			if (XmlUtils::testNameValueXmlNode(*iter)) {
 				NameValue nv = XmlUtils::toNameValue(*iter);
 				if (!nv.value().empty()) {
@@ -173,13 +173,13 @@ namespace UPNP {
 		if (doc.getRootNode().nil()) {
 			throw OS::Exception("wrong scpd format - xml parse failed");
 		}
-		vector<XmlNode*> actions = doc.getRootNode()->getElementsByTagName("action");
-		for (vector<XmlNode*>::iterator iter = actions.begin(); iter != actions.end(); iter++) {
+		vector<AutoRef<XmlNode> > actions = doc.getRootNode()->getElementsByTagName("action");
+		for (vector<AutoRef<XmlNode> >::iterator iter = actions.begin(); iter != actions.end(); iter++) {
 			UPnPAction action = parseActionFromXmlNode(*iter);
 			scpd.action(action.name()) = action;
 		}
-		vector<XmlNode*> stateVariables = doc.getRootNode()->getElementsByTagName("stateVariable");
-		for (vector<XmlNode*>::iterator iter = stateVariables.begin(); iter != stateVariables.end(); iter++) {
+		vector<AutoRef<XmlNode> > stateVariables = doc.getRootNode()->getElementsByTagName("stateVariable");
+		for (vector<AutoRef<XmlNode> >::iterator iter = stateVariables.begin(); iter != stateVariables.end(); iter++) {
 			UPnPStateVariable stateVariable = parseStateVariableFromXmlNode(*iter);
 			scpd.stateVariable(stateVariable.name()) = stateVariable;
 		}

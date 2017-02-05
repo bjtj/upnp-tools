@@ -49,7 +49,7 @@ namespace UPNP {
 	map<string, AutoRef<UPnPDeviceProfileSession> > & UPnPDeviceProfileSessionManager::sessions() {
 		return _sessions;
 	}
-	vector<UTIL::AutoRef<UPnPDeviceProfileSession> > UPnPDeviceProfileSessionManager::sessionList() {
+	vector<AutoRef<UPnPDeviceProfileSession> > UPnPDeviceProfileSessionManager::sessionList() {
 		vector<AutoRef<UPnPDeviceProfileSession> > ret;
 		for (map<string, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin(); iter != _sessions.end(); iter++) {
 			ret.push_back(iter->second);
@@ -534,15 +534,15 @@ namespace UPNP {
 				throw Exception("wrong soap action xml format", -1, 0);
 			}
 
-			XML::XmlNode * actionNode = doc.getRootNode()->getElementByTagName(actionName);
-			if (actionNode == NULL) {
+			AutoRef<XML::XmlNode> actionNode = doc.getRootNode()->getElementByTagName(actionName);
+			if (actionNode.nil()) {
 				throw Exception("wrong soap action xml format / no action name tag", -1, 0);
 			}
 
-			vector<XML::XmlNode*> children = actionNode->children();
-			for (vector<XML::XmlNode*>::iterator iter = children.begin(); iter != children.end(); iter++) {
+			vector<AutoRef<XML::XmlNode> > children = actionNode->children();
+			for (vector<AutoRef<XML::XmlNode> >::iterator iter = children.begin(); iter != children.end(); iter++) {
 				if (XmlUtils::testNameValueXmlNode(*iter)) {
-					UTIL::NameValue nv = XmlUtils::toNameValue(*iter);
+					NameValue nv = XmlUtils::toNameValue(*iter);
 					actionRequest[nv.name()] = nv.value();
 				}
 			}

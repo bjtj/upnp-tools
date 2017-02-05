@@ -166,9 +166,9 @@ namespace UPNP {
 		if (doc.getRootNode().nil()) {
 			return props;
 		}
-		vector<XmlNode*> nodes = doc.getRootNode()->getElementsByTagName("property");
-		for (vector<XmlNode*>::iterator iter = nodes.begin(); iter != nodes.end(); iter++) {
-			XmlNode * node = *iter;
+		vector<AutoRef<XmlNode> > nodes = doc.getRootNode()->getElementsByTagName("property");
+		for (vector<AutoRef<XmlNode> >::iterator iter = nodes.begin(); iter != nodes.end(); iter++) {
+			AutoRef<XmlNode> node = *iter;
 			NameValue nv = XmlUtils::toNameValue(node->getFirstChildElement());
 			props[nv.name()] = nv.value();
 		}

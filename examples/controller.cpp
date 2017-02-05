@@ -46,13 +46,13 @@ int main(int argc, char *args[]) {
 	try {
 		return run(argc, args);
 	} catch (const char * e) {
-		cerr << e << endl;
+		cerr << "error occured - " << e << endl;
 		return 1;
 	} catch (const string & e) {
-		cerr << e << endl;
+		cerr << "error occured - " << e << endl;
 		return 1;
 	} catch (OS::Exception & e) {
-		cerr << e.getMessage() << endl;
+		cerr << "error occured - " << e.getMessage() << endl;
 		return 1;
 	}
 
@@ -69,6 +69,9 @@ string prompt(const string & msg) {
 	return readline();
 }
 
+/**
+ * @brief upnp device printer
+ */
 class UPnPDevicePrinter {
 private:
 	AutoRef<UPnPDevice> device;
@@ -158,6 +161,9 @@ AutoRef<UPnPDevice> selectDeviceByIndex(const vector<AutoRef<UPnPDevice> > & dev
 	return devices[idx];
 }
 
+/**
+ * @brief device listener
+ */
 class MyDeviceListener : public DeviceAddRemoveListener {
 private:
 public:
@@ -173,6 +179,9 @@ public:
 	}
 };
 
+/**
+ * @brief session
+ */
 class Session {
 private:
 	string _udn;
@@ -187,7 +196,7 @@ public:
 };
 
 /**
- * @brief 
+ * @brief print debug info
  */
 class PrintDebugInfo : public OnDebugInfoListener {
 private:
@@ -202,149 +211,149 @@ public:
 	}
 };
 
+/**
+ * @brief run
+ */
 int run(int argc, char *args[]) {
 
 	FileStream out("./.controller.log", "wb");
+	Session session;
 
 	AutoRef<UPnPDebug> debug(new UPnPDebug);
 	debug->setOnDebugInfoListener(AutoRef<OnDebugInfoListener>(new PrintDebugInfo(out)));
-
 	AutoRef<SharedUPnPDeviceList> list(new SharedUPnPDeviceList);
-
-	Session session;
-
-	// UPnPControlPointConfig config(9998);
 	UPnPControlPoint cp(UPnPControlPoint::Config(9998));
 	cp.setDebug(debug);
-
 	cp.addSharedDeviceList(list);
 	cp.setDeviceAddRemoveListener(AutoRef<DeviceAddRemoveListener>(new MyDeviceListener));
 	cp.startAsync();
-
 	cp.getEventReceiver()->addEventListener(AutoRef<UPnPEventListener>(new MyEventListener));
 
 	while (1) {
 		string line;
-		if ((line = readline()).size() > 0) {
-			if (line == "q") {
-				break;
-			} else if (line == "clear") {
-				cp.clearDevices();
-			} else if (line.find_first_not_of("0123456789") == string::npos) {
-				int idx = Text::toInt(line);
-				cout << "idx : " << idx << endl;
-				AutoRef<UPnPDevice> device = selectDeviceByIndex(cp.getDevices(), (size_t)idx);
-				if (device.nil() == false) {
-					session.udn() = Uuid(device->getUdn()).getUuid();
-					cout << "SET UDN: " << session.udn() << endl;
-				}
-			} else if (Text::startsWith(line, "udn ")) {
-				session.udn() = Uuid(line.substr(4)).getUuid();
-			} else if (line == "udn") {
-				cout << "UDN: " << session.udn() << endl;
-			} else if (Text::startsWith(line, "service ")) {
-				session.serviceType() = line.substr(8);
-			} else if (line == "service") {
-				cout << "Service : " << session.serviceType() << endl;
-			} else if (Text::startsWith(line, "action ")) {
-				session.action() = line.substr(7);
-			} else if (line == "action") {
-				cout << "Action : " << session.action() << endl;
-			} else if (line == "invoke" || line == "i") {
-				try {
-					UPnPActionInvoker invoker = cp.prepareActionInvoke(session.udn(), session.serviceType());
-					AutoRef<UPnPService> service = cp.getServiceByUdnAndServiceType(session.udn(), session.serviceType());
+		if ((line = readline()).size() == 0) {
+			printList(cp.getDevices());
+			continue;
+		}
+		
+		if (line == "q" || line == "quit") {
+			break;
+		} else if (line == "clear") {
+			cp.clearDevices();
+		} else if (line.find_first_not_of("0123456789") == string::npos) {
+			int idx = Text::toInt(line);
+			cout << "idx : " << idx << endl;
+			AutoRef<UPnPDevice> device = selectDeviceByIndex(cp.getDevices(), (size_t)idx);
+			if (device.nil() == false) {
+				session.udn() = Uuid(device->getUdn()).getUuid();
+				cout << "SET UDN: " << session.udn() << endl;
+			}
+		} else if (Text::startsWith(line, "udn ")) {
+			session.udn() = Uuid(line.substr(4)).getUuid();
+		} else if (line == "udn") {
+			cout << "UDN: " << session.udn() << endl;
+		} else if (Text::startsWith(line, "service ")) {
+			session.serviceType() = line.substr(8);
+		} else if (line == "service") {
+			cout << "Service : " << session.serviceType() << endl;
+		} else if (Text::startsWith(line, "action ")) {
+			session.action() = line.substr(7);
+		} else if (line == "action") {
+			cout << "Action : " << session.action() << endl;
+		} else if (line == "invoke" || line == "i") {
+			try {
+				UPnPActionInvoker invoker = cp.prepareActionInvoke(session.udn(), session.serviceType());
+				AutoRef<UPnPService> service = cp.getServiceByUdnAndServiceType(session.udn(), session.serviceType());
 					
-					if (!service->scpd().hasAction(session.action())) {
-						throw "Error: no action found";
-					}
-					UPnPAction action = service->scpd().action(session.action());
-					vector<UPnPArgument> & arguments = action.arguments();
-					UPnPActionRequest request;
-					request.serviceType() = service->serviceType();
-					request.action() = action;
-					for (vector<UPnPArgument>::iterator iter = arguments.begin(); iter != arguments.end(); iter++) {
-						if (iter->direction() == UPnPArgument::IN_DIRECTION) {
-							string allows = "";
-							UPnPStateVariable sv = service->scpd().stateVariable(iter->relatedStateVariable());
-							if (sv.hasAllowedValues()) {
-								allows = " [" + Text::join(sv.allowedValueList(), ", ") + "]";
-							}
-							string param = prompt(iter->name() + allows + " : ");
-							request[iter->name()] = param;
+				if (!service->scpd().hasAction(session.action())) {
+					throw "Error: no action found";
+				}
+				UPnPAction action = service->scpd().action(session.action());
+				vector<UPnPArgument> & arguments = action.arguments();
+				UPnPActionRequest request;
+				request.serviceType() = service->serviceType();
+				request.action() = action;
+				for (vector<UPnPArgument>::iterator iter = arguments.begin(); iter != arguments.end(); iter++) {
+					if (iter->direction() == UPnPArgument::IN_DIRECTION) {
+						string allows = "";
+						UPnPStateVariable sv = service->scpd().stateVariable(iter->relatedStateVariable());
+						if (sv.hasAllowedValues()) {
+							allows = " [" + Text::join(sv.allowedValueList(), ", ") + "]";
 						}
-					}
-					unsigned long tick = tick_milli();
-					UPnPActionResponse response = invoker.invoke(request);
-					cout << " ** invoke action : " << tick_milli() - tick << " ms." << endl;
-					LinkedStringMap & params = response.parameters();
-					for (size_t i = 0; i < params.size(); i++) {
-						NameValue & nv = params[i];
-						string name = nv.name();
-						string & value = nv.value();
-						cout << " - " << name << " := " << value << endl;
-					}
-				} catch (OS::Exception & e) {
-					cout << "Error: " << e.getMessage() << endl;
-				}
-			} else if (line == "subs") {
-				// TODO: subscription list
-			} else if (line == "sub") {
-
-				if (session.udn().empty() || session.serviceType().empty()) {
-					throw "Error: select udn and sevice first";
-				}
-
-				cout << "Subscribe - " << session.udn() << " // " << session.serviceType() << endl;
-				cp.subscribe(session.udn(), session.serviceType());
-
-			} else if (line == "unsub") {
-
-				if (session.udn().empty() || session.serviceType().empty()) {
-					throw "Error: select udn and sevice first";
-				}
-
-				cout << "Unsubscribe - " << session.udn() << " .. " << session.serviceType() << endl;
-				cp.unsubscribe(session.udn(), session.serviceType());
-
-			} else if (line == "shared") {
-
-				vector<AutoRef<UPnPDevice> > devices = list->list_s();
-
-				for (vector<AutoRef<UPnPDevice> >::iterator iter = devices.begin(); iter != devices.end(); iter++) {
-					cout << " * " << (*iter)->getFriendlyName() << endl;
-				}
-
-			} else if (line == "dump") {
-
-				if (session.udn().empty()) {
-					throw "Error: select udn first";
-				}
-
-				Url url = cp.getBaseUrlByUdn(session.udn());
-				string dd = HttpUtils::httpGet(url);
-				cout << dd << endl;
-
-				if (!session.serviceType().empty()) {
-					AutoRef<UPnPService> service = cp.getServiceByUdnAndServiceType(session.udn(), session.serviceType());
-					if (!service.nil()) {
-						url = cp.getBaseUrlByUdn(session.udn()).relativePath(service->scpdUrl());
-						cout << "GET SCPD : " << url.toString() << endl;
-						dd = HttpUtils::httpGet(url);
-						cout << dd << endl;
+						string param = prompt(iter->name() + allows + " : ");
+						request[iter->name()] = param;
 					}
 				}
-			} else {
-				cout << " -**- Searching... " << line << " **" << endl;
-				cp.sendMsearchAsync(line, 3);
+				unsigned long tick = tick_milli();
+				UPnPActionResponse response = invoker.invoke(request);
+				cout << " ** invoke action : " << tick_milli() - tick << " ms." << endl;
+				LinkedStringMap & params = response.parameters();
+				for (size_t i = 0; i < params.size(); i++) {
+					NameValue & nv = params[i];
+					string name = nv.name();
+					string & value = nv.value();
+					cout << " - " << name << " := " << value << endl;
+				}
+			} catch (OS::Exception & e) {
+				cout << "Error: " << e.getMessage() << endl;
+			}
+		} else if (line == "subs") {
+			// TODO: subscription list
+		} else if (line == "sub") {
+
+			if (session.udn().empty() || session.serviceType().empty()) {
+				throw "Error: select udn and sevice first";
+			}
+
+			cout << "Subscribe - " << session.udn() << " // " << session.serviceType() << endl;
+			cp.subscribe(session.udn(), session.serviceType());
+
+		} else if (line == "unsub") {
+
+			if (session.udn().empty() || session.serviceType().empty()) {
+				throw "Error: select udn and sevice first";
+			}
+
+			cout << "Unsubscribe - " << session.udn() << " .. " << session.serviceType() << endl;
+			cp.unsubscribe(session.udn(), session.serviceType());
+
+		} else if (line == "shared") {
+
+			vector<AutoRef<UPnPDevice> > devices = list->list_s();
+
+			for (vector<AutoRef<UPnPDevice> >::iterator iter = devices.begin(); iter != devices.end(); iter++) {
+				cout << " * " << (*iter)->getFriendlyName() << endl;
+			}
+
+		} else if (line == "dump") {
+
+			if (session.udn().empty()) {
+				throw "Error: select udn first";
+			}
+
+			Url url = cp.getBaseUrlByUdn(session.udn());
+			string dd = HttpUtils::httpGet(url);
+			cout << dd << endl;
+
+			if (!session.serviceType().empty()) {
+				AutoRef<UPnPService> service = cp.getServiceByUdnAndServiceType(session.udn(), session.serviceType());
+				if (!service.nil()) {
+					url = cp.getBaseUrlByUdn(session.udn()).relativePath(service->scpdUrl());
+					cout << "GET SCPD : " << url.toString() << endl;
+					dd = HttpUtils::httpGet(url);
+					cout << dd << endl;
+				}
 			}
 		} else {
-			printList(cp.getDevices());
+			cout << " -**- Searching... " << line << " **" << endl;
+			cp.sendMsearchAsync(line, 3);
 		}
 	}
 
 	out.close();
 	cp.stop();
+
+	cout << "Bye" << endl;
 
     return 0;
 }
