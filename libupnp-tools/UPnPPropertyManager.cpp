@@ -22,44 +22,41 @@ namespace UPNP {
 	/**
 	 * @brief
 	 */
-	class NotificationRequestObject : public Object {
-	private:
-		unsigned long creationTick;
-		string _sid;
-		unsigned long delay;
-	public:
-		NotificationRequestObject() : delay(0) {
-			creationTick = tick_milli();
-		}
-		NotificationRequestObject(const string & sid) :  _sid(sid), delay(0) {
-			creationTick = tick_milli();
-		}
-		NotificationRequestObject(const string & sid, unsigned long delay) : _sid(sid), delay(delay) {
-			creationTick = tick_milli();
-		}
-		virtual ~NotificationRequestObject() {
-		}
-		string & sid() {
-			return _sid;
-		}
-		bool prepared() {
-			return (tick_milli() - creationTick) >= delay;
-		}
-		static bool prepared(Message msg) {
-			return ((NotificationRequestObject*)&msg.obj())->prepared();
-		}
-		static string sid(Message msg) {
-			return ((NotificationRequestObject*)&msg.obj())->sid();
-		}
-	};
+
+	NotificationRequest::NotificationRequest() : delay(0) {
+		creationTick = tick_milli();
+	}
+	
+	NotificationRequest::NotificationRequest(const string & sid) :  _sid(sid), delay(0) {
+		creationTick = tick_milli();
+	}
+	
+	NotificationRequest::NotificationRequest(const string & sid, unsigned long delay) : _sid(sid), delay(delay) {
+		creationTick = tick_milli();
+	}
+	
+	NotificationRequest::~NotificationRequest() {
+	}
+	
+	string & NotificationRequest::sid() {
+		return _sid;
+	}
+	
+	bool NotificationRequest::prepared() {
+		return (tick_milli() - creationTick) >= delay;
+	}
+
 
 	/**
 	 * @brief
 	 */
-	UPnPEventNotificationThread::UPnPEventNotificationThread(UPnPPropertyManager & propertyManager) : propertyManager(propertyManager) {
+	UPnPEventNotificationThread::UPnPEventNotificationThread(UPnPPropertyManager & propertyManager)
+		: propertyManager(propertyManager) {
 	}
+	
 	UPnPEventNotificationThread::~UPnPEventNotificationThread() {
 	}
+	
 	void UPnPEventNotificationThread::run() {
 		while (!interrupted()) {
 			if (messageQueue.size() == 0) {
@@ -68,8 +65,8 @@ namespace UPNP {
 			}
 			size_t size = messageQueue.size();
 			while (size-- > 0) {
-				if (NotificationRequestObject::prepared(messageQueue.front())) {
-					string sid = NotificationRequestObject::sid(messageQueue.dequeue());
+				if (messageQueue.front().obj()->prepared()) {
+					string sid = messageQueue.dequeue().obj()->sid();
 					try {
 						propertyManager.notify(sid);
 					} catch (Exception e) {
@@ -79,11 +76,15 @@ namespace UPNP {
 			}
 		}
 	}
+	
 	void UPnPEventNotificationThread::notify(const string & sid) {
-		messageQueue.enqueue(Message(0, AutoRef<Object>(new NotificationRequestObject(sid))));
+		messageQueue.enqueue(NotificationRequestMessage(0, AutoNotificationRequest(
+															new NotificationRequest(sid))));
 	}
+	
 	void UPnPEventNotificationThread::delayNotify(const string & sid, unsigned long delay) {
-		messageQueue.enqueue(Message(0, AutoRef<Object>(new NotificationRequestObject(sid, delay))));
+		messageQueue.enqueue(NotificationRequestMessage(0, AutoNotificationRequest(
+															new NotificationRequest(sid, delay))));
 	}
 
 	/**

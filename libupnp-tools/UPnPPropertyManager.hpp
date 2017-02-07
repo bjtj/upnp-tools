@@ -35,11 +35,31 @@ namespace UPNP {
 	};
 
 	/**
+	 * notification request
+	 */
+	class NotificationRequest {
+	private:
+		unsigned long creationTick;
+		std::string _sid;
+		unsigned long delay;
+	public:
+		NotificationRequest();
+		NotificationRequest(const std::string & sid);
+		NotificationRequest(const std::string & sid, unsigned long delay);
+		virtual ~NotificationRequest();
+		std::string & sid();
+		bool prepared();
+	};
+
+	typedef UTIL::AutoRef<NotificationRequest> AutoNotificationRequest;
+	typedef UTIL::Message<AutoNotificationRequest> NotificationRequestMessage;
+
+	/**
 	 * @brief notify thread
 	 */
 	class UPnPEventNotificationThread : public OS::Thread {
 	private:
-		UTIL::MessageQueue messageQueue;
+		UTIL::MessageQueue<AutoNotificationRequest> messageQueue;
 		UPnPPropertyManager & propertyManager;
 		
 	public:
