@@ -350,8 +350,8 @@ int run(int argc, char *args[]) {
 		}
 	}
 
-	out.close();
 	cp.stop();
+	out.close();
 
 	cout << "Bye" << endl;
 
