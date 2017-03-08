@@ -53,7 +53,7 @@ static void test_notification_server() {
 	UPnPEventSubscription subscription("uuid:xxxxx");
 	server.addSubscription(subscription);
 
-	send_notify(Url("http://localhost:9998/"));
+	send_notify(Url("http://127.0.0.1:9998/"));
 
 	idle(1000);
 

@@ -47,7 +47,7 @@ public:
 		OS::InetAddress addr;
 		SSDPHeader header("NOTIFY * HTTP/1.1\r\n"
 						  "HOST: 239.255.255.250:1900\r\n"
-						  "Location: http://localhost:9998/device.xml\r\n"
+						  "Location: http://127.0.0.1:9998/device.xml\r\n"
 						  "NTS: ssdp:alive\r\n"
 						  "USN: uuid:" + _udn + "::rootdevice\r\n"
 						  "\r\n", addr);

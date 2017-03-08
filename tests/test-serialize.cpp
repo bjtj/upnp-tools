@@ -51,7 +51,7 @@ public:
 		OS::InetAddress addr;
 		SSDPHeader header("NOTIFY * HTTP/1.1\r\n"
 						  "HOST: 239.255.255.250:1900\r\n"
-						  "Location: http://localhost:9998/device.xml\r\n"
+						  "Location: http://127.0.0.1:9998/device.xml\r\n"
 						  "NTS: ssdp:alive\r\n"
 						  "USN: uuid:" + _udn + "::rootdevice\r\n"
 						  "\r\n", addr);
@@ -70,7 +70,7 @@ static void test_deserialize() {
 	server.startAsync();
 
 	UPnPDeviceDeserializer deserializer;
-	AutoRef<UPnPDevice> device = deserializer.build(Url("http://localhost:9999/device.xml"));
+	AutoRef<UPnPDevice> device = deserializer.build(Url("http://127.0.0.1:9999/device.xml"));
 	ASSERT(device.nil(), ==, false);
 	
 	ASSERT(device->getUdn(), ==, "uuid:" + udn);
@@ -114,7 +114,7 @@ static void test_serialize() {
 	server.startAsync();
 
 	UPnPDeviceDeserializer deserializer;
-	AutoRef<UPnPDevice> device = deserializer.build(Url("http://localhost:9999/device.xml"));
+	AutoRef<UPnPDevice> device = deserializer.build(Url("http://127.0.0.1:9999/device.xml"));
 
 	ASSERT(device->getUdn(), ==, "uuid:" + udn);
 	ASSERT(device->getFriendlyName(), ==, "UPnP Test Device");
@@ -127,7 +127,7 @@ static void test_serialize() {
 	cout << "serialized : " << dd << endl;
 
 	AutoRef<UPnPDevice> deserialized(new UPnPDevice);
-	deserialized->baseUrl() = Url("http://localhost:9999/device.xml");
+	deserialized->baseUrl() = Url("http://127.0.0.1:9999/device.xml");
 	deserializer.parseDeviceXml(dd, *deserialized);
 
 	ASSERT(deserialized->getUdn(), ==, "uuid:" + udn);

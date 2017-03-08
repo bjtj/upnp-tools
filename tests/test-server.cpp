@@ -5,7 +5,6 @@
 #include <libupnp-tools/HttpUtils.hpp>
 #include <libupnp-tools/XmlUtils.hpp>
 #include <libupnp-tools/UPnPActionInvoker.hpp>
-#include <libupnp-tools/UPnPActionHandler.hpp>
 #include <libupnp-tools/UPnPDeviceDeserializer.hpp>
 #include <libupnp-tools/UPnPEventSubscriber.hpp>
 #include <libupnp-tools/UPnPEventReceiver.hpp>
@@ -107,13 +106,13 @@ static void test_device_profile() {
 
 	// dd check
 	{
-		string xml = HttpUtils::httpGet(Url("http://localhost:9001/device.xml?udn=" + uuid));
+		string xml = HttpUtils::httpGet(Url("http://127.0.0.1:9001/device.xml?udn=" + uuid));
 		ASSERT(xml, ==, dd(uuid));
 	}
 
 	// scpd check
 	{
-		string xml = HttpUtils::httpGet(Url("http://localhost:9001/scpd.xml?udn=" + uuid +
+		string xml = HttpUtils::httpGet(Url("http://127.0.0.1:9001/scpd.xml?udn=" + uuid +
 											"&serviceType=urn:schemas-dummy-com:service:Dummy:1"));
 		ASSERT(xml, ==, scpd());
 	}
@@ -149,7 +148,7 @@ static void test_device_profile() {
 
 	// action test
 	{
-		Url url = Url("http://localhost:9001/control?udn=" + uuid + "&serviceType=urn:schemas-dummy-com:service:Dummy:1");
+		Url url = Url("http://127.0.0.1:9001/control?udn=" + uuid + "&serviceType=urn:schemas-dummy-com:service:Dummy:1");
 		UPnPActionInvoker invoker(url);
 		UPnPActionRequest request;
 		request.serviceType() = "urn:schemas-dummy-com:service:Dummy:1";
@@ -162,10 +161,10 @@ static void test_device_profile() {
 	// event test
 	{
 		string serviceType = "urn:schemas-dummy-com:service:Dummy:1";
-		Url url = Url("http://localhost:9001/event?udn=" + uuid + "&serviceType=" + serviceType);
+		Url url = Url("http://127.0.0.1:9001/event?udn=" + uuid + "&serviceType=" + serviceType);
 		UPnPEventSubscriber subscriber(url);
 
-		UPnPEventSubscribeRequest request("http://localhost:9998", 300);
+		UPnPEventSubscribeRequest request("http://127.0.0.1:9998", 300);
 		UPnPEventSubscribeResponse response = subscriber.subscribe(request);
 
 		cout << " ** Recieved SID : " << response.sid() << endl;
