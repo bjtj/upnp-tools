@@ -73,8 +73,8 @@ namespace UPNP {
 				throw Exception("wrong event notify / no content");
 			}
 			
-			string sid = request.getHeader()["SID"];
-			string seq = request.getHeader()["SEQ"];
+			string sid = request.header()["SID"];
+			string seq = request.header()["SEQ"];
 			UPnPNotify notify(sid, Text::toLong(seq));
 			string dump = ((StringDataSink*)&sink)->data();
 			map<string, string> props = receiver.parseEventNotify(dump);

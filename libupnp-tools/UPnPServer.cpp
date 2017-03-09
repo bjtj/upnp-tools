@@ -2,6 +2,7 @@
 #include <liboslayer/MessageQueue.hpp>
 #include <liboslayer/Uuid.hpp>
 #include <libhttp-server/StringDataSink.hpp>
+#include <libhttp-server/WebServerUtil.hpp>
 #include "UPnPActionErrorCodes.hpp"
 #include "UPnPDeviceDeserializer.hpp"
 #include "UPnPDeviceProfileBuilder.hpp"
@@ -293,7 +294,7 @@ namespace UPNP {
 	/**
 	 * @brief upnp server http request handler
 	 */
-	class UPnPServerHttpRequestHandler : public HttpRequestHandler {
+	class UPnPServerHttpRequestHandler : public HttpRequestHandler, public WebServerUtil {
 	private:
 		UPnPServer & server;
 		
@@ -320,9 +321,9 @@ namespace UPNP {
 				return;
 			}
 
-			string uri = request.getHeader().getPart2();
+			string uri = request.header().getPart2();
 			if (request.getPath() == "/device.xml") {
-				server.debug("upnp:device-description", request.getHeader().toString());
+				server.debug("upnp:device-description", request.header().toString());
 				if (request.getMethod() != "GET") {
 					response.setStatus(405);
 					return;
@@ -333,7 +334,7 @@ namespace UPNP {
 			}
 			
 			if (server.getProfileManager().hasDeviceProfileSessionByScpdUrl(uri)) {
-				server.debug("upnp:scpd", request.getHeader().toString());
+				server.debug("upnp:scpd", request.header().toString());
 				if (request.getMethod() != "GET") {
 					response.setStatus(405);
 					return;
@@ -344,7 +345,7 @@ namespace UPNP {
 			}
 			
 			if (server.getProfileManager().hasDeviceProfileSessionByControlUrl(uri)) {
-				server.debug("upnp:control", request.getHeader().toString() +
+				server.debug("upnp:control", request.header().toString() +
 							 (sink.nil() ? "" : ((StringDataSink*)&sink)->data()));
 				if (request.getMethod() != "POST") {
 					response.setStatus(405);
@@ -356,7 +357,7 @@ namespace UPNP {
 			}
 
 			if (server.getProfileManager().hasDeviceProfileSessionByEventSubUrl(uri)) {
-				server.debug("upnp:event", request.getHeader().toString() +
+				server.debug("upnp:event", request.header().toString() +
 							 (sink.nil() ? "" : ((StringDataSink*)&sink)->data()));
 				prepareCommonResponse(request, response);
 				onEventSubscriptionRequest(request, response, uri);
@@ -369,12 +370,12 @@ namespace UPNP {
 		}
 
 		void prepareCommonResponse(HttpRequest & request, HttpResponse & response) {
-			response.getHeader().setHeaderField("Ext", "");
-			if (request.getHeader().hasHeaderFieldIgnoreCase("ACCEPT-LANGUAGE")) {
-				response.getHeader().setHeaderField("CONTENT-LANGUAGE", "en");
+			response.header().setHeaderField("Ext", "");
+			if (request.header().hasHeaderFieldIgnoreCase("ACCEPT-LANGUAGE")) {
+				response.header().setHeaderField("CONTENT-LANGUAGE", "en");
 			}
-			response.getHeader().setHeaderField("Server", server.getServerInfo());
-			response.getHeader().setHeaderField("Date", Date::formatRfc1123(Date::now()));
+			response.header().setHeaderField("Server", server.getServerInfo());
+			response.header().setHeaderField("Date", Date::formatRfc1123(Date::now()));
 		}
 
 		void onDeviceDescriptionRequest(HttpRequest & request, HttpResponse & response, const string & uri) {
@@ -467,8 +468,8 @@ namespace UPNP {
 						sid = server.
 						onSubscribe(deviceProfile, serviceProfile, callbacks, timeoutMilli);
 					response.setStatus(200);
-					response.getHeader().setHeaderField("SID", sid);
-					response.getHeader().setHeaderField("TIMEOUT",
+					response.header().setHeaderField("SID", sid);
+					response.header().setHeaderField("TIMEOUT",
 														"Second-" + Text::toString(timeoutMilli / 1000));
 					server.delayNotifyEvent(sid, 500);
 				} else { // re-subscribe
@@ -481,7 +482,7 @@ namespace UPNP {
 					}
 					if (server.onRenewSubscription(sid, timeoutMilli)) {
 						response.setStatus(200);
-						response.getHeader().setHeaderField("TIMEOUT",
+						response.header().setHeaderField("TIMEOUT",
 															"Second-" + Text::toString(timeoutMilli / 1000));
 						server.delayNotifyEvent(sid, 500);
 					} else {

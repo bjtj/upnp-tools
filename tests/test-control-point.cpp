@@ -4,6 +4,7 @@
 #include <libupnp-tools/UPnPControlPoint.hpp>
 #include <libhttp-server/AnotherHttpServer.hpp>
 #include <libhttp-server/StringDataSink.hpp>
+#include <libhttp-server/WebServerUtil.hpp>
 
 using namespace std;
 using namespace OS;
@@ -12,7 +13,7 @@ using namespace HTTP;
 using namespace UPNP;
 using namespace SSDP;
 
-class RequestHandler : public HttpRequestHandler {
+class RequestHandler : public HttpRequestHandler, public WebServerUtil {
 private:
 	string _udn;
 	string dummy;
@@ -27,12 +28,12 @@ public:
 		return AutoRef<DataSink>(new StringDataSink);
 	}
 	virtual void onHttpRequestContentCompleted(HttpRequest & request, AutoRef<DataSink> sink, HttpResponse & response) {
-		cout << " ** path : " << request.getHeader().getPart2() << endl;
+		cout << " ** path : " << request.header().getPart2() << endl;
 		if (request.getPath() == "/device.xml") {
 			response.setStatus(200);
 			response.setContentType("text/xml");
 			setFixedTransfer(response, dd(_udn));
-		} else if (request.getHeader().getPart2() == "/scpd.xml?udn=" + _udn + "&serviceType=" + dummy) {
+		} else if (request.header().getPart2() == "/scpd.xml?udn=" + _udn + "&serviceType=" + dummy) {
 			response.setStatus(200);
 			response.setContentType("text/xml");
 			setFixedTransfer(response, scpd());

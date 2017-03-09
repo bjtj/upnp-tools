@@ -3,6 +3,7 @@
 #include <liboslayer/Uuid.hpp>
 #include <libhttp-server/AnotherHttpServer.hpp>
 #include <libhttp-server/StringDataSink.hpp>
+#include <libhttp-server/WebServerUtil.hpp>
 #include <libupnp-tools/UPnPDeviceDeserializer.hpp>
 #include <libupnp-tools/UPnPDeviceSerializer.hpp>
 
@@ -19,7 +20,7 @@ static string scpd();
 
 static string dummy = "urn:schemas-dummy-com:service:Dummy:1";
 
-class RequestHandler : public HttpRequestHandler {
+class RequestHandler : public HttpRequestHandler, public WebServerUtil {
 private:
 	string _udn;
 public:
@@ -31,12 +32,12 @@ public:
 		return AutoRef<DataSink>(new StringDataSink);
 	}
 	virtual void onHttpRequestContentCompleted(HttpRequest & request, AutoRef<DataSink> sink, HttpResponse & response) {
-		cout << " ** path : " << request.getHeader().getPart2() << endl;
+		cout << " ** path : " << request.header().getPart2() << endl;
 		if (request.getPath() == "/device.xml") {
 			response.setStatus(200);
 			response.setContentType("text/xml");
 			setFixedTransfer(response, dd(_udn));
-		} else if (request.getHeader().getPart2() == "/scpd.xml?udn=" + _udn + "&serviceType=" + dummy) {
+		} else if (request.header().getPart2() == "/scpd.xml?udn=" + _udn + "&serviceType=" + dummy) {
 			response.setStatus(200);
 			response.setContentType("text/xml");
 			setFixedTransfer(response, scpd());

@@ -33,7 +33,7 @@ namespace UPNP {
 				return UTIL::AutoRef<HTTP::DataSink>(new HTTP::StringDataSink);
 			}
 			virtual void onTransferDone(HTTP::HttpResponse & response, UTIL::AutoRef<HTTP::DataSink> sink, UTIL::AutoRef<HTTP::UserData> userData) {
-				responseHeader = response.getHeader();
+				responseHeader = response.header();
 				if (!sink.nil()) {
 					dump = ((HTTP::StringDataSink*)&sink)->data();
 				}
