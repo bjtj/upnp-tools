@@ -22,7 +22,7 @@ namespace UPNP {
 	using namespace UTIL;
 
 	/**
-	 * @brief 
+	 * @brief upnp device profile session
 	 */
 
 	UPnPDeviceProfileSession::UPnPDeviceProfileSession(const UPnPDeviceProfile & profile) : enabled(false), _profile(profile){
@@ -40,7 +40,7 @@ namespace UPNP {
 	}
 	
 	/**
-	 * @brief 
+	 * @brief upnp device profile session manager
 	 */
 	
 	UPnPDeviceProfileSessionManager::UPnPDeviceProfileSessionManager() {
@@ -264,21 +264,23 @@ namespace UPNP {
 			return true;
 		}
 		/**
-		   M-SEARCH * HTTP/1.1
-		   HOST: 239.255.255.250:1900
-		   MAN: "ssdp:discover"
-		   MX: 3
-		   ST: upnp:rootdevice
-		   USER-AGENT: Android/23 UPnP/1.1 UPnPTool/1.4.7
-
-		   M-SEARCH * HTTP/1.1
-		   MX: 1
-		   ST: upnp:rootdevice
-		   MAN: "ssdp:discover"
-		   User-Agent: UPnP/1.0 DLNADOC/1.50 Platinum/1.0.4.11
-		   Host: 239.255.255.250:1900
-		   Connection: close
-		*/
+		 *  e.g.)
+		 *
+		 *  M-SEARCH * HTTP/1.1
+		 *  HOST: 239.255.255.250:1900
+		 *  MAN: "ssdp:discover"
+		 *  MX: 3
+		 *  ST: upnp:rootdevice
+		 *  USER-AGENT: Android/23 UPnP/1.1 UPnPTool/1.4.7
+		 *
+		 *  M-SEARCH * HTTP/1.1
+		 *  MX: 1
+		 *  ST: upnp:rootdevice
+		 *  MAN: "ssdp:discover"
+		 *  User-Agent: UPnP/1.0 DLNADOC/1.50 Platinum/1.0.4.11
+		 *  Host: 239.255.255.250:1900
+		 *  Connection: close
+		 */
 		virtual void onMsearch(SSDPHeader & header) {
 
 			if (header.getHeaderFieldIgnoreCase("MX").empty() ||
@@ -306,7 +308,7 @@ namespace UPNP {
 
 			response.setContentLength(0);
 			
-			// https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+			// @ref https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 			if (request.getHeaderFieldIgnoreCase("Expect") == "100-continue") {
 				request.clearTransfer();
 				response.setStatus(100); // 100 continue, 417 expectation failed
@@ -395,16 +397,24 @@ namespace UPNP {
 			response.setContentType("text/xml; charset=\"utf-8\"");
 			UPnPDeviceProfile profile = server.getProfileManager().
 				getDeviceProfileSessionByUuid(request.getParameter("udn"))->profile();
-
 			setFixedTransfer(response, profile.deviceDescription());
+
+			if (server.getHttpEventListener().nil() == false) {
+				server.getHttpEventListener()->onDeviceDescriptionRequest(request, response, uri);
+			}
 		}
 		
 		void onScpdRequest(HttpRequest & request, HttpResponse & response, const string & uri) {
-			UPnPDeviceProfile deviceProfile = server.getProfileManager().getDeviceProfileSessionHasScpdUrl(uri)->profile();
+			UPnPDeviceProfile deviceProfile = server.getProfileManager().
+				getDeviceProfileSessionHasScpdUrl(uri)->profile();
 			response.setStatus(200);
 			response.setContentType("text/xml; charset=\"utf-8\"");
 			UPnPServiceProfile serviceProfile = deviceProfile.getServiceProfileByScpdUrl(uri);
 			setFixedTransfer(response, serviceProfile.scpd());
+
+			if (server.getHttpEventListener().nil() == false) {
+				server.getHttpEventListener()->onScpdRequest(request, response, uri);
+			}
 		}
 		
 		void onControlRequest(HttpRequest & request, HttpResponse & response, const string & uri) {
@@ -428,6 +438,10 @@ namespace UPNP {
 				response.setStatus(500);
 				response.setContentType("text/xml; charset=\"utf-8\"");
 				setFixedTransfer(response, makeSoapErrorResponseContent(401));
+			}
+
+			if (server.getHttpEventListener().nil() == false) {
+				server.getHttpEventListener()->onControlRequest(request, response, uri);
 			}
 		}
 		
@@ -458,32 +472,32 @@ namespace UPNP {
 						response.setStatus(412, "Precondition Failed");
 						return;
 					}
-					unsigned long
-						timeoutMilli = server.
+					unsigned long timeoutMilli = server.
 						parseTimeoutMilli(request.getHeaderFieldIgnoreCase("TIMEOUT"));
 					if (timeoutMilli <= 1800 * 1000) {
 						timeoutMilli = 1800 * 1000;
 					}
-					string
-						sid = server.
+					string sid = server.
 						onSubscribe(deviceProfile, serviceProfile, callbacks, timeoutMilli);
 					response.setStatus(200);
 					response.header().setHeaderField("SID", sid);
 					response.header().setHeaderField("TIMEOUT",
-														"Second-" + Text::toString(timeoutMilli / 1000));
+													 "Second-" +
+													 Text::toString(timeoutMilli / 1000));
 					server.delayNotifyEvent(sid, 500);
 				} else { // re-subscribe
 					string
 						sid = request.getHeaderFieldIgnoreCase("SID");
-					unsigned long
-						timeoutMilli = server.parseTimeoutMilli(request.getHeaderFieldIgnoreCase("TIMEOUT"));
+					unsigned long timeoutMilli = server
+						.parseTimeoutMilli(request.getHeaderFieldIgnoreCase("TIMEOUT"));
 					if (timeoutMilli <= 1800 * 1000) {
 						timeoutMilli = 1800 * 1000;
 					}
 					if (server.onRenewSubscription(sid, timeoutMilli)) {
 						response.setStatus(200);
 						response.header().setHeaderField("TIMEOUT",
-															"Second-" + Text::toString(timeoutMilli / 1000));
+														 "Second-" +
+														 Text::toString(timeoutMilli / 1000));
 						server.delayNotifyEvent(sid, 500);
 					} else {
 						response.setStatus(412, "Precondition Failed");
@@ -541,7 +555,8 @@ namespace UPNP {
 			}
 
 			vector<AutoRef<XML::XmlNode> > children = actionNode->children();
-			for (vector<AutoRef<XML::XmlNode> >::iterator iter = children.begin(); iter != children.end(); iter++) {
+			for (vector<AutoRef<XML::XmlNode> >::iterator iter = children.begin();
+				 iter != children.end(); iter++) {
 				if (XmlUtils::testNameValueXmlNode(*iter)) {
 					NameValue nv = XmlUtils::toNameValue(*iter);
 					actionRequest[nv.name()] = nv.value();
@@ -620,7 +635,6 @@ namespace UPNP {
 	
 	UPnPServer::UPnPServer(const UPnPServer::Config & config)
 		: config(config),
-		  httpServer(NULL),
 		  notificationThread(propertyManager),
 		  ssdpListener(new UPnPServerSsdpHandler(*this)) {
 	}
@@ -628,7 +642,6 @@ namespace UPNP {
 	UPnPServer::UPnPServer(const UPnPServer::Config & config, AutoRef<NetworkStateManager> networkStateManager)
 		: networkStateManager(networkStateManager),
 		  config(config),
-		  httpServer(NULL),
 		  notificationThread(propertyManager),
 		  ssdpListener(new UPnPServerSsdpHandler(*this)) {
 	}
@@ -638,14 +651,14 @@ namespace UPNP {
 
 	void UPnPServer::startAsync() {
 		
-		if (httpServer) {
+		if (httpServer.nil() == false) {
 			return;
 		}
 		
 		HttpServerConfig httpServerConfig;
 		httpServerConfig["listen.port"] = config["listen.port"];
 		httpServerConfig["thread.count"] = config.getProperty("thread.count", "5");
-		httpServer = new AnotherHttpServer(httpServerConfig);
+		httpServer = AutoRef<AnotherHttpServer>(new AnotherHttpServer(httpServerConfig));
 		AutoRef<HttpRequestHandler> handler(new UPnPServerHttpRequestHandler(*this));
 		httpServer->registerRequestHandler("/*", handler);
 		httpServer->startAsync();
@@ -662,7 +675,7 @@ namespace UPNP {
 	
 	void UPnPServer::stop() {
 		
-		if (!httpServer) {
+		if (httpServer.nil() == true) {
 			return;
 		}
 
@@ -675,8 +688,11 @@ namespace UPNP {
 		notificationThread.wait();
 		
 		httpServer->stop();
-		delete httpServer;
 		httpServer = NULL;
+	}
+
+	AutoRef<AnotherHttpServer> UPnPServer::getHttpServer() {
+		return httpServer;
 	}
 
 	string UPnPServer::makeLocation(const string & uuid) {
@@ -899,6 +915,14 @@ namespace UPNP {
 
 	AutoRef<UPnPActionRequestHandler> UPnPServer::getActionRequestHandler() {
 		return actionRequestHandler;
+	}
+
+	void UPnPServer::setHttpEventListener(AutoRef<HttpEventListener> httpEventListener) {
+		this->httpEventListener = httpEventListener;
+	}
+	
+	AutoRef<HttpEventListener> UPnPServer::getHttpEventListener() {
+		return httpEventListener;
 	}
 
 	UPnPPropertyManager & UPnPServer::getPropertyManager() {

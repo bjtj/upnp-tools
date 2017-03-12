@@ -18,7 +18,27 @@
 namespace UPNP {
 
 	/**
-	 * @brief 
+	 * @brief http event listener
+	 */
+	class HttpEventListener
+	{
+	public:
+		HttpEventListener() {}
+		virtual ~HttpEventListener() {}
+		virtual void onDeviceDescriptionRequest(HTTP::HttpRequest & request,
+												HTTP::HttpResponse & response,
+												const std::string & uri) = 0;
+		virtual void onScpdRequest(HTTP::HttpRequest & request,
+								   HTTP::HttpResponse & response,
+								   const std::string & uri) = 0;
+		virtual void onControlRequest(HTTP::HttpRequest & request,
+									  HTTP::HttpResponse & response,
+									  const std::string & uri) = 0;
+	};
+
+
+	/**
+	 * @brief upnp device profile session
 	 */
 	class UPnPDeviceProfileSession {
 	private:
@@ -33,7 +53,7 @@ namespace UPNP {
 	};
 
 	/**
-	 * @brief 
+	 * @brief upnp device profile session manager
 	 */
 	class UPnPDeviceProfileSessionManager {
 	private:
@@ -81,8 +101,9 @@ namespace UPNP {
 		UTIL::AutoRef<NetworkStateManager> networkStateManager;
 		Config config;
 		UPnPDeviceProfileSessionManager profileManager;
-		HTTP::AnotherHttpServer * httpServer;
+		UTIL::AutoRef<HTTP::AnotherHttpServer> httpServer;
 		UTIL::AutoRef<UPnPActionRequestHandler> actionRequestHandler;
+		UTIL::AutoRef<HttpEventListener> httpEventListener;
 		UPnPPropertyManager propertyManager;
 		UPnPEventNotificationThread notificationThread;
 		UTIL::TimerLooperThread timerThread;
@@ -101,6 +122,7 @@ namespace UPNP {
 		virtual ~UPnPServer();
 		void startAsync();
 		void stop();
+		UTIL::AutoRef<HTTP::AnotherHttpServer> getHttpServer();
 		std::string makeLocation(const std::string & uuid);
 
 		void setEnableDevice(const std::string & udn, bool enable);
@@ -128,9 +150,11 @@ namespace UPNP {
 		void registerDeviceProfile(const std::string & uuid, const UPnPDeviceProfile & profile);
 		void unregisterDeviceProfile(const std::string & uuid);
 
-		// functionality
+		// application level control
 		void setActionRequestHandler(UTIL::AutoRef<UPnPActionRequestHandler> actionRequestHandler);
 		UTIL::AutoRef<UPnPActionRequestHandler> getActionRequestHandler();
+		void setHttpEventListener(UTIL::AutoRef<HttpEventListener> httpEventListener);
+		UTIL::AutoRef<HttpEventListener> getHttpEventListener();
 
 		// event notification
 		UPnPPropertyManager & getPropertyManager();

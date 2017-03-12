@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<root xmlns="urn:schemas-upnp-org:device-1-0">
+  <specVersion>
+    <major>1</major>
+    <minor>0</minor>
+  </specVersion>
+  <device>
+    <deviceType>urn:dial-multiscreen-org:device:dial:1</deviceType>
+    <friendlyName>DIAL device</friendlyName>
+    <manufacturer>DIAL tester</manufacturer>
+    <modelName>DIAL test</modelName>
+    <UDN>uuid</UDN>
+    <serviceList>
+      <service>
+        <serviceType>urn:dial-multiscreen-org:service:dial:1</serviceType>
+        <serviceId>urn:dial-multiscreen-org:serviceId:dial</serviceId>
+        <!-- <controlURL>/ssdp/notfound</controlURL> -->
+        <!-- <eventSubURL>/ssdp/notfound</eventSubURL> -->
+        <!-- <SCPDURL>/ssdp/notfound</SCPDURL> -->
+      </service>
+    </serviceList>
+  </device>
+</root>

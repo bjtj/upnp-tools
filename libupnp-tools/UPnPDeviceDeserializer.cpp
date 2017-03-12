@@ -155,9 +155,7 @@ namespace UPNP {
 	}
 
 	AutoRef<UPnPDevice> UPnPDeviceDeserializer::parseDeviceXml(const string & deviceXml) {
-
 		debug("upnp", deviceXml);
-		
 		AutoRef<UPnPDevice> device(new UPnPDevice);
 		XmlDocument doc = DomParser::parse(deviceXml);
 		parseDeviceXmlNode(doc.getRootNode()->getElementByTagName("device"), *device);
@@ -165,9 +163,10 @@ namespace UPNP {
 	}
 	
 	UPnPScpd UPnPDeviceDeserializer::parseScpdXml(const string & scpdXml) {
-
 		debug("upnp", scpdXml);
-		
+		if (scpdXml.empty()) {
+			return UPnPScpd();
+		}
 		UPnPScpd scpd;
 		XmlDocument doc = DomParser::parse(scpdXml);
 		if (doc.getRootNode().nil()) {

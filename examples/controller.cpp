@@ -91,13 +91,13 @@ public:
 
 		str.append(depth, ' ');
 		if (depth > 0) { str.append(" - "); }
-		str.append(device->getUdn() + " (" + device->getFriendlyName() + ")");
+		str.append(device->getFriendlyName() + " (" + device->getUdn() + ")");
 
 		vector<AutoRef<UPnPService> > services = device->services();
 		for (vector<AutoRef<UPnPService> >::iterator iter = services.begin(); iter != services.end(); iter++) {
 			str.append("\n");
 			str.append(depth, ' ');
-			str.append(" <> " + (*iter)->serviceType());
+			str.append(" [" + (*iter)->serviceType() + "]");
 
 			vector<UPnPAction> actions = (*iter)->scpd().actions();
 			for (vector<UPnPAction>::iterator aiter = actions.begin(); aiter != actions.end(); aiter++) {
@@ -127,7 +127,7 @@ public:
 
 		str.append(depth, ' ');
 		if (depth > 0) { str.append("  - "); }
-		str.append(device->getUdn() + " (" + device->getFriendlyName() + ")");
+		str.append(device->getFriendlyName() + " (" + device->getUdn() + ")");
 
 		vector<AutoRef<UPnPDevice> > & devices = device->embeddedDevices();
 		for (vector<AutoRef<UPnPDevice> >::iterator iter = devices.begin(); iter != devices.end(); iter++) {
@@ -138,12 +138,13 @@ public:
 	}
 };
 
-void printList(const vector<AutoRef<UPnPDevice> > & devices) {
+static void printList(const vector<AutoRef<UPnPDevice> > & devices) {
 
 	cout << " == Device List (" << devices.size() << ") ==" << endl;
 	
 	size_t i = 0;
-	for (vector<AutoRef<UPnPDevice> >::const_iterator iter = devices.begin(); iter != devices.end(); iter++, i++) {
+	for (vector<AutoRef<UPnPDevice> >::const_iterator iter = devices.begin();
+		 iter != devices.end(); iter++, i++) {
 		UPnPDevicePrinter printer(*iter);
 		cout << "[" << i << "] " << printer.toBriefString() << endl;
 	}
@@ -195,6 +196,17 @@ public:
 	string & action() {return _action;}
 };
 
+static string s_str(const string & s, const string & e) {
+	return (s.empty() ? e : s);
+}
+
+static void printSession(Session & session) {
+	cout << " << Session >>" << endl;
+	cout << "  |UDN: " << s_str(session.udn(), "(none)") << endl;
+	cout << "  |Service: " << s_str(session.serviceType(), "(none)") << endl;
+	cout << "  |Action: " << s_str(session.action(), "(none)") << endl;
+}
+
 /**
  * @brief print debug info
  */
@@ -233,6 +245,8 @@ int run(int argc, char *args[]) {
 		string line;
 		if ((line = readline()).size() == 0) {
 			printList(cp.getDevices());
+			cout << endl;
+			printSession(session);			
 			continue;
 		}
 		
