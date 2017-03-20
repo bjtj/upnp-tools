@@ -45,7 +45,7 @@ namespace UPNP {
 
 		PropertyMap & props = device.getProperties();
 		for (size_t i = 0; i < props.size(); i++) {
-			ret.append(XmlUtils::toNameValueTag(props[i]));
+			ret.append(XmlUtils::toKeyValueTag(props[i]));
 			ret.append(NEWLINE);
 		}
 
@@ -62,7 +62,7 @@ namespace UPNP {
 			ret.append(NEWLINE);
 			PropertyMap & props = service->getProperties();
 			for (size_t i = 0; i < props.size(); i++) {
-				ret.append(XmlUtils::toNameValueTag(props[i]));
+				ret.append(XmlUtils::toKeyValueTag(props[i]));
 				ret.append(NEWLINE);
 			}
 			ret.append("</service>");
@@ -131,7 +131,7 @@ namespace UPNP {
 		string ret = "<action>";
 		ret.append(NEWLINE);
 
-		ret.append(XmlUtils::toNameValueTag("name", action.name()));
+		ret.append(XmlUtils::toKeyValueTag("name", action.name()));
 		ret.append(NEWLINE);
 		ret.append("<argumentList>");
 		ret.append(NEWLINE);
@@ -148,11 +148,11 @@ namespace UPNP {
 	string UPnPDeviceSerializer::serializeArgument(UPnPArgument & argument) {
 		string ret = "<argument>";
 		ret.append(NEWLINE);
-		ret.append(XmlUtils::toNameValueTag("name", argument.name()));
+		ret.append(XmlUtils::toKeyValueTag("name", argument.name()));
 		ret.append(NEWLINE);
-		ret.append(XmlUtils::toNameValueTag("direction", argument.in() ? "in" : "out"));
+		ret.append(XmlUtils::toKeyValueTag("direction", argument.in() ? "in" : "out"));
 		ret.append(NEWLINE);
-		ret.append(XmlUtils::toNameValueTag("relatedStateVariable", argument.relatedStateVariable()));
+		ret.append(XmlUtils::toKeyValueTag("relatedStateVariable", argument.relatedStateVariable()));
 		ret.append(NEWLINE);
 		ret.append("</argument>");
 		ret.append(NEWLINE);
@@ -176,11 +176,11 @@ namespace UPNP {
 		ret.append(NEWLINE);
 
 		// name
-		ret.append(XmlUtils::toNameValueTag("name", stateVariable.name()));
+		ret.append(XmlUtils::toKeyValueTag("name", stateVariable.name()));
 		ret.append(NEWLINE);
 
 		// data type
-		ret.append(XmlUtils::toNameValueTag("dataType", stateVariable.dataType()));
+		ret.append(XmlUtils::toKeyValueTag("dataType", stateVariable.dataType()));
 		ret.append(NEWLINE);
 
 		// allowed value list
@@ -188,7 +188,7 @@ namespace UPNP {
 			ret.append("<allowedValueList>");
 			ret.append(NEWLINE);
 			for (size_t i = 0; i < stateVariable.allowedValueList().size(); i++) {
-				ret.append(XmlUtils::toNameValueTag("allowedValue", stateVariable.allowedValueList()[i]));
+				ret.append(XmlUtils::toKeyValueTag("allowedValue", stateVariable.allowedValueList()[i]));
 				ret.append(NEWLINE);
 			}
 			ret.append("</allowedValueList>");
@@ -199,12 +199,12 @@ namespace UPNP {
 		if (!stateVariable.minimum().empty()) {
 			ret.append("<allowedValueRange>");
 			ret.append(NEWLINE);
-			ret.append(XmlUtils::toNameValueTag("minimum", stateVariable.minimum()));
+			ret.append(XmlUtils::toKeyValueTag("minimum", stateVariable.minimum()));
 			ret.append(NEWLINE);
-			ret.append(XmlUtils::toNameValueTag("maximum", stateVariable.maximum()));
+			ret.append(XmlUtils::toKeyValueTag("maximum", stateVariable.maximum()));
 			ret.append(NEWLINE);
 			if (!stateVariable.step().empty()) {
-				ret.append(XmlUtils::toNameValueTag("step", stateVariable.step()));
+				ret.append(XmlUtils::toKeyValueTag("step", stateVariable.step()));
 				ret.append(NEWLINE);
 			}
 			ret.append("</allowedValueRange>");

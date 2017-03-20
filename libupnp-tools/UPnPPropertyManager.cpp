@@ -176,7 +176,7 @@ namespace UPNP {
 		content.append("<e:propertyset xmlns:e=\"urn:schemas-upnp-org:event-1-0\">\r\n");
 		content.append("<e:property>\r\n");
 		for (size_t i = 0; i < props.size(); i++) {
-			content.append(XmlUtils::toNameValueTag(props[i]));
+			content.append(XmlUtils::toKeyValueTag(props[i]));
 			content.append("\r\n");
 		}
 		content.append("</e:property>\r\n");

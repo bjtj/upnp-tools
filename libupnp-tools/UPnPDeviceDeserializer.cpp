@@ -54,8 +54,8 @@ namespace UPNP {
 	UPnPAction UPnPDeviceDeserializer::parseActionFromXmlNode(AutoRef<XmlNode> actionXml) {
 		UPnPAction action;
 		AutoRef<XmlNode> name = actionXml->getElementByTagName("name");
-		if (XmlUtils::testNameValueXmlNode(name)) {
-			NameValue nv = XmlUtils::toNameValue(name);
+		if (XmlUtils::testKeyValueXmlNode(name)) {
+			KeyValue nv = XmlUtils::toKeyValue(name);
 			action.name() = nv.value();
 		}
 		vector<AutoRef<XmlNode> > arguments = actionXml->getElementsByTagName("argument");
@@ -69,14 +69,14 @@ namespace UPNP {
 		UPnPArgument arg;
 		vector<AutoRef<XmlNode> > children = argumentXml->children();
 		for (vector<AutoRef<XmlNode> >::iterator iter = children.begin(); iter != children.end(); iter++) {
-			if (XmlUtils::testNameValueXmlNode(*iter)) {
-				NameValue nv = XmlUtils::toNameValue(*iter);
-				if (nv.name() == "name") {
-					arg.name() = nv.value();
-				} else if (nv.name() == "direction") {
-					arg.direction() = (nv.value() == "out" ? UPnPArgument::OUT_DIRECTION : UPnPArgument::IN_DIRECTION);
-				} else if (nv.name() == "relatedStateVariable") {
-					arg.relatedStateVariable() = nv.value();
+			if (XmlUtils::testKeyValueXmlNode(*iter)) {
+				KeyValue kv = XmlUtils::toKeyValue(*iter);
+				if (kv.key() == "name") {
+					arg.name() = kv.value();
+				} else if (kv.key() == "direction") {
+					arg.direction() = (kv.value() == "out" ? UPnPArgument::OUT_DIRECTION : UPnPArgument::IN_DIRECTION);
+				} else if (kv.key() == "relatedStateVariable") {
+					arg.relatedStateVariable() = kv.value();
 				}
 			}
 		}
@@ -104,21 +104,21 @@ namespace UPNP {
 			if ((*iter)->isElement()) {
 				
 				// single arguments
-				if (XmlUtils::testNameValueXmlNode(*iter)) {
-					NameValue nv = XmlUtils::toNameValue(*iter);
-					if (nv.name() == "name") {
-						stateVariable.name() = nv.value();
-					} else if (nv.name() == "dataType") {
-						stateVariable.dataType() = nv.value();
+				if (XmlUtils::testKeyValueXmlNode(*iter)) {
+					KeyValue kv = XmlUtils::toKeyValue(*iter);
+					if (kv.key() == "name") {
+						stateVariable.name() = kv.value();
+					} else if (kv.key() == "dataType") {
+						stateVariable.dataType() = kv.value();
 					}
 				}
 				// allowed value list
 				if ((*iter)->tagName() == "allowedValueList") {
 					vector<AutoRef<XmlNode> > values = (*iter)->children();
 					for (vector<AutoRef<XmlNode> >::iterator vi = values.begin(); vi != values.end(); vi++) {
-						if (XmlUtils::testNameValueXmlNode(*vi)) {
-							NameValue anv = XmlUtils::toNameValue(*vi);
-							if (anv.name() == "allowedValue") {
+						if (XmlUtils::testKeyValueXmlNode(*vi)) {
+							KeyValue anv = XmlUtils::toKeyValue(*vi);
+							if (anv.key() == "allowedValue") {
 								stateVariable.addAllowedValue(anv.value());
 							}
 						}
@@ -132,10 +132,10 @@ namespace UPNP {
 	void UPnPDeviceDeserializer::parsePropertiesFromXmlNode(AutoRef<XmlNode> node, UPnPModelObject & obj) {
 		vector<AutoRef<XmlNode> > children = node->children();
 		for (vector<AutoRef<XmlNode> >::iterator iter = children.begin(); iter != children.end(); iter++) {
-			if (XmlUtils::testNameValueXmlNode(*iter)) {
-				NameValue nv = XmlUtils::toNameValue(*iter);
-				if (!nv.value().empty()) {
-					obj[nv.name()] = nv.value();
+			if (XmlUtils::testKeyValueXmlNode(*iter)) {
+				KeyValue kv = XmlUtils::toKeyValue(*iter);
+				if (!kv.value().empty()) {
+					obj[kv.key()] = kv.value();
 				}
 			}
 		}

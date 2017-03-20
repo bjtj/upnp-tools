@@ -47,9 +47,9 @@ namespace UPNP {
 			}
 			std::vector<UTIL::AutoRef<XML::XmlNode> > children = node->children();
 			for (std::vector<UTIL::AutoRef<XML::XmlNode> >::iterator iter = children.begin(); iter != children.end(); iter++) {
-				if (XmlUtils::testNameValueXmlNode(*iter)) {
-					UTIL::NameValue nv = XmlUtils::toNameValue(*iter);
-					response[XML::XmlDecoder::decode(nv.name())] = XML::XmlDecoder::decode(nv.value());
+				if (XmlUtils::testKeyValueXmlNode(*iter)) {
+					UTIL::KeyValue nv = XmlUtils::toKeyValue(*iter);
+					response[XML::XmlDecoder::decode(nv.key())] = XML::XmlDecoder::decode(nv.value());
 				}
 			}
 			return response;

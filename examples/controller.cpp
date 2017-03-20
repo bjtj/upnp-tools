@@ -303,9 +303,9 @@ int run(int argc, char *args[]) {
 				cout << " ** invoke action : " << tick_milli() - tick << " ms." << endl;
 				LinkedStringMap & params = response.parameters();
 				for (size_t i = 0; i < params.size(); i++) {
-					NameValue & nv = params[i];
-					string name = nv.name();
-					string & value = nv.value();
+					KeyValue & kv = params[i];
+					string name = kv.key();
+					string & value = kv.value();
 					cout << " - " << name << " := " << value << endl;
 				}
 			} catch (OS::Exception & e) {

@@ -40,7 +40,7 @@ namespace UPNP {
 			LinkedStringListMap fields = handler.getResponseHeader().getHeaderFields();
 			LinkedStringMap meta;
 			for (size_t i = 0; i < fields.size(); i++) {
-				meta[fields[i].name()] = fields[i].first();
+				meta[fields[i].name()] = fields[i].obj().first();
 			}
 			res.meta() = meta;
 			res.content() = handler.getDump();

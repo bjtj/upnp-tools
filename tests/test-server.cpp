@@ -1,6 +1,8 @@
 #include <iostream>
 #include <liboslayer/os.hpp>
 #include <liboslayer/Uuid.hpp>
+#include <liboslayer/XmlParser.hpp>
+#include <liboslayer/Logger.hpp>
 #include <libupnp-tools/UPnPServer.hpp>
 #include <libupnp-tools/HttpUtils.hpp>
 #include <libupnp-tools/XmlUtils.hpp>
@@ -8,7 +10,6 @@
 #include <libupnp-tools/UPnPDeviceDeserializer.hpp>
 #include <libupnp-tools/UPnPEventSubscriber.hpp>
 #include <libupnp-tools/UPnPEventReceiver.hpp>
-#include <liboslayer/XmlParser.hpp>
 #include "utils.hpp"
 
 using namespace std;
@@ -62,6 +63,7 @@ static void test_device_profile() {
 
 	UuidGeneratorVersion1 gen;
 	string uuid = gen.generate();
+	string serviceType = "urn:schemas-dummy-com:service:Dummy:1";
 
 	UPnPEventReceiverConfig notiConfig(9998);
 	UPnPEventReceiver notiServer(notiConfig);
@@ -69,6 +71,7 @@ static void test_device_profile() {
 	notiServer.startAsync();
 
 	UPnPServer server(UPnPServer::Config(9001));
+	server.setDebug(AutoRef<UPnPDebug>(new UPnPDebug));
 
 	UPnPDeviceProfile deviceProfile;
 	deviceProfile.uuid() = uuid;
@@ -76,9 +79,9 @@ static void test_device_profile() {
 	UPnPServiceProfile serviceProfile;
 	serviceProfile.scpd() = scpd();
 	serviceProfile.serviceType() = "urn:schemas-dummy-com:service:Dummy:1";
-	serviceProfile.scpdUrl() = "/scpd.xml?udn=" + uuid + "&serviceType=urn:schemas-dummy-com:service:Dummy:1";
-	serviceProfile.controlUrl() = "/control?udn=" + uuid + "&serviceType=urn:schemas-dummy-com:service:Dummy:1";
-	serviceProfile.eventSubUrl() = "/event?udn=" + uuid + "&serviceType=urn:schemas-dummy-com:service:Dummy:1";
+	serviceProfile.scpdUrl() = "/scpd.xml?udn=" + uuid + "&serviceType=" + serviceType;
+	serviceProfile.controlUrl() = "/control?udn=" + uuid + "&serviceType=" + serviceType;
+	serviceProfile.eventSubUrl() = "/event?udn=" + uuid + "&serviceType=" + serviceType;
 	deviceProfile.serviceProfiles().push_back(serviceProfile);
 	
 	server.registerDeviceProfile(uuid, deviceProfile);
@@ -86,7 +89,7 @@ static void test_device_profile() {
 
 	LinkedStringMap props;
 	props["xxx"] = "";
-	server.getPropertyManager().registerService(uuid, "urn:schemas-dummy-com:service:Dummy:1", props);
+	server.getPropertyManager().registerService(uuid, serviceType, props);
 
 	AutoRef<UPnPActionRequestHandler> handler(new MyActionHandler);
 	server.setActionRequestHandler(handler);
@@ -97,24 +100,25 @@ static void test_device_profile() {
 
 	// profile search check
 	{
-		string scpdUrl = "/scpd.xml?udn=" + uuid + "&serviceType=urn:schemas-dummy-com:service:Dummy:1";
+		string scpdUrl = "/scpd.xml?udn=" + uuid + "&serviceType=" + serviceType;
 		UPnPDeviceProfile deviceProfile = server.getProfileManager().getDeviceProfileSessionHasScpdUrl(scpdUrl)->profile();
 		UPnPServiceProfile service = deviceProfile.getServiceProfileByScpdUrl(scpdUrl);
-		ASSERT(service.serviceType(), ==, "urn:schemas-dummy-com:service:Dummy:1");
+		ASSERT(service.serviceType(), ==, serviceType);
 		ASSERT(server.getProfileManager().hasDeviceProfileSessionByScpdUrl(scpdUrl), ==, true);
 	}
 
 	// dd check
 	{
-		string xml = HttpUtils::httpGet(Url("http://127.0.0.1:9001/device.xml?udn=" + uuid));
-		ASSERT(xml, ==, dd(uuid));
+		Url url("http://127.0.0.1:9001/device.xml?udn=" + uuid);
+		string ddXml = HttpUtils::httpGet(url);
+		ASSERT(ddXml, ==, dd(uuid));
 	}
 
 	// scpd check
 	{
-		string xml = HttpUtils::httpGet(Url("http://127.0.0.1:9001/scpd.xml?udn=" + uuid +
-											"&serviceType=urn:schemas-dummy-com:service:Dummy:1"));
-		ASSERT(xml, ==, scpd());
+		Url url("http://127.0.0.1:9001/scpd.xml?udn=" + uuid + "&serviceType=" + serviceType);
+		string scpdXml = HttpUtils::httpGet(url);
+		ASSERT(scpdXml, ==, scpd());
 	}
 
 	// scpd check
@@ -148,10 +152,10 @@ static void test_device_profile() {
 
 	// action test
 	{
-		Url url = Url("http://127.0.0.1:9001/control?udn=" + uuid + "&serviceType=urn:schemas-dummy-com:service:Dummy:1");
+		Url url = Url("http://127.0.0.1:9001/control?udn=" + uuid + "&serviceType=" + serviceType);
 		UPnPActionInvoker invoker(url);
 		UPnPActionRequest request;
-		request.serviceType() = "urn:schemas-dummy-com:service:Dummy:1";
+		request.serviceType() = serviceType;
 		request.actionName() = "GetProtocolInfo";
 		UPnPActionResponse response = invoker.invoke(request);
 		ASSERT(response["Sink"], ==, "<sample sink>");
@@ -160,7 +164,6 @@ static void test_device_profile() {
 
 	// event test
 	{
-		string serviceType = "urn:schemas-dummy-com:service:Dummy:1";
 		Url url = Url("http://127.0.0.1:9001/event?udn=" + uuid + "&serviceType=" + serviceType);
 		UPnPEventSubscriber subscriber(url);
 
@@ -185,9 +188,8 @@ static void test_device_profile() {
 }
 
 int main(int argc, char *args[]) {
-
+	LoggerFactory::getInstance().setLoggerDescriptorSimple("*", "basic", "console");
 	test_device_profile();
-    
     return 0;
 }
 

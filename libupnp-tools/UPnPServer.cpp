@@ -1,5 +1,6 @@
 #include <liboslayer/XmlParser.hpp>
 #include <liboslayer/MessageQueue.hpp>
+#include <liboslayer/Logger.hpp>
 #include <liboslayer/Uuid.hpp>
 #include <libhttp-server/StringDataSink.hpp>
 #include <libhttp-server/WebServerUtil.hpp>
@@ -20,6 +21,8 @@ namespace UPNP {
 	using namespace SSDP;
 	using namespace HTTP;
 	using namespace UTIL;
+
+	static AutoRef<Logger> logger = LoggerFactory::getInstance().getObservingLogger(__FILE__);
 
 	/**
 	 * @brief upnp device profile session
@@ -299,7 +302,6 @@ namespace UPNP {
 	class UPnPServerHttpRequestHandler : public HttpRequestHandler, public WebServerUtil {
 	private:
 		UPnPServer & server;
-		
 	public:
 		UPnPServerHttpRequestHandler(UPnPServer & server) : server(server) { /**/ }
 		virtual ~UPnPServerHttpRequestHandler() { /**/ }
@@ -324,6 +326,7 @@ namespace UPNP {
 			}
 
 			string uri = request.header().getPart2();
+			logger->logd("[UPnPServer] HTTP REQUEST / full path - '" + uri + "'");
 			if (request.getPath() == "/device.xml") {
 				server.debug("upnp:device-description", request.header().toString());
 				if (request.getMethod() != "GET") {
@@ -338,6 +341,7 @@ namespace UPNP {
 			if (server.getProfileManager().hasDeviceProfileSessionByScpdUrl(uri)) {
 				server.debug("upnp:scpd", request.header().toString());
 				if (request.getMethod() != "GET") {
+					logger->logd("[UPnPServer] HTTP REQUEST / unexpected method - " + request.getMethod());
 					response.setStatus(405);
 					return;
 				}
@@ -350,6 +354,7 @@ namespace UPNP {
 				server.debug("upnp:control", request.header().toString() +
 							 (sink.nil() ? "" : ((StringDataSink*)&sink)->data()));
 				if (request.getMethod() != "POST") {
+					logger->logd("[UPnPServer] HTTP REQUEST / unexpected method - " + request.getMethod());
 					response.setStatus(405);
 					return;
 				}
@@ -366,6 +371,7 @@ namespace UPNP {
 				return;
 			}
 
+			logger->logd("[UPnPServer] HTTP REQUEST / 404 not found");
 			response.setStatus(404);
 			response.setContentType("text/plain");
 			setFixedTransfer(response, "Not found");
@@ -557,9 +563,9 @@ namespace UPNP {
 			vector<AutoRef<XML::XmlNode> > children = actionNode->children();
 			for (vector<AutoRef<XML::XmlNode> >::iterator iter = children.begin();
 				 iter != children.end(); iter++) {
-				if (XmlUtils::testNameValueXmlNode(*iter)) {
-					NameValue nv = XmlUtils::toNameValue(*iter);
-					actionRequest[nv.name()] = nv.value();
+				if (XmlUtils::testKeyValueXmlNode(*iter)) {
+					KeyValue kv = XmlUtils::toKeyValue(*iter);
+					actionRequest[kv.key()] = kv.value();
 				}
 			}
 
@@ -579,9 +585,9 @@ namespace UPNP {
 			xml.append("<s:Body>\r\n");
 			xml.append("<u:" + actionName + "Response xmlns:u=\"" + serviceType + "\">\r\n");
 			for (size_t i = 0; i < parameters.size(); i++) {
-				NameValue & nv = parameters[i];
-				string name = XML::XmlEncoder::encode(nv.name());
-				string value = XML::XmlEncoder::encode(nv.value());
+				KeyValue & kv = parameters[i];
+				string name = XML::XmlEncoder::encode(kv.key());
+				string value = XML::XmlEncoder::encode(kv.value());
 				xml.append("<" + name + ">" + value + "</" + name + ">\r\n");
 			}
 			xml.append("</u:" + actionName + "Response>");
@@ -659,15 +665,14 @@ namespace UPNP {
 		httpServerConfig["listen.port"] = config["listen.port"];
 		httpServerConfig["thread.count"] = config.getProperty("thread.count", "5");
 		httpServer = AutoRef<AnotherHttpServer>(new AnotherHttpServer(httpServerConfig));
-		AutoRef<HttpRequestHandler> handler(new UPnPServerHttpRequestHandler(*this));
-		httpServer->registerRequestHandler("/*", handler);
+		httpServer->registerRequestHandler("/*", AutoRef<HttpRequestHandler>(
+											   new UPnPServerHttpRequestHandler(*this)));
 		httpServer->startAsync();
 
 		notificationThread.start();
 		
 		timerThread.start();
-		timerThread.looper().
-			interval(15 * 1000, AutoRef<TimerTask>(new UPnPServerLifetimeTask(*this)));
+		timerThread.looper().interval(15 * 1000, AutoRef<TimerTask>(new UPnPServerLifetimeTask(*this)));
 
 		ssdpServer.addSSDPEventListener(ssdpListener);
 		ssdpServer.startAsync();
