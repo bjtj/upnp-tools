@@ -27,12 +27,14 @@ libupnp_toolsinc_HEADERS = \
 	UPnPEventReceiver.hpp \
 	UPnPEventSubscriber.hpp \
 	UPnPEventSubscription.hpp \
+	UPnPExceptions.hpp \
 	UPnPLocationResolver.hpp \
 	UPnPModels.hpp \
 	UPnPPropertyManager.hpp \
 	UPnPResourceManager.hpp \
 	UPnPServer.hpp \
 	UPnPServiceProfile.hpp \
+	UPnPUtils.hpp \
 	XmlUtils.hpp
 
 libupnp_tools_la_SOURCES = \
@@ -83,6 +85,7 @@ libupnp_tools_la_SOURCES = \
 	UPnPEventSubscriber.hpp \
 	UPnPEventSubscription.cpp \
 	UPnPEventSubscription.hpp \
+	UPnPExceptions.hpp \
 	UPnPLocationResolver.cpp \
 	UPnPLocationResolver.hpp \
 	UPnPModels.cpp \
@@ -94,6 +97,8 @@ libupnp_tools_la_SOURCES = \
 	UPnPServer.cpp \
 	UPnPServer.hpp \
 	UPnPServiceProfile.hpp \
+	UPnPUtils.cpp \
+	UPnPUtils.hpp \
 	XmlUtils.hpp
 
 libupnp_tools_la_CXXFLAGS = $(PTHREAD_CXXFLAGS) $(LIBOSLAYER_CFLAGS) $(LIBHTTP_SERVER_CFLAGS)
