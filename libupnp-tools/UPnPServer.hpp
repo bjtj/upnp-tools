@@ -25,17 +25,10 @@ namespace UPNP {
 	public:
 		HttpEventListener() {}
 		virtual ~HttpEventListener() {}
-		virtual void onDeviceDescriptionRequest(HTTP::HttpRequest & request,
-												HTTP::HttpResponse & response,
-												const std::string & uri) = 0;
-		virtual void onScpdRequest(HTTP::HttpRequest & request,
-								   HTTP::HttpResponse & response,
-								   const std::string & uri) = 0;
-		virtual void onControlRequest(HTTP::HttpRequest & request,
-									  HTTP::HttpResponse & response,
-									  const std::string & uri) = 0;
+		virtual void onDeviceDescriptionRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response) = 0;
+		virtual void onScpdRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response) = 0;
+		virtual void onControlRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response) = 0;
 	};
-
 
 	/**
 	 * @brief upnp device profile session

@@ -15,56 +15,52 @@ namespace UPNP {
 
 	class HttpUtils {
 	private:
-
 		static unsigned long connectionTimeout;
 		static unsigned long soTimeout;
-
 	public:
+		/**
+		 * 
+		 */
 		class DumpResponseHandler : public HTTP::OnHttpResponseListener {
 		private:
 			HTTP::HttpResponseHeader responseHeader;
 			std::string dump;
 		public:
-			DumpResponseHandler() {
-			}
-			virtual ~DumpResponseHandler() {
-			}
-			virtual UTIL::AutoRef<HTTP::DataSink> getDataSink() {
-				return UTIL::AutoRef<HTTP::DataSink>(new HTTP::StringDataSink);
-			}
-			virtual void onTransferDone(HTTP::HttpResponse & response, UTIL::AutoRef<HTTP::DataSink> sink, UTIL::AutoRef<HTTP::UserData> userData) {
-				responseHeader = response.header();
-				if (!sink.nil()) {
-					dump = ((HTTP::StringDataSink*)&sink)->data();
-				}
-			}
-			virtual void onError(OS::Exception & e, UTIL::AutoRef<HTTP::UserData> userData) {
-				printf("Error/e: %s\n", e.getMessage().c_str());
-			}
-			HTTP::HttpResponseHeader & getResponseHeader() {
-				return responseHeader;
-			}
-			std::string & getDump() {
-				return dump;
-			}
+			DumpResponseHandler();
+			virtual ~DumpResponseHandler();
+			virtual UTIL::AutoRef<HTTP::DataSink> getDataSink();
+			virtual void onTransferDone(HTTP::HttpResponse & response,
+										UTIL::AutoRef<HTTP::DataSink> sink,
+										UTIL::AutoRef<HTTP::UserData> userData);
+			virtual void onError(OS::Exception & e, UTIL::AutoRef<HTTP::UserData> userData);
+			HTTP::HttpResponseHeader & getResponseHeader();
+			std::string & getDump();
 		};
 		
 	public:
 		HttpUtils();
 		virtual ~HttpUtils();
-
 		static void setConnectionTimeout(unsigned long connectionTimeout);
 		static unsigned long getConnectionTimeout();
 		static void setRecvTimeout(unsigned long readTimeout);
 		static unsigned long getRecvTimeout();
-
 		static std::string httpGet(const HTTP::Url & url);
-		static std::string httpPost(const HTTP::Url & url, const UTIL::LinkedStringMap & headers, const std::string & content);
-		static std::string httpPost(const std::string & method, const HTTP::Url & url, const UTIL::LinkedStringMap & headers, const std::string & content);
-		static DumpResponseHandler httpRequest(const HTTP::Url & url, const std::string & method);
-		static DumpResponseHandler httpRequest(const HTTP::Url & url, const std::string & method, const UTIL::LinkedStringMap & headers);
-		static DumpResponseHandler httpRequest(const HTTP::Url & url, const std::string & method, const UTIL::LinkedStringMap & headers, const std::string & content);
-		
+		static std::string httpPost(const HTTP::Url & url,
+									const UTIL::LinkedStringMap & headers,
+									const std::string & content);
+		static std::string httpPost(const std::string & method,
+									const HTTP::Url & url,
+									const UTIL::LinkedStringMap & headers,
+									const std::string & content);
+		static DumpResponseHandler httpRequest(const HTTP::Url & url,
+											   const std::string & method);
+		static DumpResponseHandler httpRequest(const HTTP::Url & url,
+											   const std::string & method,
+											   const UTIL::LinkedStringMap & headers);
+		static DumpResponseHandler httpRequest(const HTTP::Url & url,
+											   const std::string & method,
+											   const UTIL::LinkedStringMap & headers,
+											   const std::string & content);
 		static void testHttpErrorCode(int code);
 	};
 }

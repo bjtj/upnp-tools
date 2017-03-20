@@ -34,23 +34,14 @@ public:
     virtual ~DialHttpEventListener() {
 	}
 	
-	virtual void onDeviceDescriptionRequest(HTTP::HttpRequest & request,
-											HTTP::HttpResponse & response,
-											const std::string & uri)
-	{
+	virtual void onDeviceDescriptionRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response) {
 		string host = NetworkUtil::selectDefaultAddress().getHost();
 		response.header().setHeaderField("Application-URL",
 										 "http://" + host + ":9001/dial/");
 	}
-	virtual void onScpdRequest(HTTP::HttpRequest & request,
-							   HTTP::HttpResponse & response,
-							   const std::string & uri)
-	{
+	virtual void onScpdRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response) {
 	}
-	virtual void onControlRequest(HTTP::HttpRequest & request,
-								  HTTP::HttpResponse & response,
-								  const std::string & uri)
-	{
+	virtual void onControlRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response) {
 	}
 };
 

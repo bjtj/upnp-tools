@@ -1,5 +1,6 @@
 #include "HttpUtils.hpp"
 #include <libhttp-server/StringDataSource.hpp>
+#include <liboslayer/Logger.hpp>
 
 namespace UPNP {
 
@@ -8,8 +9,42 @@ namespace UPNP {
 	using namespace HTTP;
 	using namespace UTIL;
 
+	static AutoRef<Logger> logger = LoggerFactory::getInstance().getObservingLogger(__FILE__);
+
 	unsigned long HttpUtils::connectionTimeout = 5000;
 	unsigned long HttpUtils::soTimeout = 5000;
+
+	/**
+	 * 
+	 */
+	
+	HttpUtils::DumpResponseHandler::DumpResponseHandler() {
+	}
+	HttpUtils::DumpResponseHandler::~DumpResponseHandler() {
+	}
+	UTIL::AutoRef<DataSink> HttpUtils::DumpResponseHandler::getDataSink() {
+		return UTIL::AutoRef<DataSink>(new StringDataSink);
+	}
+	void HttpUtils::DumpResponseHandler::onTransferDone(HttpResponse & response, UTIL::AutoRef<DataSink> sink, UTIL::AutoRef<UserData> userData) {
+		responseHeader = response.header();
+		if (!sink.nil()) {
+			dump = ((StringDataSink*)&sink)->data();
+		}
+	}
+	void HttpUtils::DumpResponseHandler::onError(OS::Exception & e, UTIL::AutoRef<UserData> userData) {
+		logger->loge("Error/e: " + e.getMessage());
+	}
+	HttpResponseHeader & HttpUtils::DumpResponseHandler::getResponseHeader() {
+		return responseHeader;
+	}
+	string & HttpUtils::DumpResponseHandler::getDump() {
+		return dump;
+	}
+
+
+	/**
+	 * 
+	 */
 	
 	HttpUtils::HttpUtils() {
 	}

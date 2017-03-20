@@ -65,8 +65,6 @@ namespace UPNP {
 	bool UPnPDeviceProfile::hasServiceByScpdUrl(const string & scpdUrl) {
 		for (vector<UPnPServiceProfile>::iterator iter = _serviceProfiles.begin();
 			 iter != _serviceProfiles.end(); iter++) {
-			printf(" xx - hasServiceByScpdUrl() / '%s'\n", iter->scpdUrl().c_str());
-			printf(" yy - scpdUrl() / '%s'\n", scpdUrl.c_str());
 			if (iter->scpdUrl() == scpdUrl) {
 				return true;
 			}

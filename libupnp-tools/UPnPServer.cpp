@@ -4,6 +4,7 @@
 #include <liboslayer/Uuid.hpp>
 #include <libhttp-server/StringDataSink.hpp>
 #include <libhttp-server/WebServerUtil.hpp>
+#include <libhttp-server/HttpException.hpp>
 #include "UPnPActionErrorCodes.hpp"
 #include "UPnPDeviceDeserializer.hpp"
 #include "UPnPDeviceProfileBuilder.hpp"
@@ -15,6 +16,8 @@
 #include "XmlUtils.hpp"
 
 namespace UPNP {
+
+	DECL_NAMED_EXCEPTION(SoapException);
 
 	using namespace std;
 	using namespace OS;
@@ -140,8 +143,8 @@ namespace UPNP {
 	}
 	
 	bool UPnPDeviceProfileSessionManager::hasDeviceProfileSessionByScpdUrl(const string & scpdUrl) {
-		for (map<string, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin();
-			 iter != _sessions.end(); iter++) {
+		map<string, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin();
+		for (; iter != _sessions.end(); iter++) {
 			AutoRef<UPnPDeviceProfileSession> session = iter->second;
 			if (session->profile().hasServiceByScpdUrl(scpdUrl)) {
 				return true;
@@ -307,9 +310,7 @@ namespace UPNP {
 		virtual ~UPnPServerHttpRequestHandler() { /**/ }
 
 		virtual void onHttpRequestHeaderCompleted(HttpRequest & request, HttpResponse & response) {
-
 			response.setContentLength(0);
-			
 			// @ref https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 			if (request.getHeaderFieldIgnoreCase("Expect") == "100-continue") {
 				request.clearTransfer();
@@ -324,57 +325,76 @@ namespace UPNP {
 			if (response.getStatusCode() == 100 || response.getStatusCode() == 417) {
 				return;
 			}
-
-			string uri = request.header().getPart2();
-			logger->logd("[UPnPServer] HTTP REQUEST / full path - '" + uri + "'");
-			if (request.getPath() == "/device.xml") {
-				server.debug("upnp:device-description", request.header().toString());
-				if (request.getMethod() != "GET") {
-					response.setStatus(405);
+			logger->logd("[UPnPServer] HTTP REQUEST / full path - '" + request.getRawPath() + "'");
+			try {
+				if (handleUPnP(request, sink, response) == true) {
 					return;
 				}
-				prepareCommonResponse(request, response);
-				onDeviceDescriptionRequest(request, response, uri);
+			} catch (HttpException e) {
+				response.setStatus(e.statusCode(), e.statusString());
+				response.setContentType("text/plain");
+				setFixedTransfer(response, e.description());
 				return;
 			}
-			
-			if (server.getProfileManager().hasDeviceProfileSessionByScpdUrl(uri)) {
-				server.debug("upnp:scpd", request.header().toString());
-				if (request.getMethod() != "GET") {
-					logger->logd("[UPnPServer] HTTP REQUEST / unexpected method - " + request.getMethod());
-					response.setStatus(405);
-					return;
-				}
-				prepareCommonResponse(request, response);
-				onScpdRequest(request, response, uri);
-				return;
-			}
-			
-			if (server.getProfileManager().hasDeviceProfileSessionByControlUrl(uri)) {
-				server.debug("upnp:control", request.header().toString() +
-							 (sink.nil() ? "" : ((StringDataSink*)&sink)->data()));
-				if (request.getMethod() != "POST") {
-					logger->logd("[UPnPServer] HTTP REQUEST / unexpected method - " + request.getMethod());
-					response.setStatus(405);
-					return;
-				}
-				prepareCommonResponse(request, response);
-				onControlRequest(request, response, uri);
-				return;
-			}
-
-			if (server.getProfileManager().hasDeviceProfileSessionByEventSubUrl(uri)) {
-				server.debug("upnp:event", request.header().toString() +
-							 (sink.nil() ? "" : ((StringDataSink*)&sink)->data()));
-				prepareCommonResponse(request, response);
-				onEventSubscriptionRequest(request, response, uri);
-				return;
-			}
-
 			logger->logd("[UPnPServer] HTTP REQUEST / 404 not found");
 			response.setStatus(404);
 			response.setContentType("text/plain");
 			setFixedTransfer(response, "Not found");
+		}
+
+		bool handleUPnP(HttpRequest & request, AutoRef<DataSink> sink, HttpResponse & response) {
+			if (request.getPath() == "/device.xml") {
+				handleDeviceDescription(request, response);
+				return true;
+			}
+			if (server.getProfileManager().hasDeviceProfileSessionByScpdUrl(request.getRawPath())) {
+				handleScpd(request, response);
+				return true;
+			}
+			if (server.getProfileManager().hasDeviceProfileSessionByControlUrl(request.getRawPath())) {
+				handleControl(request, sink, response);
+				return true;
+			}
+			if (server.getProfileManager().hasDeviceProfileSessionByEventSubUrl(request.getRawPath())) {
+				handleEvent(request, sink, response);
+				return true;
+			}
+			return false;
+		}
+
+		void handleDeviceDescription(HttpRequest & request, HttpResponse & response) {
+			server.debug("upnp:device-description", request.header().toString());
+			validateMethod(request, "GET");
+			prepareCommonResponse(request, response);
+			onDeviceDescriptionRequest(request, response);
+		}
+
+		void handleScpd(HttpRequest & request, HttpResponse & response) {
+			server.debug("upnp:scpd", request.header().toString());
+			validateMethod(request, "GET");
+			prepareCommonResponse(request, response);
+			onScpdRequest(request, response);
+		}
+
+		void handleControl(HttpRequest & request, AutoRef<DataSink> sink, HttpResponse & response) {
+			server.debug("upnp:control", request.header().toString() + (sink.nil() ? "" : ((StringDataSink*)&sink)->data()));
+			validateMethod(request, "POST");
+			prepareCommonResponse(request, response);
+			onControlRequest(request, response);
+		}
+
+		void handleEvent(HttpRequest & request, AutoRef<DataSink> sink, HttpResponse & response) {
+			server.debug("upnp:event", request.header().toString() + (sink.nil() ? "" : ((StringDataSink*)&sink)->data()));
+			prepareCommonResponse(request, response);
+			onEventSubscriptionRequest(request, response);
+		}
+
+		void validateMethod(HttpRequest & request, const string & expect) {
+			if (request.getMethod() != expect) {
+				logger->logd("[UPnPServer] HTTP REQUEST / unexpected method - " + request.getMethod());
+				throw HttpException(405, HttpStatusCodes::getStatusString(405),
+									"Unexpected method - " + request.getMethod());
+			}
 		}
 
 		void prepareCommonResponse(HttpRequest & request, HttpResponse & response) {
@@ -386,17 +406,14 @@ namespace UPNP {
 			response.header().setHeaderField("Date", Date::formatRfc1123(Date::now()));
 		}
 
-		void onDeviceDescriptionRequest(HttpRequest & request, HttpResponse & response, const string & uri) {
+		void onDeviceDescriptionRequest(HttpRequest & request, HttpResponse & response) {
 			if (!server.getProfileManager().hasDeviceProfileSessionByUuid(request.getParameter("udn"))) {
-				response.setStatus(404);
-				return;
+				throw HttpException(404);
 			}
-			AutoRef<UPnPDeviceProfileSession> session = server.
-				getProfileManager().
-				getDeviceProfileSessionByUuid(request.getParameter("udn"));
+			AutoRef<UPnPDeviceProfileSession> session =
+				server.getProfileManager().getDeviceProfileSessionByUuid(request.getParameter("udn"));
 			if (!session->isEnabled()) {
-				response.setStatus(404);
-				return;
+				throw HttpException(404);
 			}
 				
 			response.setStatus(200);
@@ -406,57 +423,54 @@ namespace UPNP {
 			setFixedTransfer(response, profile.deviceDescription());
 
 			if (server.getHttpEventListener().nil() == false) {
-				server.getHttpEventListener()->onDeviceDescriptionRequest(request, response, uri);
+				server.getHttpEventListener()->onDeviceDescriptionRequest(request, response);
 			}
 		}
 		
-		void onScpdRequest(HttpRequest & request, HttpResponse & response, const string & uri) {
+		void onScpdRequest(HttpRequest & request, HttpResponse & response) {
 			UPnPDeviceProfile deviceProfile = server.getProfileManager().
-				getDeviceProfileSessionHasScpdUrl(uri)->profile();
+				getDeviceProfileSessionHasScpdUrl(request.getRawPath())->profile();
 			response.setStatus(200);
 			response.setContentType("text/xml; charset=\"utf-8\"");
-			UPnPServiceProfile serviceProfile = deviceProfile.getServiceProfileByScpdUrl(uri);
+			UPnPServiceProfile serviceProfile = deviceProfile.getServiceProfileByScpdUrl(request.getRawPath());
 			setFixedTransfer(response, serviceProfile.scpd());
 
 			if (server.getHttpEventListener().nil() == false) {
-				server.getHttpEventListener()->onScpdRequest(request, response, uri);
+				server.getHttpEventListener()->onScpdRequest(request, response);
 			}
 		}
 		
-		void onControlRequest(HttpRequest & request, HttpResponse & response, const string & uri) {
+		void onControlRequest(HttpRequest & request, HttpResponse & response) {
 			// TODO: recognize specific device and service
 			UPnPActionRequest actionRequest = parseActionRequest(request);
 			UPnPActionResponse actionResponse;
 			actionResponse.actionName() = actionRequest.actionName();
 			actionResponse.serviceType() = actionRequest.serviceType();
-			if (handleActionRequest(actionRequest, actionResponse)) {
-				if (actionResponse.errorCode() == 0) {
-					response.setStatus(200);
-					response.setContentType("text/xml; charset=\"utf-8\"");
-					setFixedTransfer(response, makeSoapResponseContent(actionResponse));
-				} else {
-					response.setStatus(500);
-					response.setContentType("text/xml; charset=\"utf-8\"");
-					setFixedTransfer(response, makeSoapErrorResponseContent(actionResponse.errorCode(),
-																			actionResponse.errorString()));
+			try {
+				if (handleActionRequest(actionRequest, actionResponse) == false) {
+					throw SoapException(UPnPActionErrorCodes::getDescription(401), 401, 0);
 				}
-			} else {
+				if (actionResponse.errorCode() != 0) {
+					throw SoapException(actionResponse.errorString(), actionResponse.errorCode(), 0);
+				}
+				response.setStatus(200);
+				response.setContentType("text/xml; charset=\"utf-8\"");
+				setFixedTransfer(response, makeSoapResponseContent(actionResponse));
+			} catch (SoapException e) {
 				response.setStatus(500);
 				response.setContentType("text/xml; charset=\"utf-8\"");
-				setFixedTransfer(response, makeSoapErrorResponseContent(401));
+				setFixedTransfer(response, makeSoapErrorResponseContent(e.getErrorCode(), e.getMessage()));
 			}
 
 			if (server.getHttpEventListener().nil() == false) {
-				server.getHttpEventListener()->onControlRequest(request, response, uri);
+				server.getHttpEventListener()->onControlRequest(request, response);
 			}
 		}
 		
-		void onEventSubscriptionRequest(HttpRequest & request, HttpResponse & response, const string & uri) {
-			UPnPDeviceProfile
-				deviceProfile
-				= server.getProfileManager().getDeviceProfileSessionHasEventSubUrl(uri)->
-				profile();
-			UPnPServiceProfile serviceProfile = deviceProfile.getServiceProfileByEventSubUrl(uri);
+		void onEventSubscriptionRequest(HttpRequest & request, HttpResponse & response) {
+			UPnPDeviceProfile deviceProfile =
+				server.getProfileManager().getDeviceProfileSessionHasEventSubUrl(request.getRawPath())->profile();
+			UPnPServiceProfile serviceProfile = deviceProfile.getServiceProfileByEventSubUrl(request.getRawPath());
 			if (request.getMethod() == "SUBSCRIBE") {
 				if (!request.getHeaderFieldIgnoreCase("SID").empty() &&
 					(!request.getHeaderFieldIgnoreCase("NT").empty() ||
