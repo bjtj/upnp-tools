@@ -1,7 +1,10 @@
 #include "UPnPControlPoint.hpp"
-#include <liboslayer/Uuid.hpp>
-#include "NetworkUtil.hpp"
 #include "UPnPDeviceDeserializer.hpp"
+#include "NetworkUtil.hpp"
+#include "UPnPUtils.hpp"
+#include "UPnPExceptions.hpp"
+#include <liboslayer/Uuid.hpp>
+#include <liboslayer/Logger.hpp>
 
 namespace UPNP {
 
@@ -10,6 +13,8 @@ namespace UPNP {
 	using namespace SSDP;
 	using namespace std;
 	using namespace OS;
+
+	static AutoRef<Logger> logger = LoggerFactory::getInstance().getObservingLogger(__FILE__);
 
 	UPnPDeviceSession::UPnPDeviceSession(const string & udn)
 		: _udn(udn), _completed(false) {
@@ -467,9 +472,12 @@ namespace UPNP {
 	}
 
 	unsigned long UPnPControlPoint::parseCacheControlMilli(const string & cacheControl) {
-		if (Text::startsWithIgnoreCase(cacheControl, "max-age=")) {
-			return Text::toLong(cacheControl.substr(string("max-age=").size())) * 1000;
+		try {
+			MaxAge maxAge(cacheControl);
+			return maxAge.second() * 1000;
+		} catch (UPnPParseException e) {
+			logger->loge("upnp parse exception - '" + e.getMessage() + "'");
+			return DEFAULT_DEVICE_SESSION_TIMEOUT;
 		}
-		return DEFAULT_DEVICE_SESSION_TIMEOUT;
 	}
 }

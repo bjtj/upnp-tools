@@ -28,12 +28,12 @@ public:
 		return AutoRef<DataSink>(new StringDataSink);
 	}
 	virtual void onHttpRequestContentCompleted(HttpRequest & request, AutoRef<DataSink> sink, HttpResponse & response) {
-		cout << " ** path : " << request.header().getPart2() << endl;
+		cout << " ** path : " << request.getRawPath() << endl;
 		if (request.getPath() == "/device.xml") {
 			response.setStatus(200);
 			response.setContentType("text/xml");
 			setFixedTransfer(response, dd(_udn));
-		} else if (request.header().getPart2() == "/scpd.xml?udn=" + _udn + "&serviceType=" + dummy) {
+		} else if (request.getRawPath() == "/scpd.xml?udn=" + _udn + "&serviceType=" + dummy) {
 			response.setStatus(200);
 			response.setContentType("text/xml");
 			setFixedTransfer(response, scpd());

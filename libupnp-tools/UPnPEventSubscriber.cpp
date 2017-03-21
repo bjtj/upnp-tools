@@ -1,8 +1,9 @@
 #include "UPnPEventSubscriber.hpp"
+#include "UPnPUtils.hpp"
+#include "HttpUtils.hpp"
 #include <liboslayer/StringElements.hpp>
 #include <liboslayer/Text.hpp>
 #include <libhttp-server/HttpHeader.hpp>
-#include "HttpUtils.hpp"
 
 namespace UPNP {
 
@@ -48,9 +49,15 @@ namespace UPNP {
 
 	UPnPEventSubscribeRequest::UPnPEventSubscribeRequest() : _timeoutSec(0) {
 	}
-	UPnPEventSubscribeRequest::UPnPEventSubscribeRequest(std::vector<std::string> & callbackUrls, unsigned long timeoutSec) : _callbackUrls(callbackUrls), _timeoutSec(timeoutSec) {
+	UPnPEventSubscribeRequest::UPnPEventSubscribeRequest(std::vector<std::string> & callbackUrls,
+														 unsigned long timeoutSec)
+		: _callbackUrls(callbackUrls), _timeoutSec(timeoutSec)
+	{
 	}
-	UPnPEventSubscribeRequest::UPnPEventSubscribeRequest(const std::string & callbackUrl, unsigned long timeoutSec) : _timeoutSec(timeoutSec) {
+	UPnPEventSubscribeRequest::UPnPEventSubscribeRequest(const std::string & callbackUrl,
+														 unsigned long timeoutSec)
+		: _timeoutSec(timeoutSec)
+	{
 		_callbackUrls.push_back(callbackUrl);
 	}
 	UPnPEventSubscribeRequest::~UPnPEventSubscribeRequest() {
@@ -86,18 +93,12 @@ namespace UPNP {
 	UPnPEventSubscribeResponse UPnPEventSubscriber::subscribe(UPnPEventSubscribeRequest & request) {
 		UPnPEventSubscribeResponse response;
 		LinkedStringMap headers;
-		string callbackUrlStrings;
-		vector<string> & callbackUrls = request.callbackUrls();
-		for (vector<string>::iterator iter = callbackUrls.begin(); iter != callbackUrls.end(); iter++) {
-			if (callbackUrlStrings.size() > 0) {
-				callbackUrlStrings.append(" ");
-			}
-			callbackUrlStrings.append("<" + *iter + ">");
-		}
-		headers["CALLBACK"] = callbackUrlStrings;
+		CallbackUrls cbs(request.callbackUrls());
+		headers["CALLBACK"] = cbs.toString();
 		headers["NT"] = "upnp:event";
 		headers["TIMEOUT"] = string("Second-") + Text::toString(request.timeoutSec()) ;
-		HttpResponseHeader header = HttpUtils::httpRequest(eventSubUrl, "SUBSCRIBE", headers).getResponseHeader();
+		HttpResponseHeader header = HttpUtils::httpRequest(eventSubUrl, "SUBSCRIBE", headers)
+			.getResponseHeader();
 		response.sid() = header["SID"];
 		// TODO: use TIMEOUT value in response
 		return response;

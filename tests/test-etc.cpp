@@ -7,6 +7,9 @@ using namespace OS;
 using namespace UTIL;
 using namespace UPNP;
 
+/**
+ * max-age test case
+ */
 class MaxAgeTestCase : public TestCase {
 public:
 	MaxAgeTestCase() : TestCase("max-age test") {
@@ -43,6 +46,9 @@ public:
 	}
 };
 
+/**
+ * callback url test case
+ */
 class CallbackUrlsTestCase : public TestCase
 {
 public:
@@ -84,12 +90,39 @@ public:
 	}
 };
 
+/**
+ * Second- test case
+ */
+class SecondTestCase : public TestCase {
+public:
+    SecondTestCase() : TestCase("second-test-case") {}
+    virtual ~SecondTestCase() {}
+	virtual void test() {
+		Second second("Second-100");
+		ASSERT(second.second(), ==, 100);
 
+		second = Second(140);
+		ASSERT(second.toString(), ==, "Second-140");
+
+		try {
+			Second::parse("120");
+			throw "It should not be thrown!";
+		} catch (UPnPParseException & e) {
+			ASSERT(e.getMessage().size(), >, 0);
+		}
+	}
+};
+
+
+/**
+ * main
+ */
 int main(int argc, char *args[]) {
 
 	TestSuite ts;
 	ts.addTestCase(AutoRef<TestCase>(new MaxAgeTestCase));
 	ts.addTestCase(AutoRef<TestCase>(new CallbackUrlsTestCase));
+	ts.addTestCase(AutoRef<TestCase>(new SecondTestCase));
 
 	TestReport report(ts.testAll());
 	report.validate();

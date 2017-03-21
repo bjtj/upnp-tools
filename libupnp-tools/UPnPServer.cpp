@@ -15,6 +15,7 @@
 #include "UPnPActionResponse.hpp"
 #include "UPnPSoapFormatter.hpp"
 #include "UPnPSoapException.hpp"
+#include "UPnPUtils.hpp"
 #include "XmlUtils.hpp"
 
 namespace UPNP {
@@ -398,12 +399,12 @@ namespace UPNP {
 		}
 
 		void prepareCommonResponse(HttpRequest & request, HttpResponse & response) {
-			response.header().setHeaderField("Ext", "");
-			if (request.header().hasHeaderFieldIgnoreCase("ACCEPT-LANGUAGE")) {
-				response.header().setHeaderField("CONTENT-LANGUAGE", "en");
+			response.setHeaderField("Ext", "");
+			if (request.hasHeaderFieldIgnoreCase("ACCEPT-LANGUAGE")) {
+				response.setHeaderField("CONTENT-LANGUAGE", "en");
 			}
-			response.header().setHeaderField("Server", server.getServerInfo());
-			response.header().setHeaderField("Date", Date::formatRfc1123(Date::now()));
+			response.setHeaderField("Server", server.getServerInfo());
+			response.setHeaderField("Date", Date::formatRfc1123(Date::now()));
 		}
 
 		void onDeviceDescriptionRequest(HttpRequest & request, HttpResponse & response) {
@@ -487,38 +488,34 @@ namespace UPNP {
 					}
 					vector<string> callbacks;
 					try {
-						callbacks = server.
-							parseCallbackUrls(request.getHeaderFieldIgnoreCase("CALLBACK"));
-					} catch (Exception e) {
+						CallbackUrls cbs(request.getHeaderFieldIgnoreCase("CALLBACK"));
+						callbacks = cbs.urls();
+					} catch (Exception & e) {
 						response.setStatus(412, "Precondition Failed");
 						return;
 					}
-					unsigned long timeoutMilli = server.
-						parseTimeoutMilli(request.getHeaderFieldIgnoreCase("TIMEOUT"));
+					;
+					unsigned long timeoutMilli =
+						Second::parse(request.getHeaderFieldIgnoreCase("TIMEOUT")) * 1000;
 					if (timeoutMilli <= 1800 * 1000) {
 						timeoutMilli = 1800 * 1000;
 					}
 					string sid = server.
 						onSubscribe(deviceProfile, serviceProfile, callbacks, timeoutMilli);
 					response.setStatus(200);
-					response.header().setHeaderField("SID", sid);
-					response.header().setHeaderField("TIMEOUT",
-													 "Second-" +
-													 Text::toString(timeoutMilli / 1000));
+					response.setHeaderField("SID", sid);
+					response.setHeaderField("TIMEOUT", Second::toString(timeoutMilli / 1000));
 					server.delayNotifyEvent(sid, 500);
 				} else { // re-subscribe
-					string
-						sid = request.getHeaderFieldIgnoreCase("SID");
-					unsigned long timeoutMilli = server
-						.parseTimeoutMilli(request.getHeaderFieldIgnoreCase("TIMEOUT"));
+					string sid = request.getHeaderFieldIgnoreCase("SID");
+					unsigned long timeoutMilli = Second::parse(
+						request.getHeaderFieldIgnoreCase("TIMEOUT")) * 1000;
 					if (timeoutMilli <= 1800 * 1000) {
 						timeoutMilli = 1800 * 1000;
 					}
 					if (server.onRenewSubscription(sid, timeoutMilli)) {
 						response.setStatus(200);
-						response.header().setHeaderField("TIMEOUT",
-														 "Second-" +
-														 Text::toString(timeoutMilli / 1000));
+						response.setHeaderField("TIMEOUT", Second::toString(timeoutMilli / 1000));
 						server.delayNotifyEvent(sid, 500);
 					} else {
 						response.setStatus(412, "Precondition Failed");
@@ -940,36 +937,6 @@ namespace UPNP {
 			return true;
 		}
 		return false;
-	}
-
-	vector<string> UPnPServer::parseCallbackUrls(const string & urls) {
-		vector<string> ret;
-		string buffer;
-		if (urls.empty()) {
-			throw Exception("empty callback string");
-		}
-		for (string::const_iterator iter = urls.begin(); iter != urls.end(); iter++) {
-			if (*iter == '<') {
-				buffer = "";
-				for (iter++; iter != urls.end() && *iter != '>'; iter++) {
-					buffer.append(1, *iter);
-				}
-				Url url(buffer); // test valid url
-				ret.push_back(buffer);
-			}
-		}
-		if (ret.empty()) {
-			throw Exception("no parsed callback - maybe wrong format");
-		}
-		return ret;
-	}
-
-	unsigned long UPnPServer::parseTimeoutMilli(const string & phrase) {
-		unsigned long timeout = 0;
-		if (Text::startsWithIgnoreCase(phrase, "Second-")) {
-			timeout = (unsigned long)Text::toLong(phrase.substr(string("Second-").size())) * 1000;
-		}
-		return timeout;
 	}
 
 	TimerLooperThread & UPnPServer::getTimerThread() {

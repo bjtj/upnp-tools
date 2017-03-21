@@ -36,7 +36,7 @@ public:
 	
 	virtual void onDeviceDescriptionRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response) {
 		string host = NetworkUtil::selectDefaultAddress().getHost();
-		response.header().setHeaderField("Application-URL",
+		response.setHeaderField("Application-URL",
 										 "http://" + host + ":9001/dial/");
 	}
 	virtual void onScpdRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response) {

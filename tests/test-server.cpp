@@ -10,6 +10,7 @@
 #include <libupnp-tools/UPnPDeviceDeserializer.hpp>
 #include <libupnp-tools/UPnPEventSubscriber.hpp>
 #include <libupnp-tools/UPnPEventReceiver.hpp>
+#include <libupnp-tools/UPnPUtils.hpp>
 #include "utils.hpp"
 
 using namespace std;
@@ -94,7 +95,7 @@ static void test_device_profile() {
 	AutoRef<UPnPActionRequestHandler> handler(new MyActionHandler);
 	server.setActionRequestHandler(handler);
 
-	ASSERT(server.parseTimeoutMilli("Second-300"), ==, 300000);
+	ASSERT(Second::parse("Second-300") * 1000, ==, 300000);
 
 	server.startAsync();
 
