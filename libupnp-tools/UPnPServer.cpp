@@ -13,11 +13,11 @@
 #include "NetworkUtil.hpp"
 #include "UPnPActionRequest.hpp"
 #include "UPnPActionResponse.hpp"
+#include "UPnPSoapFormatter.hpp"
+#include "UPnPSoapException.hpp"
 #include "XmlUtils.hpp"
 
 namespace UPNP {
-
-	DECL_NAMED_EXCEPTION(SoapException);
 
 	using namespace std;
 	using namespace OS;
@@ -448,18 +448,19 @@ namespace UPNP {
 			actionResponse.serviceType() = actionRequest.serviceType();
 			try {
 				if (handleActionRequest(actionRequest, actionResponse) == false) {
-					throw SoapException(UPnPActionErrorCodes::getDescription(401), 401, 0);
+					throw UPnPSoapException(401);
 				}
 				if (actionResponse.errorCode() != 0) {
-					throw SoapException(actionResponse.errorString(), actionResponse.errorCode(), 0);
+					throw UPnPSoapException(actionResponse.errorCode(),
+											actionResponse.errorString());
 				}
 				response.setStatus(200);
 				response.setContentType("text/xml; charset=\"utf-8\"");
-				setFixedTransfer(response, makeSoapResponseContent(actionResponse));
-			} catch (SoapException e) {
+				setFixedTransfer(response, UPnPSoapFormatter::formatResponse(actionResponse));
+			} catch (UPnPSoapException e) {
 				response.setStatus(500);
 				response.setContentType("text/xml; charset=\"utf-8\"");
-				setFixedTransfer(response, makeSoapErrorResponseContent(e.getErrorCode(), e.getMessage()));
+				setFixedTransfer(response, e.getSoapErrorMessage());
 			}
 
 			if (server.getHttpEventListener().nil() == false) {
@@ -550,30 +551,25 @@ namespace UPNP {
 
 		UPnPActionRequest parseActionRequest(HttpRequest & request) {
 			UPnPActionRequest actionRequest;
-
 			string soapAction = request.getHeaderField("SOAPACTION");
 			soapAction = unwrapQuotes(soapAction);
 			size_t f = soapAction.find("#");
 			if (f == string::npos) {
-				throw Exception("wrong soap action header format", -1, 0);
+				throw Exception("wrong soap action header format");
 			}
 			string serviceType = soapAction.substr(0, f);
 			string actionName = soapAction.substr(f + 1);
-
 			actionRequest.serviceType() = serviceType;
 			actionRequest.actionName() = actionName;
-
 			string xml = ((StringDataSink*)&request.getTransfer()->sink())->data();
 			XML::XmlDocument doc = XML::DomParser::parse(xml);
 			if (doc.getRootNode().nil()) {
-				throw Exception("wrong soap action xml format", -1, 0);
+				throw Exception("wrong soap action xml format");
 			}
-
 			AutoRef<XML::XmlNode> actionNode = doc.getRootNode()->getElementByTagName(actionName);
 			if (actionNode.nil()) {
-				throw Exception("wrong soap action xml format / no action name tag", -1, 0);
+				throw Exception("wrong soap action xml format / no action name tag");
 			}
-
 			vector<AutoRef<XML::XmlNode> > children = actionNode->children();
 			for (vector<AutoRef<XML::XmlNode> >::iterator iter = children.begin();
 				 iter != children.end(); iter++) {
@@ -582,57 +578,7 @@ namespace UPNP {
 					actionRequest[kv.key()] = kv.value();
 				}
 			}
-
 			return actionRequest;
-		}
-
-		string makeSoapResponseContent(UPnPActionResponse & response) {
-
-			string actionName = response.actionName();
-			string serviceType = response.serviceType();
-		    LinkedStringMap & parameters = response.parameters();
-			
-			string xml;
-			xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n";
-			xml.append("<s:Envelope s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\" "
-					   "xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">\r\n");
-			xml.append("<s:Body>\r\n");
-			xml.append("<u:" + actionName + "Response xmlns:u=\"" + serviceType + "\">\r\n");
-			for (size_t i = 0; i < parameters.size(); i++) {
-				KeyValue & kv = parameters[i];
-				string name = XML::XmlEncoder::encode(kv.key());
-				string value = XML::XmlEncoder::encode(kv.value());
-				xml.append("<" + name + ">" + value + "</" + name + ">\r\n");
-			}
-			xml.append("</u:" + actionName + "Response>");
-			xml.append("</s:Body>\r\n");
-			xml.append("</s:Envelope>");
-			return xml;
-		}
-
-		string makeSoapErrorResponseContent(int errorCode) {
-			return makeSoapErrorResponseContent(errorCode, UPnPActionErrorCodes::getDescription(errorCode));
-		}
-
-		string makeSoapErrorResponseContent(int errorCode, const string & errorString) {
-			string xml;
-			xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n";
-			xml.append("<s:Envelope s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\" "
-					   "xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">\r\n");
-			xml.append("<s:Body>\r\n");
-			xml.append("<s:Fault>");
-			xml.append("<faultcode>s:Client</faultcode>");
-			xml.append("<faultstring>UPnPError</faultstring>");
-			xml.append("<detail>");
-			xml.append("<UPnPError xmlns=\"urn:schemas-upnp-org:control-1-0\">");
-			xml.append("<errorCode>" + Text::toString(errorCode) + "</errorCode>");
-			xml.append("<errorDescription>" + errorString + "</errorDescription>");
-			xml.append("</UPnPError>");
-			xml.append("</detail>");
-			xml.append("</s:Fault>");
-			xml.append("</s:Body>\r\n");
-			xml.append("</s:Envelope>");
-			return xml;
 		}
 
 		string unwrapQuotes(const string & text) {

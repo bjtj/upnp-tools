@@ -43,11 +43,53 @@ public:
 	}
 };
 
+class CallbackUrlsTestCase : public TestCase
+{
+public:
+    CallbackUrlsTestCase() : TestCase("callback-urls-test-case") {}
+    virtual ~CallbackUrlsTestCase() {}
+	virtual void test() {
+		{
+			CallbackUrls cbs("<http://a>");
+			ASSERT(cbs.urls().size(), ==, 1);
+			ASSERT(cbs.urls()[0], ==, "http://a");
+		}
+
+		{
+			try {
+				CallbackUrls cbs("<>");
+				throw "It should not be thrown!";
+			} catch (UPnPParseException e) {
+				cerr << "[expected exception] " << e.getMessage() << endl;
+				ASSERT(e.getMessage().size(), >, 0);
+			}
+		}
+
+		{
+			try {
+				CallbackUrls cbs("<x>");
+				throw "It should not be thrown!";
+			} catch (UPnPParseException e) {
+				cerr << "[expected exception] " << e.getMessage() << endl;
+				ASSERT(e.getMessage().size(), >, 0);
+			}
+		}
+
+		{
+			CallbackUrls cbs("<http://a> <http://b>");
+			ASSERT(cbs.urls().size(), ==, 2);
+			ASSERT(cbs.urls()[0], ==, "http://a");
+			ASSERT(cbs.urls()[1], ==, "http://b");
+		}
+	}
+};
+
 
 int main(int argc, char *args[]) {
 
 	TestSuite ts;
 	ts.addTestCase(AutoRef<TestCase>(new MaxAgeTestCase));
+	ts.addTestCase(AutoRef<TestCase>(new CallbackUrlsTestCase));
 
 	TestReport report(ts.testAll());
 	report.validate();

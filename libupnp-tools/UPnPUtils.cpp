@@ -1,11 +1,18 @@
 #include "UPnPUtils.hpp"
 #include "UPnPExceptions.hpp"
 #include <liboslayer/Text.hpp>
+#include <libhttp-server/Url.hpp>
 
 namespace UPNP {
 
 	using namespace std;
 	using namespace UTIL;
+	using namespace HTTP;
+
+
+	/**
+	 * 
+	 */
 
 	MaxAge::MaxAge(const string & phrase) {
 		parse(phrase);
@@ -30,4 +37,49 @@ namespace UPNP {
 		return "max-age=" + Text::toString(second);
 	}
 
+	/**
+	 * callback urls
+	 */
+	
+	CallbackUrls::CallbackUrls(const string & phrase) {
+		parse(phrase);
+	}
+	CallbackUrls::CallbackUrls(const std::vector<std::string> & urls) : _urls(urls) {
+	}
+	CallbackUrls::~CallbackUrls() {
+	}
+	vector<string> & CallbackUrls::urls() {
+		return _urls;
+	}
+	void CallbackUrls::parse(const string & phrase) {
+		string buffer;
+		_urls.clear();
+		if (phrase.empty()) {
+			throw UPnPParseException("empty string");
+		}
+		for (string::const_iterator iter = phrase.begin(); iter != phrase.end(); iter++) {
+			if (*iter == '<') {
+				buffer = "";
+				for (iter++; iter != phrase.end() && *iter != '>'; iter++) {
+					buffer.append(1, *iter);
+				}
+				try {
+					Url::validateUrlFormat(buffer);
+				} catch (UrlParseException & e) {
+					throw UPnPParseException("wrong url format - '" + buffer + "'");
+				}
+				_urls.push_back(buffer);
+			}
+		}
+	}
+	string CallbackUrls::toString() {
+		string ret;
+		for (size_t i = 0; i < _urls.size(); i++) {
+			if (i != 0) {
+				ret.append(" ");
+			}
+			ret.append("<" + _urls[i] + ">");
+		}
+		return ret;
+	}
 }
