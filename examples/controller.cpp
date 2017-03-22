@@ -251,6 +251,7 @@ int run(int argc, char *args[]) {
 		}
 		
 		if (line == "q" || line == "quit") {
+			cout << "[quit]" << endl;
 			break;
 		} else if (line == "clear") {
 			cp.clearDevices();
@@ -367,7 +368,7 @@ int run(int argc, char *args[]) {
 	cp.stop();
 	out.close();
 
-	cout << "Bye" << endl;
+	cout << "[bye]" << endl;
 
     return 0;
 }
