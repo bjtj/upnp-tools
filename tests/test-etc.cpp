@@ -41,7 +41,7 @@ public:
 			MaxAge ma("1800");
 			throw "must be throw!";
 		} catch (UPnPParseException e) {
-			ASSERT(e.getMessage().size(), >, 0);
+			ASSERT(e.toString().size(), >, 0);
 		}
 	}
 };
@@ -66,8 +66,8 @@ public:
 				CallbackUrls cbs("<>");
 				throw "It should not be thrown!";
 			} catch (UPnPParseException e) {
-				cerr << "[expected exception] " << e.getMessage() << endl;
-				ASSERT(e.getMessage().size(), >, 0);
+				cerr << "[expected exception] " << e.toString() << endl;
+				ASSERT(e.toString().size(), >, 0);
 			}
 		}
 
@@ -76,8 +76,8 @@ public:
 				CallbackUrls cbs("<x>");
 				throw "It should not be thrown!";
 			} catch (UPnPParseException e) {
-				cerr << "[expected exception] " << e.getMessage() << endl;
-				ASSERT(e.getMessage().size(), >, 0);
+				cerr << "[expected exception] " << e.toString() << endl;
+				ASSERT(e.toString().size(), >, 0);
 			}
 		}
 
@@ -108,7 +108,7 @@ public:
 			Second::parse("120");
 			throw "It should not be thrown!";
 		} catch (UPnPParseException & e) {
-			ASSERT(e.getMessage().size(), >, 0);
+			ASSERT(e.toString().size(), >, 0);
 		}
 	}
 };

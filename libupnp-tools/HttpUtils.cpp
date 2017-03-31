@@ -32,7 +32,7 @@ namespace UPNP {
 		}
 	}
 	void HttpUtils::DumpResponseHandler::onError(OS::Exception & e, UTIL::AutoRef<UserData> userData) {
-		logger->loge("Error/e: " + e.getMessage());
+		logger->loge("Error/e: " + e.toString());
 	}
 	HttpResponseHeader & HttpUtils::DumpResponseHandler::getResponseHeader() {
 		return responseHeader;

@@ -20,7 +20,7 @@ namespace UPNP {
 			{/**/}
 		virtual ~UPnPSoapException() throw() {/**/}
 		std::string getSoapErrorMessage() {
-			return UPnPSoapFormatter::formatError(getErrorCode(), getMessage());
+			return UPnPSoapFormatter::formatError(error_code(), toString());
 		}
 	};
 }

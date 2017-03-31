@@ -52,7 +52,7 @@ int main(int argc, char *args[]) {
 		cerr << "error occured - " << e << endl;
 		return 1;
 	} catch (OS::Exception & e) {
-		cerr << "error occured - " << e.getMessage() << endl;
+		cerr << "error occured - " << e.toString() << endl;
 		return 1;
 	}
 
@@ -310,7 +310,7 @@ int run(int argc, char *args[]) {
 					cout << " - " << name << " := " << value << endl;
 				}
 			} catch (OS::Exception & e) {
-				cout << "Error: " << e.getMessage() << endl;
+				cout << "Error: " << e.toString() << endl;
 			}
 		} else if (line == "subs") {
 			// TODO: subscription list

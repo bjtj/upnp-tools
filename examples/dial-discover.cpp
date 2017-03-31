@@ -100,7 +100,7 @@ int main(int argc, char *args[]) {
 			try {
 				cout << "[GET]" << endl << HttpUtils::httpGet(Url(url)) << endl;
 			} catch (Exception e) {
-				cout << "GET/Err: " << e.getMessage() << endl;
+				cout << "GET/Err: " << e.toString() << endl;
 			}
 		} else if (toks[0] == "launch") {
 			int idx = Text::toInt(toks[1]) - 1;
@@ -110,7 +110,7 @@ int main(int argc, char *args[]) {
 			try {
 				cout << "[POST]" << endl << HttpUtils::httpRequest(Url(url), "POST", LinkedStringMap(), payload).getResponseHeader().getStatusCode() << endl;
 			} catch (Exception e) {
-				cout << "POST/Err: " << e.getMessage() << endl;
+				cout << "POST/Err: " << e.toString() << endl;
 			}
 		} else if (toks[0] == "stop") {
 			int idx = Text::toInt(toks[1]) - 1;
@@ -119,7 +119,7 @@ int main(int argc, char *args[]) {
 			try {
 				cout << "[DELETE]" << endl << HttpUtils::httpRequest(Url(url), "DELETE").getResponseHeader().getStatusCode() << endl;
 			} catch (Exception e) {
-				cout << "DELETE/Err: " << e.getMessage() << endl;
+				cout << "DELETE/Err: " << e.toString() << endl;
 			}
 		} else {
 			cout << "no operation for '" << line << "'" << endl;
