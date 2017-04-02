@@ -261,27 +261,27 @@ int run(int argc, char *args[]) {
 			AutoRef<UPnPDevice> device = selectDeviceByIndex(cp.getDevices(), (size_t)idx);
 			if (device.nil() == false) {
 				session.udn() = Uuid(device->getUdn()).getUuid();
-				cout << "SET UDN: " << session.udn() << endl;
+				cout << "[SET UDN: " << session.udn() << "]" << endl;
 			}
 		} else if (Text::startsWith(line, "udn ")) {
 			session.udn() = Uuid(line.substr(4)).getUuid();
 		} else if (line == "udn") {
-			cout << "UDN: " << session.udn() << endl;
+			cout << "[UDN: " << session.udn() << "]" << endl;
 		} else if (Text::startsWith(line, "service ")) {
 			session.serviceType() = line.substr(8);
 		} else if (line == "service") {
-			cout << "Service : " << session.serviceType() << endl;
+			cout << "[Service : " << session.serviceType() << "]" << endl;
 		} else if (Text::startsWith(line, "action ")) {
 			session.action() = line.substr(7);
 		} else if (line == "action") {
-			cout << "Action : " << session.action() << endl;
+			cout << "[Action : " << session.action() << "]" << endl;
 		} else if (line == "invoke" || line == "i") {
 			try {
 				UPnPActionInvoker invoker = cp.prepareActionInvoke(session.udn(), session.serviceType());
 				AutoRef<UPnPService> service = cp.getServiceByUdnAndServiceType(session.udn(), session.serviceType());
 					
 				if (!service->scpd().hasAction(session.action())) {
-					throw "Error: no action found";
+					throw "[Error: no action found]";
 				}
 				UPnPAction action = service->scpd().action(session.action());
 				vector<UPnPArgument> & arguments = action.arguments();
@@ -301,7 +301,6 @@ int run(int argc, char *args[]) {
 				}
 				unsigned long tick = tick_milli();
 				UPnPActionResponse response = invoker.invoke(request);
-				cout << " ** invoke action : " << tick_milli() - tick << " ms." << endl;
 				LinkedStringMap & params = response.parameters();
 				for (size_t i = 0; i < params.size(); i++) {
 					KeyValue & kv = params[i];
@@ -309,27 +308,28 @@ int run(int argc, char *args[]) {
 					string & value = kv.value();
 					cout << " - " << name << " := " << value << endl;
 				}
+				cout << "[elapsed : " << tick_milli() - tick << " ms.]" << endl;
 			} catch (OS::Exception & e) {
-				cout << "Error: " << e.toString() << endl;
+				cout << "[error : " << e.toString() << "]" << endl;
 			}
 		} else if (line == "subs") {
 			// TODO: subscription list
 		} else if (line == "sub") {
 
 			if (session.udn().empty() || session.serviceType().empty()) {
-				throw "Error: select udn and sevice first";
+				throw "[error: select udn and sevice first]";
 			}
 
-			cout << "Subscribe - " << session.udn() << " // " << session.serviceType() << endl;
+			cout << "[Subscribe - " << session.udn() << " // " << session.serviceType() << "]" << endl;
 			cp.subscribe(session.udn(), session.serviceType());
 
 		} else if (line == "unsub") {
 
 			if (session.udn().empty() || session.serviceType().empty()) {
-				throw "Error: select udn and sevice first";
+				throw "[error: select udn and sevice first]";
 			}
 
-			cout << "Unsubscribe - " << session.udn() << " .. " << session.serviceType() << endl;
+			cout << "[Unsubscribe - " << session.udn() << " .. " << session.serviceType() << "]" <<endl;
 			cp.unsubscribe(session.udn(), session.serviceType());
 
 		} else if (line == "shared") {
@@ -343,7 +343,7 @@ int run(int argc, char *args[]) {
 		} else if (line == "dump") {
 
 			if (session.udn().empty()) {
-				throw "Error: select udn first";
+				throw "[error: select udn first]";
 			}
 
 			Url url = cp.getBaseUrlByUdn(session.udn());
@@ -354,13 +354,13 @@ int run(int argc, char *args[]) {
 				AutoRef<UPnPService> service = cp.getServiceByUdnAndServiceType(session.udn(), session.serviceType());
 				if (!service.nil()) {
 					url = cp.getBaseUrlByUdn(session.udn()).relativePath(service->scpdUrl());
-					cout << "GET SCPD : " << url.toString() << endl;
+					cout << "[GET SCPD : " << url.toString() << "]" << endl;
 					dd = HttpUtils::httpGet(url);
 					cout << dd << endl;
 				}
 			}
 		} else {
-			cout << " -**- Searching... " << line << " **" << endl;
+			cout << "[Searching : '" << line << "']" << endl;
 			cp.sendMsearchAsync(line, 3);
 		}
 	}
