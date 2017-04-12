@@ -5,6 +5,7 @@
 #include <vector>
 #include <liboslayer/AutoRef.hpp>
 #include <liboslayer/os.hpp>
+#include <liboslayer/Thread.hpp>
 #include "SSDPHeader.hpp"
 #include "SSDPMsearchSender.hpp"
 #include "SSDPMulticastListener.hpp"

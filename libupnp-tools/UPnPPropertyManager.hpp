@@ -3,6 +3,7 @@
 
 #include <liboslayer/StringElements.hpp>
 #include <liboslayer/os.hpp>
+#include <liboslayer/Thread.hpp>
 #include <liboslayer/MessageQueue.hpp>
 #include "UPnPEventSubscription.hpp"
 #include "UPnPCache.hpp"
