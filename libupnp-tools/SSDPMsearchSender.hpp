@@ -15,11 +15,11 @@ namespace SSDP {
 
 	public:
 		SSDPMsearchSender();
-		SSDPMsearchSender(UTIL::AutoRef<OS::Selector> selector);
+		SSDPMsearchSender(OS::AutoRef<OS::Selector> selector);
 		SSDPMsearchSender(int port);
-		SSDPMsearchSender(int port, UTIL::AutoRef<OS::Selector> selector);
+		SSDPMsearchSender(int port, OS::AutoRef<OS::Selector> selector);
 		SSDPMsearchSender(OS::InetAddress & bindAddr);
-		SSDPMsearchSender(OS::InetAddress & bindAddr, UTIL::AutoRef<OS::Selector> selector);
+		SSDPMsearchSender(OS::InetAddress & bindAddr, OS::AutoRef<OS::Selector> selector);
 		virtual ~SSDPMsearchSender();
 		void cancel();
 		void gather(unsigned long timeout);

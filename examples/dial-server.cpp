@@ -12,6 +12,7 @@
 #include <libhttp-server/Url.hpp>
 
 using namespace std;
+using namespace OS;
 using namespace UTIL;
 using namespace HTTP;
 using namespace UPNP;

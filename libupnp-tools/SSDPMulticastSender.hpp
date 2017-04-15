@@ -13,16 +13,16 @@ namespace SSDP {
 	class SSDPMulticastSender {
 	private:
 		OS::DatagramSocket sock;
-		UTIL::AutoRef<OS::Selector> selector;
-		std::vector<UTIL::AutoRef<SSDPEventListener> > listeners;
+		OS::AutoRef<OS::Selector> selector;
+		std::vector<OS::AutoRef<SSDPEventListener> > listeners;
 		
 	public:
 		SSDPMulticastSender();
-		SSDPMulticastSender(UTIL::AutoRef<OS::Selector> selector);
+		SSDPMulticastSender(OS::AutoRef<OS::Selector> selector);
 		SSDPMulticastSender(int port);
-		SSDPMulticastSender(int port, UTIL::AutoRef<OS::Selector> selector);
+		SSDPMulticastSender(int port, OS::AutoRef<OS::Selector> selector);
 		SSDPMulticastSender(OS::InetAddress & bindAddr);
-		SSDPMulticastSender(OS::InetAddress & bindAddr, UTIL::AutoRef<OS::Selector> selector);
+		SSDPMulticastSender(OS::InetAddress & bindAddr, OS::AutoRef<OS::Selector> selector);
 		virtual ~SSDPMulticastSender();
 		void init();
 		void close();
@@ -33,8 +33,8 @@ namespace SSDP {
 		void onReceive(OS::DatagramPacket & packet);
 		void sendMcast(const std::string & content, const std::string & group, int port);
 		void sendMcastToAllInterfaces(const std::string & content, const std::string & group, int port);
-		void addSSDPEventListener(UTIL::AutoRef<SSDPEventListener> listener);
-		void removeSSDPEventListener(UTIL::AutoRef<SSDPEventListener> listener);
+		void addSSDPEventListener(OS::AutoRef<SSDPEventListener> listener);
+		void removeSSDPEventListener(OS::AutoRef<SSDPEventListener> listener);
 	};
 }
 

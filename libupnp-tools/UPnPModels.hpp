@@ -157,8 +157,8 @@ namespace UPNP {
 	class UPnPDevice : public UPnPModelObject {
 	private:
 		UPnPDevice * parent;
-		std::vector<UTIL::AutoRef<UPnPDevice> > _embeddedDevices;
-		std::vector<UTIL::AutoRef<UPnPService> > _services;
+		std::vector<OS::AutoRef<UPnPDevice> > _embeddedDevices;
+		std::vector<OS::AutoRef<UPnPService> > _services;
 		HTTP::Url _baseUrl;
 		
 	public:
@@ -166,13 +166,13 @@ namespace UPNP {
 		UPnPDevice(UPnPDevice * parent);
 		virtual ~UPnPDevice();
 		void setParent(UPnPDevice * parent);
-		UTIL::AutoRef<UPnPDevice> prepareDevice();
-		void addDevice(UTIL::AutoRef<UPnPDevice> device);
-		void addService(UTIL::AutoRef<UPnPService> service);
+		OS::AutoRef<UPnPDevice> prepareDevice();
+		void addDevice(OS::AutoRef<UPnPDevice> device);
+		void addService(OS::AutoRef<UPnPService> service);
 		bool hasService(const std::string & serviceType);
-		UTIL::AutoRef<UPnPService> getService(const std::string & serviceType);
-		std::vector<UTIL::AutoRef<UPnPDevice> > & embeddedDevices();
-		std::vector<UTIL::AutoRef<UPnPService> > & services();
+		OS::AutoRef<UPnPService> getService(const std::string & serviceType);
+		std::vector<OS::AutoRef<UPnPDevice> > & embeddedDevices();
+		std::vector<OS::AutoRef<UPnPService> > & services();
 		std::vector<UPnPDevice*> allDevices();
 		std::vector<UPnPService*> allServices();
 		std::string getUdn();

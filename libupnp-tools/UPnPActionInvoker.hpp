@@ -41,12 +41,12 @@ namespace UPNP {
 			if (doc.getRootNode().nil()) {
 				throw OS::Exception("invoke error / wrong response format", -1, 0);
 			}
-			UTIL::AutoRef<XML::XmlNode> node = doc.getRootNode()->getElementByTagName(actionName + "Response");
+			OS::AutoRef<XML::XmlNode> node = doc.getRootNode()->getElementByTagName(actionName + "Response");
 			if (node.nil()) {
 				throw OS::Exception("invoke error / wrong response format - no action response", -1, 0);
 			}
-			std::vector<UTIL::AutoRef<XML::XmlNode> > children = node->children();
-			for (std::vector<UTIL::AutoRef<XML::XmlNode> >::iterator iter = children.begin(); iter != children.end(); iter++) {
+			std::vector<OS::AutoRef<XML::XmlNode> > children = node->children();
+			for (std::vector<OS::AutoRef<XML::XmlNode> >::iterator iter = children.begin(); iter != children.end(); iter++) {
 				if (XmlUtils::testKeyValueXmlNode(*iter)) {
 					UTIL::KeyValue nv = XmlUtils::toKeyValue(*iter);
 					response[XML::XmlDecoder::decode(nv.key())] = XML::XmlDecoder::decode(nv.value());

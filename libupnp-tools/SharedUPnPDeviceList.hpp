@@ -14,7 +14,7 @@ namespace UPNP {
 	 */
 	class SharedUPnPDeviceList {
 	private:
-		std::vector<UTIL::AutoRef<UPnPDevice> > _devices;
+		std::vector<OS::AutoRef<UPnPDevice> > _devices;
 		OS::Semaphore sem;
 	public:
 		SharedUPnPDeviceList();
@@ -23,14 +23,14 @@ namespace UPNP {
 		virtual void lock();
 		virtual void unlock();
 
-		std::vector<UTIL::AutoRef<UPnPDevice> > list();
-		std::vector<UTIL::AutoRef<UPnPDevice> > list_s();
-		UTIL::AutoRef<UPnPDevice> findByUdn(const std::string & udn);
-		UTIL::AutoRef<UPnPDevice> findByUdn_s(const std::string & udn);
-		void add(UTIL::AutoRef<UPnPDevice> device);
-		void add_s(UTIL::AutoRef<UPnPDevice> device);
-		void remove(UTIL::AutoRef<UPnPDevice> device);
-		void remove_s(UTIL::AutoRef<UPnPDevice> device);
+		std::vector<OS::AutoRef<UPnPDevice> > list();
+		std::vector<OS::AutoRef<UPnPDevice> > list_s();
+		OS::AutoRef<UPnPDevice> findByUdn(const std::string & udn);
+		OS::AutoRef<UPnPDevice> findByUdn_s(const std::string & udn);
+		void add(OS::AutoRef<UPnPDevice> device);
+		void add_s(OS::AutoRef<UPnPDevice> device);
+		void remove(OS::AutoRef<UPnPDevice> device);
+		void remove_s(OS::AutoRef<UPnPDevice> device);
 		size_t size();
 		size_t size_s();
 	};

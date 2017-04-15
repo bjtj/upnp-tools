@@ -4,6 +4,7 @@
 namespace SSDP {
 
 	using namespace std;
+	using namespace UTIL;
 	
 	SSDPHeader::SSDPHeader(const string & headerString, OS::InetAddress & remoteAddr)
 		: remoteAddr(remoteAddr) {
@@ -15,47 +16,47 @@ namespace SSDP {
 	SSDPHeader::~SSDPHeader() {
 	}
 	bool SSDPHeader::isSSDPRequest() const {
-		if (UTIL::Text::equalsIgnoreCase(getMethod(), "NOTIFY") ||
-			UTIL::Text::equalsIgnoreCase(getMethod(), "M-SEARCH")) {
+		if (Text::equalsIgnoreCase(getMethod(), "NOTIFY") ||
+			Text::equalsIgnoreCase(getMethod(), "M-SEARCH")) {
 			return true;
 		}
 		return false;
 	}
 	bool SSDPHeader::isSSDPResponse() const {
-		if (UTIL::Text::startsWith(getMethod(), "HTTP/", true)) {
+		if (Text::startsWith(getMethod(), "HTTP/", true)) {
 			return true;
 		}
 		return false;
 	}
 	bool SSDPHeader::isNotifyAlive() const {
-		if (UTIL::Text::equalsIgnoreCase(getMethod(), "NOTIFY") &&
-			UTIL::Text::equalsIgnoreCase(getNts(), "ssdp:alive")) {
+		if (Text::equalsIgnoreCase(getMethod(), "NOTIFY") &&
+			Text::equalsIgnoreCase(getNts(), "ssdp:alive")) {
 			return true;
 		}
 		return false;
 	}
 	bool SSDPHeader::isNotifyByebye() const {
-		if (UTIL::Text::equalsIgnoreCase(getMethod(), "NOTIFY") &&
-			UTIL::Text::equalsIgnoreCase(getNts(), "ssdp:byebye")) {
+		if (Text::equalsIgnoreCase(getMethod(), "NOTIFY") &&
+			Text::equalsIgnoreCase(getNts(), "ssdp:byebye")) {
 			return true;
 		}
 		return false;
 	}
 	bool SSDPHeader::isNotifyUpdate() const {
-		if (UTIL::Text::equalsIgnoreCase(getMethod(), "NOTIFY") &&
-			UTIL::Text::equalsIgnoreCase(getNts(), "ssdp:update")) {
+		if (Text::equalsIgnoreCase(getMethod(), "NOTIFY") &&
+			Text::equalsIgnoreCase(getNts(), "ssdp:update")) {
 			return true;
 		}
 		return false;
 	}
 	bool SSDPHeader::isNotify() const {
-		if (UTIL::Text::equalsIgnoreCase(getMethod(), "NOTIFY")) {
+		if (Text::equalsIgnoreCase(getMethod(), "NOTIFY")) {
 			return true;
 		}
 		return false;
 	}
 	bool SSDPHeader::isMsearch() const {
-		if (UTIL::Text::equalsIgnoreCase(getMethod(), "M-SEARCH")) {
+		if (Text::equalsIgnoreCase(getMethod(), "M-SEARCH")) {
 			return true;
 		}
 		return false;

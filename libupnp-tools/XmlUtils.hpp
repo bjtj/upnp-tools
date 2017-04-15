@@ -12,7 +12,7 @@ namespace UPNP {
 		XmlUtils() {}
 		virtual ~XmlUtils() {}
 
-		static UTIL::KeyValue toKeyValue(UTIL::AutoRef<XML::XmlNode> node) {
+		static UTIL::KeyValue toKeyValue(OS::AutoRef<XML::XmlNode> node) {
 
 			if (node.nil()) {
 				throw OS::Exception("node null", -1, 0);
@@ -24,7 +24,7 @@ namespace UPNP {
 			return nv;
 		}
 
-		static bool testKeyValueXmlNode(UTIL::AutoRef<XML::XmlNode> node) {
+		static bool testKeyValueXmlNode(OS::AutoRef<XML::XmlNode> node) {
 			return (node.nil() == false && node->isElement() && node->childrenCount() == 1 &&
 					node->getFirstChild().nil() == false && node->getFirstChild()->isText());
 		}

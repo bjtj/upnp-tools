@@ -5,6 +5,7 @@
 namespace UPNP {
 
 	using namespace std;
+	using namespace OS;
 	using namespace SSDP;
 	using namespace XML;
 	using namespace HTTP;

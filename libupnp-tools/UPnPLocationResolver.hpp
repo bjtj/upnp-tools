@@ -9,12 +9,12 @@ namespace UPNP {
 	public:
 		UPnPLocationResolver();
 		virtual ~UPnPLocationResolver();
-		virtual std::string makeScpdUrl(UTIL::AutoRef<UPnPDevice> device, UTIL::AutoRef<UPnPService> service);
-		virtual std::string makeControlUrl(UTIL::AutoRef<UPnPDevice> device, UTIL::AutoRef<UPnPService> service);
-		virtual std::string makeEventSubUrl(UTIL::AutoRef<UPnPDevice> device, UTIL::AutoRef<UPnPService> service);
+		virtual std::string makeScpdUrl(OS::AutoRef<UPnPDevice> device, OS::AutoRef<UPnPService> service);
+		virtual std::string makeControlUrl(OS::AutoRef<UPnPDevice> device, OS::AutoRef<UPnPService> service);
+		virtual std::string makeEventSubUrl(OS::AutoRef<UPnPDevice> device, OS::AutoRef<UPnPService> service);
 		virtual std::string generalize(const std::string & url);
-		void resolve(UTIL::AutoRef<UPnPDevice> device);
-		void resolveRecursive(UTIL::AutoRef<UPnPDevice> device);
+		void resolve(OS::AutoRef<UPnPDevice> device);
+		void resolveRecursive(OS::AutoRef<UPnPDevice> device);
 	};
 }
 

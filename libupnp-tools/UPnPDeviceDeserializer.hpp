@@ -19,17 +19,17 @@ namespace UPNP {
 		virtual ~UPnPDeviceDeserializer();
 
 		void parseDeviceXml(const std::string & xml, UPnPDevice & device);
-		void parseDeviceXmlNode(UTIL::AutoRef<XML::XmlNode> deviceXml, UPnPDevice & device);
-		void parseDevicePropertiesFromDeviceXmlNode(UTIL::AutoRef<XML::XmlNode> deviceXml, UPnPDevice & device);
-		void parseServiceListFromDeviceXmlNode(UTIL::AutoRef<XML::XmlNode> deviceXml, UPnPDevice & device);
-		void parseServicePropertiesFromServiceXmlNode(UTIL::AutoRef<XML::XmlNode> serviceXml, UPnPService * service);
-		UPnPAction parseActionFromXmlNode(UTIL::AutoRef<XML::XmlNode> actionXml);
-		UPnPArgument parseArgumentFromXmlNode(UTIL::AutoRef<XML::XmlNode> argumentXml);
-		UPnPStateVariable parseStateVariableFromXmlNode(UTIL::AutoRef<XML::XmlNode> stateVariableXml);
-		void parsePropertiesFromXmlNode(UTIL::AutoRef<XML::XmlNode> node, UPnPModelObject & obj);
+		void parseDeviceXmlNode(OS::AutoRef<XML::XmlNode> deviceXml, UPnPDevice & device);
+		void parseDevicePropertiesFromDeviceXmlNode(OS::AutoRef<XML::XmlNode> deviceXml, UPnPDevice & device);
+		void parseServiceListFromDeviceXmlNode(OS::AutoRef<XML::XmlNode> deviceXml, UPnPDevice & device);
+		void parseServicePropertiesFromServiceXmlNode(OS::AutoRef<XML::XmlNode> serviceXml, UPnPService * service);
+		UPnPAction parseActionFromXmlNode(OS::AutoRef<XML::XmlNode> actionXml);
+		UPnPArgument parseArgumentFromXmlNode(OS::AutoRef<XML::XmlNode> argumentXml);
+		UPnPStateVariable parseStateVariableFromXmlNode(OS::AutoRef<XML::XmlNode> stateVariableXml);
+		void parsePropertiesFromXmlNode(OS::AutoRef<XML::XmlNode> node, UPnPModelObject & obj);
 
-		virtual UTIL::AutoRef<UPnPDevice> build(const HTTP::Url & url);
-		virtual UTIL::AutoRef<UPnPDevice> parseDeviceXml(const std::string & deviceXml);
+		virtual OS::AutoRef<UPnPDevice> build(const HTTP::Url & url);
+		virtual OS::AutoRef<UPnPDevice> parseDeviceXml(const std::string & deviceXml);
 		virtual UPnPScpd parseScpdXml(const std::string & scpdXml);
 	};
 }

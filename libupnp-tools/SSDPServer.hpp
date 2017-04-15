@@ -18,9 +18,9 @@ namespace SSDP {
 	 */
 	class SSDPServer {
 	private:
-		UTIL::AutoRef<OS::Selector> selector;
+		OS::AutoRef<OS::Selector> selector;
 		SSDP::SSDPMulticastListener mcastListener;
-		UTIL::AutoRef<SSDP::SSDPEventListener> listener;
+		OS::AutoRef<SSDP::SSDPEventListener> listener;
 		OS::Thread * pollingThread;
 		OS::Thread * msearchResponseListenerThread;
 
@@ -47,11 +47,11 @@ namespace SSDP {
 		void sendMsearchAsync(const std::vector<std::string> & st, unsigned long timeoutSec);
 		void sendMsearchAndGather(const std::string & st, unsigned long timeoutSec);
 		void sendMsearchAndGather(std::vector<std::string> & st, unsigned long timeoutSec);
-		UTIL::AutoRef<SSDPMsearchSender> sendMsearch(const std::string & st, unsigned long timeoutSec);
-		UTIL::AutoRef<SSDPMsearchSender> sendMsearch(const std::string & st, unsigned long timeoutSec, UTIL::AutoRef<OS::Selector> selector);
-		UTIL::AutoRef<SSDPMsearchSender> sendMsearch(const std::vector<std::string> & st, unsigned long timeoutSec);
-		UTIL::AutoRef<SSDPMsearchSender> sendMsearch(const std::vector<std::string> & st, unsigned long timeoutSec, UTIL::AutoRef<OS::Selector> selector);
-		void addSSDPEventListener(UTIL::AutoRef<SSDPEventListener> listener);
+		OS::AutoRef<SSDPMsearchSender> sendMsearch(const std::string & st, unsigned long timeoutSec);
+		OS::AutoRef<SSDPMsearchSender> sendMsearch(const std::string & st, unsigned long timeoutSec, OS::AutoRef<OS::Selector> selector);
+		OS::AutoRef<SSDPMsearchSender> sendMsearch(const std::vector<std::string> & st, unsigned long timeoutSec);
+		OS::AutoRef<SSDPMsearchSender> sendMsearch(const std::vector<std::string> & st, unsigned long timeoutSec, OS::AutoRef<OS::Selector> selector);
+		void addSSDPEventListener(OS::AutoRef<SSDPEventListener> listener);
 	};
 }
 

@@ -89,7 +89,7 @@ namespace UPNP {
 		return deviceProfile;
 	}
 
-	void UPnPDeviceProfileBuilder::setLocationResolver(UTIL::AutoRef<UPnPLocationResolver> locationResolver) {
+	void UPnPDeviceProfileBuilder::setLocationResolver(AutoRef<UPnPLocationResolver> locationResolver) {
 		this->_locationResolver = locationResolver;
 	}
 }

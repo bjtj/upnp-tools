@@ -52,7 +52,7 @@ namespace UPNP {
 		bool prepared();
 	};
 
-	typedef UTIL::AutoRef<NotificationRequest> AutoNotificationRequest;
+	typedef OS::AutoRef<NotificationRequest> AutoNotificationRequest;
 	typedef UTIL::Message<AutoNotificationRequest> NotificationRequestMessage;
 
 	/**
@@ -77,8 +77,8 @@ namespace UPNP {
 	class UPnPPropertyManager {
 	private:
 		std::map<std::string, UTIL::LinkedStringMap> registry;
-		std::map<std::string, UTIL::AutoRef<UPnPEventSubscriptionSession> > sessions;
-		UTIL::AutoRef<OnSubscriptionOutdatedListener> outdatedListener;
+		std::map<std::string, OS::AutoRef<UPnPEventSubscriptionSession> > sessions;
+		OS::AutoRef<OnSubscriptionOutdatedListener> outdatedListener;
 
 	private:
 		std::string makeKey(const std::string & udn, const std::string serviceType);
@@ -89,20 +89,20 @@ namespace UPNP {
 		void clear();
 		bool isRegisteredService(const std::string & udn, const std::string serviceType);
 		void registerService(const std::string & udn, const std::string serviceType, const UTIL::LinkedStringMap & props);
-		void addSubscriptionSession(const UTIL::AutoRef<UPnPEventSubscriptionSession> session);
+		void addSubscriptionSession(const OS::AutoRef<UPnPEventSubscriptionSession> session);
 		bool hasSubscriptionSession(const std::string & sid);
 		void removeSubscriptionSession(const std::string & sid);
-		UTIL::AutoRef<UPnPEventSubscriptionSession> getSession(const std::string & sid);
-		std::vector<UTIL::AutoRef<UPnPEventSubscriptionSession> > getSessionsByUdnAndServiceType(const std::string & udn, const std::string & serviceType);
+		OS::AutoRef<UPnPEventSubscriptionSession> getSession(const std::string & sid);
+		std::vector<OS::AutoRef<UPnPEventSubscriptionSession> > getSessionsByUdnAndServiceType(const std::string & udn, const std::string & serviceType);
 		void setProperties(const std::string & udn, const std::string & serviceType, const UTIL::LinkedStringMap & props);
 		UTIL::LinkedStringMap & getProperties(const std::string & udn, const std::string & serviceType);
 		UTIL::LinkedStringMap & getPropertiesBySid(const std::string & sid);
 		void notify(const std::string & sid);
-		void notify(const std::vector<UTIL::AutoRef<UPnPEventSubscriptionSession> > & sessions, const UTIL::LinkedStringMap & props);
-		void notify(UTIL::AutoRef<UPnPEventSubscriptionSession> session, const UTIL::LinkedStringMap & props);
+		void notify(const std::vector<OS::AutoRef<UPnPEventSubscriptionSession> > & sessions, const UTIL::LinkedStringMap & props);
+		void notify(OS::AutoRef<UPnPEventSubscriptionSession> session, const UTIL::LinkedStringMap & props);
 		std::string makePropertiesXml(const UTIL::LinkedStringMap & props);
 		void collectOutdated();
-		void setOnSubscriptionOutdatedListener(UTIL::AutoRef<OnSubscriptionOutdatedListener> listener);
+		void setOnSubscriptionOutdatedListener(OS::AutoRef<OnSubscriptionOutdatedListener> listener);
 	};
 }
 

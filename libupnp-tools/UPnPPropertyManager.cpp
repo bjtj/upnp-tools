@@ -197,7 +197,7 @@ namespace UPNP {
 		}
 	}
 
-	void UPnPPropertyManager::setOnSubscriptionOutdatedListener(UTIL::AutoRef<OnSubscriptionOutdatedListener> listener) {
+	void UPnPPropertyManager::setOnSubscriptionOutdatedListener(AutoRef<OnSubscriptionOutdatedListener> listener) {
 		outdatedListener = listener;
 	}
 }

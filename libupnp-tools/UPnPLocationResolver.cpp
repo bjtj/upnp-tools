@@ -31,7 +31,7 @@ namespace UPNP {
 		}
 		return url.substr(s + 1);
 	}
-	void UPnPLocationResolver::resolve(UTIL::AutoRef<UPnPDevice> device) {
+	void UPnPLocationResolver::resolve(AutoRef<UPnPDevice> device) {
 		vector<AutoRef<UPnPService> > services = device->services();
 		for (vector<AutoRef<UPnPService> >::iterator iter = services.begin(); iter != services.end(); iter++) {
 			(*iter)->scpdUrl() = makeScpdUrl(device, (*iter));
@@ -39,7 +39,7 @@ namespace UPNP {
 			(*iter)->eventSubUrl() = makeEventSubUrl(device, (*iter));
 		}
 	}
-	void UPnPLocationResolver::resolveRecursive(UTIL::AutoRef<UPnPDevice> device) {
+	void UPnPLocationResolver::resolveRecursive(AutoRef<UPnPDevice> device) {
 		resolve(device);
 		vector<AutoRef<UPnPDevice> > embeds = device->embeddedDevices();
 		for (vector<AutoRef<UPnPDevice> >::iterator iter = embeds.begin(); iter != embeds.end(); iter++) {

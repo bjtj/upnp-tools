@@ -22,16 +22,16 @@ namespace UPNP {
 	}
 	HttpUtils::DumpResponseHandler::~DumpResponseHandler() {
 	}
-	UTIL::AutoRef<DataSink> HttpUtils::DumpResponseHandler::getDataSink() {
-		return UTIL::AutoRef<DataSink>(new StringDataSink);
+	AutoRef<DataSink> HttpUtils::DumpResponseHandler::getDataSink() {
+		return AutoRef<DataSink>(new StringDataSink);
 	}
-	void HttpUtils::DumpResponseHandler::onTransferDone(HttpResponse & response, UTIL::AutoRef<DataSink> sink, UTIL::AutoRef<UserData> userData) {
+	void HttpUtils::DumpResponseHandler::onTransferDone(HttpResponse & response, AutoRef<DataSink> sink, AutoRef<UserData> userData) {
 		responseHeader = response.header();
 		if (!sink.nil()) {
 			dump = ((StringDataSink*)&sink)->data();
 		}
 	}
-	void HttpUtils::DumpResponseHandler::onError(OS::Exception & e, UTIL::AutoRef<UserData> userData) {
+	void HttpUtils::DumpResponseHandler::onError(OS::Exception & e, AutoRef<UserData> userData) {
 		logger->loge("Error/e: " + e.toString());
 	}
 	HttpResponseHeader & HttpUtils::DumpResponseHandler::getResponseHeader() {

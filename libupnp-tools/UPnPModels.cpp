@@ -3,6 +3,7 @@
 namespace UPNP {
 
 	using namespace std;
+	using namespace OS;
 	using namespace HTTP;
 	using namespace UTIL;
 

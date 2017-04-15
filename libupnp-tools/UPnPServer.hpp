@@ -50,12 +50,12 @@ namespace UPNP {
 	 */
 	class UPnPDeviceProfileSessionManager {
 	private:
-		std::map<std::string, UTIL::AutoRef<UPnPDeviceProfileSession> > _sessions;
+		std::map<std::string, OS::AutoRef<UPnPDeviceProfileSession> > _sessions;
 	public:
 		UPnPDeviceProfileSessionManager();
 		virtual ~UPnPDeviceProfileSessionManager();
-		std::map<std::string, UTIL::AutoRef<UPnPDeviceProfileSession> > & sessions();
-		std::vector<UTIL::AutoRef<UPnPDeviceProfileSession> > sessionList();
+		std::map<std::string, OS::AutoRef<UPnPDeviceProfileSession> > & sessions();
+		std::vector<OS::AutoRef<UPnPDeviceProfileSession> > sessionList();
 		void registerProfile(const UPnPDeviceProfile & profile);
 		void registerProfile(const std::string & uuid, const UPnPDeviceProfile & profile);
 		void unregisterProfile(const std::string & uuid);
@@ -65,9 +65,9 @@ namespace UPNP {
 		bool hasDeviceProfileSessionByScpdUrl(const std::string & scpdUrl);
 		bool hasDeviceProfileSessionByControlUrl(const std::string & controlUrl);
 		bool hasDeviceProfileSessionByEventSubUrl(const std::string & eventSubUrl);
-		UTIL::AutoRef<UPnPDeviceProfileSession> getDeviceProfileSessionByUuid(const std::string & uuid);
-		UTIL::AutoRef<UPnPDeviceProfileSession> getDeviceProfileSessionHasScpdUrl(const std::string & scpdUrl);
-		UTIL::AutoRef<UPnPDeviceProfileSession> getDeviceProfileSessionHasEventSubUrl(const std::string & eventSubUrl);
+		OS::AutoRef<UPnPDeviceProfileSession> getDeviceProfileSessionByUuid(const std::string & uuid);
+		OS::AutoRef<UPnPDeviceProfileSession> getDeviceProfileSessionHasScpdUrl(const std::string & scpdUrl);
+		OS::AutoRef<UPnPDeviceProfileSession> getDeviceProfileSessionHasEventSubUrl(const std::string & eventSubUrl);
 	};
 
 	/**
@@ -91,17 +91,17 @@ namespace UPNP {
 		
 		static std::string DEFAULT_SERVER_INFO;
 
-		UTIL::AutoRef<NetworkStateManager> networkStateManager;
+		OS::AutoRef<NetworkStateManager> networkStateManager;
 		Config config;
 		UPnPDeviceProfileSessionManager profileManager;
-		UTIL::AutoRef<HTTP::AnotherHttpServer> httpServer;
-		UTIL::AutoRef<UPnPActionRequestHandler> actionRequestHandler;
-		UTIL::AutoRef<HttpEventListener> httpEventListener;
+		OS::AutoRef<HTTP::AnotherHttpServer> httpServer;
+		OS::AutoRef<UPnPActionRequestHandler> actionRequestHandler;
+		OS::AutoRef<HttpEventListener> httpEventListener;
 		UPnPPropertyManager propertyManager;
 		UPnPEventNotificationThread notificationThread;
 		UTIL::TimerLooperThread timerThread;
 		SSDP::SSDPServer ssdpServer;
-		UTIL::AutoRef<SSDP::SSDPEventListener> ssdpListener;
+		OS::AutoRef<SSDP::SSDPEventListener> ssdpListener;
 
 	private:
 		
@@ -111,11 +111,11 @@ namespace UPNP {
 		
 	public:
 		UPnPServer(const Config & config);
-		UPnPServer(const Config & config, UTIL::AutoRef<NetworkStateManager> networkStateManager);
+		UPnPServer(const Config & config, OS::AutoRef<NetworkStateManager> networkStateManager);
 		virtual ~UPnPServer();
 		void startAsync();
 		void stop();
-		UTIL::AutoRef<HTTP::AnotherHttpServer> getHttpServer();
+		OS::AutoRef<HTTP::AnotherHttpServer> getHttpServer();
 		std::string makeLocation(const std::string & uuid);
 
 		void setEnableDevice(const std::string & udn, bool enable);
@@ -144,10 +144,10 @@ namespace UPNP {
 		void unregisterDeviceProfile(const std::string & uuid);
 
 		// application level control
-		void setActionRequestHandler(UTIL::AutoRef<UPnPActionRequestHandler> actionRequestHandler);
-		UTIL::AutoRef<UPnPActionRequestHandler> getActionRequestHandler();
-		void setHttpEventListener(UTIL::AutoRef<HttpEventListener> httpEventListener);
-		UTIL::AutoRef<HttpEventListener> getHttpEventListener();
+		void setActionRequestHandler(OS::AutoRef<UPnPActionRequestHandler> actionRequestHandler);
+		OS::AutoRef<UPnPActionRequestHandler> getActionRequestHandler();
+		void setHttpEventListener(OS::AutoRef<HttpEventListener> httpEventListener);
+		OS::AutoRef<HttpEventListener> getHttpEventListener();
 
 		// event notification
 		UPnPPropertyManager & getPropertyManager();

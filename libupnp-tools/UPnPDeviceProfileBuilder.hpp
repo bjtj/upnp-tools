@@ -15,18 +15,18 @@ namespace UPNP {
 	class UPnPDeviceProfileBuilder {
 	private:
 		std::string _uuid;
-		UTIL::AutoRef<UPnPDevice> _device;
-		UTIL::AutoRef<UPnPLocationResolver> _locationResolver;
+		OS::AutoRef<UPnPDevice> _device;
+		OS::AutoRef<UPnPLocationResolver> _locationResolver;
 		
 	public:
-		UPnPDeviceProfileBuilder(UTIL::AutoRef<UPnPDevice> device);
-		UPnPDeviceProfileBuilder(const std::string uuid, UTIL::AutoRef<UPnPDevice> device);
+		UPnPDeviceProfileBuilder(OS::AutoRef<UPnPDevice> device);
+		UPnPDeviceProfileBuilder(const std::string uuid, OS::AutoRef<UPnPDevice> device);
 		virtual ~UPnPDeviceProfileBuilder();
 		std::string & uuid();
-		UTIL::AutoRef<UPnPDevice> device();
-		std::vector<UTIL::AutoRef<UPnPDevice> > selectAllDevices(UTIL::AutoRef<UPnPDevice> device);
+		OS::AutoRef<UPnPDevice> device();
+		std::vector<OS::AutoRef<UPnPDevice> > selectAllDevices(OS::AutoRef<UPnPDevice> device);
 		UPnPDeviceProfile build();
-		void setLocationResolver(UTIL::AutoRef<UPnPLocationResolver> locationResolver);
+		void setLocationResolver(OS::AutoRef<UPnPLocationResolver> locationResolver);
 	};
 }
 

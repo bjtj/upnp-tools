@@ -104,7 +104,7 @@ namespace UPNP {
 		return response;
 	}
 	void UPnPEventSubscriber::unsubscribe(const std::string & sid) {
-		UTIL::LinkedStringMap headers;
+		LinkedStringMap headers;
 		headers["SID"] = sid;
 		HttpUtils::httpRequest(eventSubUrl, "UNSUBSCRIBE", headers).getResponseHeader().getStatusCode();
 	}

@@ -6,6 +6,7 @@
 namespace UPNP {
 
 	using namespace std;
+	using namespace OS;
 	using namespace UTIL;
 
 	string UPnPDeviceSerializer::FIRSTLINE = "<?xml version=\"1.0\"?>\r\n";

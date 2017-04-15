@@ -28,11 +28,11 @@ namespace UPNP {
 		public:
 			DumpResponseHandler();
 			virtual ~DumpResponseHandler();
-			virtual UTIL::AutoRef<HTTP::DataSink> getDataSink();
+			virtual OS::AutoRef<HTTP::DataSink> getDataSink();
 			virtual void onTransferDone(HTTP::HttpResponse & response,
-										UTIL::AutoRef<HTTP::DataSink> sink,
-										UTIL::AutoRef<HTTP::UserData> userData);
-			virtual void onError(OS::Exception & e, UTIL::AutoRef<HTTP::UserData> userData);
+										OS::AutoRef<HTTP::DataSink> sink,
+										OS::AutoRef<HTTP::UserData> userData);
+			virtual void onError(OS::Exception & e, OS::AutoRef<HTTP::UserData> userData);
 			HTTP::HttpResponseHeader & getResponseHeader();
 			std::string & getDump();
 		};

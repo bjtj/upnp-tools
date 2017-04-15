@@ -13,12 +13,12 @@ namespace SSDP {
 	private:
 		std::string group;
 		OS::MulticastSocket sock;
-		UTIL::AutoRef<OS::Selector> selector;
-		std::vector<UTIL::AutoRef<SSDPEventListener> > listeners;
+		OS::AutoRef<OS::Selector> selector;
+		std::vector<OS::AutoRef<SSDPEventListener> > listeners;
 
 	public:
 		SSDPMulticastListener(const std::string & group, int port);
-		SSDPMulticastListener(const std::string & group, int port, UTIL::AutoRef<OS::Selector> selector);
+		SSDPMulticastListener(const std::string & group, int port, OS::AutoRef<OS::Selector> selector);
 		virtual ~SSDPMulticastListener();
 
 		void start();
@@ -29,8 +29,8 @@ namespace SSDP {
 		bool isReadable(OS::Selector & selector);
 		void procRead();
 		void onReceive(OS::DatagramPacket & packet);
-		void addSSDPEventListener(UTIL::AutoRef<SSDPEventListener> listener);
-		void removeSSDPEventListener(UTIL::AutoRef<SSDPEventListener> listener);
+		void addSSDPEventListener(OS::AutoRef<SSDPEventListener> listener);
+		void removeSSDPEventListener(OS::AutoRef<SSDPEventListener> listener);
 	};
 }
 

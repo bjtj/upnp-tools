@@ -4,7 +4,6 @@ namespace UPNP {
 
 	using namespace std;
 	using namespace OS;
-	using namespace UTIL;
 
 	/**
 	 * @brief 
@@ -37,7 +36,7 @@ namespace UPNP {
 		return _history;
 	}
 
-	void UPnPDebug::setOnDebugInfoListener(UTIL::AutoRef<OnDebugInfoListener> listener) {
+	void UPnPDebug::setOnDebugInfoListener(AutoRef<OnDebugInfoListener> listener) {
 		_listener = listener;
 	}
 
