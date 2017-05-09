@@ -53,7 +53,7 @@ namespace UPNP {
 	public:
 		UPnPControlPointLifetimeTask(UPnPControlPoint & cp) : cp(cp) {}
 		virtual ~UPnPControlPointLifetimeTask() {}
-		virtual void doTask() {
+		virtual void onTask() {
 			cp.collectOutdated();
 		}
 	};
@@ -148,7 +148,7 @@ namespace UPNP {
 		DeviceBuildTask(UPnPControlPoint & cp, AutoRef<UPnPDeviceSession> session, SSDPHeader & header) : cp(cp), session(session), header(header) {}
 		virtual ~DeviceBuildTask() {}
 
-		virtual void doTask() {
+		virtual void onTask() {
 			try {
 				session->setRootDevice(cp.buildDevice(header));
 				session->setCompleted(true);

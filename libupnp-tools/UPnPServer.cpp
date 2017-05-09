@@ -213,7 +213,7 @@ namespace UPNP {
 	public:
 		UPnPServerLifetimeTask(UPnPServer & server) : server(server) { /**/ }
 		virtual ~UPnPServerLifetimeTask() { /**/ }
-		virtual void doTask() {
+		virtual void onTask() {
 			server.notifyAliveAll();
 			server.collectOutdated();
 		}
@@ -239,7 +239,7 @@ namespace UPNP {
 			: server(server), type(type), profile(profile)
 			{ /**/ }
 		virtual ~NotifyTask() { /**/ }
-		virtual void doTask() {
+		virtual void onTask() {
 			switch (type) {
 			case NOTIFY_ALIVE:
 				server.notifyAlive(profile);
