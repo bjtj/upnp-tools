@@ -7,6 +7,43 @@
 namespace UPNP {
 
 	/**
+	 * usn
+	 */
+	class USN {
+	private:
+		std::string _str;
+	public:
+		USN();
+		USN(const std::string & str);
+		virtual ~USN();
+		std::string & str();
+		std::string str() const;
+		std::string uuid() const;
+		std::string rest() const;
+		bool empty() const;
+		bool valid() const;
+		std::string toString() const;
+	};
+
+	/**
+	 * udn
+	 */
+	class UDN {
+	private:
+		std::string _str;
+	public:
+		UDN();
+		UDN(const std::string & str);
+		virtual ~UDN();
+		std::string & str();
+		std::string str() const;
+		std::string uuid() const;
+		bool empty() const;
+		bool valid() const;
+		std::string toString() const;
+	};
+
+	/**
 	 * max age
 	 */
 	class MaxAge {
@@ -18,7 +55,7 @@ namespace UPNP {
 		virtual ~MaxAge();
 		unsigned long & second();
 		static unsigned long parse(const std::string & phrase);
-		std::string toString();
+		std::string toString() const;
 		static std::string toString(unsigned long second);
 	};
 
@@ -34,7 +71,7 @@ namespace UPNP {
 		virtual ~CallbackUrls();
 		std::vector<std::string> & urls();
 		static std::vector<std::string> parse(const std::string & phrase);
-		std::string toString();
+		std::string toString() const;
 		static std::string toString(const std::vector<std::string> & _urls);
 	};
 
@@ -50,7 +87,7 @@ namespace UPNP {
 		virtual ~Second();
 		unsigned long & second();
 		static unsigned long parse(const std::string & phrase);
-		std::string toString();
+		std::string toString() const;
 		static std::string toString(unsigned long second);
 	};
 }
