@@ -1,4 +1,4 @@
-noinst_PROGRAMS = controller server ssdp-discover dial-discover dial-server
+noinst_PROGRAMS = controller server ssdp-discover ssdp-server dial-discover dial-server
 
 if WITH_NCURSES
 noinst_PROGRAMS += tui-controller
@@ -9,6 +9,7 @@ endif
 controller_SOURCES = controller.cpp
 server_SOURCES = server.cpp
 ssdp_discover_SOURCES = ssdp-discover.cpp
+ssdp_server_SOURCES = ssdp-server.cpp
 dial_discover_SOURCES = dial-discover.cpp
 dial_server_SOURCES = dial-server.cpp
 
