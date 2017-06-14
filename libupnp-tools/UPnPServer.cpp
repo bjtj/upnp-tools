@@ -490,7 +490,7 @@ namespace UPNP {
 					try {
 						CallbackUrls cbs(request.getHeaderFieldIgnoreCase("CALLBACK"));
 						callbacks = cbs.urls();
-					} catch (Exception & e) {
+					} catch (Exception e) {
 						response.setStatus(412, "Precondition Failed");
 						return;
 					}

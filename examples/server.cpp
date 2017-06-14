@@ -322,7 +322,7 @@ int main(int argc, char * args[]) {
 	while (1) {
 		string cmd;
 		if ((cmd = readline()).size() > 0) {
-			if (cmd == "q") {
+			if (cmd == "q" || cmd == "quit") {
 				break;
 			}
 

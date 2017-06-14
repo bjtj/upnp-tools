@@ -67,7 +67,7 @@ namespace UPNP {
 				}
 				try {
 					Url::validateUrlFormat(buffer);
-				} catch (UrlParseException & e) {
+				} catch (UrlParseException e) {
 					throw UPnPParseException("wrong url format - '" + buffer + "'");
 				}
 				urls.push_back(buffer);

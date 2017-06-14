@@ -60,12 +60,6 @@
     <ClCompile Include="..\libupnp-tools\UPnPDeviceProfileBuilder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\libupnp-tools\UPnPDeviceProfileSession.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libupnp-tools\UPnPDeviceProfileSessionManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\libupnp-tools\UPnPDeviceSerializer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -75,19 +69,7 @@
     <ClCompile Include="..\libupnp-tools\UPnPEventSubscription.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\libupnp-tools\UPnPEventSubscriptionRegistry.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libupnp-tools\UPnPEventSubscriptionSession.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\libupnp-tools\UPnPModels.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libupnp-tools\UPnPNotificationCenter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libupnp-tools\UPnPNotificationServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libupnp-tools\UPnPResourceManager.cpp">
@@ -96,10 +78,28 @@
     <ClCompile Include="..\libupnp-tools\UPnPServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\libupnp-tools\UPnPSession.cpp">
+    <ClCompile Include="..\libupnp-tools\SharedUPnPDeviceList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\libupnp-tools\UPnPSessionManager.cpp">
+    <ClCompile Include="..\libupnp-tools\UPnPCache.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libupnp-tools\UPnPDebug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libupnp-tools\UPnPEventReceiver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libupnp-tools\UPnPLocationResolver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libupnp-tools\UPnPPropertyManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libupnp-tools\UPnPSoapFormatter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libupnp-tools\UPnPUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -134,12 +134,6 @@
     <ClInclude Include="..\libupnp-tools\UPnPModels.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\libupnp-tools\UPnPSession.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\libupnp-tools\UPnPSessionManager.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\libupnp-tools\XmlUtils.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -170,12 +164,6 @@
     <ClInclude Include="..\libupnp-tools\UPnPDeviceProfileBuilder.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\libupnp-tools\UPnPDeviceProfileSession.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\libupnp-tools\UPnPDeviceProfileSessionManager.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPDeviceSerializer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -185,18 +173,6 @@
     <ClInclude Include="..\libupnp-tools\UPnPEventSubscription.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\libupnp-tools\UPnPEventSubscriptionRegistry.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\libupnp-tools\UPnPEventSubscriptionSession.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\libupnp-tools\UPnPNotificationCenter.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\libupnp-tools\UPnPNotificationServer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPResourceManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -204,6 +180,42 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPServiceProfile.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libupnp-tools\SharedUPnPDeviceList.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libupnp-tools\SSDPEventListener.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libupnp-tools\UPnPActionRequestHandler.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libupnp-tools\UPnPCache.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libupnp-tools\UPnPDebug.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libupnp-tools\UPnPEventReceiver.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libupnp-tools\UPnPExceptions.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libupnp-tools\UPnPLocationResolver.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libupnp-tools\UPnPPropertyManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libupnp-tools\UPnPSoapException.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libupnp-tools\UPnPSoapFormatter.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libupnp-tools\UPnPUtils.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
