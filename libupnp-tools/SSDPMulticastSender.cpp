@@ -47,8 +47,7 @@ namespace SSDP {
 		return sock.isReadable(selector);
 	}
 	void SSDPMulticastSender::procRead() {
-		char buffer[4096] = {0,};
-		DatagramPacket packet(buffer, sizeof(buffer));
+		DatagramPacket packet(4096);
 		sock.recv(packet);
 		onReceive(packet);
 	}
@@ -59,14 +58,12 @@ namespace SSDP {
 		}
 	}
 	void SSDPMulticastSender::sendMcast(const string & content, const string & group, int port) {
-		char buffer[4096] = {0,};
-		DatagramPacket packet(buffer, sizeof(buffer), group, port);
+		DatagramPacket packet(4096, group, port);
 		packet.write(content);
 		sock.send(packet);
 	}
 	void SSDPMulticastSender::sendMcastToAllInterfaces(const string & content, const string & group, int port) {
-		char buffer[4096] = {0,};
-		DatagramPacket packet(buffer, sizeof(buffer), group, port);
+		DatagramPacket packet(4096, group, port);
 		packet.write(content);
 		std::vector<InetAddress> addrs = Network::getAllInetAddress();
 		for (size_t i = 0; i < addrs.size(); i++) {

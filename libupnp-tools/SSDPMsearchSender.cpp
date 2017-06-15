@@ -59,10 +59,8 @@ namespace SSDP {
 
 	void SSDPMsearchSender::unicast(const string & content, InetAddress & remoteAddr) {
 		DatagramSocket sock;
-		char * buffer = new char[content.size()];
-		DatagramPacket packet(buffer, content.size(), remoteAddr);
+		DatagramPacket packet(content.size(), remoteAddr);
 		packet.write(content);
 		sock.send(packet);
-		delete[] buffer;
 	}
 }

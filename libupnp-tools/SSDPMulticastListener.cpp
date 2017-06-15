@@ -39,8 +39,7 @@ namespace SSDP {
 		return sock.isReadable(selector);
 	}
 	void SSDPMulticastListener::procRead() {
-		char buffer[4096] = {0,};
-		DatagramPacket packet(buffer, sizeof(buffer));
+		DatagramPacket packet(4096);
 		sock.recv(packet);
 		onReceive(packet);
 	}

@@ -153,7 +153,7 @@ namespace UPNP {
 				session->setRootDevice(cp.buildDevice(header));
 				session->setCompleted(true);
 				cp.onDeviceBuildCompleted(session);
-			} catch (Exception & e) {
+			} catch (Exception e) {
 				cp.onDeviceBuildFailed(session);
 			}
 
