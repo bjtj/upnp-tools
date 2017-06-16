@@ -15,14 +15,14 @@ public:
 	virtual void test() {
 		UPnPCache cache;
 
-		cache.prolong(1000);
+		cache.extend(1000);
 		idle(500);
 		ASSERT(cache.outdated(), ==, false);
 
 		idle(1000);
 		ASSERT(cache.outdated(), ==, true);
 
-		cache.prolong(1000);
+		cache.extend(1000);
 		ASSERT(cache.outdated(), ==, false);
 		ASSERT(cache.lifetimeFull(), >=, 1500);
 		ASSERT(cache.lifetimeRecent(), <=, 1500);

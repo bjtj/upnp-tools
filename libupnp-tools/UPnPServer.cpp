@@ -913,7 +913,7 @@ namespace UPNP {
 		AutoRef<UPnPEventSubscriptionSession> session(new UPnPEventSubscriptionSession);
 		session->sid() = sid;
 		session->callbackUrls() = callbacks;
-		session->prolong(timeout);
+		session->extend(timeout);
 		session->udn() = device.const_uuid();
 		session->serviceType() = service.const_serviceType();
 
@@ -924,7 +924,7 @@ namespace UPNP {
 
 	bool UPnPServer::onRenewSubscription(const string & sid, unsigned long timeout) {
 		if (propertyManager.hasSubscriptionSession(sid)) {
-			propertyManager.getSession(sid)->prolong(timeout);
+			propertyManager.getSession(sid)->extend(timeout);
 			return true;
 		}
 		return false;

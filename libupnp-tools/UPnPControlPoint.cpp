@@ -293,10 +293,10 @@ namespace UPNP {
 		InetAddress addr = header.getRemoteAddr();
 		unsigned long timeout = parseCacheControlMilli(header.getCacheControl());
 		if (_sessionManager.has(udn)) {
-			_sessionManager[udn]->prolong(timeout);
+			_sessionManager[udn]->extend(timeout);
 		} else {
 			AutoRef<UPnPDeviceSession> session = _sessionManager.prepareSession(udn);
-			session->prolong(timeout);
+			session->extend(timeout);
 			deviceBuildTaskThreadPool.setTask(AutoRef<Task>(new DeviceBuildTask(*this, session, header)));
 		}
 	}

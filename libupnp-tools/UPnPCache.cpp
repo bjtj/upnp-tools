@@ -49,12 +49,12 @@ namespace UPNP {
 		return (lifetimeRecent() >= _timeout);
 	}
 
-	void UPnPCache::prolong() {
+	void UPnPCache::extend() {
 		_lastUpdateTime = tick_milli();
 	}
 	
-	void UPnPCache::prolong(unsigned long newTimeout) {
-		prolong();
+	void UPnPCache::extend(unsigned long newTimeout) {
+		extend();
 		_timeout = newTimeout;
 	}
 }
