@@ -8,6 +8,7 @@
 #include "UPnPActionErrorCodes.hpp"
 #include "UPnPDeviceDeserializer.hpp"
 #include "UPnPDeviceProfileBuilder.hpp"
+#include "UPnPDeviceBuilder.hpp"
 #include "UPnPServer.hpp"
 #include "SSDPMsearchSender.hpp"
 #include "NetworkUtil.hpp"
@@ -846,17 +847,15 @@ namespace UPNP {
 	}
 
 	void UPnPServer::registerDeviceProfile(const Url & url) {
-		UPnPDeviceDeserializer deserializer;
-		UPnPDeviceProfileBuilder builder(deserializer.build(url));
-		UPnPDeviceProfile profile = builder.build();
-		registerDeviceProfile(profile);
+		UPnPDeviceBuilder builder(url);
+		UPnPDeviceProfileBuilder profileBuilder(builder.execute());
+		registerDeviceProfile(profileBuilder.build());
 	}
 	
 	void UPnPServer::registerDeviceProfile(const string & uuid, const Url & url) {
-		UPnPDeviceDeserializer deserializer;
-		UPnPDeviceProfileBuilder builder(uuid, deserializer.build(url));
-		UPnPDeviceProfile profile = builder.build();
-		registerDeviceProfile(profile);
+		UPnPDeviceBuilder builder(url);
+		UPnPDeviceProfileBuilder profileBuilder(uuid, builder.execute());
+		registerDeviceProfile(profileBuilder.build());
 	}
 	
 	void UPnPServer::registerDeviceProfile(const UPnPDeviceProfile & profile) {

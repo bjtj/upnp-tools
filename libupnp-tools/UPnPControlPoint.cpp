@@ -1,5 +1,6 @@
 #include "UPnPControlPoint.hpp"
 #include "UPnPDeviceDeserializer.hpp"
+#include "UPnPDeviceBuilder.hpp"
 #include "NetworkUtil.hpp"
 #include "UPnPUtils.hpp"
 #include "UPnPExceptions.hpp"
@@ -230,7 +231,7 @@ namespace UPNP {
 			CPOnSessionOutdatedListener(UPnPControlPoint & cp) : cp(cp) {/**/}
 			virtual ~CPOnSessionOutdatedListener() {/**/}
 			virtual void onSessionOutdated(AutoRef<UPnPDeviceSession> session) {
-				cp.announceDeviceRemoved(session->getRootDevice());
+				cp.onDeviceRemoved(session->getRootDevice());
 			}
 		};
 
@@ -282,7 +283,7 @@ namespace UPNP {
 		started = false;
 	}
 
-	void UPnPControlPoint::setDeviceAddRemoveListener(AutoRef<DeviceAddRemoveListener> deviceListener) {
+	void UPnPControlPoint::setDeviceListener(AutoRef<UPnPDeviceListener> deviceListener) {
 		this->deviceListener = deviceListener;
 	}
 
@@ -306,20 +307,19 @@ namespace UPNP {
 
 		if (!deviceListener.nil() && !_sessionManager[udn].nil()) {
 			AutoRef<UPnPDevice> device = _sessionManager[udn]->getRootDevice();
-			announceDeviceRemoved(device);
+			onDeviceRemoved(device);
 		}
 		
 		_sessionManager.remove(udn);
 	}
 
 	AutoRef<UPnPDevice> UPnPControlPoint::buildDevice(SSDPHeader & header) {
-		UPnPDeviceDeserializer deserializer;
-		deserializer.setDebug(getDebug());
-		return deserializer.build(Url(header.getLocation()));
+		UPnPDeviceBuilder builder(Url(header.getLocation()));
+		return builder.execute();
 	}
 
 	void UPnPControlPoint::onDeviceBuildCompleted(AutoRef<UPnPDeviceSession> session) {
-		announceDeviceAdded(session->getRootDevice());
+		onDeviceAdded(session->getRootDevice());
 	}
 	
 	void UPnPControlPoint::onDeviceBuildFailed(AutoRef<UPnPDeviceSession> session) {
@@ -447,24 +447,24 @@ namespace UPNP {
 		}
 	}
 
-	void UPnPControlPoint::announceDeviceAdded(AutoRef<UPnPDevice> device) {
+	void UPnPControlPoint::onDeviceAdded(AutoRef<UPnPDevice> device) {
 		if (device.nil()) {
 			return;
 		}
 		if (!deviceListener.nil()) {
-			deviceListener->onDeviceAdd(device);
+			deviceListener->onDeviceAdded(device);
 		}
 		for (vector<AutoRef<SharedUPnPDeviceList> >::iterator iter = sharedDeviceLists.begin(); iter != sharedDeviceLists.end(); iter++) {
 			(*iter)->add_s(device);
 		}
 	}
 	
-	void UPnPControlPoint::announceDeviceRemoved(AutoRef<UPnPDevice> device) {
+	void UPnPControlPoint::onDeviceRemoved(AutoRef<UPnPDevice> device) {
 		if (device.nil()) {
 			return;
 		}
 		if (!deviceListener.nil()) {
-			deviceListener->onDeviceRemove(device);
+			deviceListener->onDeviceRemoved(device);
 		}
 		for (vector<AutoRef<SharedUPnPDeviceList> >::iterator iter = sharedDeviceLists.begin(); iter != sharedDeviceLists.end(); iter++) {
 			(*iter)->remove_s(device);

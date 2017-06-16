@@ -3,7 +3,9 @@
 #include <liboslayer/Uuid.hpp>
 #include <libhttp-server/AnotherHttpServer.hpp>
 #include <libhttp-server/StringDataSink.hpp>
+#include <libupnp-tools/SSDPHeader.hpp>
 #include <libhttp-server/WebServerUtil.hpp>
+#include <libupnp-tools/UPnPDeviceBuilder.hpp>
 #include <libupnp-tools/UPnPDeviceDeserializer.hpp>
 #include <libupnp-tools/UPnPDeviceSerializer.hpp>
 
@@ -70,8 +72,8 @@ static void test_deserialize() {
 	server.registerRequestHandler("/*", AutoRef<HttpRequestHandler>(new RequestHandler(udn)));
 	server.startAsync();
 
-	UPnPDeviceDeserializer deserializer;
-	AutoRef<UPnPDevice> device = deserializer.build(Url("http://127.0.0.1:9999/device.xml"));
+	UPnPDeviceBuilder builder(Url("http://127.0.0.1:9999/device.xml"));
+	AutoRef<UPnPDevice> device = builder.execute();
 	ASSERT(device.nil(), ==, false);
 	
 	ASSERT(device->getUdn(), ==, "uuid:" + udn);
@@ -96,8 +98,8 @@ static void test_filesystem_base_deserialize() {
 	fs.write(scpd().c_str(), scpd().size());
 	fs.close();
 
-	UPnPDeviceDeserializer deserializer;
-	AutoRef<UPnPDevice> device = deserializer.build(Url("file://" + File::getCwd() + "/device.xml"));
+	UPnPDeviceBuilder builder(Url("file://" + File::getCwd() + "/device.xml"));
+	AutoRef<UPnPDevice> device = builder.execute();
 
 	ASSERT(device->getUdn(), ==, "uuid:" + udn);
 	ASSERT(device->getFriendlyName(), ==, "UPnP Test Device");
@@ -114,8 +116,8 @@ static void test_serialize() {
 	server.registerRequestHandler("/*", AutoRef<HttpRequestHandler>(new RequestHandler(udn)));
 	server.startAsync();
 
-	UPnPDeviceDeserializer deserializer;
-	AutoRef<UPnPDevice> device = deserializer.build(Url("http://127.0.0.1:9999/device.xml"));
+	UPnPDeviceBuilder builder(Url("http://127.0.0.1:9999/device.xml"));
+	AutoRef<UPnPDevice> device = builder.execute();
 
 	ASSERT(device->getUdn(), ==, "uuid:" + udn);
 	ASSERT(device->getFriendlyName(), ==, "UPnP Test Device");
@@ -129,6 +131,7 @@ static void test_serialize() {
 
 	AutoRef<UPnPDevice> deserialized(new UPnPDevice);
 	deserialized->baseUrl() = Url("http://127.0.0.1:9999/device.xml");
+	UPnPDeviceDeserializer deserializer;
 	deserializer.parseDeviceXml(dd, *deserialized);
 
 	ASSERT(deserialized->getUdn(), ==, "uuid:" + udn);

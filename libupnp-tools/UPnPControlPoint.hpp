@@ -14,6 +14,7 @@
 #include "SharedUPnPDeviceList.hpp"
 #include "UPnPCache.hpp"
 #include "UPnPDebug.hpp"
+#include "UPnPDeviceListener.hpp"
 
 namespace UPNP {
 
@@ -74,20 +75,6 @@ namespace UPNP {
 		OS::AutoRef<OnSessionOutdatedListener> getOnSessionOutdatedListener();
 	};
 
-
-	/**
-	 * @brief device add remove listener
-	 */
-	class DeviceAddRemoveListener {
-	private:
-	public:
-		DeviceAddRemoveListener() {}
-		virtual ~DeviceAddRemoveListener() {}
-		virtual void onDeviceAdd(OS::AutoRef<UPnPDevice> device) {}
-		virtual void onDeviceRemove(OS::AutoRef<UPnPDevice> device) {}
-	};
-
-
 	/**
 	 * @brief upnp control point
 	 */
@@ -106,7 +93,7 @@ namespace UPNP {
 		static const unsigned long DEFAULT_DEVICE_SESSION_TIMEOUT = 1800 * 1000; 
 		OS::AutoRef<NetworkStateManager> networkStateManager;
 		Config config;
-		OS::AutoRef<DeviceAddRemoveListener> deviceListener;
+		OS::AutoRef<UPnPDeviceListener> deviceListener;
 		OS::AutoRef<SSDP::SSDPEventListener> ssdpListener;
 		SSDP::SSDPServer ssdpServer;
 		UPnPDeviceSessionManager _sessionManager;
@@ -132,7 +119,7 @@ namespace UPNP {
 	public:
 		void startAsync();
 		void stop();
-		void setDeviceAddRemoveListener(OS::AutoRef<DeviceAddRemoveListener> deviceListener);
+		void setDeviceListener(OS::AutoRef<UPnPDeviceListener> deviceListener);
 		void addDevice(SSDP::SSDPHeader & header);
 		void removeDevice(SSDP::SSDPHeader & header);
 		OS::AutoRef<UPnPDevice> buildDevice(SSDP::SSDPHeader & header);
@@ -158,8 +145,8 @@ namespace UPNP {
 		unsigned long parseCacheControlMilli(const std::string & cacheControl, unsigned long def);
 		void addSharedDeviceList(OS::AutoRef<SharedUPnPDeviceList> list);
 		void removeSharedDeviceList(OS::AutoRef<SharedUPnPDeviceList> list);
-		void announceDeviceAdded(OS::AutoRef<UPnPDevice> device);
-		void announceDeviceRemoved(OS::AutoRef<UPnPDevice> device);
+		void onDeviceAdded(OS::AutoRef<UPnPDevice> device);
+		void onDeviceRemoved(OS::AutoRef<UPnPDevice> device);
 		unsigned long parseCacheControlMilli(const std::string & cacheControl);
 	};
 }

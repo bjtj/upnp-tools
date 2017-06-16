@@ -119,17 +119,17 @@ public:
 
 static map<string, AutoRef<UPnPDevice> > s_device_list;
 
-class DeviceListener : public DeviceAddRemoveListener {
+class DeviceListener : public UPnPDeviceListener {
 private:
 public:
     DeviceListener() {}
     virtual ~DeviceListener() {}
-	virtual void onDeviceAdd(AutoRef<UPnPDevice> device) {
+	virtual void onDeviceAdded(AutoRef<UPnPDevice> device) {
 		Uuid uuid(device->getUdn());
 		cout << " ** added : " << uuid.getUuid() << endl;
 		s_device_list[uuid.getUuid()] = device;
 	}
-	virtual void onDeviceRemove(AutoRef<UPnPDevice> device) {
+	virtual void onDeviceRemoved(AutoRef<UPnPDevice> device) {
 		Uuid uuid(device->getUdn());
 		cout << " ** removed : " << uuid.getUuid() << endl;
 		s_device_list.erase(uuid.getUuid());
@@ -146,7 +146,7 @@ static void test_control_point() {
 	server.startAsync();
 
 	UPnPControlPoint cp(UPnPControlPoint::Config(9999));
-	cp.setDeviceAddRemoveListener(AutoRef<DeviceAddRemoveListener>(new DeviceListener));
+	cp.setDeviceListener(AutoRef<UPnPDeviceListener>(new DeviceListener));
 	cp.startAsync();
 
 	SSDPHeader header = ((RequestHandler*)&handler)->getSSDPHeader();

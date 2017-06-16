@@ -28,13 +28,18 @@ namespace UPNP {
 	 */
 	class UPnPResourceManager {
 	private:
-		static UTIL::Properties props;
-	public:
+		UTIL::Properties props;
+		static UPnPResourceManager _instance;
+	private:
 		UPnPResourceManager();
+		UPnPResourceManager(const UPnPResourceManager & other);
+		UPnPResourceManager & operator=(const UPnPResourceManager & other);
+	public:
 		virtual ~UPnPResourceManager();
-		static std::string getResourceContent(const HTTP::Url & url);
-		static UPnPResource getResource(const HTTP::Url & url);
-		static UTIL::Properties & properties();
+		static UPnPResourceManager & instance();
+		std::string getResourceContent(const HTTP::Url & url);
+		UPnPResource getResource(const HTTP::Url & url);
+		UTIL::Properties & properties();
 	};
 }
 

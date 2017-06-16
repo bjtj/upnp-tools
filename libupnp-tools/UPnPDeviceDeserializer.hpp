@@ -28,7 +28,6 @@ namespace UPNP {
 		UPnPStateVariable parseStateVariableFromXmlNode(OS::AutoRef<XML::XmlNode> stateVariableXml);
 		void parsePropertiesFromXmlNode(OS::AutoRef<XML::XmlNode> node, UPnPModelObject & obj);
 
-		virtual OS::AutoRef<UPnPDevice> build(const HTTP::Url & url);
 		virtual OS::AutoRef<UPnPDevice> parseDeviceXml(const std::string & deviceXml);
 		virtual UPnPScpd parseScpdXml(const std::string & scpdXml);
 	};

@@ -20,7 +20,9 @@ libupnp_toolsinc_HEADERS = \
 	UPnPCache.hpp \
 	UPnPControlPoint.hpp \
 	UPnPDebug.hpp \
+	UPnPDeviceBuilder.hpp \
 	UPnPDeviceDeserializer.hpp \
+	UPnPDeviceListener.hpp \
 	UPnPDeviceProfile.hpp \
 	UPnPDeviceProfileBuilder.hpp \
 	UPnPDeviceSerializer.hpp \
@@ -72,8 +74,11 @@ libupnp_tools_la_SOURCES = \
 	UPnPControlPoint.hpp \
 	UPnPDebug.cpp \
 	UPnPDebug.hpp \
+	UPnPDeviceBuilder.cpp \
+	UPnPDeviceBuilder.hpp \
 	UPnPDeviceDeserializer.cpp \
 	UPnPDeviceDeserializer.hpp \
+	UPnPDeviceListener.hpp \
 	UPnPDeviceProfile.cpp \
 	UPnPDeviceProfile.hpp \
 	UPnPDeviceProfileBuilder.cpp \

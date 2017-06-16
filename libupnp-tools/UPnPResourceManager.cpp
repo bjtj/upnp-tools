@@ -24,10 +24,16 @@ namespace UPNP {
 	}
 	
 
-	Properties UPnPResourceManager::props;
+	// Properties UPnPResourceManager::props;
+
+	UPnPResourceManager UPnPResourceManager::_instance;
 	
 	UPnPResourceManager::UPnPResourceManager() { /**/ }
 	UPnPResourceManager::~UPnPResourceManager() { /**/ }
+
+	UPnPResourceManager & UPnPResourceManager::instance() {
+		return _instance;
+	}
 	
 	string UPnPResourceManager::getResourceContent(const Url & url) {
 		return getResource(url).content();

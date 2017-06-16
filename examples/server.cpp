@@ -246,12 +246,14 @@ public:
  * @brief 
  */
 static void s_set_device(UPnPServer & server, const string & uuid) {
+
+	UPnPResourceManager & resMan = UPnPResourceManager::instance();
 	
 	string svc_sp1 = "urn:schemas-upnp-org:service:SwitchPower:1";
 	string svc_d1 = "urn:schemas-upnp-org:service:Dimming:1";
-	UPnPResourceManager::properties()["/device.xml"] = dd(uuid);
-	UPnPResourceManager::properties()["/scpd.xml/" + uuid + "::" + svc_sp1] = scpd_sp1();
-	UPnPResourceManager::properties()["/scpd.xml/" + uuid + "::" + svc_d1] = scpd_d1();
+	resMan.properties()["/device.xml"] = dd(uuid);
+	resMan.properties()["/scpd.xml/" + uuid + "::" + svc_sp1] = scpd_sp1();
+	resMan.properties()["/scpd.xml/" + uuid + "::" + svc_d1] = scpd_d1();
 
 	server.registerDeviceProfile(uuid, Url("prop:///device.xml"));
 

@@ -233,7 +233,7 @@ public:
 };
 
 
-class MyDeviceListener : public DeviceAddRemoveListener {
+class MyDeviceListener : public UPnPDeviceListener {
 private:
 	Tui & tui;
 	UPnPControlPoint & cp;
@@ -241,12 +241,12 @@ public:
     MyDeviceListener(Tui & tui, UPnPControlPoint & cp) : tui(tui), cp(cp) {}
     virtual ~MyDeviceListener() {}
 
-	virtual void onDeviceAdd(AutoRef<UPnPDevice> device) {
+	virtual void onDeviceAdded(AutoRef<UPnPDevice> device) {
 		tui.toast(" ** Added: " + device->getFriendlyName());
 		tui.printDeviceList(cp.getDevices());
 	}
 
-	virtual void onDeviceRemove(AutoRef<UPnPDevice> device) {
+	virtual void onDeviceRemoved(AutoRef<UPnPDevice> device) {
 		tui.toast(" ** Removed: " + device->getFriendlyName());
 		tui.printDeviceList(cp.getDevices());
 	}
@@ -268,7 +268,7 @@ int main(int argc, char *args[]) {
 	tui.start();
 	tui.setNoecho();
 
-	cp.setDeviceAddRemoveListener(AutoRef<DeviceAddRemoveListener>(new MyDeviceListener(tui, cp)));
+	cp.setDeviceListener(AutoRef<DeviceAddRemoveListener>(new MyDeviceListener(tui, cp)));
 	cp.startAsync();
 
 	while (!done) {

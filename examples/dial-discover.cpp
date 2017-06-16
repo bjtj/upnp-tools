@@ -30,19 +30,19 @@ public:
 
 vector<DialDevice> dialDevices;
 
-class DeviceListener : public DeviceAddRemoveListener {
+class DeviceListener : public UPnPDeviceListener {
 private:
 public:
 	DeviceListener() {}
     virtual ~DeviceListener() {}
-	virtual void onDeviceAdd(AutoRef<UPnPDevice> device) {
+	virtual void onDeviceAdded(AutoRef<UPnPDevice> device) {
 		if (device->meta()["Application-URL"].empty() == false) {
 			DialDevice dialDevice(device, device->meta()["Application-URL"]);
 			dialDevices.push_back(dialDevice);
 			cout << dialDevice.toString() << endl;
 		}
 	}
-	virtual void onDeviceRemove(AutoRef<UPnPDevice> device) {
+	virtual void onDeviceRemoved(AutoRef<UPnPDevice> device) {
 		cout << " ** Removed: " << device->getFriendlyName() << endl;
 	}
 };
@@ -76,7 +76,7 @@ int main(int argc, char *args[]) {
 	HttpUtils::setRecvTimeout(30000);
 
 	UPnPControlPoint cp(UPnPControlPoint::Config(9998));
-	cp.setDeviceAddRemoveListener(AutoRef<DeviceAddRemoveListener>(new DeviceListener));
+	cp.setDeviceListener(AutoRef<UPnPDeviceListener>(new DeviceListener));
 	cp.startAsync();
 
 	cp.sendMsearchAsync("urn:dial-multiscreen-org:service:dial:1", 3);

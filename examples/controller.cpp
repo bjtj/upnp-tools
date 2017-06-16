@@ -165,17 +165,17 @@ AutoRef<UPnPDevice> selectDeviceByIndex(const vector<AutoRef<UPnPDevice> > & dev
 /**
  * @brief device listener
  */
-class MyDeviceListener : public DeviceAddRemoveListener {
+class MyDeviceListener : public UPnPDeviceListener {
 private:
 public:
     MyDeviceListener() {}
     virtual ~MyDeviceListener() {}
 
-	virtual void onDeviceAdd(AutoRef<UPnPDevice> device) {
+	virtual void onDeviceAdded(AutoRef<UPnPDevice> device) {
 		cout << " ** Added: " << device->getFriendlyName() << endl;
 	}
 
-	virtual void onDeviceRemove(AutoRef<UPnPDevice> device) {
+	virtual void onDeviceRemoved(AutoRef<UPnPDevice> device) {
 		cout << " ** Removed: " << device->getFriendlyName() << endl;
 	}
 };
@@ -237,7 +237,7 @@ int run(int argc, char *args[]) {
 	UPnPControlPoint cp(UPnPControlPoint::Config(9998));
 	cp.setDebug(debug);
 	cp.addSharedDeviceList(list);
-	cp.setDeviceAddRemoveListener(AutoRef<DeviceAddRemoveListener>(new MyDeviceListener));
+	cp.setDeviceListener(AutoRef<UPnPDeviceListener>(new MyDeviceListener));
 	cp.startAsync();
 	cp.getEventReceiver()->addEventListener(AutoRef<UPnPEventListener>(new MyEventListener));
 

@@ -1,6 +1,7 @@
 #include "utils.hpp"
 #include <liboslayer/os.hpp>
 #include <liboslayer/Uuid.hpp>
+#include <libupnp-tools/UPnPDeviceBuilder.hpp>
 #include <libupnp-tools/UPnPDeviceDeserializer.hpp>
 #include <libupnp-tools/UPnPDeviceProfileBuilder.hpp>
 #include <libupnp-tools/UPnPResourceManager.hpp>
@@ -19,31 +20,34 @@ static void test_device_profile_builder() {
 	
 	UuidGeneratorVersion1 gen;
 	string uuid = gen.generate();
-	
-	UPnPResourceManager::properties()["/device.xml"] = dd(uuid);
-	UPnPResourceManager::properties()["/scpd/urn:schemas-upnp-org:service:ContentDirectory:1"] = scpd_cd();
-	UPnPResourceManager::properties()["/scpd/urn:schemas-upnp-org:service:ConnectionManager:1"] = scpd_cm();
 
-	UPnPDeviceDeserializer deserializer;
-	AutoRef<UPnPDevice> device = deserializer.build(Url("prop:///device.xml"));
-	UPnPDeviceProfileBuilder builder(uuid, device);
-	UPnPDeviceProfile profile = builder.build();
+	UPnPResourceManager & resMan = UPnPResourceManager::instance();
+	
+	resMan.properties()["/device.xml"] = dd(uuid);
+	resMan.properties()["/scpd/urn:schemas-upnp-org:service:ContentDirectory:1"] = scpd_cd();
+	resMan.properties()["/scpd/urn:schemas-upnp-org:service:ConnectionManager:1"] = scpd_cm();
+
+	UPnPDeviceBuilder builder(Url("prop:///device.xml"));
+	AutoRef<UPnPDevice> device = builder.execute();
+	UPnPDeviceProfileBuilder profileBuilder(uuid, device);
+	UPnPDeviceProfile profile = profileBuilder.build();
 
 	ASSERT(profile.uuid(), ==, uuid);
 	ASSERT(profile.deviceTypes()[0], ==, "urn:schemas-upnp-org:device:MediaServer:1");
 	ASSERT(profile.serviceProfiles()[0].serviceType(), ==, "urn:schemas-upnp-org:service:ContentDirectory:1");
 	ASSERT(profile.serviceProfiles()[1].serviceType(), ==, "urn:schemas-upnp-org:service:ConnectionManager:1");
 
+	UPnPDeviceDeserializer deserializer;
 	device = deserializer.parseDeviceXml(profile.deviceDescription());
 	ASSERT(device->getUdn(), ==, "uuid:" + uuid);
 }
 
 static void test_build_from_file() {
 	
-	UPnPDeviceDeserializer deserializer;
-	AutoRef<UPnPDevice> device = deserializer.build(Url("file://" + File::mergePaths(DATA_PATH, "/dms.xml")));
-	UPnPDeviceProfileBuilder builder(device);
-	UPnPDeviceProfile profile = builder.build();
+	UPnPDeviceBuilder builder(Url("file://" + File::mergePaths(DATA_PATH, "/dms.xml")));
+	AutoRef<UPnPDevice> device = builder.execute();
+	UPnPDeviceProfileBuilder profileBuilder(device);
+	UPnPDeviceProfile profile = profileBuilder.build();
 
 	vector<UPnPServiceProfile> services = profile.serviceProfiles();
 	for (vector<UPnPServiceProfile>::iterator iter = services.begin(); iter != services.end(); iter++) {
@@ -57,9 +61,9 @@ static void test_builder() {
 
 	Url url("file://" + File::mergePaths(DATA_PATH, "/dms.xml"));
 
-	UPnPDeviceDeserializer deserializer;
-	UPnPDeviceProfileBuilder builder(deserializer.build(url));
-	UPnPDeviceProfile profile = builder.build();
+	UPnPDeviceBuilder builder(url);
+	UPnPDeviceProfileBuilder profileBuilder(builder.execute());
+	UPnPDeviceProfile profile = profileBuilder.build();
 
 	vector<UPnPServiceProfile> profiles = profile.serviceProfiles();
 	for (vector<UPnPServiceProfile>::iterator iter = profiles.begin(); iter != profiles.end(); iter++) {

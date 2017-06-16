@@ -18,9 +18,10 @@ using namespace HTTP;
 using namespace UPNP;
 
 static void s_set_dial_devcie(UPnPServer & server, const string & dd_path, const string & uuid) {
+	UPnPResourceManager & resMan = UPnPResourceManager::instance();
 	FileStream fs(dd_path, "r");
 	string xml = fs.readFullAsString();
-	UPnPResourceManager::properties()["/device.xml"] = xml;
+	resMan.properties()["/device.xml"] = xml;
 	server.registerDeviceProfile(uuid, Url("prop:///device.xml"));
 }
 
