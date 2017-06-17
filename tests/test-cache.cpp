@@ -17,13 +17,13 @@ public:
 
 		cache.extend(1000);
 		idle(500);
-		ASSERT(cache.outdated(), ==, false);
+		ASSERT(cache.expired(), ==, false);
 
 		idle(1000);
-		ASSERT(cache.outdated(), ==, true);
+		ASSERT(cache.expired(), ==, true);
 
 		cache.extend(1000);
-		ASSERT(cache.outdated(), ==, false);
+		ASSERT(cache.expired(), ==, false);
 		ASSERT(cache.lifetimeFull(), >=, 1500);
 		ASSERT(cache.lifetimeRecent(), <=, 1500);
 	}

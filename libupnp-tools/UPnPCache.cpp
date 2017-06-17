@@ -45,7 +45,7 @@ namespace UPNP {
 		return 0;
 	}
 
-	bool UPnPCache::outdated() {
+	bool UPnPCache::expired() {
 		return (lifetimeRecent() >= _timeout);
 	}
 

@@ -216,7 +216,7 @@ namespace UPNP {
 		virtual ~UPnPServerLifetimeTask() { /**/ }
 		virtual void onTask() {
 			server.notifyAliveAll();
-			server.collectOutdated();
+			server.collectExpired();
 		}
 	};
 
@@ -942,8 +942,8 @@ namespace UPNP {
 		return timerThread;
 	}
 
-	void UPnPServer::collectOutdated() {
-		propertyManager.collectOutdated();
+	void UPnPServer::collectExpired() {
+		propertyManager.collectExpired();
 	}
 
 	string UPnPServer::getServerInfo() {

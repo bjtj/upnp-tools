@@ -101,7 +101,7 @@ namespace UPNP {
 		void notify(const std::vector<OS::AutoRef<UPnPEventSubscriptionSession> > & sessions, const UTIL::LinkedStringMap & props);
 		void notify(OS::AutoRef<UPnPEventSubscriptionSession> session, const UTIL::LinkedStringMap & props);
 		std::string makePropertiesXml(const UTIL::LinkedStringMap & props);
-		void collectOutdated();
+		void collectExpired();
 		void setOnSubscriptionOutdatedListener(OS::AutoRef<OnSubscriptionOutdatedListener> listener);
 	};
 }

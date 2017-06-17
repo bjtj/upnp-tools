@@ -163,7 +163,7 @@ namespace UPNP {
 		// session timeout manager
 		UTIL::TimerLooperThread & getTimerThread();
 
-		void collectOutdated();
+		void collectExpired();
 
 		// information
 		std::string getServerInfo();

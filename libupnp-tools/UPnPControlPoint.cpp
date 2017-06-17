@@ -55,7 +55,7 @@ namespace UPNP {
 		UPnPControlPointLifetimeTask(UPnPControlPoint & cp) : cp(cp) {}
 		virtual ~UPnPControlPointLifetimeTask() {}
 		virtual void onTask() {
-			cp.collectOutdated();
+			cp.collectExpired();
 		}
 	};
 
@@ -116,9 +116,9 @@ namespace UPNP {
 		return sessions[udn];
 	}
 
-	void UPnPDeviceSessionManager::collectOutdated() {
+	void UPnPDeviceSessionManager::collectExpired() {
 		for (map<string, AutoRef<UPnPDeviceSession> >::iterator iter = sessions.begin(); iter != sessions.end();) {
-			if (iter->second->outdated()) {
+			if (iter->second->expired()) {
 				if (!onSessionOutdatedListener.nil()) {
 					onSessionOutdatedListener->onSessionOutdated(iter->second);
 				}
@@ -430,8 +430,8 @@ namespace UPNP {
 		return timerThread;
 	}
 	
-	void UPnPControlPoint::collectOutdated() {
-		_sessionManager.collectOutdated();
+	void UPnPControlPoint::collectExpired() {
+		_sessionManager.collectExpired();
 	}
 
 	void UPnPControlPoint::addSharedDeviceList(AutoRef<SharedUPnPDeviceList> list) {

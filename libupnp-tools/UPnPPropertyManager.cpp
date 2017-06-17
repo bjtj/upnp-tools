@@ -184,9 +184,9 @@ namespace UPNP {
 		return content;
 	}
 
-	void UPnPPropertyManager::collectOutdated() {
+	void UPnPPropertyManager::collectExpired() {
 		for (map<string, AutoRef<UPnPEventSubscriptionSession> >::iterator iter = sessions.begin(); iter != sessions.end();) {
-			if (iter->second->outdated()) {
+			if (iter->second->expired()) {
 				if (!outdatedListener.nil()) {
 					outdatedListener->onSessionOutdated(*(iter->second));
 				}

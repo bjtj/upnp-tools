@@ -36,7 +36,6 @@ namespace UPNP {
 		void setRootDevice(OS::AutoRef<UPnPDevice> device);
 	};
 
-
 	/**
 	 * @brief 
 	 */
@@ -70,7 +69,7 @@ namespace UPNP {
 		std::vector<OS::AutoRef<UPnPDeviceSession> > getSessions();
 		std::vector<OS::AutoRef<UPnPDevice> > getDevices();
 		OS::AutoRef<UPnPDeviceSession> operator[] (const std::string & udn);
-		void collectOutdated();
+		void collectExpired();
 		void setOnSessionOutdatedListener(OS::AutoRef<OnSessionOutdatedListener> onSessionOutdatedListener);
 		OS::AutoRef<OnSessionOutdatedListener> getOnSessionOutdatedListener();
 	};
@@ -141,7 +140,7 @@ namespace UPNP {
 		OS::AutoRef<UPnPService> findServiceRecursive(OS::AutoRef<UPnPDevice> device, const std::string & serviceType);
 		OS::AutoRef<UPnPEventReceiver> getEventReceiver();
 		UTIL::TimerLooperThread & getTimerThread();
-		void collectOutdated();
+		void collectExpired();
 		unsigned long parseCacheControlMilli(const std::string & cacheControl, unsigned long def);
 		void addSharedDeviceList(OS::AutoRef<SharedUPnPDeviceList> list);
 		void removeSharedDeviceList(OS::AutoRef<SharedUPnPDeviceList> list);
