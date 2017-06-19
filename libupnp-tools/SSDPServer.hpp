@@ -10,6 +10,7 @@
 #include "SSDPMsearchSender.hpp"
 #include "SSDPMulticastListener.hpp"
 #include "SSDPEventListener.hpp"
+#include "UPnPUtils.hpp"
 
 namespace SSDP {
 
@@ -51,6 +52,8 @@ namespace SSDP {
 		OS::AutoRef<SSDPMsearchSender> sendMsearch(const std::string & st, unsigned long timeoutSec, OS::AutoRef<OS::Selector> selector);
 		OS::AutoRef<SSDPMsearchSender> sendMsearch(const std::vector<std::string> & st, unsigned long timeoutSec);
 		OS::AutoRef<SSDPMsearchSender> sendMsearch(const std::vector<std::string> & st, unsigned long timeoutSec, OS::AutoRef<OS::Selector> selector);
+		void sendNotify(const SSDPHeader & header);
+		SSDPHeader getNotifyHeader(const std::string & nts, const UPNP::USN & usn);
 		void addSSDPEventListener(OS::AutoRef<SSDPEventListener> listener);
 	};
 }

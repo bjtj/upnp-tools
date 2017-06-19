@@ -5,7 +5,10 @@ namespace SSDP {
 
 	using namespace std;
 	using namespace UTIL;
-	
+	using namespace UPNP;
+
+	SSDPHeader::SSDPHeader() {
+	}
 	SSDPHeader::SSDPHeader(const string & headerString, OS::InetAddress & remoteAddr)
 		: remoteAddr(remoteAddr) {
 		HTTP::HttpHeaderReader reader;
@@ -90,5 +93,24 @@ namespace SSDP {
 	}
 	string SSDPHeader::getCacheControl() const {
 		return getHeaderFieldIgnoreCase("Cache-Control");
+	}
+
+	void SSDPHeader::setCacheControl(int maxAge) {
+		setHeaderField("Cache-Control", Text::toString(maxAge));
+	}
+	void SSDPHeader::setNotificationType(const string & nt) {
+		setHeaderField("NT", nt);
+	}
+	void SSDPHeader::setNotificationSubType(const string & nts) {
+		setHeaderField("NTS", nts);
+	}
+	void SSDPHeader::setSearchTarget(const string & st) {
+		setHeaderField("ST", st);
+	}
+	void SSDPHeader::setLocation(const string & location) {
+		setHeaderField("LOCATION", location);
+	}
+	void SSDPHeader::setUsn(const USN & usn) {
+		setHeaderField("USN", usn.toString());
 	}
 }

@@ -5,6 +5,7 @@
 #include <liboslayer/Network.hpp>
 #include <libhttp-server/HttpHeader.hpp>
 #include <libhttp-server/HttpHeaderReader.hpp>
+#include "UPnPUtils.hpp"
 
 namespace SSDP {
 
@@ -13,6 +14,7 @@ namespace SSDP {
 		std::string rawPacket;
 		OS::InetAddress remoteAddr;
 	public:
+		SSDPHeader();
 		SSDPHeader(const std::string & headerString, OS::InetAddress & remoteAddr);
 		virtual ~SSDPHeader();
 		bool isSSDPRequest() const;
@@ -32,6 +34,12 @@ namespace SSDP {
 		OS::InetAddress getRemoteAddr() const;
 		std::string getRawPacket() const;
 		std::string getCacheControl() const;
+		void setCacheControl(int maxAge);
+		void setNotificationType(const std::string & nt);
+		void setNotificationSubType(const std::string & nts);
+		void setSearchTarget(const std::string & st);
+		void setLocation(const std::string & location);
+		void setUsn(const UPNP::USN & usn);
 	};
 
 }

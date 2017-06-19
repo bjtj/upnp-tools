@@ -34,6 +34,10 @@ static const char * dd =
 "<serviceList>\n"
 "</serviceList></device></root>\n";
 
+static string getLocation() {
+	return "http://" + NetworkUtil::selectDefaultAddress().getHost() + ":9000/";
+}
+
 /**
  * 
  */
@@ -47,14 +51,11 @@ public:
 		cout << "[RECV] M-SEARCH / search target: '" << header["ST"] << "' - " << header.getRemoteAddr().toString() << endl;
 
 		HttpHeader httpHeader;
-		httpHeader.setPart1("HTTP/1.1"); 
-		httpHeader.setPart2("200"); 
-		httpHeader.setPart3("OK");		
-		httpHeader.setHeaderField("LOCATION", "http://" + NetworkUtil::selectDefaultAddress().getHost() + ":9000/");
-		//httpHeader.setHeaderField("USN", "uuid:fc4ec57e-b051-11db-88f8-0060085db3f0::upnp:rootdevice");
-		httpHeader.setHeaderField("USN", "uuid:fc4ec57e-b051-11db-88f8-0060085db3f0");
+		httpHeader.setParts("HTTP/1.1", "200", "OK"); 
+		httpHeader.setHeaderField("LOCATION", getLocation());
+		httpHeader.setHeaderField("USN", "uuid:fc4ec57e-b051-11db-88f8-0060085db3f0::upnp:rootdevice");
 		httpHeader.setHeaderField("ST", "upnp:rootdevice");
-		httpHeader.setHeaderField("CACHE-CONTROL", "max-age=120");
+		httpHeader.setHeaderField("CACHE-CONTROL", "max-age=1800");
 		httpHeader.setHeaderField("EXT", "");
 
 		DatagramSocket socket;
@@ -96,6 +97,27 @@ int main(int argc, char *args[]) {
 		string line = fs.readline();
 		if (line == "q" || line == "quit") {
 			break;
+		}
+		if (line == "alive") {
+			SSDPHeader header;
+			header = server.getNotifyHeader("ssdp:alive", USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0"));
+			header.setLocation(getLocation());
+			server.sendNotify(header);
+			header = server.getNotifyHeader("ssdp:alive", USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0::upnp:rootdevice"));
+			header.setLocation(getLocation());
+			server.sendNotify(header);
+			header = server.getNotifyHeader("ssdp:alive", USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0::urn:schemas-upnp-org:device:InternetGatewayDevice:1"));
+			header.setLocation(getLocation());
+			server.sendNotify(header);
+		}
+		if (line == "byebye") {
+			SSDPHeader header;
+			header = server.getNotifyHeader("ssdp:byebye", USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0::urn:schemas-upnp-org:device:InternetGatewayDevice:1"));
+			server.sendNotify(header);
+			header = server.getNotifyHeader("ssdp:byebye", USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0::upnp:rootdevice"));
+			server.sendNotify(header);
+			header = server.getNotifyHeader("ssdp:byebye", USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0"));
+			server.sendNotify(header);
 		}
 	}
 
