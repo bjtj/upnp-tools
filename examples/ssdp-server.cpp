@@ -21,7 +21,7 @@ static const char * dd =
 "<minor>0</minor>\n"
 "</specVersion><device>\n"
 "<deviceType>urn:schemas-upnp-org:device:InternetGatewayDevice:1</deviceType>\n"
-"<friendlyName>EFM Networks ipTIME A2004NS-R</friendlyName>\n"
+"<friendlyName>EFM Networks ipTIME A2004NS-R (COPY)</friendlyName>\n"
 "<manufacturer>EFM Networks</manufacturer>\n"
 "<manufacturerURL>www.iptime.co.kr</manufacturerURL>\n"
 "<modelDescription>EFM Networks ipTIME A2004NS-R IUX</modelDescription>\n"
@@ -32,7 +32,7 @@ static const char * dd =
 "<presentationURL>http://192.168.0.1/</presentationURL>\n"
 "<UDN>uuid:fc4ec57e-b051-11db-88f8-0060085db3f0</UDN>\n"
 "<serviceList>\n"
-"</serviceList></device></deviceList></device></deviceList></device></root>\n";
+"</serviceList></device></root>\n";
 
 /**
  * 
@@ -51,7 +51,8 @@ public:
 		httpHeader.setPart2("200"); 
 		httpHeader.setPart3("OK");		
 		httpHeader.setHeaderField("LOCATION", "http://" + NetworkUtil::selectDefaultAddress().getHost() + ":9000/");
-		httpHeader.setHeaderField("USN", "uuid:fc4ec57e-b051-11db-88f8-0060085db3f0::upnp:rootdevice");
+		//httpHeader.setHeaderField("USN", "uuid:fc4ec57e-b051-11db-88f8-0060085db3f0::upnp:rootdevice");
+		httpHeader.setHeaderField("USN", "uuid:fc4ec57e-b051-11db-88f8-0060085db3f0");
 		httpHeader.setHeaderField("ST", "upnp:rootdevice");
 		httpHeader.setHeaderField("CACHE-CONTROL", "max-age=120");
 		httpHeader.setHeaderField("EXT", "");
