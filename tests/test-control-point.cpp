@@ -15,15 +15,18 @@ using namespace SSDP;
 
 class RequestHandler : public HttpRequestHandler, public WebServerUtil {
 private:
-	string _udn;
+	UuidGeneratorVersion1 gen;
+	string _uuid;
 	string dummy;
 public:
     RequestHandler() {
-		UuidGeneratorVersion1 gen;
-		_udn = gen.generate();
+		genUuid();
 		dummy = "urn:schemas-dummy-com:service:Dummy:1";
 	}
     virtual ~RequestHandler() {}
+	void genUuid() {
+		_uuid = gen.generate();
+	}
 	virtual AutoRef<DataSink> getDataSink() {
 		return AutoRef<DataSink>(new StringDataSink);
 	}
@@ -32,8 +35,8 @@ public:
 		if (request.getPath() == "/device.xml") {
 			response.setStatus(200);
 			response.setContentType("text/xml");
-			setFixedTransfer(response, dd(_udn));
-		} else if (request.getRawPath() == "/scpd.xml?udn=" + _udn + "&serviceType=" + dummy) {
+			setFixedTransfer(response, dd(_uuid));
+		} else if (request.getRawPath() == "/scpd.xml?udn=uuid:" + _uuid + "&serviceType=" + dummy) {
 			response.setStatus(200);
 			response.setContentType("text/xml");
 			setFixedTransfer(response, scpd());
@@ -41,8 +44,8 @@ public:
 			response.setStatus(404);
 		}
 	}
-	string udn() {
-		return _udn;
+	string & uuid() {
+		return _uuid;
 	}
 	SSDPHeader getSSDPHeader() {
 		OS::InetAddress addr;
@@ -50,12 +53,11 @@ public:
 						  "HOST: 239.255.255.250:1900\r\n"
 						  "Location: http://127.0.0.1:9998/device.xml\r\n"
 						  "NTS: ssdp:alive\r\n"
-						  "USN: uuid:" + _udn + "::rootdevice\r\n"
+						  "USN: uuid:" + _uuid + "::rootdevice\r\n"
 						  "\r\n", addr);
 		return header;
 	}
-	string dd(string udn) {
-		
+	string dd(const string & uuid) {
 		string xml = "<?xml version=\"1.0\"?>"
 			"<root xmlns=\"urn:schemas-upnp-org:device-1-0\">"
 			"<specVersion>"
@@ -71,14 +73,14 @@ public:
 			"<modelNumber>1</modelNumber>"
 			"<modelURL>www.example.com</modelURL>"
 			"<serialNumber>12345678</serialNumber>"
-			"<UDN>uuid:" + udn + "</UDN>"
+			"<UDN>uuid:" + uuid + "</UDN>"
 			"<serviceList>"
 			"<service>"
 			"<serviceType>urn:schemas-dummy-com:service:Dummy:1</serviceType>"
 			"<serviceId>urn:dummy-com:serviceId:dummy1</serviceId>"
-			"<controlURL>/control?udn=" + udn + "&amp;serviceType=" + dummy + "</controlURL>"
-			"<eventSubURL>/event?udn=" + udn + "&amp;serviceType=" + dummy + "</eventSubURL>"
-			"<SCPDURL>/scpd.xml?udn=" + udn + "&amp;serviceType=" + dummy + "</SCPDURL>"
+			"<controlURL>/control?udn=uuid:" + uuid + "&amp;serviceType=" + dummy + "</controlURL>"
+			"<eventSubURL>/event?udn=uuid:" + uuid + "&amp;serviceType=" + dummy + "</eventSubURL>"
+			"<SCPDURL>/scpd.xml?udn=uuid:" + uuid + "&amp;serviceType=" + dummy + "</SCPDURL>"
 			"</service></serviceList>"
 			"</root>";
 
@@ -117,7 +119,7 @@ public:
 	}
 };
 
-static map<string, AutoRef<UPnPDevice> > s_device_list;
+static map< UDN, AutoRef<UPnPDevice> > s_device_list;
 
 class DeviceListener : public UPnPDeviceListener {
 private:
@@ -125,14 +127,12 @@ public:
     DeviceListener() {}
     virtual ~DeviceListener() {}
 	virtual void onDeviceAdded(AutoRef<UPnPDevice> device) {
-		Uuid uuid(device->getUdn());
-		cout << " ** added : " << uuid.getUuid() << endl;
-		s_device_list[uuid.getUuid()] = device;
+		cout << " ** added : " << device->getUdn().toString() << endl;
+		s_device_list[device->getUdn()] = device;
 	}
 	virtual void onDeviceRemoved(AutoRef<UPnPDevice> device) {
-		Uuid uuid(device->getUdn());
-		cout << " ** removed : " << uuid.getUuid() << endl;
-		s_device_list.erase(uuid.getUuid());
+		cout << " ** removed : " << device->getUdn().toString() << endl;
+		s_device_list.erase(device->getUdn());
 	}
 };
 
@@ -149,15 +149,23 @@ static void test_control_point() {
 	cp.setDeviceListener(AutoRef<UPnPDeviceListener>(new DeviceListener));
 	cp.startAsync();
 
-	SSDPHeader header = ((RequestHandler*)&handler)->getSSDPHeader();
-	cp.addDevice(header);
-
+	// first device
+	cp.addDevice(((RequestHandler*)&handler)->getSSDPHeader());
 	idle(100);
-
-	string udn = ((RequestHandler*)&handler)->udn();
-	cout << " ** test udn : " << udn << endl;
+	string uuid = ((RequestHandler*)&handler)->uuid();
+	UDN udn("uuid:" + uuid);
+	cout << " ** test uuid : " << uuid << endl;
 	ASSERT(s_device_list.size(), ==, 1);
-	ASSERT(s_device_list[udn]->getUdn(), ==, "uuid:" + udn);
+	ASSERT(s_device_list[udn]->getUdn().toString(), ==, ("uuid:" + uuid));
+
+	// second device
+	((RequestHandler*)&handler)->genUuid();
+	cp.addDevice(((RequestHandler*)&handler)->getSSDPHeader());
+	idle(100);
+	uuid = ((RequestHandler*)&handler)->uuid();
+	udn = UDN("uuid:" + uuid);
+	ASSERT(s_device_list.size(), ==, 2);
+	ASSERT(s_device_list[udn]->getUdn().toString(), ==, ("uuid:" + uuid));
 
 	cp.stop();
 	server.stop();

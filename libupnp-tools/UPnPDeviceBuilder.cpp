@@ -11,12 +11,15 @@ namespace UPNP {
 	using namespace UTIL;
 
 	UPnPDeviceBuilder::UPnPDeviceBuilder(const Url & url)
-		: _url(url) {
+		: _url(url), _allow_fail_scpd(false) {
 	}
 	UPnPDeviceBuilder::~UPnPDeviceBuilder() {
 	}
 	Url & UPnPDeviceBuilder::url() {
 		return _url;
+	}
+	bool & UPnPDeviceBuilder::allow_fail_scpd() {
+		return _allow_fail_scpd;
 	}
 	AutoRef<UPnPDevice> & UPnPDeviceBuilder::device() {
 		return _device;
@@ -31,7 +34,14 @@ namespace UPNP {
 		_device->baseUrl() = _url;
 		vector<UPnPService*> services = _device->allServices();
 		for (vector<UPnPService*>::iterator iter = services.begin(); iter != services.end(); iter++) {
-			(*iter)->scpd() = deserializer.parseScpdXml(resMan.getResourceContent(_url.relativePath((*iter)->scpdUrl())));
+			try {
+				(*iter)->scpd() = deserializer.parseScpdXml(
+					resMan.getResourceContent(_url.relativePath((*iter)->scpdUrl())));
+			} catch (Exception e) {
+				if(_allow_fail_scpd == false) {
+					throw e;
+				}
+			}
 		}
 		return _device;
 	}

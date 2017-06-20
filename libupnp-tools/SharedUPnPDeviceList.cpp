@@ -27,7 +27,7 @@ namespace UPNP {
 		unlock();
 		return ret;
 	}
-	AutoRef<UPnPDevice> SharedUPnPDeviceList::findByUdn(const string & udn) {
+	AutoRef<UPnPDevice> SharedUPnPDeviceList::findByUdn(const UDN & udn) {
 		AutoRef<UPnPDevice> ret;
 		for (vector<AutoRef<UPnPDevice> >::iterator iter = _devices.begin(); iter != _devices.end(); iter++) {
 			if ((*iter)->getUdn() == udn) {
@@ -36,7 +36,7 @@ namespace UPNP {
 		}
 		return ret;
 	}
-	AutoRef<UPnPDevice> SharedUPnPDeviceList::findByUdn_s(const string & udn) {
+	AutoRef<UPnPDevice> SharedUPnPDeviceList::findByUdn_s(const UDN & udn) {
 		lock();
 		AutoRef<UPnPDevice> ret = findByUdn(udn);
 		unlock();

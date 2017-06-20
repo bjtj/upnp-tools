@@ -15,7 +15,7 @@ namespace UPNP {
 	string & UPnPEventSubscription::sid() {
 		return _sid;
 	}
-	string & UPnPEventSubscription::udn() {
+	UDN & UPnPEventSubscription::udn() {
 		return _udn;
 	}
 	string & UPnPEventSubscription::serviceType() {

@@ -15,10 +15,10 @@ namespace SSDP {
 		SSDPEventListener() {}
 		virtual ~SSDPEventListener() {}
 
-        virtual bool filter(SSDPHeader & header) {return true;}
-		virtual void onMsearch(SSDPHeader & header) {}
-		virtual void onNotify(SSDPHeader & header) {}
-		virtual void onMsearchResponse(SSDPHeader & header) {}
+        virtual bool filter(const SSDPHeader & header) {return true;}
+		virtual void onMsearch(const SSDPHeader & header) {}
+		virtual void onNotify(const SSDPHeader & header) {}
+		virtual void onMsearchResponse(const SSDPHeader & header) {}
 
 		void dispatch(SSDPHeader & header) {
 			if (filter(header)) {

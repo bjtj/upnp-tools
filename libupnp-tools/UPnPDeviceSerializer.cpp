@@ -1,7 +1,6 @@
 #include "UPnPDeviceSerializer.hpp"
 #include "XmlUtils.hpp"
 #include <liboslayer/Text.hpp>
-#include <iostream>
 
 namespace UPNP {
 

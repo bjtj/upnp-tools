@@ -8,6 +8,7 @@
 #include <liboslayer/XmlParser.hpp>
 #include <liboslayer/FileStream.hpp>
 #include <liboslayer/Uuid.hpp>
+#include <liboslayer/Logger.hpp>
 #include <libupnp-tools/UPnPControlPoint.hpp>
 #include <libupnp-tools/UPnPActionInvoker.hpp>
 #include <libupnp-tools/UPnPActionRequest.hpp>
@@ -22,6 +23,10 @@ using namespace UTIL;
 using namespace UPNP;
 using namespace HTTP;
 using namespace XML;
+
+// #define _DEBUG
+
+static AutoRef<Logger> logger = LoggerFactory::getInstance().getObservingLogger(__FILE__);
 
 class MyEventListener : public UPnPEventListener {
 private:
@@ -42,6 +47,10 @@ public:
 static int run(int argc, char *args[]);
 
 int main(int argc, char *args[]) {
+
+#if defined(_DEBUG)
+	LoggerFactory::getInstance().setLoggerDescriptorSimple("*", "basic", "console");
+#endif
 
 	try {
 		return run(argc, args);
@@ -91,7 +100,7 @@ public:
 
 		str.append(depth, ' ');
 		if (depth > 0) { str.append(" - "); }
-		str.append(device->getFriendlyName() + " (" + device->getUdn() + ")");
+		str.append(device->getFriendlyName() + " (" + device->getUdn().str() + ")");
 
 		vector<AutoRef<UPnPService> > services = device->services();
 		for (vector<AutoRef<UPnPService> >::iterator iter = services.begin(); iter != services.end(); iter++) {
@@ -117,18 +126,16 @@ public:
 
 	string toBriefString() {
 		if (device.nil()) {
-			return "";
+			return "(n/a)";
 		}
 		return toBriefString(device, 0);
 	}
 
 	string toBriefString(AutoRef<UPnPDevice> device, int depth) {
 		string str;
-
 		str.append(depth, ' ');
 		if (depth > 0) { str.append("  - "); }
-		str.append(device->getFriendlyName() + " (" + device->getUdn() + ")");
-
+		str.append(device->getFriendlyName() + " (" + device->getUdn().str() + ")");
 		vector<AutoRef<UPnPDevice> > & devices = device->childDevices();
 		for (vector<AutoRef<UPnPDevice> >::iterator iter = devices.begin(); iter != devices.end(); iter++) {
 			str.append("\n");
@@ -139,9 +146,7 @@ public:
 };
 
 static void printList(const vector<AutoRef<UPnPDevice> > & devices) {
-
 	cout << " == Device List (" << devices.size() << ") ==" << endl;
-	
 	size_t i = 0;
 	for (vector<AutoRef<UPnPDevice> >::const_iterator iter = devices.begin();
 		 iter != devices.end(); iter++, i++) {
@@ -185,13 +190,13 @@ public:
  */
 class Session {
 private:
-	string _udn;
+	UDN _udn;
 	string _serviceType;
 	string _action;
 public:
     Session() {}
     virtual ~Session() {}
-	string & udn() {return _udn;}
+	UDN & udn() {return _udn;}
 	string & serviceType() {return _serviceType;}
 	string & action() {return _action;}
 };
@@ -201,10 +206,10 @@ static string s_str(const string & s, const string & e) {
 }
 
 static void printSession(Session & session) {
-	cout << " << Session >>" << endl;
-	cout << "  |UDN: " << s_str(session.udn(), "(none)") << endl;
-	cout << "  |Service: " << s_str(session.serviceType(), "(none)") << endl;
-	cout << "  |Action: " << s_str(session.action(), "(none)") << endl;
+	cout << " -- Session --" << endl;
+	cout << " |UDN: " << s_str(session.udn().toString(), "(none)") << endl;
+	cout << " |Service: " << s_str(session.serviceType(), "(none)") << endl;
+	cout << " |Action: " << s_str(session.action(), "(none)") << endl;
 }
 
 /**
@@ -246,10 +251,9 @@ int run(int argc, char *args[]) {
 		if ((line = readline()).size() == 0) {
 			printList(cp.getDevices());
 			cout << endl;
-			printSession(session);			
+			printSession(session);
 			continue;
-		}
-		
+		}		
 		if (line == "q" || line == "quit") {
 			cout << "[quit]" << endl;
 			break;
@@ -260,13 +264,13 @@ int run(int argc, char *args[]) {
 			cout << "idx : " << idx << endl;
 			AutoRef<UPnPDevice> device = selectDeviceByIndex(cp.getDevices(), (size_t)idx);
 			if (device.nil() == false) {
-				session.udn() = Uuid(device->getUdn()).getUuid();
-				cout << "[SET UDN: " << session.udn() << "]" << endl;
+				session.udn() = device->getUdn();
+				cout << "* SET UDN> " << session.udn().toString() << endl;
 			}
 		} else if (Text::startsWith(line, "udn ")) {
-			session.udn() = Uuid(line.substr(4)).getUuid();
+			session.udn() = UDN(line.substr(4));
 		} else if (line == "udn") {
-			cout << "[UDN: " << session.udn() << "]" << endl;
+			cout << "[UDN: " << session.udn().toString() << "]" << endl;
 		} else if (Text::startsWith(line, "service ")) {
 			session.serviceType() = line.substr(8);
 		} else if (line == "service") {
@@ -315,41 +319,29 @@ int run(int argc, char *args[]) {
 		} else if (line == "subs") {
 			// TODO: subscription list
 		} else if (line == "sub") {
-
 			if (session.udn().empty() || session.serviceType().empty()) {
 				throw "[error: select udn and sevice first]";
 			}
-
-			cout << "[Subscribe - " << session.udn() << " // " << session.serviceType() << "]" << endl;
+			cout << "[Subscribe - " << session.udn().toString() << " // " << session.serviceType() << "]" << endl;
 			cp.subscribe(session.udn(), session.serviceType());
-
 		} else if (line == "unsub") {
-
 			if (session.udn().empty() || session.serviceType().empty()) {
 				throw "[error: select udn and sevice first]";
 			}
-
-			cout << "[Unsubscribe - " << session.udn() << " .. " << session.serviceType() << "]" <<endl;
+			cout << "[Unsubscribe - " << session.udn().toString() << " .. " << session.serviceType() << "]" <<endl;
 			cp.unsubscribe(session.udn(), session.serviceType());
-
 		} else if (line == "shared") {
-
 			vector<AutoRef<UPnPDevice> > devices = list->list_s();
-
 			for (vector<AutoRef<UPnPDevice> >::iterator iter = devices.begin(); iter != devices.end(); iter++) {
 				cout << " * " << (*iter)->getFriendlyName() << endl;
 			}
-
 		} else if (line == "dump") {
-
 			if (session.udn().empty()) {
 				throw "[error: select udn first]";
 			}
-
 			Url url = cp.getBaseUrlByUdn(session.udn());
 			string dd = HttpUtils::httpGet(url);
 			cout << dd << endl;
-
 			if (!session.serviceType().empty()) {
 				AutoRef<UPnPService> service = cp.getServiceByUdnAndServiceType(session.udn(), session.serviceType());
 				if (!service.nil()) {
@@ -364,11 +356,8 @@ int run(int argc, char *args[]) {
 			cp.sendMsearchAsync(line, 3);
 		}
 	}
-
 	cp.stop();
 	out.close();
-
 	cout << "[bye]" << endl;
-
     return 0;
 }

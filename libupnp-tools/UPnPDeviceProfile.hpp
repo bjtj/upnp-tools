@@ -6,6 +6,7 @@
 #include <map>
 #include "UPnPModels.hpp"
 #include "UPnPServiceProfile.hpp"
+#include "UPnPTerms.hpp"
 
 namespace UPNP {
 
@@ -14,7 +15,7 @@ namespace UPNP {
 	 */
 	class UPnPDeviceProfile {
 	private:
-		std::string _uuid;
+		UDN _udn;
 		std::string _deviceDescription;
 		std::vector<std::string> _deviceTypes;
 		std::vector<UPnPServiceProfile> _serviceProfiles;
@@ -22,8 +23,8 @@ namespace UPNP {
 	public:
 		UPnPDeviceProfile();
 		virtual ~UPnPDeviceProfile();
-		std::string & uuid();
-		std::string const_uuid() const;
+		UDN & udn();
+		UDN const_udn() const;
 		std::string & deviceDescription();
 		std::string const_deviceDescription() const;
 		std::vector<std::string> & deviceTypes();

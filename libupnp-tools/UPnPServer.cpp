@@ -55,89 +55,87 @@ namespace UPNP {
 	}
 	UPnPDeviceProfileSessionManager::~UPnPDeviceProfileSessionManager() {
 	}
-	map<string, AutoRef<UPnPDeviceProfileSession> > & UPnPDeviceProfileSessionManager::sessions() {
+	map< UDN, AutoRef<UPnPDeviceProfileSession> > & UPnPDeviceProfileSessionManager::sessions() {
 		return _sessions;
 	}
 	vector<AutoRef<UPnPDeviceProfileSession> > UPnPDeviceProfileSessionManager::sessionList() {
 		vector<AutoRef<UPnPDeviceProfileSession> > ret;
-		for (map<string, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin(); iter != _sessions.end(); iter++) {
+		for (map<UDN, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin(); iter != _sessions.end(); iter++) {
 			ret.push_back(iter->second);
 		}
 		return ret;
 	}
 
 	void UPnPDeviceProfileSessionManager::registerProfile(const UPnPDeviceProfile & profile) {
-		registerProfile(profile.const_uuid(), profile);
+		registerProfile(profile.const_udn(), profile);
 	}
 
-	void UPnPDeviceProfileSessionManager::registerProfile(const string & uuid, const UPnPDeviceProfile & profile) {
-		_sessions[uuid] = AutoRef<UPnPDeviceProfileSession>(new UPnPDeviceProfileSession(profile));
+	void UPnPDeviceProfileSessionManager::registerProfile(const UDN & udn, const UPnPDeviceProfile & profile) {
+		_sessions[udn] = AutoRef<UPnPDeviceProfileSession>(new UPnPDeviceProfileSession(profile));
 	}
 
-	void UPnPDeviceProfileSessionManager::unregisterProfile(const string & uuid) {
-		_sessions.erase(uuid);
+	void UPnPDeviceProfileSessionManager::unregisterProfile(const UDN & udn) {
+		_sessions.erase(udn);
 	}
 
 	vector<string> UPnPDeviceProfileSessionManager::getAllTypes() {
 		vector<string> types;
-		for (map<string, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin();
+		for (map<UDN, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin();
 			 iter != _sessions.end(); iter++) {
 			AutoRef<UPnPDeviceProfileSession> & session = iter->second;
-			Uuid uuid(session->profile().uuid());
-			string udn = uuid.toString();
-			types.push_back(udn);
-			uuid.setRest("upnp:rootdevice");
-			types.push_back(uuid.toString());
+
+			UPNP::USN usn(session->profile().udn().toString());
+			types.push_back(usn.toString());
+			usn.rest() = "upnp:rootdevice";
+			types.push_back(usn.toString());
 			vector<string> & deviceTypes = session->profile().deviceTypes();
 			for (vector<string>::iterator iter = deviceTypes.begin(); iter != deviceTypes.end(); iter++) {
-				uuid.setRest(*iter);
-				types.push_back(uuid.toString());
+				usn.rest() = (*iter);
+				types.push_back(usn.toString());
 			}
 			vector<UPnPServiceProfile> & serviceProfiles = session->profile().serviceProfiles();
 			for (vector<UPnPServiceProfile>::iterator iter = serviceProfiles.begin(); iter != serviceProfiles.end(); iter++) {
-				uuid.setRest(iter->serviceType());
-				types.push_back(uuid.toString());
+				usn.rest() = (iter->serviceType());
+				types.push_back(usn.toString());
 			}
-			
 		}
 		return types;
 	}
 	
 	vector<string> UPnPDeviceProfileSessionManager::getTypes(const string & st) {
 		vector<string> types;
-		for (map<string, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin();
+		for (map<UDN, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin();
 			 iter != _sessions.end(); iter++) {
 			AutoRef<UPnPDeviceProfileSession> & session = iter->second;
-			Uuid uuid(session->profile().uuid());
-			string udn = uuid.toString();
+			UPNP::USN usn(session->profile().udn().toString());
 			if (st == "upnp:rootdevice") {
-				uuid.setRest("upnp:rootdevice");
-				types.push_back(uuid.toString());
+				usn.rest() = "upnp:rootdevice";
+				types.push_back(usn.toString());
 				continue;
 			}
-			if (Text::startsWith(st, "uuid:") && udn == Uuid(st).toString()) {
-				types.push_back(udn);
+			if (Text::startsWith(st, "uuid:") && usn.uuid() == UPNP::USN(st).uuid()) {
+				types.push_back("uuid:" + usn.uuid());
 				continue;
 			}
 			if (session->profile().hasDeviceType(st)) {
-				uuid.setRest(st);
-				types.push_back(uuid.toString());
+				usn.rest() = st;
+				types.push_back(usn.toString());
 				continue;
 			}
 			if (session->profile().hasServiceByServiceType(st)) {
-				uuid.setRest(st);
-				types.push_back(uuid.toString());
+				usn.rest() = st;
+				types.push_back(usn.toString());
 				continue;
 			}
 		}
 		return types;
 	}
 
-	bool UPnPDeviceProfileSessionManager::hasDeviceProfileSessionByUuid(const string & uuid) {
-		for (map<string, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin();
+	bool UPnPDeviceProfileSessionManager::hasDeviceProfileSessionByUDN(const UDN & udn) {
+		for (map<UDN, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin();
 			 iter != _sessions.end(); iter++) {
 			AutoRef<UPnPDeviceProfileSession> session = iter->second;
-			if (session->profile().uuid() == uuid) {
+			if (session->profile().udn() == udn) {
 				return true;
 			}
 		}
@@ -145,7 +143,7 @@ namespace UPNP {
 	}
 	
 	bool UPnPDeviceProfileSessionManager::hasDeviceProfileSessionByScpdUrl(const string & scpdUrl) {
-		map<string, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin();
+		map<UDN, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin();
 		for (; iter != _sessions.end(); iter++) {
 			AutoRef<UPnPDeviceProfileSession> session = iter->second;
 			if (session->profile().hasServiceByScpdUrl(scpdUrl)) {
@@ -156,7 +154,7 @@ namespace UPNP {
 	}
 	
 	bool UPnPDeviceProfileSessionManager::hasDeviceProfileSessionByControlUrl(const string & controlUrl) {
-		for (map<string, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin(); iter != _sessions.end(); iter++) {
+		for (map<UDN, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin(); iter != _sessions.end(); iter++) {
 			AutoRef<UPnPDeviceProfileSession> session = iter->second;
 			if (session->profile().hasServiceByControlUrl(controlUrl)) {
 				return true;
@@ -166,7 +164,7 @@ namespace UPNP {
 	}
 	
 	bool UPnPDeviceProfileSessionManager::hasDeviceProfileSessionByEventSubUrl(const string & eventSubUrl) {
-		for (map<string, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin(); iter != _sessions.end(); iter++) {
+		for (map<UDN, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin(); iter != _sessions.end(); iter++) {
 			AutoRef<UPnPDeviceProfileSession> session = iter->second;
 			if (session->profile().hasServiceByEventSubUrl(eventSubUrl)) {
 				return true;
@@ -175,34 +173,34 @@ namespace UPNP {
 		return false;
 	}
 	
-	AutoRef<UPnPDeviceProfileSession> UPnPDeviceProfileSessionManager::getDeviceProfileSessionByUuid(const string & uuid) {
-		for (map<string, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin(); iter != _sessions.end(); iter++) {
+	AutoRef<UPnPDeviceProfileSession> UPnPDeviceProfileSessionManager::getDeviceProfileSessionByUDN(const UDN & udn) {
+		for (map<UDN, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin(); iter != _sessions.end(); iter++) {
 			AutoRef<UPnPDeviceProfileSession> session = iter->second;
-			if (session->profile().uuid() == uuid) {
+			if (session->profile().udn() == udn) {
 				return iter->second;
 			}
 		}
-		throw Exception("not found deivce profile session");
+		throw Exception("not found device profile session by udn");
 	}
 	
 	AutoRef<UPnPDeviceProfileSession> UPnPDeviceProfileSessionManager::getDeviceProfileSessionHasScpdUrl(const string & scpdUrl) {
-		for (map<string, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin(); iter != _sessions.end(); iter++) {
+		for (map< UDN, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin(); iter != _sessions.end(); iter++) {
 			AutoRef<UPnPDeviceProfileSession> session = iter->second;
 			if (session->profile().hasServiceByScpdUrl(scpdUrl)) {
 				return iter->second;
 			}
 		}
-		throw Exception("not found deivce profile session");
+		throw Exception("not found device profile session by scpd url");
 	}
 	
 	AutoRef<UPnPDeviceProfileSession> UPnPDeviceProfileSessionManager::getDeviceProfileSessionHasEventSubUrl(const string & eventSubUrl) {
-		for (map<string, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin(); iter != _sessions.end(); iter++) {
+		for (map<UDN, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin(); iter != _sessions.end(); iter++) {
 			AutoRef<UPnPDeviceProfileSession> session = iter->second;
 			if (session->profile().hasServiceByEventSubUrl(eventSubUrl)) {
 				return iter->second;
 			}
 		}
-		throw Exception("not found deivce profile session");
+		throw Exception("not found device profile session by event sub url");
 	}
 
 	/**
@@ -289,7 +287,7 @@ namespace UPNP {
 		 *  Host: 239.255.255.250:1900
 		 *  Connection: close
 		 */
-		virtual void onMsearch(SSDPHeader & header) {
+		virtual void onMsearch(const SSDPHeader & header) {
 
 			if (header.getHeaderFieldIgnoreCase("MX").empty() ||
 				header.getHeaderFieldIgnoreCase("MAN").empty()) {
@@ -297,7 +295,7 @@ namespace UPNP {
 			}
 			
 			InetAddress remoteAddr = header.getRemoteAddr();
-			server.respondMsearch(header.getSt(), remoteAddr);
+			server.respondMsearch(header.getSearchTarget(), remoteAddr);
 		}
 	};
 
@@ -409,19 +407,19 @@ namespace UPNP {
 		}
 
 		void onDeviceDescriptionRequest(HttpRequest & request, HttpResponse & response) {
-			if (!server.getProfileManager().hasDeviceProfileSessionByUuid(request.getParameter("udn"))) {
+			UDN udn(request.getParameter("udn"));
+			if (!server.getProfileManager().hasDeviceProfileSessionByUDN(udn)) {
 				throw HttpException(404);
 			}
-			AutoRef<UPnPDeviceProfileSession> session =
-				server.getProfileManager().getDeviceProfileSessionByUuid(request.getParameter("udn"));
+			AutoRef<UPnPDeviceProfileSession> session = server.getProfileManager()
+				.getDeviceProfileSessionByUDN(udn);
 			if (!session->isEnabled()) {
 				throw HttpException(404);
 			}
 				
 			response.setStatus(200);
 			response.setContentType("text/xml; charset=\"utf-8\"");
-			UPnPDeviceProfile profile = server.getProfileManager().
-				getDeviceProfileSessionByUuid(request.getParameter("udn"))->profile();
+			UPnPDeviceProfile profile = server.getProfileManager().getDeviceProfileSessionByUDN(udn)->profile();
 			setFixedTransfer(response, profile.deviceDescription());
 
 			if (server.getHttpEventListener().nil() == false) {
@@ -658,31 +656,24 @@ namespace UPNP {
 		return httpServer;
 	}
 
-	string UPnPServer::makeLocation(const string & uuid) {
+	string UPnPServer::makeLocation(const UDN & udn) {
 		Url url;
 		url.setProtocol("http");
 		url.setHost(NetworkUtil::selectDefaultAddress().getHost());
 		url.setPort(config["listen.port"]);
 		url.setPath("device.xml");
-		url.setParameter("udn", uuid);
+		url.setParameter("udn", udn.toString());
 		return url.toString();
 	}
 
-	void UPnPServer::setEnableDevice(const string & udn, bool enable) {
-		
-		Uuid uuid(udn);
-		
-		getProfileManager().getDeviceProfileSessionByUuid(uuid.getUuid())->
-			setEnable(enable);
-		
+	void UPnPServer::setEnableDevice(const UDN & udn, bool enable) {
+		getProfileManager().getDeviceProfileSessionByUDN(udn)->setEnable(enable);
 		if (enable) {
 			notifyAlive(getProfileManager().
-						getDeviceProfileSessionByUuid(uuid.getUuid())->
-						profile());
+						getDeviceProfileSessionByUDN(udn)->profile());
 		} else {
 			notifyByeBye(getProfileManager().
-						 getDeviceProfileSessionByUuid(uuid.getUuid())->
-						 profile());
+						 getDeviceProfileSessionByUDN(udn)->profile());
 		}
 	}
 
@@ -705,8 +696,8 @@ namespace UPNP {
 	}
 
 	void UPnPServer::notifyAliveAll() {
-		vector<AutoRef<UPnPDeviceProfileSession> > sessions = profileManager.sessionList();
-		for (vector<AutoRef<UPnPDeviceProfileSession> >::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
+		vector< AutoRef<UPnPDeviceProfileSession> > sessions = profileManager.sessionList();
+		for (vector< AutoRef<UPnPDeviceProfileSession> >::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
 			if ((*iter)->isEnabled()) {
 				notifyAlive((*iter)->profile());
 			}
@@ -717,50 +708,50 @@ namespace UPNP {
 		SSDPMsearchSender sender;
 		string host = "239.255.255.250";
 		int port = 1900;
-		string uuid = profile.uuid();
-		string location = makeLocation(profile.uuid());
-		sender.sendMcastToAllInterfaces(makeNotifyAlive(location, uuid, "upnp:rootdevice"),
+		UDN udn = profile.udn();
+		string location = makeLocation(udn);
+		sender.sendMcastToAllInterfaces(makeNotifyAlive(location, udn, "upnp:rootdevice"),
 										host, port);
-		sender.sendMcastToAllInterfaces(makeNotifyAlive(location, uuid, ""),
+		sender.sendMcastToAllInterfaces(makeNotifyAlive(location, udn, ""),
 										host, port);
 		vector<string> & deviceTypes = profile.deviceTypes();
 		for (vector<string>::iterator iter = deviceTypes.begin();
 			 iter != deviceTypes.end(); iter++) {
-			sender.sendMcastToAllInterfaces(makeNotifyAlive(location, uuid, *iter),	host, port);
+			sender.sendMcastToAllInterfaces(makeNotifyAlive(location, udn, *iter),	host, port);
 		}
 		vector<UPnPServiceProfile> & serviceProfiles = profile.serviceProfiles();
 		for (vector<UPnPServiceProfile>::iterator iter = serviceProfiles.begin();
 			 iter != serviceProfiles.end(); iter++) {
-			sender.sendMcastToAllInterfaces(makeNotifyAlive(location, uuid, iter->serviceType()), host, port);
+			sender.sendMcastToAllInterfaces(makeNotifyAlive(location, udn, iter->serviceType()), host, port);
 		}
 		sender.close();
 	}
 	
 	void UPnPServer::notifyAliveByDeviceType(UPnPDeviceProfile & profile, const string & deviceType) {
 
-		string uuid = profile.uuid();
-		string location = makeLocation(profile.uuid());
+		UDN udn = profile.udn();
+		string location = makeLocation(udn);
 		
 		SSDPMsearchSender sender;
-		string packet = makeNotifyAlive(location, uuid, deviceType);
+		string packet = makeNotifyAlive(location, udn, deviceType);
 		debug("ssdp:notify-alive", packet);
 		sender.sendMcastToAllInterfaces(packet, "239.255.255.250", 1900);
 		sender.close();
 	}
 	
-	string UPnPServer::makeNotifyAlive(const string & location, const string & uuid, const string & deviceType) {
+	string UPnPServer::makeNotifyAlive(const string & location, const UDN & udn, const string & deviceType) {
 
-		Uuid u(uuid);
-		u.setRest(deviceType);
+		UPNP::USN usn(udn.toString());
+		usn.rest() = deviceType;
 		
 		return "NOTIFY * HTTP/1.1\r\n"
 			"Cache-Control: max-age=1800\r\n"
 			"HOST: 239.255.255.250:1900\r\n"
 			"Location: " + location + "\r\n"
-			"NT: " + (deviceType.empty() ? u.toString() : deviceType) + "\r\n"
+			"NT: " + (deviceType.empty() ? usn.toString() : deviceType) + "\r\n"
 			"NTS: ssdp:alive\r\n"
 			"Server: " + config.getProperty("server.info", DEFAULT_SERVER_INFO) + "\r\n"
-			"USN: " + u.toString() + "\r\n"
+			"USN: " + usn.toString() + "\r\n"
 			"\r\n";
 	}
 	void UPnPServer::notifyByeBye(UPnPDeviceProfile & profile) {
@@ -769,43 +760,39 @@ namespace UPNP {
 		string host = "239.255.255.250";
 		int port = 1900;
 
-		string uuid = profile.uuid();
-		string location = makeLocation(profile.uuid());
-		sender.sendMcastToAllInterfaces(makeNotifyByeBye(uuid, "upnp:rootdevice"), host, port);
-		sender.sendMcastToAllInterfaces(makeNotifyByeBye(uuid, ""), host, port);
+		UDN udn = profile.udn();
+		string location = makeLocation(udn);
+		sender.sendMcastToAllInterfaces(makeNotifyByeBye(udn, "upnp:rootdevice"), host, port);
+		sender.sendMcastToAllInterfaces(makeNotifyByeBye(udn, ""), host, port);
 
 		vector<string> & deviceTypes = profile.deviceTypes();
 		for (vector<string>::iterator iter = deviceTypes.begin(); iter != deviceTypes.end(); iter++) {
-			sender.sendMcastToAllInterfaces(makeNotifyByeBye(uuid, *iter), host, port);
+			sender.sendMcastToAllInterfaces(makeNotifyByeBye(udn, *iter), host, port);
 		}
 
 		vector<UPnPServiceProfile> & serviceProfiles = profile.serviceProfiles();
 		for (vector<UPnPServiceProfile>::iterator iter = serviceProfiles.begin(); iter != serviceProfiles.end(); iter++) {
-			sender.sendMcastToAllInterfaces(makeNotifyByeBye(uuid, iter->serviceType()), host, port);
+			sender.sendMcastToAllInterfaces(makeNotifyByeBye(udn, iter->serviceType()), host, port);
 		}
 		
 		sender.close();
 	}
 	void UPnPServer::notifyByeByeByDeviceType(UPnPDeviceProfile & profile, const string & deviceType) {
-
-		string uuid = profile.uuid();
-		
+		UDN udn = profile.udn();
 		SSDPMsearchSender sender;
-		string packet = makeNotifyByeBye(uuid, deviceType);
+		string packet = makeNotifyByeBye(udn, deviceType);
 		debug("ssdp:notify-byebye", packet);
 		sender.sendMcastToAllInterfaces(packet, "239.255.255.250", 1900);
 		sender.close();
 	}
-	string UPnPServer::makeNotifyByeBye(const string & uuid, const string & deviceType) {
-
-		Uuid u(uuid);
-		u.setRest(deviceType);
-		
+	string UPnPServer::makeNotifyByeBye(const UDN & udn, const string & deviceType) {
+		UPNP::USN usn(udn.toString());
+		usn.rest() = deviceType;
 		return "NOTIFY * HTTP/1.1\r\n"
 			"Host: 239.255.255.250:1900\r\n"
-			"NT: " + (deviceType.empty() ? u.toString() : deviceType)  + "\r\n"
+			"NT: " + (deviceType.empty() ? usn.toString() : deviceType)  + "\r\n"
 			"NTS: ssdp:byebye\r\n"
-			"USN: " + u.toString() + "\r\n"
+			"USN: " + usn.toString() + "\r\n"
 			"\r\n";
 	}
 
@@ -817,26 +804,24 @@ namespace UPNP {
 								getProfileManager().getTypes(st));
 
 		for (vector<string>::iterator iter = types.begin(); iter != types.end(); iter++) {
-			Uuid uuid(*iter);
-			string location = makeLocation(uuid.getUuid());
-			string packet = makeMsearchResponse(location, uuid.getUuid(), uuid.getRest());
+			UPNP::USN usn(*iter);
+			UDN udn("uuid:" + usn.uuid());
+			string location = makeLocation(udn);
+			string packet = makeMsearchResponse(location, udn, usn.rest());
 			debug("ssdp:response-msearch", packet);
 			sender.unicast(packet, remoteAddr);
 		}
 		sender.close();
 	}
-	string UPnPServer::makeMsearchResponse(const string & location, const string & uuid, const string & st) {
-
-		Uuid u(uuid);
-		u.setRest(st);
-		
+	string UPnPServer::makeMsearchResponse(const string & location, const UDN & udn, const string & st) {
+		UPNP::USN usn(udn.toString());
 		return "HTTP/1.1 200 OK\r\n"
 			"Cache-Control: max-age=1800\r\n"
 			"HOST: 239.255.255.250:1900\r\n"
 			"Location: " + location + "\r\n"
-			"ST: " + (st.empty() ? u.toString() : st) + "\r\n"
+			"ST: " + (st.empty() ? usn.toString() : st) + "\r\n"
 			"Server: " + config.getProperty("server.info", DEFAULT_SERVER_INFO) + "\r\n"
-			"USN: " + u.toString() + "\r\n"
+			"USN: " + usn.toString() + "\r\n"
 			"Ext: \r\n"
 			"Date: " + Date::formatRfc1123(Date::now()) + "\r\n"
 			"\r\n";
@@ -852,9 +837,9 @@ namespace UPNP {
 		registerDeviceProfile(profileBuilder.build());
 	}
 	
-	void UPnPServer::registerDeviceProfile(const string & uuid, const Url & url) {
+	void UPnPServer::registerDeviceProfile(const UDN & udn, const Url & url) {
 		UPnPDeviceBuilder builder(url);
-		UPnPDeviceProfileBuilder profileBuilder(uuid, builder.execute());
+		UPnPDeviceProfileBuilder profileBuilder(udn, builder.execute());
 		registerDeviceProfile(profileBuilder.build());
 	}
 	
@@ -862,12 +847,12 @@ namespace UPNP {
 		getProfileManager().registerProfile(profile);
 	}
 	
-	void UPnPServer::registerDeviceProfile(const string & uuid, const UPnPDeviceProfile & profile) {
-		getProfileManager().registerProfile(uuid, profile);
+	void UPnPServer::registerDeviceProfile(const UDN & udn, const UPnPDeviceProfile & profile) {
+		getProfileManager().registerProfile(udn, profile);
 	}
 
-	void UPnPServer::unregisterDeviceProfile(const string & uuid) {
-		getProfileManager().unregisterProfile(uuid);
+	void UPnPServer::unregisterDeviceProfile(const UDN & udn) {
+		getProfileManager().unregisterProfile(udn);
 	}
 	
 	void UPnPServer::setActionRequestHandler(AutoRef<UPnPActionRequestHandler> actionRequestHandler) {
@@ -890,7 +875,7 @@ namespace UPNP {
 		return propertyManager;
 	}
 
-	void UPnPServer::setProperties(const string & udn, const string & serviceType, LinkedStringMap & props) {
+	void UPnPServer::setProperties(const UDN & udn, const string & serviceType, LinkedStringMap & props) {
 		getPropertyManager().setProperties(udn, serviceType, props);
 	}
 
@@ -914,7 +899,7 @@ namespace UPNP {
 		session->sid() = sid;
 		session->callbackUrls() = callbacks;
 		session->extend(timeout);
-		session->udn() = device.const_uuid();
+		session->udn() = device.const_udn();
 		session->serviceType() = service.const_serviceType();
 
 		propertyManager.addSubscriptionSession(session);

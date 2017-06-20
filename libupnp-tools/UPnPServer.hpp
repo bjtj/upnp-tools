@@ -50,22 +50,22 @@ namespace UPNP {
 	 */
 	class UPnPDeviceProfileSessionManager {
 	private:
-		std::map<std::string, OS::AutoRef<UPnPDeviceProfileSession> > _sessions;
+		std::map< UDN, OS::AutoRef<UPnPDeviceProfileSession> > _sessions;
 	public:
 		UPnPDeviceProfileSessionManager();
 		virtual ~UPnPDeviceProfileSessionManager();
-		std::map<std::string, OS::AutoRef<UPnPDeviceProfileSession> > & sessions();
+		std::map<UDN, OS::AutoRef<UPnPDeviceProfileSession> > & sessions();
 		std::vector<OS::AutoRef<UPnPDeviceProfileSession> > sessionList();
 		void registerProfile(const UPnPDeviceProfile & profile);
-		void registerProfile(const std::string & uuid, const UPnPDeviceProfile & profile);
-		void unregisterProfile(const std::string & uuid);
+		void registerProfile(const UDN & udn, const UPnPDeviceProfile & profile);
+		void unregisterProfile(const UDN & udn);
 		std::vector<std::string> getAllTypes();
 		std::vector<std::string> getTypes(const std::string & st);
-		bool hasDeviceProfileSessionByUuid(const std::string & uuid);
+		bool hasDeviceProfileSessionByUDN(const UDN & udn);
 		bool hasDeviceProfileSessionByScpdUrl(const std::string & scpdUrl);
 		bool hasDeviceProfileSessionByControlUrl(const std::string & controlUrl);
 		bool hasDeviceProfileSessionByEventSubUrl(const std::string & eventSubUrl);
-		OS::AutoRef<UPnPDeviceProfileSession> getDeviceProfileSessionByUuid(const std::string & uuid);
+		OS::AutoRef<UPnPDeviceProfileSession> getDeviceProfileSessionByUDN(const UDN & udn);
 		OS::AutoRef<UPnPDeviceProfileSession> getDeviceProfileSessionHasScpdUrl(const std::string & scpdUrl);
 		OS::AutoRef<UPnPDeviceProfileSession> getDeviceProfileSessionHasEventSubUrl(const std::string & eventSubUrl);
 	};
@@ -116,9 +116,9 @@ namespace UPNP {
 		void startAsync();
 		void stop();
 		OS::AutoRef<HTTP::AnotherHttpServer> getHttpServer();
-		std::string makeLocation(const std::string & uuid);
+		std::string makeLocation(const UDN & udn);
 
-		void setEnableDevice(const std::string & udn, bool enable);
+		void setEnableDevice(const UDN & udn, bool enable);
 		void setEnableAllDevices(bool enable);
 
 		// announce
@@ -126,22 +126,22 @@ namespace UPNP {
 		void notifyAliveAll();
 		void notifyAlive(UPnPDeviceProfile & profile);
 		void notifyAliveByDeviceType(UPnPDeviceProfile & profile, const std::string & deviceType);
-		std::string makeNotifyAlive(const std::string & location, const std::string & uuid, const std::string & deviceType);
+		std::string makeNotifyAlive(const std::string & location, const UDN & udn, const std::string & deviceType);
 		void notifyByeBye(UPnPDeviceProfile & profile);
 		void notifyByeByeByDeviceType(UPnPDeviceProfile & profile, const std::string & deviceType);
-		std::string makeNotifyByeBye(const std::string & uuid, const std::string & deviceType);
+		std::string makeNotifyByeBye(const UDN & udn, const std::string & deviceType);
 
 		// m-search response
 		void respondMsearch(const std::string & st, OS::InetAddress & remoteAddr);
-		std::string makeMsearchResponse(const std::string & location, const std::string & uuid, const std::string & st);
+		std::string makeMsearchResponse(const std::string & location, const UDN & udn, const std::string & st);
 
 		// device profile management
 		UPnPDeviceProfileSessionManager & getProfileManager();
 		void registerDeviceProfile(const HTTP::Url & url);
-		void registerDeviceProfile(const std::string & uuid, const HTTP::Url & url);
+		void registerDeviceProfile(const UDN & udn, const HTTP::Url & url);
 		void registerDeviceProfile(const UPnPDeviceProfile & profile);
-		void registerDeviceProfile(const std::string & uuid, const UPnPDeviceProfile & profile);
-		void unregisterDeviceProfile(const std::string & uuid);
+		void registerDeviceProfile(const UDN & udn, const UPnPDeviceProfile & profile);
+		void unregisterDeviceProfile(const UDN & udn);
 
 		// application level control
 		void setActionRequestHandler(OS::AutoRef<UPnPActionRequestHandler> actionRequestHandler);
@@ -151,7 +151,7 @@ namespace UPNP {
 
 		// event notification
 		UPnPPropertyManager & getPropertyManager();
-		void setProperties(const std::string & udn, const std::string & serviceyType, UTIL::LinkedStringMap & props);
+		void setProperties(const UDN & udn, const std::string & serviceyType, UTIL::LinkedStringMap & props);
 		void notifyEvent(const std::string & sid);
 		void delayNotifyEvent(const std::string & sid, unsigned long delay);
 		std::string onSubscribe(const UPnPDeviceProfile & device, const UPnPServiceProfile & service, const std::vector<std::string> & callbacks, unsigned long timeout);

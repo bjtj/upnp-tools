@@ -13,16 +13,13 @@ namespace UPNP {
 	UPnPLocationResolver::~UPnPLocationResolver() {
 	}
 	string UPnPLocationResolver::makeScpdUrl(AutoRef<UPnPDevice> device, AutoRef<UPnPService> service) {
-		Uuid uuid(device->getUdn());
-		return "/scpd.xml/" + uuid.getUuid() + "::" + service->serviceType();
+		return "/scpd.xml/" + device->getUdn().toString() + "::" + service->serviceType();
 	}
 	string UPnPLocationResolver::makeControlUrl(AutoRef<UPnPDevice> device, AutoRef<UPnPService> service) {
-		Uuid uuid(device->getUdn());
-		return "/control/" + uuid.getUuid() + "::" + service->serviceType();
+		return "/control/" + device->getUdn().toString() + "::" + service->serviceType();
 	}
 	string UPnPLocationResolver::makeEventSubUrl(AutoRef<UPnPDevice> device, AutoRef<UPnPService> service) {
-		Uuid uuid(device->getUdn());
-		return "/event/" + uuid.getUuid() + "::" + service->serviceType();
+		return "/event/" + device->getUdn().toString() + "::" + service->serviceType();
 	}
 	string UPnPLocationResolver::generalize(const string & url) {
 		size_t s = url.find_last_of("/");

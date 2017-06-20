@@ -90,6 +90,24 @@ namespace UPNP {
 	string UDN::toString() const {
 		return _str;
 	}
+	bool UDN::operator< (const UDN & other) const {
+		return _str < other._str;
+	}
+	bool UDN::operator< (const string & str) const {
+		return _str < str;
+	}
+	bool UDN::operator> (const UDN & other) const {
+		return _str > other._str;
+	}
+	bool UDN::operator> (const string & str) const {
+		return _str > str;
+	}
+	bool UDN::operator== (const UDN & other) const {
+		return _str == other._str;
+	}
+	bool UDN::operator== (const string & str) const {
+		return _str == str;
+	}
 
 	/**
 	 * max-age

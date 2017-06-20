@@ -10,12 +10,12 @@ namespace UPNP {
 	UPnPDeviceProfile::~UPnPDeviceProfile() {
 	}
 	
-	string & UPnPDeviceProfile::uuid() {
-		return _uuid;
+	UDN & UPnPDeviceProfile::udn() {
+		return _udn;
 	}
 	
-	string UPnPDeviceProfile::const_uuid() const {
-		return _uuid;
+	UDN UPnPDeviceProfile::const_udn() const {
+		return _udn;
 	}
 	
 	string & UPnPDeviceProfile::deviceDescription() {
@@ -110,7 +110,7 @@ namespace UPNP {
 				return *iter;
 			}
 		}
-		throw OS::Exception("not found service", -1, 0);
+		throw OS::Exception("not found service");
 	}
 	
 	UPnPServiceProfile & UPnPDeviceProfile::getServiceProfileByControlUrl(const string & controlUrl) {

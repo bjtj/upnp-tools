@@ -97,7 +97,7 @@ namespace UPNP {
 		client.setRequest(method, headers);
 		client.execute();
 
-		testHttpErrorCode(handler.getResponseHeader().getStatusCode());
+		testHttpErrorCode(url, handler.getResponseHeader().getStatusCode());
 
 		return handler;
 	}
@@ -117,17 +117,17 @@ namespace UPNP {
 		client.setRequestWithFixedTransfer(method, headers, transfer, content.size());
 		client.execute();
 
-		testHttpErrorCode(handler.getResponseHeader().getStatusCode());
+		testHttpErrorCode(url, handler.getResponseHeader().getStatusCode());
 
 		return handler;
 	}
 
-	void HttpUtils::testHttpErrorCode(int code) {
+	void HttpUtils::testHttpErrorCode(const Url & url, int code) {
 		if (code / 100 != 2) {
 			string codeString = Text::toString(code);
 			string msg = HttpStatusCodes::getStatusString(code);
-			string errorMessage = "http error - " + codeString + " / " + msg;
-			throw Exception(errorMessage);
+			string errorMessage = "http error :: " + codeString + " / " + msg;
+			throw Exception(errorMessage + " / url: " + url.toString());
 		}
 	}
 	

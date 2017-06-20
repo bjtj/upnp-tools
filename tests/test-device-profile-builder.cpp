@@ -12,7 +12,7 @@ using namespace UTIL;
 using namespace HTTP;
 using namespace UPNP;
 
-static string dd(const string & udn);
+static string dd(const string & uuid);
 static string scpd_cm();
 static string scpd_cd();
 
@@ -29,17 +29,17 @@ static void test_device_profile_builder() {
 
 	UPnPDeviceBuilder builder(Url("prop:///device.xml"));
 	AutoRef<UPnPDevice> device = builder.execute();
-	UPnPDeviceProfileBuilder profileBuilder(uuid, device);
+	UPnPDeviceProfileBuilder profileBuilder(UDN("uuid:" + uuid), device);
 	UPnPDeviceProfile profile = profileBuilder.build();
 
-	ASSERT(profile.uuid(), ==, uuid);
+	ASSERT(profile.udn().toString(), ==, ("uuid:" + uuid));
 	ASSERT(profile.deviceTypes()[0], ==, "urn:schemas-upnp-org:device:MediaServer:1");
 	ASSERT(profile.serviceProfiles()[0].serviceType(), ==, "urn:schemas-upnp-org:service:ContentDirectory:1");
 	ASSERT(profile.serviceProfiles()[1].serviceType(), ==, "urn:schemas-upnp-org:service:ConnectionManager:1");
 
 	UPnPDeviceDeserializer deserializer;
 	device = deserializer.parseDeviceXml(profile.deviceDescription());
-	ASSERT(device->getUdn(), ==, "uuid:" + uuid);
+	ASSERT(device->getUdn().toString(), ==, ("uuid:" + uuid));
 }
 
 static void test_build_from_file() {
@@ -83,7 +83,7 @@ int main(int argc, char *args[]) {
 }
 
 
-static string dd(const string & udn) {
+static string dd(const string & uuid) {
 	return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n"
 		"<root xmlns=\"urn:schemas-upnp-org:device-1-0\" xmlns:dlna=\"urn:schemas-dlna-org:device-1-0\">\r\n"
 		"<specVersion>\r\n"
@@ -100,7 +100,7 @@ static string dd(const string & udn) {
 		"<modelURL>http://example.com/</modelURL>\r\n"
 		"<modelNumber>0.1</modelNumber>\r\n"
 		"<serialNumber/>\r\n"
-		"<UDN>" + udn + "</UDN>\r\n"
+		"<UDN>uuid:" + uuid + "</UDN>\r\n"
 		"<dlna:X_DLNADOC xmlns:dlna=\"urn:schemas-dlna-org:device-1-0\">DMS-1.50</dlna:X_DLNADOC>\r\n"
 		"<serviceList>\r\n"
 		"<service>\r\n"

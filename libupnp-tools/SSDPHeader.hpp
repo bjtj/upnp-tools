@@ -26,9 +26,9 @@ namespace SSDP {
 		bool isMsearch() const;
 		std::string getMethod() const;
 		std::string getUsn() const;
-		std::string getNt() const;
-		std::string getNts() const;
-		std::string getSt() const;
+		std::string getNotificationType() const;
+		std::string getNotificationSubType() const;
+		std::string getSearchTarget() const;
 		std::string getLocation() const;
 		std::string getMan() const;
 		OS::InetAddress getRemoteAddr() const;

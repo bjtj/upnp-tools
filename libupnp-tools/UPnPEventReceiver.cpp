@@ -39,7 +39,7 @@ namespace UPNP {
 		return subscriptions.find(sid) != subscriptions.end();
 	}
 	
-	UPnPEventSubscription & UPnPEventSubscriptionRegistry::findSubscriptionByUdnAndServiceType(const string & udn, const string & serviceType) {
+	UPnPEventSubscription & UPnPEventSubscriptionRegistry::findSubscriptionByUdnAndServiceType(const UDN & udn, const string & serviceType) {
 		for (map<string, UPnPEventSubscription>::iterator iter = subscriptions.begin(); iter != subscriptions.end(); iter++) {
 			if (iter->second.udn() == udn && iter->second.serviceType() == serviceType) {
 				return iter->second;
@@ -138,7 +138,7 @@ namespace UPNP {
 		listeners.push_back(listener);
 	}
 
-	UPnPEventSubscription & UPnPEventReceiver::findSubscriptionByUdnAndServiceType(const string & udn, const string & serviceType) {
+	UPnPEventSubscription & UPnPEventReceiver::findSubscriptionByUdnAndServiceType(const UDN & udn, const string & serviceType) {
 		return registry.findSubscriptionByUdnAndServiceType(udn, serviceType);
 	}
 	

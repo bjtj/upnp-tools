@@ -32,21 +32,21 @@ namespace SSDP {
 	}
 	bool SSDPHeader::isNotifyAlive() const {
 		if (Text::equalsIgnoreCase(getMethod(), "NOTIFY") &&
-			Text::equalsIgnoreCase(getNts(), "ssdp:alive")) {
+			Text::equalsIgnoreCase(getNotificationSubType(), "ssdp:alive")) {
 			return true;
 		}
 		return false;
 	}
 	bool SSDPHeader::isNotifyByebye() const {
 		if (Text::equalsIgnoreCase(getMethod(), "NOTIFY") &&
-			Text::equalsIgnoreCase(getNts(), "ssdp:byebye")) {
+			Text::equalsIgnoreCase(getNotificationSubType(), "ssdp:byebye")) {
 			return true;
 		}
 		return false;
 	}
 	bool SSDPHeader::isNotifyUpdate() const {
 		if (Text::equalsIgnoreCase(getMethod(), "NOTIFY") &&
-			Text::equalsIgnoreCase(getNts(), "ssdp:update")) {
+			Text::equalsIgnoreCase(getNotificationSubType(), "ssdp:update")) {
 			return true;
 		}
 		return false;
@@ -69,13 +69,13 @@ namespace SSDP {
 	string SSDPHeader::getUsn() const {
 		return getHeaderFieldIgnoreCase("USN");
 	}
-	string SSDPHeader::getNt() const {
+	string SSDPHeader::getNotificationType() const {
 		return getHeaderFieldIgnoreCase("NT");
 	}
-	string SSDPHeader::getNts() const {
+	string SSDPHeader::getNotificationSubType() const {
 		return getHeaderFieldIgnoreCase("NTS");
 	}
-	string SSDPHeader::getSt() const {
+	string SSDPHeader::getSearchTarget() const {
 		return getHeaderFieldIgnoreCase("ST");
 	}
 	string SSDPHeader::getLocation() const {

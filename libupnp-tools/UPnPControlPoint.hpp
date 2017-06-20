@@ -15,6 +15,7 @@
 #include "UPnPCache.hpp"
 #include "UPnPDebug.hpp"
 #include "UPnPDeviceListener.hpp"
+#include "UPnPTerms.hpp"
 
 namespace UPNP {
 
@@ -23,13 +24,13 @@ namespace UPNP {
 	 */
 	class UPnPDeviceSession : public UPnPCache {
 	private:
-		std::string _udn;
+		UDN _udn;
 		bool _completed;
 		OS::AutoRef<UPnPDevice> rootDevice;
 	public:
-		UPnPDeviceSession(const std::string & udn);
+		UPnPDeviceSession(const UDN & udn);
 		virtual ~UPnPDeviceSession();
-		std::string & udn();
+		UDN & udn();
 		bool isCompleted();
 		void setCompleted(bool completed);
 		OS::AutoRef<UPnPDevice> getRootDevice();
@@ -53,22 +54,21 @@ namespace UPNP {
 		};
 
 	private:
-		std::map<std::string, OS::AutoRef<UPnPDeviceSession> > sessions;
+		std::map< UDN, OS::AutoRef<UPnPDeviceSession> > sessions;
 		OS::AutoRef<OnSessionOutdatedListener> onSessionOutdatedListener;
 		
 	public:
 		UPnPDeviceSessionManager();
 		virtual ~UPnPDeviceSessionManager();
-		bool has(const std::string & udn);
+		bool contains(const UDN & udn);
 		void clear();
-		OS::AutoRef<UPnPDeviceSession> prepareSession(const std::string & udn);
-		void remove(const std::string & udn);
+		OS::AutoRef<UPnPDeviceSession> prepareSession(const UDN & udn);
+		void remove(const UDN & udn);
 		size_t size();
-		std::vector<std::string> getUdnS();
-		OS::AutoRef<UPnPDevice> getDevice(const std::string & udn);
+		OS::AutoRef<UPnPDevice> findDevice(const UDN & udn);
 		std::vector<OS::AutoRef<UPnPDeviceSession> > getSessions();
 		std::vector<OS::AutoRef<UPnPDevice> > getDevices();
-		OS::AutoRef<UPnPDeviceSession> operator[] (const std::string & udn);
+		OS::AutoRef<UPnPDeviceSession> operator[] (const UDN & udn);
 		void collectExpired();
 		void setOnSessionOutdatedListener(OS::AutoRef<OnSessionOutdatedListener> onSessionOutdatedListener);
 		OS::AutoRef<OnSessionOutdatedListener> getOnSessionOutdatedListener();
@@ -119,23 +119,23 @@ namespace UPNP {
 		void startAsync();
 		void stop();
 		void setDeviceListener(OS::AutoRef<UPnPDeviceListener> deviceListener);
-		void addDevice(SSDP::SSDPHeader & header);
-		void removeDevice(SSDP::SSDPHeader & header);
-		OS::AutoRef<UPnPDevice> buildDevice(SSDP::SSDPHeader & header);
+		void addDevice(const SSDP::SSDPHeader & header);
+		void removeDevice(const SSDP::SSDPHeader & header);
+		OS::AutoRef<UPnPDevice> buildDevice(const SSDP::SSDPHeader & header);
 		void onDeviceBuildCompleted(OS::AutoRef<UPnPDeviceSession> session);
 		void onDeviceBuildFailed(OS::AutoRef<UPnPDeviceSession> session);
-		OS::AutoRef<UPnPDevice> getDevice(const std::string & udn);
+		OS::AutoRef<UPnPDevice> findDevice(const UDN & udn);
 		void clearDevices();
 		void sendMsearchAndWait(const std::string & target, unsigned long timeoutSec);
 		void sendMsearchAsync(const std::string & target, unsigned long timeoutSec);
 		UPnPDeviceSessionManager & sessionManager();
 		std::vector<OS::AutoRef<UPnPDevice> > getDevices();
-		HTTP::Url getBaseUrlByUdn(const std::string & udn);
-		OS::AutoRef<UPnPService> getServiceByUdnAndServiceType(const std::string & udn, const std::string & serviceType);
-		UPnPActionInvoker prepareActionInvoke(const std::string & udn, const std::string & serviceType);
-		void subscribe(const std::string & udn, const std::string & serviceType);
-		void unsubscribe(const std::string & udn, const std::string & serviceType);
-		UPnPEventSubscriber prepareEventSubscriber(const std::string & udn, const std::string & serviceType);
+		HTTP::Url getBaseUrlByUdn(const UDN & udn);
+		OS::AutoRef<UPnPService> getServiceByUdnAndServiceType(const UDN & udn, const std::string & serviceType);
+		UPnPActionInvoker prepareActionInvoke(const UDN & udn, const std::string & serviceType);
+		void subscribe(const UDN & udn, const std::string & serviceType);
+		void unsubscribe(const UDN & udn, const std::string & serviceType);
+		UPnPEventSubscriber prepareEventSubscriber(const UDN & udn, const std::string & serviceType);
 		OS::AutoRef<UPnPEventReceiver> getEventReceiver();
 		UTIL::TimerLooperThread & getTimerThread();
 		void collectExpired();

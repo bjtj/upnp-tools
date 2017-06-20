@@ -169,15 +169,15 @@ namespace UPNP {
 		return ret;
 	}
 
-	string UPnPDevice::getUdn() {
-		return getProperties()["UDN"];
+	UDN UPnPDevice::getUdn() {
+		return UDN(getProperties()["UDN"]);
 	}
 
-	void UPnPDevice::setUdn(const string & udn) {
-		getProperties()["UDN"] = udn;
+	void UPnPDevice::setUdn(const UDN & udn) {
+		getProperties()["UDN"] = udn.toString();
 	}
 
-	void UPnPDevice::setUdnRecursive(const std::string & udn) {
+	void UPnPDevice::setUdnRecursive(const UDN & udn) {
 		setUdn(udn);
 		for (vector<AutoRef<UPnPDevice> >::iterator iter = _childDevices.begin(); iter != _childDevices.end(); iter++) {
 			(*iter)->setUdnRecursive(udn);

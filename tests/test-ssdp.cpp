@@ -23,15 +23,15 @@ public:
     TestSSDPListener() {}
     virtual ~TestSSDPListener() {}
 
-	virtual bool filter(SSDPHeader & header) {
+	virtual bool filter(const SSDPHeader & header) {
 		return true;
 	}
-	virtual void onMsearch(SSDPHeader & header) {
+	virtual void onMsearch(const SSDPHeader & header) {
 	}
-	virtual void onNotify(SSDPHeader & header) {
+	virtual void onNotify(const SSDPHeader & header) {
 		_headers.push_back(header);
 	}
-	virtual void onMsearchResponse(SSDPHeader & header) {
+	virtual void onMsearchResponse(const SSDPHeader & header) {
 	}
 	vector<SSDPHeader> & headers() {
 		return _headers;

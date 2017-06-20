@@ -8,6 +8,7 @@
 #include <liboslayer/StringElements.hpp>
 #include <liboslayer/PropertyMap.hpp>
 #include <libhttp-server/Url.hpp>
+#include "UPnPTerms.hpp"
 
 namespace UPNP {
 
@@ -173,9 +174,9 @@ namespace UPNP {
 		std::vector<OS::AutoRef<UPnPService> > & services();
 		std::vector<UPnPDevice*> allDevices();
 		std::vector<UPnPService*> allServices();
-		std::string getUdn();
-		void setUdn(const std::string & udn);
-		void setUdnRecursive(const std::string & udn);
+		UDN getUdn();
+		void setUdn(const UDN & udn);
+		void setUdnRecursive(const UDN & udn);
 		std::string getFriendlyName();
 		void setFriendlyName(const std::string & friendlyName);
 		std::string getDeviceType();

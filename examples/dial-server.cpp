@@ -1,6 +1,7 @@
 #include <iostream>
 #include <liboslayer/Uuid.hpp>
 #include <liboslayer/FileStream.hpp>
+#include <liboslayer/Logger.hpp>
 #include <libupnp-tools/UPnPServer.hpp>
 #include <libupnp-tools/UPnPActionRequestHandler.hpp>
 #include <libupnp-tools/UPnPDeviceDeserializer.hpp>
@@ -17,12 +18,14 @@ using namespace UTIL;
 using namespace HTTP;
 using namespace UPNP;
 
-static void s_set_dial_devcie(UPnPServer & server, const string & dd_path, const string & uuid) {
+// #define _DEBUG
+
+static void s_set_dial_devcie(UPnPServer & server, const string & dd_path, const UDN & udn) {
 	UPnPResourceManager & resMan = UPnPResourceManager::instance();
 	FileStream fs(dd_path, "r");
 	string xml = fs.readFullAsString();
 	resMan.properties()["/device.xml"] = xml;
-	server.registerDeviceProfile(uuid, Url("prop:///device.xml"));
+	server.registerDeviceProfile(udn, Url("prop:///device.xml"));
 }
 
 /**
@@ -79,6 +82,11 @@ public:
  */
 int main(int argc, char *argv[])
 {
+
+#if defined(_DEBUG)
+	LoggerFactory::getInstance().setLoggerDescriptorSimple("*", "basic", "console");
+#endif
+	
 	string ddPath = "dial.xml";
 	if (argc > 1) {
 		ddPath = string(argv[1]);
@@ -86,16 +94,17 @@ int main(int argc, char *argv[])
 	
 	UuidGeneratorVersion1 gen;
 	string uuid = gen.generate();
+	UDN udn("uuid:" + uuid);
 	
     UPnPServer server(UPnPServer::Config(9001));
-	s_set_dial_devcie(server, ddPath, uuid);
+	s_set_dial_devcie(server, ddPath, udn);
 	server.setHttpEventListener(AutoRef<HttpEventListener>(new DialHttpEventListener()));
 	server.startAsync();
 	server.getHttpServer()->registerRequestHandler("/dial*",
 												   AutoRef<HttpRequestHandler>(new DialRequestHandler));
-	server.setEnableDevice(uuid, true);
+	server.setEnableDevice(udn, true);
 	getchar();
-	server.setEnableDevice(uuid, false);
+	server.setEnableDevice(udn, false);
 	server.stop();
     return 0;
 }

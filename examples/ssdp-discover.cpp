@@ -24,22 +24,23 @@ public:
 	MySSDPEventListener(Debug & debug) : debug(debug) {}
 	virtual ~MySSDPEventListener() {}
 
-	virtual void onMsearch(SSDPHeader & header) {
-		cout << "M-SEARCH : " << header["ST"] << endl;
+	virtual void onMsearch(const SSDPHeader & header) {
+		cout << "M-SEARCH : " << header.getSearchTarget() << endl;
 		if (debug.verbose()) {
 			cout << " ** " << header.toString() << endl;
 		}
 	}
 
-	virtual void onNotify(SSDPHeader & header) {
-		cout << "NOTIFY : " << header["NTS"] << " - " << header["LOCATION"] << endl;
+	virtual void onNotify(const SSDPHeader & header) {
+		cout << "NOTIFY : " << header.getNotificationSubType() << " - " <<
+			header.getLocation() << endl;
 		if (debug.verbose()) {
 			cout << " ** " << header.toString() << endl;
 		}
 	}
 
-	virtual void onMsearchResponse(SSDPHeader & header) {
-		cout << "RESP : " << header["LOCATION"] << endl;
+	virtual void onMsearchResponse(const SSDPHeader & header) {
+		cout << "RESP : " << header.getLocation() << endl;
 		if (debug.verbose()) {
 			cout << " ** " << header.toString() << endl;
 		}

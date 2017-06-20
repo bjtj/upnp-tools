@@ -1,6 +1,8 @@
 #ifndef __UPNP_DEVICE_CACHE_MANAGER_HPP__
 #define __UPNP_DEVICE_CACHE_MANAGER_HPP__
 
+#include "UPnPTerms.hpp"
+
 namespace UPNP {
 
 	class UPnPDeviceCache : public UPnPCache {
@@ -18,13 +20,13 @@ namespace UPNP {
 	 */
 	class UPnPDeviceCacheManager {
 	private:
-		std::map<std::string, UPnPDeviceCache> _cache;
+		std::map<UDN, UPnPDeviceCache> _cache;
 	public:
 		UPnPDeviceCacheManager();
 		virtual ~UPnPDeviceCacheManager();
-		std::vector<std::string> udn_set();
+		std::vector<UDN> udn_set();
 		void put(const OS::AutoRef<UPnPDevice> & device);
-		OS::AutoRef<UPnPDevice> & get(const std::string & udn);
+		OS::AutoRef<UPnPDevice> & get(const UDN & udn);
 		void collect();
 	};
 }

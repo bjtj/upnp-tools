@@ -17,14 +17,14 @@ namespace UPNP {
 
 	static AutoRef<Logger> logger = LoggerFactory::getInstance().getObservingLogger(__FILE__);
 
-	UPnPDeviceSession::UPnPDeviceSession(const string & udn)
+	UPnPDeviceSession::UPnPDeviceSession(const UDN & udn)
 		: _udn(udn), _completed(false) {
 	}
 	
 	UPnPDeviceSession::~UPnPDeviceSession() {
 	}
 
-	string & UPnPDeviceSession::udn() {
+	UDN & UPnPDeviceSession::udn() {
 		return _udn;
 	}
 
@@ -60,64 +60,55 @@ namespace UPNP {
 	};
 
 
-
 	UPnPDeviceSessionManager::UPnPDeviceSessionManager() {
 	}
 	UPnPDeviceSessionManager::~UPnPDeviceSessionManager() {
 	}
-
-	bool UPnPDeviceSessionManager::has(const string & udn) {
+	bool UPnPDeviceSessionManager::contains(const UDN & udn) {
 		return (sessions.find(udn) != sessions.end());
 	}
 	void UPnPDeviceSessionManager::clear() {
 		sessions.clear();
 	}
-	AutoRef<UPnPDeviceSession> UPnPDeviceSessionManager::prepareSession(const string & udn) {
-		if (!has(udn)) {
+	AutoRef<UPnPDeviceSession> UPnPDeviceSessionManager::prepareSession(const UDN & udn) {
+		if (!contains(udn)) {
 			sessions[udn] = AutoRef<UPnPDeviceSession>(new UPnPDeviceSession(udn));
 		}
 		return sessions[udn];
 	}
-	void UPnPDeviceSessionManager::remove(const string & udn) {
+	void UPnPDeviceSessionManager::remove(const UDN & udn) {
 		sessions.erase(udn);
 	}
 	size_t UPnPDeviceSessionManager::size() {
 		return sessions.size();
 	}
-	vector<string> UPnPDeviceSessionManager::getUdnS() {
-		vector<string> ret;
-		for (map<string, AutoRef<UPnPDeviceSession> >::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
-			ret.push_back(iter->first);
-		}
-		return ret;
-	}
-	AutoRef<UPnPDevice> UPnPDeviceSessionManager::getDevice(const string & udn) {
+	AutoRef<UPnPDevice> UPnPDeviceSessionManager::findDevice(const UDN & udn) {
 		AutoRef<UPnPDeviceSession> session = sessions[udn];
 		if (!session.nil()) {
 			return session->getRootDevice();
 		}
 		return AutoRef<UPnPDevice>();
 	}
-	vector<AutoRef<UPnPDeviceSession> > UPnPDeviceSessionManager::getSessions() {
+	vector< AutoRef<UPnPDeviceSession> > UPnPDeviceSessionManager::getSessions() {
 		vector<AutoRef<UPnPDeviceSession> > ret;
-		for (map<string, AutoRef<UPnPDeviceSession> >::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
+		for (map< UDN, AutoRef<UPnPDeviceSession> >::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
 			ret.push_back(iter->second);
 		}
 		return ret;
 	}
-	vector<AutoRef<UPnPDevice> > UPnPDeviceSessionManager::getDevices() {
+	vector< AutoRef<UPnPDevice> > UPnPDeviceSessionManager::getDevices() {
 		vector<AutoRef<UPnPDevice> > ret;
-		for (map<string, AutoRef<UPnPDeviceSession> >::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
+		for (map< UDN, AutoRef<UPnPDeviceSession> >::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
 			ret.push_back(iter->second->getRootDevice());
 		}
 		return ret;
 	}
-	AutoRef<UPnPDeviceSession> UPnPDeviceSessionManager::operator[] (const string & udn) {
+	AutoRef<UPnPDeviceSession> UPnPDeviceSessionManager::operator[] (const UDN & udn) {
 		return sessions[udn];
 	}
 
 	void UPnPDeviceSessionManager::collectExpired() {
-		for (map<string, AutoRef<UPnPDeviceSession> >::iterator iter = sessions.begin(); iter != sessions.end();) {
+		for (map< UDN, AutoRef<UPnPDeviceSession> >::iterator iter = sessions.begin(); iter != sessions.end();) {
 			if (iter->second->expired()) {
 				if (!onSessionOutdatedListener.nil()) {
 					onSessionOutdatedListener->onSessionOutdated(iter->second);
@@ -146,18 +137,18 @@ namespace UPNP {
 		AutoRef<UPnPDeviceSession> session;
 		SSDPHeader header;
 	public:
-		DeviceBuildTask(UPnPControlPoint & cp, AutoRef<UPnPDeviceSession> session, SSDPHeader & header) : cp(cp), session(session), header(header) {}
+		DeviceBuildTask(UPnPControlPoint & cp, AutoRef<UPnPDeviceSession> session, const SSDPHeader & header)
+			: cp(cp), session(session), header(header) {}
 		virtual ~DeviceBuildTask() {}
-
 		virtual void onTask() {
 			try {
 				session->setRootDevice(cp.buildDevice(header));
 				session->setCompleted(true);
 				cp.onDeviceBuildCompleted(session);
 			} catch (Exception e) {
+				logger->loge("build device failed - " + e.message());
 				cp.onDeviceBuildFailed(session);
 			}
-
 			session = NULL;
 		}
 	};
@@ -172,13 +163,11 @@ namespace UPNP {
 	public:
 		ControlPointSSDPListener(UPnPControlPoint & cp) : cp(cp) {}
 		virtual ~ControlPointSSDPListener() {}
-	
-		virtual bool filter(SSDPHeader & header) {
+		virtual bool filter(const SSDPHeader & header) {
 			cp.debug("ssdp", header.toString());
 			return true;
 		}
-		
-		virtual void onNotify(SSDPHeader & header) {
+		virtual void onNotify(const SSDPHeader & header) {
 			InetAddress addr = header.getRemoteAddr();
 			if (header.isNotifyAlive()) {
 				cp.addDevice(header);
@@ -186,10 +175,8 @@ namespace UPNP {
 				cp.removeDevice(header);
 			}
 		}
-		
-		virtual void onMsearchResponse(SSDPHeader & header) {
+		virtual void onMsearchResponse(const SSDPHeader & header) {
 			InetAddress addr = header.getRemoteAddr();
-			Uuid uuid(header.getUsn());
 			cp.addDevice(header);
 		}
 	};
@@ -287,12 +274,11 @@ namespace UPNP {
 		this->deviceListener = deviceListener;
 	}
 
-	void UPnPControlPoint::addDevice(SSDPHeader & header) {
-		Uuid uuid(header.getUsn());
-		string udn = uuid.getUuid();
+	void UPnPControlPoint::addDevice(const SSDPHeader & header) {;
+		UDN udn("uuid:" + UPNP::USN(header.getUsn()).uuid());
 		InetAddress addr = header.getRemoteAddr();
 		unsigned long timeout = parseCacheControlMilli(header.getCacheControl());
-		if (_sessionManager.has(udn)) {
+		if (_sessionManager.contains(udn)) {
 			_sessionManager[udn]->extend(timeout);
 		} else {
 			AutoRef<UPnPDeviceSession> session = _sessionManager.prepareSession(udn);
@@ -301,20 +287,18 @@ namespace UPNP {
 		}
 	}
 
-	void UPnPControlPoint::removeDevice(SSDPHeader & header) {
-		Uuid uuid(header.getUsn());
-		string udn = uuid.getUuid();
-
+	void UPnPControlPoint::removeDevice(const SSDPHeader & header) {
+		UDN udn("uuid:" + UPNP::USN(header.getUsn()).uuid());
 		if (!deviceListener.nil() && !_sessionManager[udn].nil()) {
 			AutoRef<UPnPDevice> device = _sessionManager[udn]->getRootDevice();
 			onDeviceRemoved(device);
 		}
-		
 		_sessionManager.remove(udn);
 	}
 
-	AutoRef<UPnPDevice> UPnPControlPoint::buildDevice(SSDPHeader & header) {
+	AutoRef<UPnPDevice> UPnPControlPoint::buildDevice(const SSDPHeader & header) {
 		UPnPDeviceBuilder builder(Url(header.getLocation()));
+		builder.allow_fail_scpd() = true;
 		return builder.execute();
 	}
 
@@ -326,8 +310,8 @@ namespace UPNP {
 		_sessionManager.remove(session->udn());
 	}
 
-	AutoRef<UPnPDevice> UPnPControlPoint::getDevice(const string & udn) {
-		return _sessionManager.getDevice(udn);
+	AutoRef<UPnPDevice> UPnPControlPoint::findDevice(const UDN & udn) {
+		return _sessionManager.findDevice(udn);
 	}
 
 	void UPnPControlPoint::clearDevices() {
@@ -350,17 +334,17 @@ namespace UPNP {
 		return _sessionManager.getDevices();
 	}
 
-	Url UPnPControlPoint::getBaseUrlByUdn(const string & udn) {
-		return getDevice(udn)->baseUrl();
+	Url UPnPControlPoint::getBaseUrlByUdn(const UDN & udn) {
+		return findDevice(udn)->baseUrl();
 	}
 
-	AutoRef<UPnPService> UPnPControlPoint::getServiceByUdnAndServiceType(const string & udn, const string & serviceType) {
-		AutoRef<UPnPDevice> device = getDevice(udn);
+	AutoRef<UPnPService> UPnPControlPoint::getServiceByUdnAndServiceType(const UDN & udn, const string & serviceType) {
+		AutoRef<UPnPDevice> device = findDevice(udn);
 		return device->findServiceRecursive(serviceType);
 	}
 
-	UPnPActionInvoker UPnPControlPoint::prepareActionInvoke(const string & udn, const string & serviceType) {
-		AutoRef<UPnPDevice> device = getDevice(udn);
+	UPnPActionInvoker UPnPControlPoint::prepareActionInvoke(const UDN & udn, const string & serviceType) {
+		AutoRef<UPnPDevice> device = findDevice(udn);
 		AutoRef<UPnPService> service = device->findServiceRecursive(serviceType);
 		if (service.nil()) {
 			throw Exception("service not found / type : " + serviceType);
@@ -368,24 +352,20 @@ namespace UPNP {
 		return UPnPActionInvoker(device->baseUrl().relativePath(service->controlUrl()));
 	}
 
-	void UPnPControlPoint::subscribe(const string & udn, const string & serviceType) {
-		
+	void UPnPControlPoint::subscribe(const UDN & udn, const string & serviceType) {
 		if (eventReceiver.nil()) {
 			throw Exception("event receiver is stopped");
 		}
-
 		InetAddress addr = NetworkUtil::selectDefaultAddress();
-
 		UPnPEventSubscriber subscriber = prepareEventSubscriber(udn, serviceType);
 		UPnPEventSubscribeRequest request(eventReceiver->getCallbackUrl(addr.getHost()), 300);
 		UPnPEventSubscribeResponse response = subscriber.subscribe(request);
 		UPnPEventSubscription subscription(response.sid());
-		
 		subscription.udn() = udn;
 		subscription.serviceType() = serviceType;
 		eventReceiver->addSubscription(subscription);
 	}
-	void UPnPControlPoint::unsubscribe(const string & udn, const string & serviceType) {
+	void UPnPControlPoint::unsubscribe(const UDN & udn, const string & serviceType) {
 		if (eventReceiver.nil()) {
 			throw Exception("event receiver is stopped");
 		}
@@ -394,8 +374,8 @@ namespace UPNP {
 		UPnPEventSubscriber subscriber = prepareEventSubscriber(udn, serviceType);
 		subscriber.unsubscribe(subscription.sid());
 	}
-	UPnPEventSubscriber UPnPControlPoint::prepareEventSubscriber(const string & udn, const string & serviceType) {
-		AutoRef<UPnPDevice> device = getDevice(udn);
+	UPnPEventSubscriber UPnPControlPoint::prepareEventSubscriber(const UDN & udn, const string & serviceType) {
+		AutoRef<UPnPDevice> device = findDevice(udn);
 		AutoRef<UPnPService> service = device->findServiceRecursive(serviceType);
 		if (service.nil()) {
 			throw Exception("service not found / type : " + serviceType);
@@ -418,7 +398,7 @@ namespace UPNP {
 		sharedDeviceLists.push_back(list);
 	}
 	void UPnPControlPoint::removeSharedDeviceList(AutoRef<SharedUPnPDeviceList> list) {
-		for (vector<AutoRef<SharedUPnPDeviceList> >::iterator iter = sharedDeviceLists.begin(); iter != sharedDeviceLists.end();) {
+		for (vector< AutoRef<SharedUPnPDeviceList> >::iterator iter = sharedDeviceLists.begin(); iter != sharedDeviceLists.end();) {
 			if ((*iter) == list) {
 				iter = sharedDeviceLists.erase(iter);
 			} else {
@@ -434,7 +414,7 @@ namespace UPNP {
 		if (!deviceListener.nil()) {
 			deviceListener->onDeviceAdded(device);
 		}
-		for (vector<AutoRef<SharedUPnPDeviceList> >::iterator iter = sharedDeviceLists.begin(); iter != sharedDeviceLists.end(); iter++) {
+		for (vector< AutoRef<SharedUPnPDeviceList> >::iterator iter = sharedDeviceLists.begin(); iter != sharedDeviceLists.end(); iter++) {
 			(*iter)->add_s(device);
 		}
 	}
@@ -446,7 +426,7 @@ namespace UPNP {
 		if (!deviceListener.nil()) {
 			deviceListener->onDeviceRemoved(device);
 		}
-		for (vector<AutoRef<SharedUPnPDeviceList> >::iterator iter = sharedDeviceLists.begin(); iter != sharedDeviceLists.end(); iter++) {
+		for (vector< AutoRef<SharedUPnPDeviceList> >::iterator iter = sharedDeviceLists.begin(); iter != sharedDeviceLists.end(); iter++) {
 			(*iter)->remove_s(device);
 		}
 	}

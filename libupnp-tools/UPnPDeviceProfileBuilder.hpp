@@ -6,6 +6,7 @@
 #include "UPnPDeviceProfile.hpp"
 #include "UPnPModels.hpp"
 #include "UPnPLocationResolver.hpp"
+#include "UPnPTerms.hpp"
 
 namespace UPNP {
 
@@ -14,15 +15,15 @@ namespace UPNP {
 	 */
 	class UPnPDeviceProfileBuilder {
 	private:
-		std::string _uuid;
+		UDN _udn;
 		OS::AutoRef<UPnPDevice> _device;
 		OS::AutoRef<UPnPLocationResolver> _locationResolver;
 		
 	public:
 		UPnPDeviceProfileBuilder(OS::AutoRef<UPnPDevice> device);
-		UPnPDeviceProfileBuilder(const std::string uuid, OS::AutoRef<UPnPDevice> device);
+		UPnPDeviceProfileBuilder(const UDN & udn, OS::AutoRef<UPnPDevice> device);
 		virtual ~UPnPDeviceProfileBuilder();
-		std::string & uuid();
+		UDN & udn();
 		OS::AutoRef<UPnPDevice> device();
 		std::vector<OS::AutoRef<UPnPDevice> > selectAllDevices(OS::AutoRef<UPnPDevice> device);
 		UPnPDeviceProfile build();

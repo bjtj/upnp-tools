@@ -47,8 +47,9 @@ public:
 	SimpleSSDPEventListener() {}
 	virtual ~SimpleSSDPEventListener() {}
 
-	virtual void onMsearch(SSDPHeader & header) {
-		cout << "[RECV] M-SEARCH / search target: '" << header["ST"] << "' - " << header.getRemoteAddr().toString() << endl;
+	virtual void onMsearch(const SSDPHeader & header) {
+		cout << "[RECV] M-SEARCH / search target: '" << header.getSearchTarget() << "' - " <<
+			header.getRemoteAddr().toString() << endl;
 
 		HttpHeader httpHeader;
 		httpHeader.setParts("HTTP/1.1", "200", "OK"); 

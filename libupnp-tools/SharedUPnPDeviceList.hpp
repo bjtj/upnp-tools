@@ -26,8 +26,8 @@ namespace UPNP {
 
 		std::vector<OS::AutoRef<UPnPDevice> > list();
 		std::vector<OS::AutoRef<UPnPDevice> > list_s();
-		OS::AutoRef<UPnPDevice> findByUdn(const std::string & udn);
-		OS::AutoRef<UPnPDevice> findByUdn_s(const std::string & udn);
+		OS::AutoRef<UPnPDevice> findByUdn(const UDN & udn);
+		OS::AutoRef<UPnPDevice> findByUdn_s(const UDN & udn);
 		void add(OS::AutoRef<UPnPDevice> device);
 		void add_s(OS::AutoRef<UPnPDevice> device);
 		void remove(OS::AutoRef<UPnPDevice> device);

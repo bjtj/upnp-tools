@@ -15,14 +15,14 @@ namespace UPNP {
 		: _device(device), _locationResolver(new UPnPLocationResolver) {
 	}
 
-	UPnPDeviceProfileBuilder::UPnPDeviceProfileBuilder(const string uuid, AutoRef<UPnPDevice> device)
-		: _uuid(uuid), _device(device), _locationResolver(new UPnPLocationResolver) {
+	UPnPDeviceProfileBuilder::UPnPDeviceProfileBuilder(const UDN & udn, AutoRef<UPnPDevice> device)
+		: _udn(udn), _device(device), _locationResolver(new UPnPLocationResolver) {
 	}
 	UPnPDeviceProfileBuilder::~UPnPDeviceProfileBuilder() {
 	}
 
-	string & UPnPDeviceProfileBuilder::uuid() {
-		return _uuid;
+	UDN & UPnPDeviceProfileBuilder::udn() {
+		return _udn;
 	}
 
 	AutoRef<UPnPDevice> UPnPDeviceProfileBuilder::device() {
@@ -41,22 +41,20 @@ namespace UPNP {
 	}
 
 	UPnPDeviceProfile UPnPDeviceProfileBuilder::build() {
-
 		if (_device.nil()) {
 			throw Exception("device is null");
 		}
 
 		UPnPDeviceProfile deviceProfile;
-		if (_uuid.empty()) {
-			Uuid uuid(_device->getUdn());
-			_uuid = uuid.getUuid();
+		if (_udn.empty()) {
+			_udn = _device->getUdn();
 		} else {
-			_device->setUdnRecursive("uuid:" + _uuid);
+			_device->setUdnRecursive(_udn);
 		}
 
 		_locationResolver->resolveRecursive(_device);
 
-		deviceProfile.uuid() = _uuid;
+		deviceProfile.udn() = _udn;
 		deviceProfile.deviceDescription() = UPnPDeviceSerializer::serializeDeviceDescription(*_device);
 
 		vector<AutoRef<UPnPDevice> > devices;

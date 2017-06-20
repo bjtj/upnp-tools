@@ -13,10 +13,12 @@ namespace UPNP {
 	private:
 		HTTP::Url _url;
 		OS::AutoRef<UPnPDevice> _device;
+		bool _allow_fail_scpd;
 	public:
 		UPnPDeviceBuilder(const HTTP::Url & url);
 		virtual ~UPnPDeviceBuilder();
 		HTTP::Url & url();
+		bool & allow_fail_scpd();
 		OS::AutoRef<UPnPDevice> & device();
 		OS::AutoRef<UPnPDevice> execute();
 	};

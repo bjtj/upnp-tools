@@ -33,7 +33,7 @@ namespace UPNP {
 		std::string _str;
 	public:
 		UDN();
-		UDN(const std::string & str);
+		explicit UDN(const std::string & str);
 		virtual ~UDN();
 		std::string & str();
 		std::string str() const;
@@ -41,6 +41,12 @@ namespace UPNP {
 		bool empty() const;
 		bool valid() const;
 		std::string toString() const;
+		bool operator< (const UDN & other) const;
+		bool operator< (const std::string & str) const;
+		bool operator> (const UDN & other) const;
+		bool operator> (const std::string & str) const;
+		bool operator== (const UDN & other) const;
+		bool operator== (const std::string & str) const;
 	};
 
 	/**
