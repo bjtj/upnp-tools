@@ -51,39 +51,31 @@ namespace UPNP {
 		} else {
 			_device->setUdnRecursive(_udn);
 		}
-
 		_locationResolver->resolveRecursive(_device);
-
 		deviceProfile.udn() = _udn;
 		deviceProfile.deviceDescription() = UPnPDeviceSerializer::serializeDeviceDescription(*_device);
 
 		vector<AutoRef<UPnPDevice> > devices;
 		devices.push_back(_device);
-		vector<AutoRef<UPnPDevice> > embeds = selectAllDevices(_device);
-		devices.insert(devices.end(), embeds.begin(), embeds.end());
-		
-		for (vector<AutoRef<UPnPDevice> >::iterator iter = devices.begin(); iter != devices.end(); iter++) {
-
+		vector<AutoRef<UPnPDevice> > lst = selectAllDevices(_device);
+		devices.insert(devices.end(), lst.begin(), lst.end());
+		for (vector< AutoRef<UPnPDevice> >::iterator iter = devices.begin(); iter != devices.end(); iter++) {
 			AutoRef<UPnPDevice> device = (*iter);
 			deviceProfile.deviceTypes().push_back(device->getDeviceType());
 			vector<AutoRef<UPnPService> > & services = device->services();
 			
-			for (vector<AutoRef<UPnPService> >::iterator si = services.begin(); si != services.end(); si++) {
-
+			for (vector< AutoRef<UPnPService> >::iterator si = services.begin(); si != services.end(); si++) {
 				AutoRef<UPnPService> service = *si;
 				UPnPServiceProfile serviceProfile;
-				
 				serviceProfile.scpd() = UPnPDeviceSerializer::serializeScpd(service->scpd());
 				serviceProfile.serviceType() = service->serviceType();
 				serviceProfile.serviceId() = service->serviceId();
 				serviceProfile.scpdUrl() = service->scpdUrl();
 				serviceProfile.controlUrl() = service->controlUrl();
 				serviceProfile.eventSubUrl() = service->eventSubUrl();
-				
 				deviceProfile.serviceProfiles().push_back(serviceProfile);
 			}
 		}
-
 		return deviceProfile;
 	}
 

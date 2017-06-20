@@ -21,13 +21,6 @@ namespace UPNP {
 	string UPnPLocationResolver::makeEventSubUrl(AutoRef<UPnPDevice> device, AutoRef<UPnPService> service) {
 		return "/event/" + device->getUdn().toString() + "::" + service->serviceType();
 	}
-	string UPnPLocationResolver::generalize(const string & url) {
-		size_t s = url.find_last_of("/");
-		if (s == string::npos) {
-			throw Exception("parse failed");
-		}
-		return url.substr(s + 1);
-	}
 	void UPnPLocationResolver::resolve(AutoRef<UPnPDevice> device) {
 		vector<AutoRef<UPnPService> > services = device->services();
 		for (vector<AutoRef<UPnPService> >::iterator iter = services.begin(); iter != services.end(); iter++) {
@@ -38,8 +31,8 @@ namespace UPNP {
 	}
 	void UPnPLocationResolver::resolveRecursive(AutoRef<UPnPDevice> device) {
 		resolve(device);
-		vector<AutoRef<UPnPDevice> > embeds = device->childDevices();
-		for (vector<AutoRef<UPnPDevice> >::iterator iter = embeds.begin(); iter != embeds.end(); iter++) {
+		vector<AutoRef<UPnPDevice> > children = device->childDevices();
+		for (vector<AutoRef<UPnPDevice> >::iterator iter = children.begin(); iter != children.end(); iter++) {
 			resolveRecursive(*iter);
 		}
 	}
