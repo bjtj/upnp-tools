@@ -5,7 +5,6 @@ namespace SSDP {
 
 	using namespace std;
 	using namespace UTIL;
-	using namespace UPNP;
 
 	SSDPHeader::SSDPHeader() {
 	}
@@ -110,7 +109,7 @@ namespace SSDP {
 	void SSDPHeader::setLocation(const string & location) {
 		setHeaderField("LOCATION", location);
 	}
-	void SSDPHeader::setUsn(const USN & usn) {
+	void SSDPHeader::setUsn(const UPNP::USN & usn) {
 		setHeaderField("USN", usn.toString());
 	}
 }

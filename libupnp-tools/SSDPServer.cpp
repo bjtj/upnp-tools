@@ -251,7 +251,7 @@ namespace SSDP {
 		sender.sendMcastToAllInterfaces(header.toString(), MCAST_HOST, MCAST_PORT);
 		sender.close();
 	}
-	SSDPHeader SSDPServer::getNotifyHeader(const string & nts, const USN & usn) {
+	SSDPHeader SSDPServer::getNotifyHeader(const string & nts, const UPNP::USN & usn) {
 		SSDPHeader header;
 		header.setParts("NOTIFY", "*", "HTTP/1.1");
 		header.setNotificationSubType(nts);

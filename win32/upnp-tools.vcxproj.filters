@@ -99,7 +99,7 @@
     <ClCompile Include="..\libupnp-tools\UPnPSoapFormatter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\libupnp-tools\UPnPUtils.cpp">
+    <ClCompile Include="..\libupnp-tools\UPnPTerms.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -215,7 +215,7 @@
     <ClInclude Include="..\libupnp-tools\UPnPSoapFormatter.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\libupnp-tools\UPnPUtils.hpp">
+    <ClInclude Include="..\libupnp-tools\UPnPTerms.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

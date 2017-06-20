@@ -95,7 +95,7 @@
     <ClCompile Include="..\libupnp-tools\UPnPResourceManager.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPServer.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPSoapFormatter.cpp" />
-    <ClCompile Include="..\libupnp-tools\UPnPUtils.cpp" />
+    <ClCompile Include="..\libupnp-tools\UPnPTerms.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\libupnp-tools\HttpUtils.hpp" />
@@ -134,7 +134,7 @@
     <ClInclude Include="..\libupnp-tools\UPnPServiceProfile.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPSoapException.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPSoapFormatter.hpp" />
-    <ClInclude Include="..\libupnp-tools\UPnPUtils.hpp" />
+    <ClInclude Include="..\libupnp-tools\UPnPTerms.hpp" />
     <ClInclude Include="..\libupnp-tools\XmlUtils.hpp" />
   </ItemGroup>
   <ItemGroup>

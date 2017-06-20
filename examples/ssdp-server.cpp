@@ -100,23 +100,23 @@ int main(int argc, char *args[]) {
 		}
 		if (line == "alive") {
 			SSDPHeader header;
-			header = server.getNotifyHeader("ssdp:alive", USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0"));
+			header = server.getNotifyHeader("ssdp:alive", UPNP::USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0"));
 			header.setLocation(getLocation());
 			server.sendNotify(header);
-			header = server.getNotifyHeader("ssdp:alive", USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0::upnp:rootdevice"));
+			header = server.getNotifyHeader("ssdp:alive", UPNP::USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0::upnp:rootdevice"));
 			header.setLocation(getLocation());
 			server.sendNotify(header);
-			header = server.getNotifyHeader("ssdp:alive", USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0::urn:schemas-upnp-org:device:InternetGatewayDevice:1"));
+			header = server.getNotifyHeader("ssdp:alive", UPNP::USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0::urn:schemas-upnp-org:device:InternetGatewayDevice:1"));
 			header.setLocation(getLocation());
 			server.sendNotify(header);
 		}
 		if (line == "byebye") {
 			SSDPHeader header;
-			header = server.getNotifyHeader("ssdp:byebye", USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0::urn:schemas-upnp-org:device:InternetGatewayDevice:1"));
+			header = server.getNotifyHeader("ssdp:byebye", UPNP::USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0::urn:schemas-upnp-org:device:InternetGatewayDevice:1"));
 			server.sendNotify(header);
-			header = server.getNotifyHeader("ssdp:byebye", USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0::upnp:rootdevice"));
+			header = server.getNotifyHeader("ssdp:byebye", UPNP::USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0::upnp:rootdevice"));
 			server.sendNotify(header);
-			header = server.getNotifyHeader("ssdp:byebye", USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0"));
+			header = server.getNotifyHeader("ssdp:byebye", UPNP::USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0"));
 			server.sendNotify(header);
 		}
 	}
