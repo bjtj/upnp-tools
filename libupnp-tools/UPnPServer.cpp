@@ -16,7 +16,7 @@
 #include "UPnPActionResponse.hpp"
 #include "UPnPSoapFormatter.hpp"
 #include "UPnPSoapException.hpp"
-#include "UPnPUtils.hpp"
+#include "UPnPTerms.hpp"
 #include "XmlUtils.hpp"
 
 namespace UPNP {

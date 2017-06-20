@@ -5,7 +5,7 @@
 #include <liboslayer/Network.hpp>
 #include <libhttp-server/HttpHeader.hpp>
 #include <libhttp-server/HttpHeaderReader.hpp>
-#include "UPnPUtils.hpp"
+#include "UPnPTerms.hpp"
 
 namespace SSDP {
 

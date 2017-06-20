@@ -1,5 +1,5 @@
 #include "UPnPEventSubscriber.hpp"
-#include "UPnPUtils.hpp"
+#include "UPnPTerms.hpp"
 #include "HttpUtils.hpp"
 #include <liboslayer/StringElements.hpp>
 #include <liboslayer/Text.hpp>

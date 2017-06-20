@@ -75,12 +75,12 @@ namespace UPNP {
 
 		// embedded devices
 
-		if (device.embeddedDevices().size() > 0) {
+		if (device.childDevices().size() > 0) {
 			ret.append("<deviceList>");
 			ret.append(NEWLINE);
 
-			for (size_t i = 0; i < device.embeddedDevices().size(); i++) {
-				ret.append(serializeDevice(*device.embeddedDevices()[i]));
+			for (size_t i = 0; i < device.childDevices().size(); i++) {
+				ret.append(serializeDevice(*device.childDevices()[i]));
 			}
 			
 			ret.append("</deviceList>");

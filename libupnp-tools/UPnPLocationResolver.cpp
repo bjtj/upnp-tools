@@ -41,7 +41,7 @@ namespace UPNP {
 	}
 	void UPnPLocationResolver::resolveRecursive(AutoRef<UPnPDevice> device) {
 		resolve(device);
-		vector<AutoRef<UPnPDevice> > embeds = device->embeddedDevices();
+		vector<AutoRef<UPnPDevice> > embeds = device->childDevices();
 		for (vector<AutoRef<UPnPDevice> >::iterator iter = embeds.begin(); iter != embeds.end(); iter++) {
 			resolveRecursive(*iter);
 		}

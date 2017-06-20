@@ -136,8 +136,6 @@ namespace UPNP {
 		void subscribe(const std::string & udn, const std::string & serviceType);
 		void unsubscribe(const std::string & udn, const std::string & serviceType);
 		UPnPEventSubscriber prepareEventSubscriber(const std::string & udn, const std::string & serviceType);
-		OS::AutoRef<UPnPService> findService(OS::AutoRef<UPnPDevice> device, const std::string & serviceType);
-		OS::AutoRef<UPnPService> findServiceRecursive(OS::AutoRef<UPnPDevice> device, const std::string & serviceType);
 		OS::AutoRef<UPnPEventReceiver> getEventReceiver();
 		UTIL::TimerLooperThread & getTimerThread();
 		void collectExpired();

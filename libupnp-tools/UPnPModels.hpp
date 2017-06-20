@@ -15,7 +15,7 @@ namespace UPNP {
 	class UPnPDevice;
 
 	/**
-	 *
+	 * @brief upnp base object
 	 */
 	class UPnPModelObject {
 	private:
@@ -32,7 +32,7 @@ namespace UPNP {
 	};
 
 	/**
-	 *
+	 * @brief upnp state variable
 	 */
 	class UPnPStateVariable : public UPnPModelObject {
 	private:
@@ -50,7 +50,6 @@ namespace UPNP {
 		UPnPStateVariable() {}
 		UPnPStateVariable(const std::string & name) : _name(name) {}
 		virtual ~UPnPStateVariable() {}
-
 		bool & sendEvents() {return _sendEvents;}
 		bool & multicast() {return _multicast;}
 		std::string & name() {return _name;}
@@ -65,7 +64,7 @@ namespace UPNP {
 	};
 
 	/**
-	 *
+	 * @brief upnp argument
 	 */
 	class UPnPArgument : public UPnPModelObject {
 	public:
@@ -87,7 +86,7 @@ namespace UPNP {
 	};
 
 	/**
-	 *
+	 * @brief upnp action
 	 */
 	class UPnPAction : public UPnPModelObject {
 	private:
@@ -111,7 +110,7 @@ namespace UPNP {
 	};
 
 	/**
-	 * @brief 
+	 * @brief upnp scpd
 	 */
 	class UPnPScpd : public UPnPModelObject {
 	private:
@@ -128,9 +127,8 @@ namespace UPNP {
 		bool hasStateVariable(const std::string & name);
 	};
 
-
 	/**
-	 *
+	 * @brief upnp service
 	 */
 	class UPnPService : public UPnPModelObject {
 	private:
@@ -152,12 +150,12 @@ namespace UPNP {
 	};
 
 	/**
-	 *
+	 * @brief upnp device
 	 */
 	class UPnPDevice : public UPnPModelObject {
 	private:
 		UPnPDevice * parent;
-		std::vector<OS::AutoRef<UPnPDevice> > _embeddedDevices;
+		std::vector<OS::AutoRef<UPnPDevice> > _childDevices;
 		std::vector<OS::AutoRef<UPnPService> > _services;
 		HTTP::Url _baseUrl;
 		
@@ -169,9 +167,9 @@ namespace UPNP {
 		OS::AutoRef<UPnPDevice> prepareDevice();
 		void addDevice(OS::AutoRef<UPnPDevice> device);
 		void addService(OS::AutoRef<UPnPService> service);
-		bool hasService(const std::string & serviceType);
-		OS::AutoRef<UPnPService> getService(const std::string & serviceType);
-		std::vector<OS::AutoRef<UPnPDevice> > & embeddedDevices();
+		OS::AutoRef<UPnPService> findService(const std::string & serviceType);
+		OS::AutoRef<UPnPService> findServiceRecursive(const std::string & serviceType);
+		std::vector<OS::AutoRef<UPnPDevice> > & childDevices();
 		std::vector<OS::AutoRef<UPnPService> > & services();
 		std::vector<UPnPDevice*> allDevices();
 		std::vector<UPnPService*> allServices();
@@ -184,7 +182,6 @@ namespace UPNP {
 		void setDeviceType(const std::string & deviceType);
 		HTTP::Url & baseUrl();
 	};	
-	
 }
 
 #endif

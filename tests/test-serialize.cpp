@@ -79,8 +79,8 @@ static void test_deserialize() {
 	ASSERT(device->getUdn(), ==, "uuid:" + udn);
 	ASSERT(device->getFriendlyName(), ==, "UPnP Test Device");
 
-	ASSERT(device->hasService("urn:schemas-dummy-com:service:Dummy:1"), ==, true);
-	ASSERT(device->getService("urn:schemas-dummy-com:service:Dummy:1")->scpd().action("GetProtocolInfo").arguments().size(), ==, 2);
+	ASSERT(device->findService("urn:schemas-dummy-com:service:Dummy:1").nil(), ==, false);
+	ASSERT(device->findService("urn:schemas-dummy-com:service:Dummy:1")->scpd().action("GetProtocolInfo").arguments().size(), ==, 2);
 
 	server.stop();
 }
@@ -104,8 +104,8 @@ static void test_filesystem_base_deserialize() {
 	ASSERT(device->getUdn(), ==, "uuid:" + udn);
 	ASSERT(device->getFriendlyName(), ==, "UPnP Test Device");
 
-	ASSERT(device->hasService("urn:schemas-dummy-com:service:Dummy:1"), ==, true);
-	ASSERT(device->getService("urn:schemas-dummy-com:service:Dummy:1")->scpd().action("GetProtocolInfo").arguments().size(), ==, 2);
+	ASSERT(device->findService("urn:schemas-dummy-com:service:Dummy:1").nil(), ==, false);
+	ASSERT(device->findService("urn:schemas-dummy-com:service:Dummy:1")->scpd().action("GetProtocolInfo").arguments().size(), ==, 2);
 }
 
 static void test_serialize() {
@@ -122,8 +122,8 @@ static void test_serialize() {
 	ASSERT(device->getUdn(), ==, "uuid:" + udn);
 	ASSERT(device->getFriendlyName(), ==, "UPnP Test Device");
 
-	ASSERT(device->hasService("urn:schemas-dummy-com:service:Dummy:1"), ==, true);
-	ASSERT(device->getService("urn:schemas-dummy-com:service:Dummy:1")->scpd().action("GetProtocolInfo").arguments().size(), ==, 2);
+	ASSERT(device->findService("urn:schemas-dummy-com:service:Dummy:1").nil(), ==, false);
+	ASSERT(device->findService("urn:schemas-dummy-com:service:Dummy:1")->scpd().action("GetProtocolInfo").arguments().size(), ==, 2);
 	
 	string dd = UPnPDeviceSerializer::serializeDeviceDescription(*device);
 

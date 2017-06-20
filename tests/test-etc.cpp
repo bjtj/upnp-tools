@@ -1,5 +1,5 @@
 #include <liboslayer/TestSuite.hpp>
-#include <libupnp-tools/UPnPUtils.hpp>
+#include <libupnp-tools/UPnPTerms.hpp>
 #include <libupnp-tools/UPnPExceptions.hpp>
 
 using namespace std;

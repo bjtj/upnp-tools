@@ -37,7 +37,7 @@ libupnp_toolsinc_HEADERS = \
 	UPnPServer.hpp \
 	UPnPServiceProfile.hpp \
 	UPnPSoapFormatter.hpp \
-	UPnPUtils.hpp \
+	UPnPTerms.hpp \
 	XmlUtils.hpp
 
 libupnp_tools_la_SOURCES = \
@@ -105,8 +105,8 @@ libupnp_tools_la_SOURCES = \
 	UPnPServiceProfile.hpp \
 	UPnPSoapFormatter.cpp \
 	UPnPSoapFormatter.hpp \
-	UPnPUtils.cpp \
-	UPnPUtils.hpp \
+	UPnPTerms.cpp \
+	UPnPTerms.hpp \
 	XmlUtils.hpp
 
 libupnp_tools_la_CXXFLAGS = $(PTHREAD_CXXFLAGS) $(LIBOSLAYER_CFLAGS) $(LIBHTTP_SERVER_CFLAGS)

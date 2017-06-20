@@ -7,7 +7,7 @@
 namespace UPNP {
 
 	/**
-	 * usn
+	 * USN (Unique Service Name)
 	 */
 	class USN {
 	private:
@@ -26,7 +26,7 @@ namespace UPNP {
 	};
 
 	/**
-	 * udn
+	 * UDN (Unique Device Name)
 	 */
 	class UDN {
 	private:

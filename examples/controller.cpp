@@ -107,7 +107,7 @@ public:
 			}
 		}
 			
-		vector<AutoRef<UPnPDevice> > & devices = device->embeddedDevices();
+		vector<AutoRef<UPnPDevice> > & devices = device->childDevices();
 		for (vector<AutoRef<UPnPDevice> >::iterator iter = devices.begin(); iter != devices.end(); iter++) {
 			str.append("\n");
 			str.append(toString((*iter), depth + 1));
@@ -129,7 +129,7 @@ public:
 		if (depth > 0) { str.append("  - "); }
 		str.append(device->getFriendlyName() + " (" + device->getUdn() + ")");
 
-		vector<AutoRef<UPnPDevice> > & devices = device->embeddedDevices();
+		vector<AutoRef<UPnPDevice> > & devices = device->childDevices();
 		for (vector<AutoRef<UPnPDevice> >::iterator iter = devices.begin(); iter != devices.end(); iter++) {
 			str.append("\n");
 			str.append(toBriefString((*iter), depth + 1));

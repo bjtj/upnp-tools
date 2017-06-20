@@ -2,7 +2,7 @@
 #include "UPnPDeviceDeserializer.hpp"
 #include "UPnPDeviceBuilder.hpp"
 #include "NetworkUtil.hpp"
-#include "UPnPUtils.hpp"
+#include "UPnPTerms.hpp"
 #include "UPnPExceptions.hpp"
 #include <liboslayer/Uuid.hpp>
 #include <liboslayer/Logger.hpp>
@@ -356,12 +356,12 @@ namespace UPNP {
 
 	AutoRef<UPnPService> UPnPControlPoint::getServiceByUdnAndServiceType(const string & udn, const string & serviceType) {
 		AutoRef<UPnPDevice> device = getDevice(udn);
-		return findServiceRecursive(device, serviceType);
+		return device->findServiceRecursive(serviceType);
 	}
 
 	UPnPActionInvoker UPnPControlPoint::prepareActionInvoke(const string & udn, const string & serviceType) {
 		AutoRef<UPnPDevice> device = getDevice(udn);
-		AutoRef<UPnPService> service = findServiceRecursive(device, serviceType);
+		AutoRef<UPnPService> service = device->findServiceRecursive(serviceType);
 		if (service.nil()) {
 			throw Exception("service not found / type : " + serviceType);
 		}
@@ -396,31 +396,11 @@ namespace UPNP {
 	}
 	UPnPEventSubscriber UPnPControlPoint::prepareEventSubscriber(const string & udn, const string & serviceType) {
 		AutoRef<UPnPDevice> device = getDevice(udn);
-		AutoRef<UPnPService> service = findServiceRecursive(device, serviceType);
+		AutoRef<UPnPService> service = device->findServiceRecursive(serviceType);
 		if (service.nil()) {
 			throw Exception("service not found / type : " + serviceType);
 		}
 		return UPnPEventSubscriber(device->baseUrl().relativePath(service->eventSubUrl()));
-	}
-	AutoRef<UPnPService> UPnPControlPoint::findService(AutoRef<UPnPDevice> device, const string & serviceType) {
-		if (device->hasService(serviceType)) {
-			return device->getService(serviceType);
-		}
-		return AutoRef<UPnPService>();
-	}
-	AutoRef<UPnPService> UPnPControlPoint::findServiceRecursive(AutoRef<UPnPDevice> device, const string & serviceType) {
-		AutoRef<UPnPService> service = findService(device, serviceType);
-		if (!service.nil()) {
-			return service;
-		}
-
-		for (size_t i = 0; i < device->embeddedDevices().size(); i++) {
-			AutoRef<UPnPService> service = findServiceRecursive(device->embeddedDevices()[i], serviceType);
-			if (!service.nil()) {
-				return service;
-			}
-		}
-		return AutoRef<UPnPService>();
 	}
 	AutoRef<UPnPEventReceiver> UPnPControlPoint::getEventReceiver() {
 		return eventReceiver;

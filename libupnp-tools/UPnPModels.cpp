@@ -110,34 +110,37 @@ namespace UPNP {
 
 	void UPnPDevice::addDevice(AutoRef<UPnPDevice> device) {
 		device->setParent(this);
-		_embeddedDevices.push_back(device);
+		_childDevices.push_back(device);
 	}
 
 	void UPnPDevice::addService(AutoRef<UPnPService> service) {
 		service->setDevice(this);
 		_services.push_back(service);
 	}
-
-	bool UPnPDevice::hasService(const string & serviceType) {
-		for (vector<AutoRef<UPnPService> >::iterator iter = _services.begin(); iter != _services.end(); iter++) {
-			if ((*iter)->serviceType() == serviceType) {
-				return true;
-			}
-		}
-		return false;
-	}
 	
-	AutoRef<UPnPService> UPnPDevice::getService(const string & serviceType) {
+	AutoRef<UPnPService> UPnPDevice::findService(const string & serviceType) {
 		for (vector<AutoRef<UPnPService> >::iterator iter = _services.begin(); iter != _services.end(); iter++) {
 			if ((*iter)->serviceType() == serviceType) {
 				return *iter;
 			}
 		}
-		throw OS::Exception("not found service / name: " + serviceType, -1, 0);
+		return AutoRef<UPnPService>();
 	}
-
-	vector<AutoRef<UPnPDevice> > & UPnPDevice::embeddedDevices() {
-		return _embeddedDevices;
+	AutoRef<UPnPService> UPnPDevice::findServiceRecursive(const string & serviceType) {
+		AutoRef<UPnPService> service = findService(serviceType);
+		if (!service.nil()) {
+			return service;
+		}
+		for (size_t i = 0; i < _childDevices.size(); i++) {
+			service = _childDevices[i]->findServiceRecursive(serviceType);
+			if (!service.nil()) {
+				return service;
+			}
+		}
+		return AutoRef<UPnPService>();
+	}
+	vector<AutoRef<UPnPDevice> > & UPnPDevice::childDevices() {
+		return _childDevices;
 	}
 
 	vector<AutoRef<UPnPService> > & UPnPDevice::services() {
@@ -147,7 +150,7 @@ namespace UPNP {
 	vector<UPnPDevice*> UPnPDevice::allDevices() {
 		vector<UPnPDevice*> ret;
 		ret.push_back(this);
-		for (vector<AutoRef<UPnPDevice> >::iterator iter = _embeddedDevices.begin(); iter != _embeddedDevices.end(); iter++) {
+		for (vector<AutoRef<UPnPDevice> >::iterator iter = _childDevices.begin(); iter != _childDevices.end(); iter++) {
 			vector<UPnPDevice*> v = (*iter)->allDevices();
 			ret.insert(ret.end(), v.begin(), v.end());
 		}
@@ -159,7 +162,7 @@ namespace UPNP {
 		for (vector<AutoRef<UPnPService> >::iterator iter = _services.begin(); iter != _services.end(); iter++) {
 			ret.push_back(&(*iter));
 		}
-		for (vector<AutoRef<UPnPDevice> >::iterator iter = _embeddedDevices.begin(); iter != _embeddedDevices.end(); iter++) {
+		for (vector<AutoRef<UPnPDevice> >::iterator iter = _childDevices.begin(); iter != _childDevices.end(); iter++) {
 			vector<UPnPService*> v = (*iter)->allServices();
 			ret.insert(ret.end(), v.begin(), v.end());
 		}
@@ -176,7 +179,7 @@ namespace UPNP {
 
 	void UPnPDevice::setUdnRecursive(const std::string & udn) {
 		setUdn(udn);
-		for (vector<AutoRef<UPnPDevice> >::iterator iter = _embeddedDevices.begin(); iter != _embeddedDevices.end(); iter++) {
+		for (vector<AutoRef<UPnPDevice> >::iterator iter = _childDevices.begin(); iter != _childDevices.end(); iter++) {
 			(*iter)->setUdnRecursive(udn);
 		}
 	}
