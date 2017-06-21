@@ -331,8 +331,9 @@ int run(int argc, char *args[]) {
 			cout << "[Unsubscribe - " << session.udn().toString() << " .. " << session.serviceType() << "]" <<endl;
 			cp.unsubscribe(session.udn(), session.serviceType());
 		} else if (line == "shared") {
-			vector<AutoRef<UPnPDevice> > devices = list->list_s();
-			for (vector<AutoRef<UPnPDevice> >::iterator iter = devices.begin(); iter != devices.end(); iter++) {
+			vector<AutoRef<UPnPDevice> > devices;
+			list->list(devices);
+			for (vector< AutoRef<UPnPDevice> >::iterator iter = devices.begin(); iter != devices.end(); iter++) {
 				cout << " * " << (*iter)->getFriendlyName() << endl;
 			}
 		} else if (line == "dump") {

@@ -415,7 +415,7 @@ namespace UPNP {
 			deviceListener->onDeviceAdded(device);
 		}
 		for (vector< AutoRef<SharedUPnPDeviceList> >::iterator iter = sharedDeviceLists.begin(); iter != sharedDeviceLists.end(); iter++) {
-			(*iter)->add_s(device);
+			(*iter)->add(device);
 		}
 	}
 	
@@ -427,7 +427,7 @@ namespace UPNP {
 			deviceListener->onDeviceRemoved(device);
 		}
 		for (vector< AutoRef<SharedUPnPDeviceList> >::iterator iter = sharedDeviceLists.begin(); iter != sharedDeviceLists.end(); iter++) {
-			(*iter)->remove_s(device);
+			(*iter)->remove(device);
 		}
 	}
 

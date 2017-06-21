@@ -17,40 +17,32 @@ namespace UPNP {
 	void SharedUPnPDeviceList::unlock() {
 		sem.post();
 	}
-
-	vector<AutoRef<UPnPDevice> > SharedUPnPDeviceList::list() {
+	vector< AutoRef<UPnPDevice> > SharedUPnPDeviceList::list() {
 		return _devices;
 	}
-	vector<AutoRef<UPnPDevice> > SharedUPnPDeviceList::list_s() {
+	void SharedUPnPDeviceList::list(vector<AutoRef<UPnPDevice> > & vec) {
 		lock();
-		vector<AutoRef<UPnPDevice> > ret = list();
+		vec.insert(vec.end(), _devices.begin(), _devices.end());
 		unlock();
-		return ret;
 	}
 	AutoRef<UPnPDevice> SharedUPnPDeviceList::findByUdn(const UDN & udn) {
 		AutoRef<UPnPDevice> ret;
+		lock();
 		for (vector<AutoRef<UPnPDevice> >::iterator iter = _devices.begin(); iter != _devices.end(); iter++) {
 			if ((*iter)->getUdn() == udn) {
 				ret = *iter;
 			}
 		}
-		return ret;
-	}
-	AutoRef<UPnPDevice> SharedUPnPDeviceList::findByUdn_s(const UDN & udn) {
-		lock();
-		AutoRef<UPnPDevice> ret = findByUdn(udn);
 		unlock();
 		return ret;
 	}
 	void SharedUPnPDeviceList::add(AutoRef<UPnPDevice> device) {
-		_devices.push_back(device);
-	}
-	void SharedUPnPDeviceList::add_s(AutoRef<UPnPDevice> device) {
 		lock();
-		add(device);
+		_devices.push_back(device);
 		unlock();
 	}
 	void SharedUPnPDeviceList::remove(AutoRef<UPnPDevice> device) {
+		lock();
 		for (vector<AutoRef<UPnPDevice> >::iterator iter = _devices.begin(); iter != _devices.end();) {
 			if ((*iter) == device) {
 				iter = _devices.erase(iter);
@@ -58,19 +50,9 @@ namespace UPNP {
 				iter++;
 			}
 		}
-	}
-	void SharedUPnPDeviceList::remove_s(AutoRef<UPnPDevice> device) {
-		lock();
-		remove(device);
 		unlock();
 	}
 	size_t SharedUPnPDeviceList::size() {
 		return _devices.size();
-	}
-	size_t SharedUPnPDeviceList::size_s() {
-		lock();
-		size_t ret = _devices.size();
-		unlock();
-		return ret;
 	}
 }

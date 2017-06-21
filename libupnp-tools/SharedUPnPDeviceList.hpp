@@ -20,20 +20,14 @@ namespace UPNP {
 	public:
 		SharedUPnPDeviceList();
 		virtual ~SharedUPnPDeviceList();
-
 		virtual void lock();
 		virtual void unlock();
-
-		std::vector<OS::AutoRef<UPnPDevice> > list();
-		std::vector<OS::AutoRef<UPnPDevice> > list_s();
+		std::vector< OS::AutoRef<UPnPDevice> > list();
+		void list(std::vector< OS::AutoRef<UPnPDevice> > & vec);
 		OS::AutoRef<UPnPDevice> findByUdn(const UDN & udn);
-		OS::AutoRef<UPnPDevice> findByUdn_s(const UDN & udn);
 		void add(OS::AutoRef<UPnPDevice> device);
-		void add_s(OS::AutoRef<UPnPDevice> device);
 		void remove(OS::AutoRef<UPnPDevice> device);
-		void remove_s(OS::AutoRef<UPnPDevice> device);
 		size_t size();
-		size_t size_s();
 	};
 }
 
