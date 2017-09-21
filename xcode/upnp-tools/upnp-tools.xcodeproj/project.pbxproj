@@ -17,6 +17,12 @@
 		6C9FC77D1C17005C00B292B8 /* SSDPMsearchSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C9FC7731C17005C00B292B8 /* SSDPMsearchSender.cpp */; };
 		6C9FC77E1C17005C00B292B8 /* SSDPMulticastListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C9FC7751C17005C00B292B8 /* SSDPMulticastListener.cpp */; };
 		6C9FC77F1C17005C00B292B8 /* SSDPMulticastListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6C9FC7751C17005C00B292B8 /* SSDPMulticastListener.cpp */; };
+		E827BD101F740D4800448271 /* UPnPDeviceBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E827BD071F740D4800448271 /* UPnPDeviceBuilder.cpp */; };
+		E827BD111F740D4800448271 /* UPnPDeviceBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E827BD071F740D4800448271 /* UPnPDeviceBuilder.cpp */; };
+		E827BD121F740D4800448271 /* UPnPSoapFormatter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E827BD0C1F740D4800448271 /* UPnPSoapFormatter.cpp */; };
+		E827BD131F740D4800448271 /* UPnPSoapFormatter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E827BD0C1F740D4800448271 /* UPnPSoapFormatter.cpp */; };
+		E827BD141F740D4800448271 /* UPnPTerms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E827BD0E1F740D4800448271 /* UPnPTerms.cpp */; };
+		E827BD151F740D4800448271 /* UPnPTerms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E827BD0E1F740D4800448271 /* UPnPTerms.cpp */; };
 		E82F68141D9C290F00121B7E /* NetworkStateManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82F68021D9C290F00121B7E /* NetworkStateManager.cpp */; };
 		E82F68151D9C290F00121B7E /* SharedUPnPDeviceList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82F68041D9C290F00121B7E /* SharedUPnPDeviceList.cpp */; };
 		E82F68161D9C290F00121B7E /* SSDPMulticastSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82F68071D9C290F00121B7E /* SSDPMulticastSender.cpp */; };
@@ -165,6 +171,15 @@
 		6C9FC7741C17005C00B292B8 /* SSDPMsearchSender.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SSDPMsearchSender.hpp; path = "../../libupnp-tools/SSDPMsearchSender.hpp"; sourceTree = "<group>"; };
 		6C9FC7751C17005C00B292B8 /* SSDPMulticastListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SSDPMulticastListener.cpp; path = "../../libupnp-tools/SSDPMulticastListener.cpp"; sourceTree = "<group>"; };
 		6C9FC7761C17005C00B292B8 /* SSDPMulticastListener.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = SSDPMulticastListener.hpp; path = "../../libupnp-tools/SSDPMulticastListener.hpp"; sourceTree = "<group>"; };
+		E827BD071F740D4800448271 /* UPnPDeviceBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UPnPDeviceBuilder.cpp; path = "../../libupnp-tools/UPnPDeviceBuilder.cpp"; sourceTree = "<group>"; };
+		E827BD081F740D4800448271 /* UPnPDeviceBuilder.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UPnPDeviceBuilder.hpp; path = "../../libupnp-tools/UPnPDeviceBuilder.hpp"; sourceTree = "<group>"; };
+		E827BD091F740D4800448271 /* UPnPDeviceListener.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UPnPDeviceListener.hpp; path = "../../libupnp-tools/UPnPDeviceListener.hpp"; sourceTree = "<group>"; };
+		E827BD0A1F740D4800448271 /* UPnPExceptions.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UPnPExceptions.hpp; path = "../../libupnp-tools/UPnPExceptions.hpp"; sourceTree = "<group>"; };
+		E827BD0B1F740D4800448271 /* UPnPSoapException.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UPnPSoapException.hpp; path = "../../libupnp-tools/UPnPSoapException.hpp"; sourceTree = "<group>"; };
+		E827BD0C1F740D4800448271 /* UPnPSoapFormatter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UPnPSoapFormatter.cpp; path = "../../libupnp-tools/UPnPSoapFormatter.cpp"; sourceTree = "<group>"; };
+		E827BD0D1F740D4800448271 /* UPnPSoapFormatter.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UPnPSoapFormatter.hpp; path = "../../libupnp-tools/UPnPSoapFormatter.hpp"; sourceTree = "<group>"; };
+		E827BD0E1F740D4800448271 /* UPnPTerms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UPnPTerms.cpp; path = "../../libupnp-tools/UPnPTerms.cpp"; sourceTree = "<group>"; };
+		E827BD0F1F740D4800448271 /* UPnPTerms.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UPnPTerms.hpp; path = "../../libupnp-tools/UPnPTerms.hpp"; sourceTree = "<group>"; };
 		E82F68021D9C290F00121B7E /* NetworkStateManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkStateManager.cpp; path = "../../libupnp-tools/NetworkStateManager.cpp"; sourceTree = "<group>"; };
 		E82F68031D9C290F00121B7E /* NetworkStateManager.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = NetworkStateManager.hpp; path = "../../libupnp-tools/NetworkStateManager.hpp"; sourceTree = "<group>"; };
 		E82F68041D9C290F00121B7E /* SharedUPnPDeviceList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SharedUPnPDeviceList.cpp; path = "../../libupnp-tools/SharedUPnPDeviceList.cpp"; sourceTree = "<group>"; };
@@ -275,6 +290,15 @@
 		E8FAB2B11BD7D8E200E89DC5 /* upnp-tools-c++ */ = {
 			isa = PBXGroup;
 			children = (
+				E827BD071F740D4800448271 /* UPnPDeviceBuilder.cpp */,
+				E827BD081F740D4800448271 /* UPnPDeviceBuilder.hpp */,
+				E827BD091F740D4800448271 /* UPnPDeviceListener.hpp */,
+				E827BD0A1F740D4800448271 /* UPnPExceptions.hpp */,
+				E827BD0B1F740D4800448271 /* UPnPSoapException.hpp */,
+				E827BD0C1F740D4800448271 /* UPnPSoapFormatter.cpp */,
+				E827BD0D1F740D4800448271 /* UPnPSoapFormatter.hpp */,
+				E827BD0E1F740D4800448271 /* UPnPTerms.cpp */,
+				E827BD0F1F740D4800448271 /* UPnPTerms.hpp */,
 				E82F68021D9C290F00121B7E /* NetworkStateManager.cpp */,
 				E82F68031D9C290F00121B7E /* NetworkStateManager.hpp */,
 				E82F68041D9C290F00121B7E /* SharedUPnPDeviceList.cpp */,
@@ -475,6 +499,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E827BD151F740D4800448271 /* UPnPTerms.cpp in Sources */,
 				E82F68251D9C2A2700121B7E /* NetworkStateManager.cpp in Sources */,
 				E82F68261D9C2A2700121B7E /* SharedUPnPDeviceList.cpp in Sources */,
 				E82F68271D9C2A2700121B7E /* SSDPMulticastSender.cpp in Sources */,
@@ -489,9 +514,11 @@
 				E89386761CBEFDCE00D45426 /* UPnPActionResponse.cpp in Sources */,
 				E89386771CBEFDCE00D45426 /* UPnPDeviceDeserializer.cpp in Sources */,
 				E89386781CBEFDCE00D45426 /* UPnPDeviceProfile.cpp in Sources */,
+				E827BD111F740D4800448271 /* UPnPDeviceBuilder.cpp in Sources */,
 				E89386791CBEFDCE00D45426 /* UPnPDeviceProfileBuilder.cpp in Sources */,
 				E893867C1CBEFDCE00D45426 /* UPnPDeviceSerializer.cpp in Sources */,
 				E893867D1CBEFDCE00D45426 /* UPnPEventSubscriber.cpp in Sources */,
+				E827BD131F740D4800448271 /* UPnPSoapFormatter.cpp in Sources */,
 				E893867E1CBEFDCE00D45426 /* UPnPEventSubscription.cpp in Sources */,
 				E89386811CBEFDCE00D45426 /* UPnPModels.cpp in Sources */,
 				E89386841CBEFDCE00D45426 /* UPnPResourceManager.cpp in Sources */,
@@ -510,6 +537,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E827BD141F740D4800448271 /* UPnPTerms.cpp in Sources */,
 				E893865B1CBEFD4200D45426 /* HttpUtils.cpp in Sources */,
 				6C9FC77A1C17005C00B292B8 /* SSDPHeader.cpp in Sources */,
 				E89386601CBEFD4200D45426 /* UPnPDeviceProfile.cpp in Sources */,
@@ -524,9 +552,11 @@
 				E89386651CBEFD4200D45426 /* UPnPEventSubscriber.cpp in Sources */,
 				6C59ABE91C76CAB400F814A4 /* UPnPControlPoint.cpp in Sources */,
 				E82F68141D9C290F00121B7E /* NetworkStateManager.cpp in Sources */,
+				E827BD101F740D4800448271 /* UPnPDeviceBuilder.cpp in Sources */,
 				E82F681A1D9C290F00121B7E /* UPnPLocationResolver.cpp in Sources */,
 				E893865E1CBEFD4200D45426 /* UPnPActionResponse.cpp in Sources */,
 				6C4A9F411C081A2F00A45604 /* NetworkUtil.cpp in Sources */,
+				E827BD121F740D4800448271 /* UPnPSoapFormatter.cpp in Sources */,
 				E82F68191D9C290F00121B7E /* UPnPEventReceiver.cpp in Sources */,
 				E89386691CBEFD4200D45426 /* UPnPModels.cpp in Sources */,
 				E82F681B1D9C290F00121B7E /* UPnPPropertyManager.cpp in Sources */,
