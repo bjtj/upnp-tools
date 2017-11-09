@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -13,18 +13,21 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A97BFF5C-B08C-40BD-8243-D21270563918}</ProjectGuid>
     <RootNamespace>upnptools</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -82,6 +85,7 @@
     <ClCompile Include="..\libupnp-tools\UPnPCache.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPControlPoint.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPDebug.cpp" />
+    <ClCompile Include="..\libupnp-tools\UPnPDeviceBuilder.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPDeviceDeserializer.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPDeviceProfile.cpp" />
     <ClCompile Include="..\libupnp-tools\UPnPDeviceProfileBuilder.cpp" />
@@ -118,7 +122,9 @@
     <ClInclude Include="..\libupnp-tools\UPnPCache.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPControlPoint.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPDebug.hpp" />
+    <ClInclude Include="..\libupnp-tools\UPnPDeviceBuilder.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPDeviceDeserializer.hpp" />
+    <ClInclude Include="..\libupnp-tools\UPnPDeviceListener.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPDeviceProfile.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPDeviceProfileBuilder.hpp" />
     <ClInclude Include="..\libupnp-tools\UPnPDeviceSerializer.hpp" />
