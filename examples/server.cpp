@@ -298,7 +298,7 @@ public:
  */
 int main(int argc, char * args[]) {
 
-	Arguments arguments = ArgumentParser::parse(argc, args);
+	ArgumentParser parser(argc, args);
 	FileStream out;
 
 	// UuidGeneratorVersion1 gen;
@@ -307,7 +307,7 @@ int main(int argc, char * args[]) {
 	UDN udn("uuid:" + uuid);
 	
 	UPnPServer server(UPnPServer::Config(9001));
-	if (arguments.varAsBoolean("debug", false)) {
+	if (parser.arguments().varAsBoolean("debug", false)) {
 		out = FileStream("./.server.log", "wb");
 		AutoRef<UPnPDebug> debug(new UPnPDebug);
 		debug->setOnDebugInfoListener(AutoRef<OnDebugInfoListener>(new PrintDebugInfo(out)));

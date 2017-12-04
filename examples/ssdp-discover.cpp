@@ -25,22 +25,25 @@ public:
 	virtual ~MySSDPEventListener() {}
 
 	virtual void onMsearch(const SSDPHeader & header) {
-		cout << "M-SEARCH : " << header.getSearchTarget() << endl;
+		cout << "[M-SEARCH] " << header.getSearchTarget()
+			 << " from " << header.getRemoteAddr().toString() << endl;
 		if (debug.verbose()) {
 			cout << " ** " << header.toString() << endl;
 		}
 	}
 
 	virtual void onNotify(const SSDPHeader & header) {
-		cout << "NOTIFY : " << header.getNotificationSubType() << " - " <<
-			header.getLocation() << endl;
+		cout << "[NOTIFY] " << header.getNotificationSubType()
+			 << " | " << header.getLocation()
+			 << " from " << header.getRemoteAddr().toString()<< endl;
 		if (debug.verbose()) {
 			cout << " ** " << header.toString() << endl;
 		}
 	}
 
 	virtual void onMsearchResponse(const SSDPHeader & header) {
-		cout << "RESP : " << header.getLocation() << endl;
+		cout << "[RESP] " << header.getLocation()
+			 << " from " << header.getRemoteAddr().toString()<< endl;
 		if (debug.verbose()) {
 			cout << " ** " << header.toString() << endl;
 		}
@@ -69,6 +72,7 @@ int main(int argc, char *args[]) {
 			break;
 		} else if (line == "v") {
 			debug.verbose() = !debug.verbose();
+			cout << "[VERBOSE MODE] " << (debug.verbose() ? "ON" : "OFF") << endl;
 		} else {
 			server.sendMsearchAsync(line, 3);
 		}
