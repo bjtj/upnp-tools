@@ -265,7 +265,7 @@ namespace UPNP {
 	public:
 		UPnPServerSsdpHandler(UPnPServer & server) : server(server) {}
 		virtual ~UPnPServerSsdpHandler() {}
-		virtual bool filter(SSDPHeader & header) {
+		virtual bool filter(const SSDPHeader & header) {
 			server.debug("ssdp", header.toString());
 			return true;
 		}
