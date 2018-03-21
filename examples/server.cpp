@@ -1,6 +1,6 @@
 #include <iostream>
 #include <liboslayer/os.hpp>
-#include <liboslayer/ArgumentParser.hpp>
+#include <liboslayer/Arguments.hpp>
 #include <liboslayer/FileStream.hpp>
 #include <libhttp-server/AnotherHttpServer.hpp>
 #include <liboslayer/Uuid.hpp>
@@ -298,7 +298,7 @@ public:
  */
 int main(int argc, char * args[]) {
 
-	ArgumentParser parser(argc, args);
+	Arguments arguments = ArgumentParser::parse(argc, args);
 	FileStream out;
 
 	// UuidGeneratorVersion1 gen;
@@ -307,7 +307,7 @@ int main(int argc, char * args[]) {
 	UDN udn("uuid:" + uuid);
 	
 	UPnPServer server(UPnPServer::Config(9001));
-	if (parser.arguments().varAsBoolean("debug", false)) {
+	if (arguments.is_set("debug")) {
 		out = FileStream("./.server.log", "wb");
 		AutoRef<UPnPDebug> debug(new UPnPDebug);
 		debug->setOnDebugInfoListener(AutoRef<OnDebugInfoListener>(new PrintDebugInfo(out)));
