@@ -9,7 +9,7 @@ namespace UPNP {
 	using namespace HTTP;
 	using namespace UTIL;
 
-	static AutoRef<Logger> logger = LoggerFactory::getInstance().getObservingLogger(__FILE__);
+	static AutoRef<Logger> logger = LoggerFactory::inst().getObservingLogger(__FILE__);
 
 	unsigned long HttpUtils::connectionTimeout = 5000;
 	unsigned long HttpUtils::soTimeout = 5000;
@@ -32,7 +32,7 @@ namespace UPNP {
 		}
 	}
 	void HttpUtils::DumpResponseHandler::onError(OS::Exception & e, AutoRef<UserData> userData) {
-		logger->loge("Error/e: " + e.toString());
+		logger->error("Error/e: " + e.toString());
 	}
 	HttpResponseHeader & HttpUtils::DumpResponseHandler::getResponseHeader() {
 		return responseHeader;

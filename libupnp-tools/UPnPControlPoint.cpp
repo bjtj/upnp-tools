@@ -15,7 +15,7 @@ namespace UPNP {
 	using namespace std;
 	using namespace OS;
 
-	static AutoRef<Logger> logger = LoggerFactory::getInstance().getObservingLogger(__FILE__);
+	static AutoRef<Logger> logger = LoggerFactory::inst().getObservingLogger(__FILE__);
 
 	UPnPDeviceSession::UPnPDeviceSession(const UDN & udn)
 		: _udn(udn), _completed(false) {
@@ -146,7 +146,7 @@ namespace UPNP {
 				session->setCompleted(true);
 				cp.onDeviceBuildCompleted(session);
 			} catch (Exception e) {
-				logger->loge("build device failed - " + e.message());
+				logger->error("build device failed - " + e.message());
 				cp.onDeviceBuildFailed(session);
 			}
 			session = NULL;
@@ -436,7 +436,7 @@ namespace UPNP {
 			MaxAge maxAge(cacheControl);
 			return maxAge.second() * 1000;
 		} catch (UPnPParseException e) {
-			logger->loge("upnp parse exception - '" + e.toString() + "'");
+			logger->error("upnp parse exception - '" + e.toString() + "'");
 			return DEFAULT_DEVICE_SESSION_TIMEOUT;
 		}
 	}

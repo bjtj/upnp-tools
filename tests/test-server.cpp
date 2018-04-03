@@ -193,7 +193,7 @@ static void test_device_profile() {
 }
 
 int main(int argc, char *args[]) {
-	LoggerFactory::getInstance().setLoggerDescriptorSimple("*", "basic", "console");
+	LoggerFactory::inst().setProfile("*", "basic", "console");
 	test_device_profile();
     return 0;
 }

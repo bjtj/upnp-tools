@@ -13,7 +13,7 @@ using namespace HTTP;
 using namespace UPNP;
 using namespace SSDP;
 
-class RequestHandler : public HttpRequestHandler, public WebServerUtil {
+class RequestHandler : public HttpRequestHandler {
 private:
 	UuidGeneratorVersion1 gen;
 	string _uuid;
@@ -35,11 +35,11 @@ public:
 		if (request.getPath() == "/device.xml") {
 			response.setStatus(200);
 			response.setContentType("text/xml");
-			setFixedTransfer(response, dd(_uuid));
+			response.setFixedTransfer(dd(_uuid));
 		} else if (request.getRawPath() == "/scpd.xml?udn=uuid:" + _uuid + "&serviceType=" + dummy) {
 			response.setStatus(200);
 			response.setContentType("text/xml");
-			setFixedTransfer(response, scpd());
+			response.setFixedTransfer(scpd());
 		} else {
 			response.setStatus(404);
 		}

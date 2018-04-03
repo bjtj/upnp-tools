@@ -68,7 +68,7 @@ public:
 	}
 };
 
-class SimpleHttpRequestHandler : public HttpRequestHandler, public WebServerUtil {
+class SimpleHttpRequestHandler : public HttpRequestHandler {
 private:
 public:
 	SimpleHttpRequestHandler() {
@@ -77,7 +77,7 @@ public:
 	}
 	virtual void onHttpRequestContentCompleted(HttpRequest & request, AutoRef<DataSink> sink, HttpResponse & response) {
 		response.setStatus(200);
-		setFixedTransfer(response, dd);
+		response.setFixedTransfer(dd);
 	}
 };
 

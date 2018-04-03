@@ -26,7 +26,7 @@ using namespace XML;
 
 // #define _DEBUG
 
-static AutoRef<Logger> logger = LoggerFactory::getInstance().getObservingLogger(__FILE__);
+static AutoRef<Logger> logger = LoggerFactory::inst().getObservingLogger(__FILE__);
 
 class MyEventListener : public UPnPEventListener {
 private:

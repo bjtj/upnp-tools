@@ -3,7 +3,6 @@
 #include <liboslayer/Logger.hpp>
 #include <liboslayer/Uuid.hpp>
 #include <libhttp-server/StringDataSink.hpp>
-#include <libhttp-server/WebServerUtil.hpp>
 #include <libhttp-server/HttpException.hpp>
 #include "UPnPActionErrorCodes.hpp"
 #include "UPnPDeviceDeserializer.hpp"
@@ -27,7 +26,7 @@ namespace UPNP {
 	using namespace HTTP;
 	using namespace UTIL;
 
-	static AutoRef<Logger> logger = LoggerFactory::getInstance().getObservingLogger(__FILE__);
+	static AutoRef<Logger> logger = LoggerFactory::inst().getObservingLogger(__FILE__);
 
 	/**
 	 * @brief upnp device profile session
@@ -302,7 +301,7 @@ namespace UPNP {
 	/**
 	 * @brief upnp server http request handler
 	 */
-	class UPnPServerHttpRequestHandler : public HttpRequestHandler, public WebServerUtil {
+	class UPnPServerHttpRequestHandler : public HttpRequestHandler {
 	private:
 		UPnPServer & server;
 	public:
@@ -325,7 +324,7 @@ namespace UPNP {
 			if (response.getStatusCode() == 100 || response.getStatusCode() == 417) {
 				return;
 			}
-			logger->logd("[UPnPServer] HTTP REQUEST / full path - '" + request.getRawPath() + "'");
+			logger->debug("[UPnPServer] HTTP REQUEST / full path - '" + request.getRawPath() + "'");
 			try {
 				if (handleUPnP(request, sink, response) == true) {
 					return;
@@ -333,13 +332,13 @@ namespace UPNP {
 			} catch (HttpException e) {
 				response.setStatus(e.statusCode(), e.statusString());
 				response.setContentType("text/plain");
-				setFixedTransfer(response, e.description());
+				response.setFixedTransfer(e.description());
 				return;
 			}
-			logger->logd("[UPnPServer] HTTP REQUEST / 404 not found");
+			logger->debug("[UPnPServer] HTTP REQUEST / 404 not found");
 			response.setStatus(404);
 			response.setContentType("text/plain");
-			setFixedTransfer(response, "Not found");
+			response.setFixedTransfer("Not found");
 		}
 
 		bool handleUPnP(HttpRequest & request, AutoRef<DataSink> sink, HttpResponse & response) {
@@ -391,7 +390,7 @@ namespace UPNP {
 
 		void validateMethod(HttpRequest & request, const string & expect) {
 			if (request.getMethod() != expect) {
-				logger->logd("[UPnPServer] HTTP REQUEST / unexpected method - " + request.getMethod());
+				logger->debug("[UPnPServer] HTTP REQUEST / unexpected method - " + request.getMethod());
 				throw HttpException(405, HttpStatusCodes::getStatusString(405),
 									"Unexpected method - " + request.getMethod());
 			}
@@ -420,7 +419,7 @@ namespace UPNP {
 			response.setStatus(200);
 			response.setContentType("text/xml; charset=\"utf-8\"");
 			UPnPDeviceProfile profile = server.getProfileManager().getDeviceProfileSessionByUDN(udn)->profile();
-			setFixedTransfer(response, profile.deviceDescription());
+			response.setFixedTransfer(profile.deviceDescription());
 
 			if (server.getHttpEventListener().nil() == false) {
 				server.getHttpEventListener()->onDeviceDescriptionRequest(request, response);
@@ -433,7 +432,7 @@ namespace UPNP {
 			response.setStatus(200);
 			response.setContentType("text/xml; charset=\"utf-8\"");
 			UPnPServiceProfile serviceProfile = deviceProfile.getServiceProfileByScpdUrl(request.getRawPath());
-			setFixedTransfer(response, serviceProfile.scpd());
+			response.setFixedTransfer(serviceProfile.scpd());
 
 			if (server.getHttpEventListener().nil() == false) {
 				server.getHttpEventListener()->onScpdRequest(request, response);
@@ -456,11 +455,11 @@ namespace UPNP {
 				}
 				response.setStatus(200);
 				response.setContentType("text/xml; charset=\"utf-8\"");
-				setFixedTransfer(response, UPnPSoapFormatter::formatResponse(actionResponse));
+				response.setFixedTransfer(UPnPSoapFormatter::formatResponse(actionResponse));
 			} catch (UPnPSoapException e) {
 				response.setStatus(500);
 				response.setContentType("text/xml; charset=\"utf-8\"");
-				setFixedTransfer(response, e.getSoapErrorMessage());
+				response.setFixedTransfer(e.getSoapErrorMessage());
 			}
 
 			if (server.getHttpEventListener().nil() == false) {

@@ -25,7 +25,7 @@ static string dummy = "urn:schemas-dummy-com:service:Dummy:1";
 /**
  * 
  */
-class RequestHandler : public HttpRequestHandler, public WebServerUtil {
+class RequestHandler : public HttpRequestHandler {
 private:
 	string _uuid;
 public:
@@ -41,11 +41,11 @@ public:
 		if (request.getPath() == "/device.xml") {
 			response.setStatus(200);
 			response.setContentType("text/xml");
-			setFixedTransfer(response, dd(_uuid));
+			response.setFixedTransfer(dd(_uuid));
 		} else if (request.getRawPath() == "/scpd.xml?udn=" + _uuid + "&serviceType=" + dummy) {
 			response.setStatus(200);
 			response.setContentType("text/xml");
-			setFixedTransfer(response, scpd());
+			response.setFixedTransfer(scpd());
 		} else {
 			response.setStatus(404);
 		}

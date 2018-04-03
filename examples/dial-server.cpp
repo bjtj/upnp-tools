@@ -9,7 +9,6 @@
 #include <libupnp-tools/UPnPDeviceProfileBuilder.hpp>
 #include <libupnp-tools/UPnPResourceManager.hpp>
 #include <libupnp-tools/NetworkUtil.hpp>
-#include <libhttp-server/WebServerUtil.hpp>
 #include <libhttp-server/Url.hpp>
 
 using namespace std;
@@ -53,7 +52,7 @@ public:
 /**
  * 
  */
-class DialRequestHandler : public HttpRequestHandler, public WebServerUtil
+class DialRequestHandler : public HttpRequestHandler
 {
 public:
     DialRequestHandler() {}
@@ -67,7 +66,7 @@ public:
 			xml.append("    <options allowStop=\"true\" />\n");
 			xml.append("    <state>stopped</state>\n");
 			xml.append("</service>");
-			setFixedTransfer(response, xml);
+			response.setFixedTransfer(xml);
 		} else if (request.getMethod() == "POST") {
 			response.setStatus(201);
 		} else if (request.getMethod() == "DELETE") {
