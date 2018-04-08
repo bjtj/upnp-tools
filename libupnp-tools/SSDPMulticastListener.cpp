@@ -1,10 +1,13 @@
 #include "SSDPMulticastListener.hpp"
+#include <liboslayer/Logger.hpp>
 
 namespace SSDP {
 
 	using namespace std;
 	using namespace OS;
 	using namespace UTIL;
+    
+    static AutoRef<Logger> logger = LoggerFactory::inst().getObservingLogger(__FILE__);
 	
 	SSDPMulticastListener::SSDPMulticastListener(const string & group, int port)
 		: group(group), sock(port), selector(new Selector) {

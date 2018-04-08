@@ -4,6 +4,7 @@
 #include <liboslayer/FileStream.hpp>
 #include <libhttp-server/AnotherHttpServer.hpp>
 #include <liboslayer/Uuid.hpp>
+#include <liboslayer/Logger.hpp>
 #include <libupnp-tools/UPnPModels.hpp>
 #include <libupnp-tools/SSDPMsearchSender.hpp>
 #include <libupnp-tools/NetworkUtil.hpp>
@@ -297,6 +298,8 @@ public:
  * @brief 
  */
 int main(int argc, char * args[]) {
+    
+    LoggerFactory::inst().setProfile("*", "basic", "console");
 
 	Arguments arguments = ArgumentParser::parse(argc, args);
 	FileStream out;

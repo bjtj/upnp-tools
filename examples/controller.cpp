@@ -49,7 +49,7 @@ static int run(int argc, char *args[]);
 int main(int argc, char *args[]) {
 
 #if defined(_DEBUG)
-	LoggerFactory::getInstance().setLoggerDescriptorSimple("*", "basic", "console");
+	LoggerFactory::inst().setProfile("*", "basic", "console");
 #endif
 
 	try {
