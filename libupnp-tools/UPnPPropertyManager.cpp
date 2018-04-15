@@ -13,8 +13,10 @@ namespace UPNP {
 
 	UPnPEventSubscriptionSession::UPnPEventSubscriptionSession() {
 	}
+	
 	UPnPEventSubscriptionSession::~UPnPEventSubscriptionSession() {
 	}
+	
 	vector<string> & UPnPEventSubscriptionSession::callbackUrls() {
 		return _callbackUrls;
 	}

@@ -15,16 +15,21 @@ namespace UPNP {
 
 	USN::USN() {
 	}
+
 	USN::USN(const string & str) : _str(str) {
 	}
+
 	USN::~USN() {
 	}
+
 	string & USN::str() {
 		return _str;
 	}
+
 	string USN::str() const {
 		return _str;
 	}
+
 	string USN::uuid() const {
 		if (valid() == false) {
 			return "";
@@ -35,6 +40,7 @@ namespace UPNP {
 		}
 		return _str.substr(5);
 	}
+
 	string USN::rest() const {
 		size_t s = _str.find("::");
 		if (s != string::npos) {
@@ -42,15 +48,18 @@ namespace UPNP {
 		}
 		return "";
 	}
+
 	bool USN::empty() const {
 		return _str.empty();
 	}
+
 	bool USN::valid() const {
 		if (Text::startsWith(_str, "uuid:") == false) {
 			return false;
 		}
 		return true;
 	}
+
 	string USN::toString() const {
 		return _str;
 	}
@@ -62,52 +71,67 @@ namespace UPNP {
 
 	UDN::UDN() {
 	}
+
 	UDN::UDN(const string & str) : _str(str) {
 	}
+
 	UDN::~UDN() {
 	}
+
 	string & UDN::str() {
 		return _str;
 	}
+
 	string UDN::str() const {
 		return _str;
 	}
+
 	string UDN::uuid() const {
 		if (valid() == false) {
 			return "";
 		}
 		return _str.substr(5);
 	}
+
 	bool UDN::empty() const {
 		return _str.empty();
 	}
+
 	bool UDN::valid() const {
 		if (Text::startsWith(_str, "uuid:") == false) {
 			return false;
 		}
 		return true;
 	}
+
 	string UDN::toString() const {
 		return _str;
 	}
+
 	bool UDN::operator< (const UDN & other) const {
 		return _str < other._str;
 	}
+
 	bool UDN::operator< (const string & str) const {
 		return _str < str;
 	}
+
 	bool UDN::operator> (const UDN & other) const {
 		return _str > other._str;
 	}
+
 	bool UDN::operator> (const string & str) const {
 		return _str > str;
 	}
+
 	bool UDN::operator== (const UDN & other) const {
 		return _str == other._str;
 	}
+
 	bool UDN::operator== (const string & str) const {
 		return _str == str;
 	}
+
 
 	/**
 	 * max-age
@@ -115,25 +139,32 @@ namespace UPNP {
 
 	MaxAge::MaxAge(const string & phrase) : _second(parse(phrase)) {
 	}
+
 	MaxAge::MaxAge(unsigned long second) : _second(second) {
 	}
+
 	MaxAge::~MaxAge() {
 	}
+
 	unsigned long & MaxAge::second() {
 		return _second;
 	}
+
 	unsigned long MaxAge::parse(const string & phrase) {
 		if (Text::startsWithIgnoreCase(phrase, "max-age=") == false) {
 			throw UPnPParseException("max-age not occurred");
 		}
 		return (unsigned long)Text::toLong(phrase.substr(string("max-age=").size()));
 	}
+
 	string MaxAge::toString() const {
 		return toString(_second);
 	}
+
 	string MaxAge::toString(unsigned long second) {
 		return "max-age=" + Text::toString(second);
 	}
+
 
 	/**
 	 * callback urls
@@ -190,6 +221,7 @@ namespace UPNP {
 		return ret;
 	}
 
+
 	/**
 	 * second
 	 */
@@ -216,8 +248,9 @@ namespace UPNP {
 	string Second::toString() const {
 		return toString(_second);
 	}
-	
+
 	string Second::toString(unsigned long second) {
 		return "Second-" + Text::toString(second);
 	}
+
 }

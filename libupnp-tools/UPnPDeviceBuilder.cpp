@@ -13,17 +13,22 @@ namespace UPNP {
 	UPnPDeviceBuilder::UPnPDeviceBuilder(const Url & url)
 		: _url(url), _allow_fail_scpd(false) {
 	}
+
 	UPnPDeviceBuilder::~UPnPDeviceBuilder() {
 	}
+
 	Url & UPnPDeviceBuilder::url() {
 		return _url;
 	}
+
 	bool & UPnPDeviceBuilder::allow_fail_scpd() {
 		return _allow_fail_scpd;
 	}
+
 	AutoRef<UPnPDevice> & UPnPDeviceBuilder::device() {
 		return _device;
 	}
+
 	AutoRef<UPnPDevice> UPnPDeviceBuilder::execute() {
 		UPnPResourceManager & resMan = UPnPResourceManager::instance();
 		UPnPDeviceDeserializer deserializer;
@@ -45,5 +50,6 @@ namespace UPNP {
 		}
 		return _device;
 	}
+
 
 }

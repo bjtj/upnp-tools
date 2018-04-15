@@ -9,11 +9,14 @@ namespace UPNP {
 
 	UPnPScpd::UPnPScpd() {
 	}
+
 	UPnPScpd::~UPnPScpd() {
 	}
+
 	vector<UPnPAction> & UPnPScpd::actions() {
 		return _actions;
 	}
+
 	UPnPAction & UPnPScpd::action(const string & name) {
 		for (vector<UPnPAction>::iterator iter = _actions.begin(); iter != _actions.end(); iter++) {
 			if (iter->name() == name) {
@@ -23,6 +26,7 @@ namespace UPNP {
 		_actions.push_back(UPnPAction(name));
 		return *_actions.rbegin();
 	}
+
 	bool UPnPScpd::hasAction(const string & name) {
 		for (vector<UPnPAction>::iterator iter = _actions.begin(); iter != _actions.end(); iter++) {
 			if (iter->name() == name) {
@@ -31,9 +35,11 @@ namespace UPNP {
 		}
 		return false;
 	}
+
 	vector<UPnPStateVariable> & UPnPScpd::stateVariables() {
 		return _stateVariables;
 	}
+
 	UPnPStateVariable & UPnPScpd::stateVariable(const string & name) {
 		for (vector<UPnPStateVariable>::iterator iter = _stateVariables.begin(); iter != _stateVariables.end(); iter++) {
 			if (iter->name() == name) {
@@ -44,6 +50,7 @@ namespace UPNP {
 		_stateVariables.push_back(UPnPStateVariable(name));
 		return *_stateVariables.rbegin();
 	}
+
 	bool UPnPScpd::hasStateVariable(const string & name) {
 		for (vector<UPnPStateVariable>::iterator iter = _stateVariables.begin(); iter != _stateVariables.end(); iter++) {
 			if (iter->name() == name) {
@@ -54,7 +61,6 @@ namespace UPNP {
 	}
 
 	
-	
 	UPnPService::UPnPService() : device(NULL) {}
 	UPnPService::UPnPService(UPnPDevice * device) : device(device) {}
 	UPnPService::~UPnPService() {}
@@ -62,24 +68,31 @@ namespace UPNP {
 	string & UPnPService::serviceType() {
 		return getProperties()["serviceType"];
 	}
+
 	string & UPnPService::serviceId() {
 		return getProperties()["serviceId"];
 	}
+
 	string & UPnPService::scpdUrl() {
 		return getProperties()["SCPDURL"];
 	}
+
 	string & UPnPService::controlUrl() {
 		return getProperties()["controlURL"];
 	}
+
 	string & UPnPService::eventSubUrl() {
 		return getProperties()["eventSubURL"];
 	}
+
 	void UPnPService::setDevice(UPnPDevice * device) {
 		this->device = device;
 	}
+
 	UPnPDevice * UPnPService::getDevice() {
 		return device;
 	}
+
 	Url UPnPService::makeScpdUrl() {
 		if (!device) {
 			throw OS::Exception("no device", -1, 0);
@@ -90,7 +103,6 @@ namespace UPNP {
 	UPnPScpd & UPnPService::scpd() {
 		return _scpd;
 	}
-	
 
 
 	UPnPDevice::UPnPDevice() : parent(NULL) {}
@@ -126,6 +138,7 @@ namespace UPNP {
 		}
 		return AutoRef<UPnPService>();
 	}
+
 	AutoRef<UPnPService> UPnPDevice::findServiceRecursive(const string & serviceType) {
 		AutoRef<UPnPService> service = findService(serviceType);
 		if (!service.nil()) {
@@ -139,6 +152,7 @@ namespace UPNP {
 		}
 		return AutoRef<UPnPService>();
 	}
+
 	vector<AutoRef<UPnPDevice> > & UPnPDevice::childDevices() {
 		return _childDevices;
 	}
@@ -203,4 +217,5 @@ namespace UPNP {
 	Url & UPnPDevice::baseUrl() {
 		return _baseUrl;
 	}
+
 }

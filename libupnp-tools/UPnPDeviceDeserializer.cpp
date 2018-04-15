@@ -83,6 +83,7 @@ namespace UPNP {
 		}
 		return arg;
 	}
+	
 	UPnPStateVariable UPnPDeviceDeserializer::parseStateVariableFromXmlNode(AutoRef<XmlNode> stateVariableXml) {
 		UPnPStateVariable stateVariable;
 
@@ -130,6 +131,7 @@ namespace UPNP {
 		}
 		return stateVariable;
 	}
+	
 	void UPnPDeviceDeserializer::parsePropertiesFromXmlNode(AutoRef<XmlNode> node, UPnPModelObject & obj) {
 		vector<AutoRef<XmlNode> > children = node->children();
 		for (vector<AutoRef<XmlNode> >::iterator iter = children.begin(); iter != children.end(); iter++) {

@@ -18,6 +18,7 @@ namespace UPNP {
 	UPnPDeviceProfileBuilder::UPnPDeviceProfileBuilder(const UDN & udn, AutoRef<UPnPDevice> device)
 		: _udn(udn), _device(device), _locationResolver(new UPnPLocationResolver) {
 	}
+	
 	UPnPDeviceProfileBuilder::~UPnPDeviceProfileBuilder() {
 	}
 

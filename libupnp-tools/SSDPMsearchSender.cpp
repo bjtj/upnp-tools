@@ -10,21 +10,27 @@ namespace SSDP {
 	SSDPMsearchSender::SSDPMsearchSender()
 		: _cancel(false) {
 	}
+
 	SSDPMsearchSender::SSDPMsearchSender(AutoRef<Selector> selector)
 		: SSDPMulticastSender(selector), _cancel(false) {
 	}
+
 	SSDPMsearchSender::SSDPMsearchSender(int port)
 		: SSDPMulticastSender(port), _cancel(false) {
 	}
+
 	SSDPMsearchSender::SSDPMsearchSender(int port, AutoRef<Selector> selector)
 		: SSDPMulticastSender(port, selector), _cancel(false) {
 	}
+
 	SSDPMsearchSender::SSDPMsearchSender(InetAddress & bindAddr)
 		: SSDPMulticastSender(bindAddr), _cancel(false) {
 	}
+
 	SSDPMsearchSender::SSDPMsearchSender(InetAddress & bindAddr, AutoRef<Selector> selector)
 		: SSDPMulticastSender(bindAddr, selector), _cancel(false) {
 	}
+
 	SSDPMsearchSender::~SSDPMsearchSender() {
 	}
 
@@ -63,4 +69,5 @@ namespace SSDP {
 		packet.write(content);
 		sock.send(packet);
 	}
+
 }

@@ -13,6 +13,7 @@ namespace UPNP {
 	
 	UPnPDeviceSerializer::UPnPDeviceSerializer() {
 	}
+	
 	UPnPDeviceSerializer::~UPnPDeviceSerializer() {
 	}
 
@@ -145,6 +146,7 @@ namespace UPNP {
 
 		return ret;
 	}
+	
 	string UPnPDeviceSerializer::serializeArgument(UPnPArgument & argument) {
 		string ret = "<argument>";
 		ret.append(NEWLINE);
@@ -158,6 +160,7 @@ namespace UPNP {
 		ret.append(NEWLINE);
 		return ret;
 	}
+	
 	string UPnPDeviceSerializer::serializeStateVariable(UPnPStateVariable & stateVariable) {
 		
 		string ret = "<stateVariable ";

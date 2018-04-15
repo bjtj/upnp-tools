@@ -11,8 +11,10 @@ namespace UPNP {
 
 	UPnPSoapFormatter::UPnPSoapFormatter() {
 	}
+
 	UPnPSoapFormatter::~UPnPSoapFormatter() {
 	}
+
 	string UPnPSoapFormatter::formatResponse(UPnPActionResponse & response) {
 		string actionName = response.actionName();
 		string serviceType = response.serviceType();
@@ -60,5 +62,4 @@ namespace UPNP {
 		xml.append("</s:Envelope>");
 		return xml;
 	}
-	
 }

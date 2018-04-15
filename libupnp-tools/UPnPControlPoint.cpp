@@ -59,29 +59,35 @@ namespace UPNP {
 		}
 	};
 
-
 	UPnPDeviceSessionManager::UPnPDeviceSessionManager() {
 	}
+
 	UPnPDeviceSessionManager::~UPnPDeviceSessionManager() {
 	}
+
 	bool UPnPDeviceSessionManager::contains(const UDN & udn) {
 		return (sessions.find(udn) != sessions.end());
 	}
+
 	void UPnPDeviceSessionManager::clear() {
 		sessions.clear();
 	}
+
 	AutoRef<UPnPDeviceSession> UPnPDeviceSessionManager::prepareSession(const UDN & udn) {
 		if (!contains(udn)) {
 			sessions[udn] = AutoRef<UPnPDeviceSession>(new UPnPDeviceSession(udn));
 		}
 		return sessions[udn];
 	}
+
 	void UPnPDeviceSessionManager::remove(const UDN & udn) {
 		sessions.erase(udn);
 	}
+
 	size_t UPnPDeviceSessionManager::size() {
 		return sessions.size();
 	}
+
 	AutoRef<UPnPDevice> UPnPDeviceSessionManager::findDevice(const UDN & udn) {
 		AutoRef<UPnPDeviceSession> session = sessions[udn];
 		if (!session.nil()) {
@@ -89,6 +95,7 @@ namespace UPNP {
 		}
 		return AutoRef<UPnPDevice>();
 	}
+
 	vector< AutoRef<UPnPDeviceSession> > UPnPDeviceSessionManager::getSessions() {
 		vector<AutoRef<UPnPDeviceSession> > ret;
 		for (map< UDN, AutoRef<UPnPDeviceSession> >::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
@@ -96,6 +103,7 @@ namespace UPNP {
 		}
 		return ret;
 	}
+
 	vector< AutoRef<UPnPDevice> > UPnPDeviceSessionManager::getDevices() {
 		vector<AutoRef<UPnPDevice> > ret;
 		for (map< UDN, AutoRef<UPnPDeviceSession> >::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
@@ -103,6 +111,7 @@ namespace UPNP {
 		}
 		return ret;
 	}
+
 	AutoRef<UPnPDeviceSession> UPnPDeviceSessionManager::operator[] (const UDN & udn) {
 		return sessions[udn];
 	}
@@ -123,6 +132,7 @@ namespace UPNP {
 	void UPnPDeviceSessionManager::setOnSessionOutdatedListener(AutoRef<UPnPDeviceSessionManager::OnSessionOutdatedListener> onSessionOutdatedListener) {
 		this->onSessionOutdatedListener = onSessionOutdatedListener;
 	}
+
 	
 	AutoRef<UPnPDeviceSessionManager::OnSessionOutdatedListener> UPnPDeviceSessionManager::getOnSessionOutdatedListener() {
 		return onSessionOutdatedListener;
@@ -152,7 +162,6 @@ namespace UPNP {
 			session = NULL;
 		}
 	};
-
 
 	/**
 	 * @brief
@@ -321,7 +330,7 @@ namespace UPNP {
 	void UPnPControlPoint::sendMsearchAndWait(const string & target, unsigned long timeoutSec) {
 		ssdpServer.sendMsearchAndGather(target, timeoutSec);
 	}
-	
+
 	void UPnPControlPoint::sendMsearchAsync(const string & target, unsigned long timeoutSec) {
 		ssdpServer.sendMsearchAsync(target, timeoutSec);
 	}
@@ -365,6 +374,7 @@ namespace UPNP {
 		subscription.serviceType() = serviceType;
 		eventReceiver->addSubscription(subscription);
 	}
+
 	void UPnPControlPoint::unsubscribe(const UDN & udn, const string & serviceType) {
 		if (eventReceiver.nil()) {
 			throw Exception("event receiver is stopped");
@@ -374,6 +384,7 @@ namespace UPNP {
 		UPnPEventSubscriber subscriber = prepareEventSubscriber(udn, serviceType);
 		subscriber.unsubscribe(subscription.sid());
 	}
+
 	UPnPEventSubscriber UPnPControlPoint::prepareEventSubscriber(const UDN & udn, const string & serviceType) {
 		AutoRef<UPnPDevice> device = findDevice(udn);
 		AutoRef<UPnPService> service = device->findServiceRecursive(serviceType);
@@ -382,6 +393,7 @@ namespace UPNP {
 		}
 		return UPnPEventSubscriber(device->baseUrl().relativePath(service->eventSubUrl()));
 	}
+
 	AutoRef<UPnPEventReceiver> UPnPControlPoint::getEventReceiver() {
 		return eventReceiver;
 	}
@@ -397,6 +409,7 @@ namespace UPNP {
 	void UPnPControlPoint::addSharedDeviceList(AutoRef<SharedUPnPDeviceList> list) {
 		sharedDeviceLists.push_back(list);
 	}
+
 	void UPnPControlPoint::removeSharedDeviceList(AutoRef<SharedUPnPDeviceList> list) {
 		for (vector< AutoRef<SharedUPnPDeviceList> >::iterator iter = sharedDeviceLists.begin(); iter != sharedDeviceLists.end();) {
 			if ((*iter) == list) {
@@ -440,4 +453,5 @@ namespace UPNP {
 			return DEFAULT_DEVICE_SESSION_TIMEOUT;
 		}
 	}
+
 }

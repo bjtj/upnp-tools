@@ -10,8 +10,10 @@ namespace UPNP {
 	
 	UPnPActionErrorCodes::UPnPActionErrorCodes() {
 	}
+
 	UPnPActionErrorCodes::~UPnPActionErrorCodes() {
 	}
+
 	string UPnPActionErrorCodes::getDescription(int code) {
 		return errorCodes[code];
 	}
@@ -29,4 +31,5 @@ namespace UPNP {
 		codes[605] = "String Argument Too Long";
 		return codes;
 	}
+
 }

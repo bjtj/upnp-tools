@@ -93,6 +93,7 @@ namespace UPNP {
 		}
 		return false;
 	}
+	
 	UPnPServiceProfile & UPnPDeviceProfile::getServiceProfileByServiceType(const string & serviceType) {
 		for (vector<UPnPServiceProfile>::iterator iter = _serviceProfiles.begin();
 			 iter != _serviceProfiles.end(); iter++) {
@@ -122,6 +123,7 @@ namespace UPNP {
 		}
 		throw OS::Exception("not found service", -1, 0);
 	}
+	
 	UPnPServiceProfile & UPnPDeviceProfile::getServiceProfileByEventSubUrl(const string & eventSubUrl) {
 		for (vector<UPnPServiceProfile>::iterator iter = _serviceProfiles.begin();
 			 iter != _serviceProfiles.end(); iter++) {

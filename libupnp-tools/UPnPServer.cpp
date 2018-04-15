@@ -34,17 +34,22 @@ namespace UPNP {
 
 	UPnPDeviceProfileSession::UPnPDeviceProfileSession(const UPnPDeviceProfile & profile) : enabled(false), _profile(profile){
 	}
+
 	UPnPDeviceProfileSession::~UPnPDeviceProfileSession() {
 	}
+
 	UPnPDeviceProfile & UPnPDeviceProfileSession::profile() {
 		return _profile;
 	}
+
 	void UPnPDeviceProfileSession::setEnable(bool enable) {
 		this->enabled = enable;
 	}
+
 	bool UPnPDeviceProfileSession::isEnabled() {
 		return enabled;
 	}
+
 	
 	/**
 	 * @brief upnp device profile session manager
@@ -52,11 +57,14 @@ namespace UPNP {
 	
 	UPnPDeviceProfileSessionManager::UPnPDeviceProfileSessionManager() {
 	}
+
 	UPnPDeviceProfileSessionManager::~UPnPDeviceProfileSessionManager() {
 	}
+
 	map< UDN, AutoRef<UPnPDeviceProfileSession> > & UPnPDeviceProfileSessionManager::sessions() {
 		return _sessions;
 	}
+
 	vector<AutoRef<UPnPDeviceProfileSession> > UPnPDeviceProfileSessionManager::sessionList() {
 		vector<AutoRef<UPnPDeviceProfileSession> > ret;
 		for (map<UDN, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin(); iter != _sessions.end(); iter++) {
@@ -191,6 +199,7 @@ namespace UPNP {
 		}
 		throw Exception("not found device profile session by scpd url");
 	}
+
 	
 	AutoRef<UPnPDeviceProfileSession> UPnPDeviceProfileSessionManager::getDeviceProfileSessionHasEventSubUrl(const string & eventSubUrl) {
 		for (map<UDN, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin(); iter != _sessions.end(); iter++) {
@@ -201,6 +210,7 @@ namespace UPNP {
 		}
 		throw Exception("not found device profile session by event sub url");
 	}
+
 
 	/**
 	 * @breif life time task
@@ -216,6 +226,7 @@ namespace UPNP {
 			server.collectExpired();
 		}
 	};
+	
 
 	/**
 	 * @brief notify task
@@ -297,6 +308,7 @@ namespace UPNP {
 			server.respondMsearch(header.getSearchTarget(), remoteAddr);
 		}
 	};
+	
 
 	/**
 	 * @brief upnp server http request handler
@@ -588,6 +600,7 @@ namespace UPNP {
 		}
 	};
 
+	
 	/**
 	 *
 	 */
@@ -753,6 +766,7 @@ namespace UPNP {
 			"USN: " + usn.toString() + "\r\n"
 			"\r\n";
 	}
+
 	void UPnPServer::notifyByeBye(UPnPDeviceProfile & profile) {
 
 		SSDPMsearchSender sender;
@@ -776,6 +790,7 @@ namespace UPNP {
 		
 		sender.close();
 	}
+
 	void UPnPServer::notifyByeByeByDeviceType(UPnPDeviceProfile & profile, const string & deviceType) {
 		UDN udn = profile.udn();
 		SSDPMsearchSender sender;
@@ -784,6 +799,7 @@ namespace UPNP {
 		sender.sendMcastToAllInterfaces(packet, "239.255.255.250", 1900);
 		sender.close();
 	}
+
 	string UPnPServer::makeNotifyByeBye(const UDN & udn, const string & deviceType) {
 		UPNP::USN usn(udn.toString());
 		usn.rest() = deviceType;
@@ -812,6 +828,7 @@ namespace UPNP {
 		}
 		sender.close();
 	}
+
 	string UPnPServer::makeMsearchResponse(const string & location, const UDN & udn, const string & st) {
 		UPNP::USN usn(udn.toString());
 		return "HTTP/1.1 200 OK\r\n"
@@ -933,4 +950,5 @@ namespace UPNP {
 	string UPnPServer::getServerInfo() {
 		return config.getProperty("server.info", DEFAULT_SERVER_INFO);
 	}
+
 }

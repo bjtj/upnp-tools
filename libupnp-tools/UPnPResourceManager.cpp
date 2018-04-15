@@ -12,13 +12,17 @@ namespace UPNP {
 
 	UPnPResource::UPnPResource() {
 	}
+
 	UPnPResource::UPnPResource(const string & content) : _content(content) {
 	}
+
 	UPnPResource::~UPnPResource() {
 	}
+
 	LinkedStringMap & UPnPResource::meta() {
 		return _meta;
 	}
+
 	string & UPnPResource::content() {
 		return _content;
 	}
@@ -29,6 +33,7 @@ namespace UPNP {
 	UPnPResourceManager UPnPResourceManager::_instance;
 	
 	UPnPResourceManager::UPnPResourceManager() { /**/ }
+
 	UPnPResourceManager::~UPnPResourceManager() { /**/ }
 
 	UPnPResourceManager & UPnPResourceManager::instance() {

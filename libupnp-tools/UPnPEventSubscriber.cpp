@@ -17,28 +17,36 @@ namespace UPNP {
 
 	UPnPNotify::UPnPNotify() : _seq(0) {
 	}
+	
 	UPnPNotify::UPnPNotify(const string & sid) : _sid(sid), _seq(0) {
 	}
+	
 	UPnPNotify::UPnPNotify(const string & sid, unsigned long seq) : _sid(sid), _seq(seq) {
 	}
+	
 	UPnPNotify::~UPnPNotify() {
 	}
-	std::string & UPnPNotify::sid() {
+	
+	string & UPnPNotify::sid() {
 		return _sid;
 	}
+	
 	unsigned long & UPnPNotify::seq() {
 		return _seq;
 	}
-	std::vector<std::string> UPnPNotify::propertyNames() {
-		std::vector<std::string> names;
-		for (std::map<std::string, std::string>::iterator iter = props.begin(); iter != props.end(); iter++) {
+	
+	vector<string> UPnPNotify::propertyNames() {
+		vector<string> names;
+		for (map<string, string>::iterator iter = props.begin(); iter != props.end(); iter++) {
 			names.push_back(iter->first);
 		}
 		return names;
 	}
-	std::string & UPnPNotify::operator[] (const std::string & name) {
+	
+	string & UPnPNotify::operator[] (const string & name) {
 		return props[name];
 	}
+	
 	UPnPEventSubscription & UPnPNotify::subscription() {
 		return _subscription;
 	}
@@ -49,22 +57,26 @@ namespace UPNP {
 
 	UPnPEventSubscribeRequest::UPnPEventSubscribeRequest() : _timeoutSec(0) {
 	}
-	UPnPEventSubscribeRequest::UPnPEventSubscribeRequest(std::vector<std::string> & callbackUrls,
+	UPnPEventSubscribeRequest::UPnPEventSubscribeRequest(vector<string> & callbackUrls,
 														 unsigned long timeoutSec)
 		: _callbackUrls(callbackUrls), _timeoutSec(timeoutSec)
 	{
 	}
-	UPnPEventSubscribeRequest::UPnPEventSubscribeRequest(const std::string & callbackUrl,
+	
+	UPnPEventSubscribeRequest::UPnPEventSubscribeRequest(const string & callbackUrl,
 														 unsigned long timeoutSec)
 		: _timeoutSec(timeoutSec)
 	{
 		_callbackUrls.push_back(callbackUrl);
 	}
+	
 	UPnPEventSubscribeRequest::~UPnPEventSubscribeRequest() {
 	}
-	std::vector<std::string> & UPnPEventSubscribeRequest::callbackUrls() {
+	
+	vector<string> & UPnPEventSubscribeRequest::callbackUrls() {
 		return _callbackUrls;
 	}
+	
 	unsigned long UPnPEventSubscribeRequest::timeoutSec() {
 		return _timeoutSec;
 	}
@@ -75,9 +87,11 @@ namespace UPNP {
 
 	UPnPEventSubscribeResponse::UPnPEventSubscribeResponse() {
 	}
+	
 	UPnPEventSubscribeResponse::~UPnPEventSubscribeResponse() {
 	}
-	std::string & UPnPEventSubscribeResponse::sid() {
+	
+	string & UPnPEventSubscribeResponse::sid() {
 		return _sid;
 	}
 
@@ -87,6 +101,7 @@ namespace UPNP {
 
 	UPnPEventSubscriber::UPnPEventSubscriber(const Url & eventSubUrl) : eventSubUrl(eventSubUrl) {
 	}
+	
 	UPnPEventSubscriber::~UPnPEventSubscriber() {
 	}
 
@@ -103,7 +118,7 @@ namespace UPNP {
 		// TODO: use TIMEOUT value in response
 		return response;
 	}
-	void UPnPEventSubscriber::unsubscribe(const std::string & sid) {
+	void UPnPEventSubscriber::unsubscribe(const string & sid) {
 		LinkedStringMap headers;
 		headers["SID"] = sid;
 		HttpUtils::httpRequest(eventSubUrl, "UNSUBSCRIBE", headers).getResponseHeader().getStatusCode();
