@@ -44,7 +44,7 @@ namespace UPNP {
 
 		// device properties
 
-		PropertyMap & props = device.getProperties();
+		PropertyMap & props = device.properties();
 		for (size_t i = 0; i < props.size(); i++) {
 			ret.append(XmlUtils::toKeyValueTag(props[i]));
 			ret.append(NEWLINE);
@@ -61,7 +61,7 @@ namespace UPNP {
 			
 			ret.append("<service>");
 			ret.append(NEWLINE);
-			PropertyMap & props = service->getProperties();
+			PropertyMap & props = service->properties();
 			for (size_t i = 0; i < props.size(); i++) {
 				ret.append(XmlUtils::toKeyValueTag(props[i]));
 				ret.append(NEWLINE);

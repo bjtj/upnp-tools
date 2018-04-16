@@ -24,7 +24,7 @@ public:
 	AutoRef<UPnPDevice> & device() {return _device;}
 	string & applicationUrl() {return _applicationUrl;}
 	string toString() {
-		return _device->getFriendlyName() + " (" + _applicationUrl + ")";
+		return _device->friendlyName() + " (" + _applicationUrl + ")";
 	}
 };
 
@@ -43,7 +43,7 @@ public:
 		}
 	}
 	virtual void onDeviceRemoved(AutoRef<UPnPDevice> device) {
-		cout << " ** Removed: " << device->getFriendlyName() << endl;
+		cout << " ** Removed: " << device->friendlyName() << endl;
 	}
 };
 

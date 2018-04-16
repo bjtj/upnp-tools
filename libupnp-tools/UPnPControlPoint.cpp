@@ -6,6 +6,8 @@
 #include "UPnPExceptions.hpp"
 #include <liboslayer/Uuid.hpp>
 #include <liboslayer/Logger.hpp>
+#include <liboslayer/File.hpp>
+
 
 namespace UPNP {
 
@@ -14,8 +16,11 @@ namespace UPNP {
 	using namespace SSDP;
 	using namespace std;
 	using namespace OS;
+	
 
-	static AutoRef<Logger> logger = LoggerFactory::inst().getObservingLogger(__FILE__);
+	static AutoRef<Logger> logger = LoggerFactory::instance().
+		getObservingLogger(File::basename(__FILE__));
+	
 
 	UPnPDeviceSession::UPnPDeviceSession(const UDN & udn)
 		: _udn(udn), _completed(false) {
@@ -288,10 +293,12 @@ namespace UPNP {
 		InetAddress addr = header.getRemoteAddr();
 		unsigned long timeout = parseCacheControlMilli(header.getCacheControl());
 		if (_sessionManager.contains(udn)) {
-			_sessionManager[udn]->extend(timeout);
+			_sessionManager[udn]->updateTime();
+			_sessionManager[udn]->timeout() = timeout;
 		} else {
 			AutoRef<UPnPDeviceSession> session = _sessionManager.prepareSession(udn);
-			session->extend(timeout);
+			session->updateTime();
+			session->timeout() = timeout;
 			deviceBuildTaskThreadPool.setTask(AutoRef<Task>(new DeviceBuildTask(*this, session, header)));
 		}
 	}
@@ -349,12 +356,13 @@ namespace UPNP {
 
 	AutoRef<UPnPService> UPnPControlPoint::getServiceByUdnAndServiceType(const UDN & udn, const string & serviceType) {
 		AutoRef<UPnPDevice> device = findDevice(udn);
-		return device->findServiceRecursive(serviceType);
+		return device->getService(serviceType);
 	}
 
 	UPnPActionInvoker UPnPControlPoint::prepareActionInvoke(const UDN & udn, const string & serviceType) {
 		AutoRef<UPnPDevice> device = findDevice(udn);
-		AutoRef<UPnPService> service = device->findServiceRecursive(serviceType);
+		// AutoRef<UPnPService> service = device->findServiceRecursive(serviceType);
+		AutoRef<UPnPService> service = device->getService(serviceType);
 		if (service.nil()) {
 			throw Exception("service not found / type : " + serviceType);
 		}
@@ -387,7 +395,8 @@ namespace UPNP {
 
 	UPnPEventSubscriber UPnPControlPoint::prepareEventSubscriber(const UDN & udn, const string & serviceType) {
 		AutoRef<UPnPDevice> device = findDevice(udn);
-		AutoRef<UPnPService> service = device->findServiceRecursive(serviceType);
+		// AutoRef<UPnPService> service = device->findServiceRecursive(serviceType);
+		AutoRef<UPnPService> service = device->getService(serviceType);
 		if (service.nil()) {
 			throw Exception("service not found / type : " + serviceType);
 		}

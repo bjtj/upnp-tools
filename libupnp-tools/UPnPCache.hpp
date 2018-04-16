@@ -15,12 +15,9 @@ namespace UPNP {
 		unsigned long & creationTime();
 		unsigned long & lastUpdateTime();
 		unsigned long & timeout();
-		unsigned long lifetimeRecent();
-		unsigned long lifetimeFull();
-		unsigned long lifetimeRemaining();
+		unsigned long lifetime();
 		bool expired();
-		void extend();
-		void extend(unsigned long newTimeout);
+		void updateTime();
 	};
 }
 

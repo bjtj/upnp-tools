@@ -25,8 +25,15 @@ namespace UPNP {
 	public:
 		UPnPModelObject() {}
 		virtual ~UPnPModelObject() {}
-		UTIL::PropertyMap & getProperties() {return _props; }
-		UTIL::LinkedStringMap & meta() { return _meta; }
+		UTIL::PropertyMap & properties() {
+			return _props;
+		}
+		UTIL::PropertyMap properties() const {
+			return _props;
+		}
+		UTIL::LinkedStringMap & meta() {
+			return _meta;
+		}
 		std::string & operator[] (const std::string & name) {
 			return _props[name];
 		}
@@ -133,20 +140,16 @@ namespace UPNP {
 	 */
 	class UPnPService : public UPnPModelObject {
 	private:
-		UPnPDevice * device;
+		// UPnPDevice * device;
 		UPnPScpd _scpd;
 	public:
 		UPnPService();
-		UPnPService(UPnPDevice * device);
 		virtual ~UPnPService();
 		std::string & serviceType();
 		std::string & serviceId();
 		std::string & scpdUrl();
 		std::string & controlUrl();
 		std::string & eventSubUrl();
-		void setDevice(UPnPDevice * device);
-		UPnPDevice * getDevice();
-		HTTP::Url makeScpdUrl();
 		UPnPScpd & scpd();
 	};
 
@@ -156,7 +159,7 @@ namespace UPNP {
 	class UPnPDevice : public UPnPModelObject {
 	private:
 		UPnPDevice * parent;
-		std::vector<OS::AutoRef<UPnPDevice> > _childDevices;
+		std::vector< OS::AutoRef<UPnPDevice> > _childDevices;
 		std::vector<OS::AutoRef<UPnPService> > _services;
 		HTTP::Url _baseUrl;
 		
@@ -168,20 +171,24 @@ namespace UPNP {
 		OS::AutoRef<UPnPDevice> prepareDevice();
 		void addDevice(OS::AutoRef<UPnPDevice> device);
 		void addService(OS::AutoRef<UPnPService> service);
-		OS::AutoRef<UPnPService> findService(const std::string & serviceType);
-		OS::AutoRef<UPnPService> findServiceRecursive(const std::string & serviceType);
+		OS::AutoRef<UPnPService> getService(const std::string & serviceType);
+		OS::AutoRef<UPnPService> getServiceWithScpdUrl(const std::string & scpdUrl);
+		OS::AutoRef<UPnPService> getServiceWithControlUrl(const std::string & controlUrl);
+		OS::AutoRef<UPnPService> getServiceWithEventSubUrl(const std::string & eventSubUrl);
 		std::vector<OS::AutoRef<UPnPDevice> > & childDevices();
 		std::vector<OS::AutoRef<UPnPService> > & services();
-		std::vector<UPnPDevice*> allDevices();
-		std::vector<UPnPService*> allServices();
-		UDN getUdn();
+		std::vector< OS::AutoRef<UPnPDevice> > allDevices();
+		std::vector< OS::AutoRef<UPnPService> > allServices();
+		UDN udn() const;
 		void setUdn(const UDN & udn);
-		void setUdnRecursive(const UDN & udn);
-		std::string getFriendlyName();
-		void setFriendlyName(const std::string & friendlyName);
-		std::string getDeviceType();
-		void setDeviceType(const std::string & deviceType);
+		std::string & friendlyName();
+		std::string & deviceType();
 		HTTP::Url & baseUrl();
+		std::string formatUrl(const std::string & url, OS::AutoRef<UPnPService> service);
+		void setScpdUrl(const std::string & scpdUrl);
+		void setControlUrl(const std::string & controlUrl);
+		void setEventSubUrl(const std::string & eventSubUrl);
+		
 	};	
 }
 

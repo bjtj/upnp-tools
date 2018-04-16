@@ -1,4 +1,5 @@
 #include "UPnPModels.hpp"
+#include <liboslayer/Text.hpp>
 
 namespace UPNP {
 
@@ -61,43 +62,29 @@ namespace UPNP {
 	}
 
 	
-	UPnPService::UPnPService() : device(NULL) {}
-	UPnPService::UPnPService(UPnPDevice * device) : device(device) {}
+	UPnPService::UPnPService() {
+	}
+	
 	UPnPService::~UPnPService() {}
 	
 	string & UPnPService::serviceType() {
-		return getProperties()["serviceType"];
+		return properties()["serviceType"];
 	}
 
 	string & UPnPService::serviceId() {
-		return getProperties()["serviceId"];
+		return properties()["serviceId"];
 	}
 
 	string & UPnPService::scpdUrl() {
-		return getProperties()["SCPDURL"];
+		return properties()["SCPDURL"];
 	}
 
 	string & UPnPService::controlUrl() {
-		return getProperties()["controlURL"];
+		return properties()["controlURL"];
 	}
 
 	string & UPnPService::eventSubUrl() {
-		return getProperties()["eventSubURL"];
-	}
-
-	void UPnPService::setDevice(UPnPDevice * device) {
-		this->device = device;
-	}
-
-	UPnPDevice * UPnPService::getDevice() {
-		return device;
-	}
-
-	Url UPnPService::makeScpdUrl() {
-		if (!device) {
-			throw OS::Exception("no device", -1, 0);
-		}
-		return device->baseUrl().relativePath(scpdUrl());
+		return properties()["eventSubURL"];
 	}
 
 	UPnPScpd & UPnPService::scpd() {
@@ -105,9 +92,14 @@ namespace UPNP {
 	}
 
 
-	UPnPDevice::UPnPDevice() : parent(NULL) {}
-	UPnPDevice::UPnPDevice(UPnPDevice * parent) : parent(parent) {}
-	UPnPDevice::~UPnPDevice() {}
+	UPnPDevice::UPnPDevice() : parent(NULL) {
+	}
+	
+	UPnPDevice::UPnPDevice(UPnPDevice * parent) : parent(parent) {
+	}
+	
+	UPnPDevice::~UPnPDevice() {
+	}
 
 	void UPnPDevice::setParent(UPnPDevice * parent) {
 		this->parent = parent;
@@ -126,26 +118,17 @@ namespace UPNP {
 	}
 
 	void UPnPDevice::addService(AutoRef<UPnPService> service) {
-		service->setDevice(this);
 		_services.push_back(service);
 	}
 	
-	AutoRef<UPnPService> UPnPDevice::findService(const string & serviceType) {
+	AutoRef<UPnPService> UPnPDevice::getService(const string & serviceType) {
 		for (vector<AutoRef<UPnPService> >::iterator iter = _services.begin(); iter != _services.end(); iter++) {
 			if ((*iter)->serviceType() == serviceType) {
 				return *iter;
 			}
 		}
-		return AutoRef<UPnPService>();
-	}
-
-	AutoRef<UPnPService> UPnPDevice::findServiceRecursive(const string & serviceType) {
-		AutoRef<UPnPService> service = findService(serviceType);
-		if (!service.nil()) {
-			return service;
-		}
 		for (size_t i = 0; i < _childDevices.size(); i++) {
-			service = _childDevices[i]->findServiceRecursive(serviceType);
+			AutoRef<UPnPService> service = _childDevices[i]->getService(serviceType);
 			if (!service.nil()) {
 				return service;
 			}
@@ -153,69 +136,162 @@ namespace UPNP {
 		return AutoRef<UPnPService>();
 	}
 
-	vector<AutoRef<UPnPDevice> > & UPnPDevice::childDevices() {
+	AutoRef<UPnPService> UPnPDevice::getServiceWithScpdUrl(const string & scpdUrl) {
+		for (vector<AutoRef<UPnPService> >::iterator iter = _services.begin();
+			 iter != _services.end(); iter++)
+		{
+			if ((*iter)->scpdUrl() == scpdUrl) {
+				return *iter;
+			}
+		}
+		for (size_t i = 0; i < _childDevices.size(); i++) {
+			AutoRef<UPnPService> service = _childDevices[i]->getServiceWithScpdUrl(scpdUrl);
+			if (!service.nil()) {
+				return service;
+			}
+		}
+		return AutoRef<UPnPService>();
+	}
+
+	AutoRef<UPnPService> UPnPDevice::getServiceWithControlUrl(const string & controlUrl) {
+		for (vector<AutoRef<UPnPService> >::iterator iter = _services.begin();
+			 iter != _services.end(); iter++)
+		{
+			if ((*iter)->controlUrl() == controlUrl) {
+				return *iter;
+			}
+		}
+		for (size_t i = 0; i < _childDevices.size(); i++) {
+			AutoRef<UPnPService> service = _childDevices[i]->getServiceWithControlUrl(controlUrl);
+			if (!service.nil()) {
+				return service;
+			}
+		}
+		return AutoRef<UPnPService>();
+	}
+
+	AutoRef<UPnPService> UPnPDevice::getServiceWithEventSubUrl(const string & eventSubUrl) {
+		for (vector<AutoRef<UPnPService> >::iterator iter = _services.begin();
+			 iter != _services.end(); iter++)
+		{
+			if ((*iter)->eventSubUrl() == eventSubUrl) {
+				return *iter;
+			}
+		}
+		for (size_t i = 0; i < _childDevices.size(); i++) {
+			AutoRef<UPnPService> service = _childDevices[i]->getServiceWithEventSubUrl(eventSubUrl);
+			if (!service.nil()) {
+				return service;
+			}
+		}
+		return AutoRef<UPnPService>();
+	}
+
+	vector< AutoRef<UPnPDevice> > & UPnPDevice::childDevices() {
 		return _childDevices;
 	}
 
-	vector<AutoRef<UPnPService> > & UPnPDevice::services() {
+	vector< AutoRef<UPnPService> > & UPnPDevice::services() {
 		return _services;
 	}
 
-	vector<UPnPDevice*> UPnPDevice::allDevices() {
-		vector<UPnPDevice*> ret;
-		ret.push_back(this);
+	vector< AutoRef<UPnPDevice> > UPnPDevice::allDevices() {
+		vector< AutoRef<UPnPDevice> > ret;
 		for (vector<AutoRef<UPnPDevice> >::iterator iter = _childDevices.begin(); iter != _childDevices.end(); iter++) {
-			vector<UPnPDevice*> v = (*iter)->allDevices();
+			vector< AutoRef<UPnPDevice> > v = (*iter)->allDevices();
 			ret.insert(ret.end(), v.begin(), v.end());
 		}
 		return ret;
 	}
 	
-	vector<UPnPService*> UPnPDevice::allServices() {
-		vector<UPnPService*> ret;
-		for (vector<AutoRef<UPnPService> >::iterator iter = _services.begin(); iter != _services.end(); iter++) {
-			ret.push_back(&(*iter));
+	vector< AutoRef<UPnPService> > UPnPDevice::allServices() {
+		vector< AutoRef<UPnPService> > ret;
+		for (vector< AutoRef<UPnPService> >::iterator iter = _services.begin();
+			 iter != _services.end(); iter++)
+		{
+			ret.push_back(*iter);
 		}
-		for (vector<AutoRef<UPnPDevice> >::iterator iter = _childDevices.begin(); iter != _childDevices.end(); iter++) {
-			vector<UPnPService*> v = (*iter)->allServices();
+				
+		for (vector< AutoRef<UPnPDevice> >::iterator iter = _childDevices.begin();
+			 iter != _childDevices.end(); iter++)
+		{
+			vector< AutoRef<UPnPService> > v = (*iter)->allServices();
 			ret.insert(ret.end(), v.begin(), v.end());
 		}
 		return ret;
 	}
 
-	UDN UPnPDevice::getUdn() {
-		return UDN(getProperties()["UDN"]);
+	UDN UPnPDevice::udn() const {
+		return UDN(properties()["UDN"]);
 	}
 
 	void UPnPDevice::setUdn(const UDN & udn) {
-		getProperties()["UDN"] = udn.toString();
+		properties()["UDN"] = udn.toString();
+
+		for (vector< AutoRef<UPnPDevice> >::iterator iter = _childDevices.begin();
+			 iter != _childDevices.end(); iter++) {
+			AutoRef<UPnPDevice> device = *iter;
+			device->setUdn(udn);
+		}
 	}
 
-	void UPnPDevice::setUdnRecursive(const UDN & udn) {
-		setUdn(udn);
-		for (vector<AutoRef<UPnPDevice> >::iterator iter = _childDevices.begin(); iter != _childDevices.end(); iter++) {
-			(*iter)->setUdnRecursive(udn);
+	string & UPnPDevice::friendlyName() {
+		return properties()["friendlyName"];
+	}
+	
+	string & UPnPDevice::deviceType() {
+		return properties()["deviceType"];
+	}
+	
+	Url & UPnPDevice::baseUrl() {
+		return _baseUrl;
+	}
+
+	string UPnPDevice::formatUrl(const string & url, AutoRef<UPnPService> service) {
+		return Text::replaceAll(Text::replaceAll(url, "$udn", udn().toString()),
+								"$serviceType", service->serviceType()); 
+	}
+
+	void UPnPDevice::setScpdUrl(const string & scpdUrl) {
+		for (vector< AutoRef<UPnPService> >::iterator iter = _services.begin();
+			 iter != _services.end(); iter++) {
+			AutoRef<UPnPService> service = *iter;
+			service->scpdUrl() = formatUrl(scpdUrl, service);
+		}
+
+		for (vector< AutoRef<UPnPDevice> >::iterator iter = _childDevices.begin();
+			 iter != _childDevices.end(); iter++) {
+			AutoRef<UPnPDevice> device = *iter;
+			device->setScpdUrl(scpdUrl);
 		}
 	}
 	
-	string UPnPDevice::getFriendlyName() {
-		return getProperties()["friendlyName"];
-	}
+	void UPnPDevice::setControlUrl(const string & controlUrl){
+		for (vector< AutoRef<UPnPService> >::iterator iter = _services.begin();
+			 iter != _services.end(); iter++) {
+			AutoRef<UPnPService> service = *iter;
+			service->controlUrl() = formatUrl(controlUrl, service);
+		}
 
-	void UPnPDevice::setFriendlyName(const string & friendlyName) {
-		getProperties()["friendlyName"] = friendlyName;
+		for (vector< AutoRef<UPnPDevice> >::iterator iter = _childDevices.begin();
+			 iter != _childDevices.end(); iter++) {
+			AutoRef<UPnPDevice> device = *iter;
+			device->setControlUrl(controlUrl);
+		}
 	}
+	
+	void UPnPDevice::setEventSubUrl(const string & eventSubUrl){
+		for (vector< AutoRef<UPnPService> >::iterator iter = _services.begin();
+			 iter != _services.end(); iter++) {
+			AutoRef<UPnPService> service = *iter;
+			service->eventSubUrl() = formatUrl(eventSubUrl, service);
+		}
 
-	string UPnPDevice::getDeviceType() {
-		return getProperties()["deviceType"];
-	}
-
-	void UPnPDevice::setDeviceType(const string & deviceType) {
-		getProperties()["deviceType"] = deviceType;
-	}
-
-	Url & UPnPDevice::baseUrl() {
-		return _baseUrl;
+		for (vector< AutoRef<UPnPDevice> >::iterator iter = _childDevices.begin();
+			 iter != _childDevices.end(); iter++) {
+			AutoRef<UPnPDevice> device = *iter;
+			device->setEventSubUrl(eventSubUrl);
+		}
 	}
 
 }

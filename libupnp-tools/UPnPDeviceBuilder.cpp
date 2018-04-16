@@ -37,8 +37,10 @@ namespace UPNP {
 		_device = deserializer.parseDeviceXml(res.content());
 		_device->meta() = res.meta();
 		_device->baseUrl() = _url;
-		vector<UPnPService*> services = _device->allServices();
-		for (vector<UPnPService*>::iterator iter = services.begin(); iter != services.end(); iter++) {
+		vector< AutoRef<UPnPService> > services = _device->allServices();
+		for (vector< AutoRef<UPnPService> >::iterator iter = services.begin();
+			 iter != services.end(); iter++)
+		{
 			try {
 				(*iter)->scpd() = deserializer.parseScpdXml(
 					resMan.getResourceContent(_url.relativePath((*iter)->scpdUrl())));

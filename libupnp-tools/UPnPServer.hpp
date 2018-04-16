@@ -15,7 +15,9 @@
 #include "UPnPDeviceProfile.hpp"
 #include "UPnPDebug.hpp"
 
+
 namespace UPNP {
+
 
 	/**
 	 * @brief http event listener
@@ -61,12 +63,9 @@ namespace UPNP {
 		void unregisterProfile(const UDN & udn);
 		std::vector<std::string> getAllTypes();
 		std::vector<std::string> getTypes(const std::string & st);
-		bool hasDeviceProfileSessionByUDN(const UDN & udn);
-		bool hasDeviceProfileSessionByScpdUrl(const std::string & scpdUrl);
-		bool hasDeviceProfileSessionByControlUrl(const std::string & controlUrl);
-		bool hasDeviceProfileSessionByEventSubUrl(const std::string & eventSubUrl);
 		OS::AutoRef<UPnPDeviceProfileSession> getDeviceProfileSessionByUDN(const UDN & udn);
 		OS::AutoRef<UPnPDeviceProfileSession> getDeviceProfileSessionHasScpdUrl(const std::string & scpdUrl);
+		OS::AutoRef<UPnPDeviceProfileSession> getDeviceProfileSessionHasControlUrl(const std::string & controlUrl);
 		OS::AutoRef<UPnPDeviceProfileSession> getDeviceProfileSessionHasEventSubUrl(const std::string & eventSubUrl);
 	};
 
@@ -139,8 +138,8 @@ namespace UPNP {
 		UPnPDeviceProfileSessionManager & getProfileManager();
 		void registerDeviceProfile(const HTTP::Url & url);
 		void registerDeviceProfile(const UDN & udn, const HTTP::Url & url);
-		void registerDeviceProfile(const UPnPDeviceProfile & profile);
-		void registerDeviceProfile(const UDN & udn, const UPnPDeviceProfile & profile);
+		void registerDeviceProfile(UPnPDeviceProfile & profile);
+		void registerDeviceProfile(const UDN & udn, UPnPDeviceProfile & profile);
 		void unregisterDeviceProfile(const UDN & udn);
 
 		// application level control
@@ -151,10 +150,12 @@ namespace UPNP {
 
 		// event notification
 		UPnPPropertyManager & getPropertyManager();
+		void setProperty(const UDN & udn, const std::string & serviceyType, const std::string & name, const std::string & value);
 		void setProperties(const UDN & udn, const std::string & serviceyType, UTIL::LinkedStringMap & props);
 		void notifyEvent(const std::string & sid);
 		void delayNotifyEvent(const std::string & sid, unsigned long delay);
-		std::string onSubscribe(const UPnPDeviceProfile & device, const UPnPServiceProfile & service, const std::vector<std::string> & callbacks, unsigned long timeout);
+		std::string onSubscribe(OS::AutoRef<UPnPDevice> device, OS::AutoRef<UPnPService> service,
+								const std::vector<std::string> & callbacks, unsigned long timeout);
 		bool onRenewSubscription(const std::string & sid, unsigned long timeout);
 		bool onUnsubscribe(const std::string & sid);
 		std::vector<std::string> parseCallbackUrls(const std::string & urls);

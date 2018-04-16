@@ -29,7 +29,7 @@ namespace UPNP {
 		AutoRef<UPnPDevice> ret;
 		lock();
 		for (vector<AutoRef<UPnPDevice> >::iterator iter = _devices.begin(); iter != _devices.end(); iter++) {
-			if ((*iter)->getUdn() == udn) {
+			if ((*iter)->udn() == udn) {
 				ret = *iter;
 			}
 		}

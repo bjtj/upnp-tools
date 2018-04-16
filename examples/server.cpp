@@ -24,188 +24,16 @@ using namespace UTIL;
 static bool s_lightOn = false;
 static int s_level = 100;
 
+
 /**
  * @brief 
  */
-string readline() {
+string readline(const string & prompt) {
+	cout << prompt;
 	FileStream fs(stdin);
 	return fs.readline();
 }
 
-/**
- * @brief 
- */
-string dd(const UDN & udn) {
-	string svc_sp1 = "urn:schemas-upnp-org:service:SwitchPower:1";
-	string svc_d1 = "urn:schemas-upnp-org:service:Dimming:1";
-	string xml = "<?xml version=\"1.0\" charset=\"utf-8\"?>\r\n";
-	xml.append("<root xmlns=\"urn:schemas-upnp-org:device-1-0\">");
-	xml.append("<specVersion>");
-	xml.append("<major>1</major>");
-	xml.append("<minor>0</minor>");
-	xml.append("</specVersion><device>");
-	xml.append("<deviceType>urn:schemas-upnp-org:device:DimmableLight:1</deviceType>");
-	xml.append("<friendlyName>UPnP Sample Dimmable Light ver.1</friendlyName>");
-	xml.append("<manufacturer>Testers</manufacturer>");
-	xml.append("<manufacturerURL>www.example.com</manufacturerURL>");
-	xml.append("<modelDescription>UPnP Test Device</modelDescription>");
-	xml.append("<modelName>UPnP Test Device</modelName>");
-	xml.append("<modelNumber>1</modelNumber>");
-	xml.append("<modelURL>www.example.com</modelURL>");
-	xml.append("<serialNumber>12345678</serialNumber>");
-	xml.append("<UDN>" + udn.toString() + "</UDN>");
-	xml.append("<serviceList>");
-	xml.append("<service>");
-	xml.append("<serviceType>" + svc_sp1 + "</serviceType>");
-	xml.append("<serviceId>urn:upnp-org:serviceId:SwitchPower.1</serviceId>");
-	xml.append("<SCPDURL>");
-	xml.append("/scpd.xml/" + udn.toString() + "::" + svc_sp1);
-	xml.append("</SCPDURL>");
-	xml.append("<controlURL>/control/" + udn.toString() + "::" + svc_sp1);
-	xml.append("</controlURL>");
-	xml.append("<eventSubURL>/event/" + udn.toString() + "::" + svc_sp1);
-	xml.append("</eventSubURL>");
-	xml.append("</service>");
-	xml.append("<service>");
-	xml.append("<serviceType>" + svc_d1 + "</serviceType>");
-	xml.append("<serviceId>urn:upnp-org:serviceId:Dimming.1</serviceId>");
-	xml.append("<SCPDURL>");
-	xml.append("/scpd.xml/" + udn.toString() + "::" + svc_d1);
-	xml.append("</SCPDURL>");
-	xml.append("<controlURL>/control/" + udn.toString() + "::" + svc_d1);
-	xml.append("</controlURL>");
-	xml.append("<eventSubURL>/event/" + udn.toString() + "::" + svc_d1);
-	xml.append("</eventSubURL>");
-	xml.append("</service>");
-	xml.append("</serviceList>");
-	xml.append("</device>");
-	xml.append("</root>");
-
-	return xml;
-}
-
-/**
- * @brief 
- */
-string scpd_sp1() {
-
-	string xml = "<scpd  xmlns=\"urn:schemas-upnp-org:service-1-0\">"
-		"<specVersion>"
-		"<major>1</major>"
-		"<minor>0</minor>"
-		"</specVersion>"
-		"<actionList>"
-		"<action>"
-		"<name>SetTarget</name>"
-		"<argumentList>"
-        "<argument>"
-		"<name>newTargetValue</name>"
-		"<direction>in</direction>"
-		"<relatedStateVariable>Target</relatedStateVariable>"
-        "</argument>"
-		"</argumentList>"
-		"</action>"
-		"<action>"
-		"<name>GetTarget</name>"
-		"<argumentList>"
-        "<argument>"
-		"<name>RetTargetValue</name>"
-		"<direction>out</direction>"
-		"<relatedStateVariable>Target</relatedStateVariable>"
-        "</argument>"
-		"</argumentList>"
-		"</action>"
-		"<action>"
-		"<name>GetStatus</name>"
-		"<argumentList>"
-        "<argument>"
-		"<name>ResultStatus</name>"
-		"<direction>out</direction>"
-		"<relatedStateVariable>Status</relatedStateVariable>"
-        "</argument>"
-		"</argumentList>"
-		"</action>"
-		"</actionList>"
-		"<serviceStateTable>"
-		"<stateVariable sendEvents=\"no\">"
-		"<name>Target</name>"
-		"<dataType>boolean</dataType>"
-		"<defaultValue>0</defaultValue>"
-		"</stateVariable>"
-		"<stateVariable>"
-		"<name>Status</name>"
-		"<dataType>boolean</dataType>"
-		"<defaultValue>0</defaultValue>"
-		"</stateVariable>"
-		"</serviceStateTable>"
-		"</scpd>";
-
-	return xml;
-}
-
-string scpd_d1() {
-	string xml = "<scpd xmlns=\"urn:schemas-upnp-org:service-1-0\">"
-		"<specVersion>"
-		"<major>1</major>"
-		"<minor>0</minor>"
-		"</specVersion>"
-		"<actionList>"
-		"<action>"
-		"<name>SetLoadLevelTarget</name>"
-		"<argumentList>"
-        "<argument>"
-		"<name>newLoadlevelTarget</name>"
-		"<direction>in</direction>"
-		"<relatedStateVariable>LoadLevelTarget</relatedStateVariable>"
-        "</argument>"
-		"</argumentList>"
-		"</action>"
-		"<action>"
-		"<name>GetLoadLevelTarget</name>"
-		"<argumentList>"
-        "<argument>"
-		"<name>GetLoadlevelTarget</name>"
-		"<direction>out</direction>"
-		"<relatedStateVariable>LoadLevelTarget</relatedStateVariable>"
-        "</argument>"
-		"</argumentList>"
-		"</action>"
-		"<action>"
-		"<name>GetLoadLevelStatus</name>"
-		"<argumentList>"
-        "<argument>"
-		"<name>retLoadlevelStatus</name>"
-		"<direction>out</direction>"
-		"<relatedStateVariable>LoadLevelStatus</relatedStateVariable>"
-        "</argument>"
-		"</argumentList>"
-		"</action>"
-		"</argumentList>"
-		"</action>"
-		"</actionList>"
-		"<serviceStateTable>"
-		"<stateVariable sendEvents=\"no\">"
-		"<name>LoadLevelTarget</name>"
-		"<dataType>ui1</dataType>"
-		"<defaultValue>0</defaultValue>"
-		"<allowedValueRange>"
-        "<minimum>0</minimum>"
-        "<maximum>100</maximum>"
-		"</allowedValueRange>"
-		"</stateVariable>"
-		"<stateVariable sendEvents=\"yes\">"
-		"<name>LoadLevelStatus</name>"
-		"<dataType>ui1</dataType>"
-		"<defaultValue>100</defaultValue>"
-		"<allowedValueRange>"
-        "<minimum>0</minimum>"
-        "<maximum>100</maximum>"
-		"</allowedValueRange>"
-		"</stateVariable>"
-		"</serviceStateTable>"
-		"</scpd>";
-	return xml;
-}
 
 /**
  * @brief 
@@ -248,23 +76,13 @@ public:
  */
 static void s_set_device(UPnPServer & server, const UDN & udn) {
 
-	UPnPResourceManager & resMan = UPnPResourceManager::instance();
-	
-	string svc_sp1 = "urn:schemas-upnp-org:service:SwitchPower:1";
-	string svc_d1 = "urn:schemas-upnp-org:service:Dimming:1";
-	resMan.properties()["/device.xml"] = dd(udn);
-	resMan.properties()["/scpd.xml/" + udn.toString() + "::" + svc_sp1] = scpd_sp1();
-	resMan.properties()["/scpd.xml/" + udn.toString() + "::" + svc_d1] = scpd_d1();
+	server.registerDeviceProfile(udn, Url("file://" + string(DATA_PATH)
+										  + "/dimming-light.xml"));
 
-	server.registerDeviceProfile(udn, Url("prop:///device.xml"));
-
-	LinkedStringMap props_sp1;
-	props_sp1["RetTargetValue"] = "0";
-	server.setProperties(udn, svc_sp1, props_sp1);
-
-	LinkedStringMap props_d1;
-	props_d1["LoadLevelStatus"] = "100";
-	server.setProperties(udn, svc_d1, props_d1);
+	server.setProperty(udn, "urn:schemas-upnp-org:service:SwitchPower:1",
+					   "RetTargetValue", "0");
+	server.setProperty(udn, "urn:schemas-upnp-org:service:Dimming:1",
+					   "LoadLevelStatus", "100");
 }
 
 /**
@@ -278,6 +96,7 @@ public:
 		cout << "session outdated / " << session.sid() << endl;
 	}
 };
+
 
 class PrintDebugInfo : public OnDebugInfoListener {
 private:
@@ -294,12 +113,13 @@ public:
 	}
 };
 
+
 /**
  * @brief 
  */
 int main(int argc, char * args[]) {
     
-    LoggerFactory::inst().setProfile("*", "basic", "console");
+    LoggerFactory::instance().setProfile("*", "basic", "console");
 
 	Arguments arguments = ArgumentParser::parse(argc, args);
 	FileStream out;
@@ -317,18 +137,20 @@ int main(int argc, char * args[]) {
 		server.setDebug(debug);
 	}
 	
-	server.startAsync();
 	s_set_device(server, udn);
 	server.setActionRequestHandler(AutoRef<UPnPActionRequestHandler>(new MyActionRequestHandler));
 	server.getPropertyManager().
-		setOnSubscriptionOutdatedListener(AutoRef<OnSubscriptionOutdatedListener>(new OutdatedListener));
+		setOnSubscriptionOutdatedListener(
+			AutoRef<OnSubscriptionOutdatedListener>(new OutdatedListener));
+	server.startAsync();
 
-	cout << "uuid: " << uuid << endl;
+	cout << "UPnP Server running / uuid: " << uuid << endl;
 
 	while (1) {
 		string cmd;
-		if ((cmd = readline()).size() > 0) {
-			if (cmd == "q" || cmd == "quit") {
+		if ((cmd = readline("> ")).size() > 0) {
+			if (cmd == "quit" || cmd == "q") {
+				cout << "[quit]" << endl;
 				break;
 			}
 
@@ -345,20 +167,20 @@ int main(int argc, char * args[]) {
 				cout << " * byebye : " << uuid << endl;
 				server.setEnableDevice(udn, false);
 			} else if (tokens[0] == "list") {
-				vector<AutoRef<UPnPDeviceProfileSession> > vec = server.getProfileManager().sessionList();
+				vector<AutoRef<UPnPDeviceProfileSession> > vec =
+					server.getProfileManager().sessionList();
 				for (size_t i = 0; i < vec.size(); i++) {
 					UPnPDeviceProfile & profile = vec[i]->profile();
-					cout << "[" << i << "] " << profile.udn().toString() << " ; " << (profile.deviceTypes().size() > 0 ? profile.deviceTypes()[0] : "") <<
+					cout << "[" << i << "] " << profile.udn().toString() << " ; "
+						 << (profile.deviceTypes().size() > 0 ? profile.deviceTypes()[0] : "") <<
 						 " / " << (vec[i]->isEnabled() ? "enabled" : "disabled") << endl;
 				}
 			} else if (tokens[0] == "set-props") {
-				LinkedStringMap props_sp1;
-				props_sp1["RetTargetValue"] = s_lightOn ? "1" : "0";
-				server.setProperties(udn, "urn:schemas-upnp-org:service:SwitchPower:1", props_sp1);
+				server.setProperty(udn, "urn:schemas-upnp-org:service:SwitchPower:1",
+								   "RetTargetValue", s_lightOn ? "1" : "0");
 
-				LinkedStringMap props_d1;
-				props_d1["LoadLevelStatus"] = Text::toString(s_level);
-				server.setProperties(udn, "urn:schemas-upnp-org:service:Dimming:1", props_d1);
+				server.setProperty(udn, "urn:schemas-upnp-org:service:Dimming:1",
+								   "LoadLevelStatus", Text::toString(s_level));
 			} else if (tokens[0] == "load") {
 				if (tokens.size() < 2) {
 					continue;
@@ -378,6 +200,7 @@ int main(int argc, char * args[]) {
 	server.stop();
 
 	out.close();
+	cout << "[done]" << endl;
     
     return 0;
 }

@@ -1,0 +1,35 @@
+<?xml version="1.0" charset="utf-8"?>
+<root xmlns="urn:schemas-upnp-org:device-1-0">
+  <specVersion>
+	<major>1</major>
+	<minor>0</minor>
+  </specVersion>
+  <device>
+	<deviceType>urn:schemas-upnp-org:device:DimmableLight:1</deviceType>
+	<friendlyName>UPnP Sample Dimmable Light ver.1</friendlyName>
+	<manufacturer>Testers</manufacturer>
+	<manufacturerURL>www.example.com</manufacturerURL>
+	<modelDescription>UPnP Test Device</modelDescription>
+	<modelName>UPnP Test Device</modelName>
+	<modelNumber>1</modelNumber>
+	<modelURL>www.example.com</modelURL>
+	<serialNumber>12345678</serialNumber>
+	<UDN>udn</UDN>
+	<serviceList>
+	  <service>
+		<serviceType>urn:schemas-upnp-org:service:SwitchPower:1</serviceType>
+		<serviceId>urn:upnp-org:serviceId:SwitchPower.1</serviceId>
+		<SCPDURL>switchpower.xml</SCPDURL>
+		<controlURL>/control</controlURL>
+		<eventSubURL>/event</eventSubURL>
+	  </service>
+	  <service>
+		<serviceType>urn:schemas-upnp-org:service:Dimming:1</serviceType>
+		<serviceId>urn:upnp-org:serviceId:Dimming.1</serviceId>
+		<SCPDURL>dimming.xml</SCPDURL>
+		<controlURL>/control</controlURL>
+		<eventSubURL>/event</eventSubURL>
+	  </service>
+	</serviceList>
+  </device>
+</root>

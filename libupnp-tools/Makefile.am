@@ -18,19 +18,18 @@ libupnp_toolsinc_HEADERS = \
 	UPnPActionRequestHandler.hpp \
 	UPnPActionResponse.hpp \
 	UPnPCache.hpp \
+	UPnPConfig.hpp \
 	UPnPControlPoint.hpp \
 	UPnPDebug.hpp \
 	UPnPDeviceBuilder.hpp \
 	UPnPDeviceDeserializer.hpp \
 	UPnPDeviceListener.hpp \
 	UPnPDeviceProfile.hpp \
-	UPnPDeviceProfileBuilder.hpp \
 	UPnPDeviceSerializer.hpp \
 	UPnPEventReceiver.hpp \
 	UPnPEventSubscriber.hpp \
 	UPnPEventSubscription.hpp \
 	UPnPExceptions.hpp \
-	UPnPLocationResolver.hpp \
 	UPnPModels.hpp \
 	UPnPPropertyManager.hpp \
 	UPnPResourceManager.hpp \
@@ -70,6 +69,8 @@ libupnp_tools_la_SOURCES = \
 	UPnPActionResponse.hpp \
 	UPnPCache.cpp \
 	UPnPCache.hpp \
+	UPnPConfig.cpp \
+	UPnPConfig.hpp \
 	UPnPControlPoint.cpp \
 	UPnPControlPoint.hpp \
 	UPnPDebug.cpp \
@@ -81,8 +82,6 @@ libupnp_tools_la_SOURCES = \
 	UPnPDeviceListener.hpp \
 	UPnPDeviceProfile.cpp \
 	UPnPDeviceProfile.hpp \
-	UPnPDeviceProfileBuilder.cpp \
-	UPnPDeviceProfileBuilder.hpp \
 	UPnPDeviceSerializer.cpp \
 	UPnPDeviceSerializer.hpp \
 	UPnPEventReceiver.cpp \
@@ -92,8 +91,6 @@ libupnp_tools_la_SOURCES = \
 	UPnPEventSubscription.cpp \
 	UPnPEventSubscription.hpp \
 	UPnPExceptions.hpp \
-	UPnPLocationResolver.cpp \
-	UPnPLocationResolver.hpp \
 	UPnPModels.cpp \
 	UPnPModels.hpp \
 	UPnPPropertyManager.cpp \

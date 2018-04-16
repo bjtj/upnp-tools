@@ -82,7 +82,7 @@ namespace UPNP {
 		OS::AutoRef<OnSubscriptionOutdatedListener> outdatedListener;
 
 	private:
-		std::string makeKey(const UDN & udn, const std::string serviceType);
+		std::string getKey(const UDN & udn, const std::string serviceType);
 		
 	public:
 		UPnPPropertyManager();
@@ -95,7 +95,10 @@ namespace UPNP {
 		void removeSubscriptionSession(const std::string & sid);
 		OS::AutoRef<UPnPEventSubscriptionSession> getSession(const std::string & sid);
 		std::vector<OS::AutoRef<UPnPEventSubscriptionSession> > getSessionsByUdnAndServiceType(const UDN & udn, const std::string & serviceType);
-		void setProperties(const UDN & udn, const std::string & serviceType, const UTIL::LinkedStringMap & props);
+		void setProperty(const UDN & udn, const std::string & serviceType,
+						 const std::string & name, const std::string & value);
+		void setProperties(const UDN & udn, const std::string & serviceType,
+						   const UTIL::LinkedStringMap & props);
 		UTIL::LinkedStringMap & getProperties(const UDN & udn, const std::string & serviceType);
 		UTIL::LinkedStringMap & getPropertiesBySid(const std::string & sid);
 		void notify(const std::string & sid);

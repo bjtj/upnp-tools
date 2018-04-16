@@ -1,5 +1,6 @@
 #include "SSDPMsearchSender.hpp"
 #include <liboslayer/Text.hpp>
+#include "UPnPConfig.hpp"
 
 namespace SSDP {
 
@@ -45,21 +46,21 @@ namespace SSDP {
 		}
 	}
 
-	void SSDPMsearchSender::sendMsearch(const std::string & st, unsigned long timeoutSec, const std::string & group, int port) {
+	void SSDPMsearchSender::sendMsearch(const string & st, unsigned long timeoutSec, const string & group, int port) {
 		sendMcast(makeMsearchPacket(st, timeoutSec, group, port), group, port);
 	}
 
-	void SSDPMsearchSender::sendMsearchAllInterfaces(const std::string & st, unsigned long timeoutSec, const std::string & group, int port) {
+	void SSDPMsearchSender::sendMsearchAllInterfaces(const string & st, unsigned long timeoutSec, const string & group, int port) {
 		sendMcastToAllInterfaces(makeMsearchPacket(st, timeoutSec, group, port), group, port);
 	}
 
-	std::string SSDPMsearchSender::makeMsearchPacket(const std::string & st, unsigned long timeoutSec, const std::string & group, int port) {
+	string SSDPMsearchSender::makeMsearchPacket(const string & st, unsigned long timeoutSec, const string & group, int port) {
 		return "M-SEARCH * HTTP/1.1\r\n"
 			"HOST: " + group + ":" + Text::toString(port) + "\r\n"
 			"MAN: \"ssdp:discover\"\r\n"
 			"MX: " + Text::toString(timeoutSec) + "\r\n"
 			"ST: " + st + "\r\n"
-			"USER-AGENT: OS/version UPnP/1.1 product/version\r\n"
+			"USER-AGENT: " + UPNP::UPnPConfig::instance().user_agent() + "\r\n"
 			"\r\n";
 	}
 

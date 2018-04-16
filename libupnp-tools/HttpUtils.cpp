@@ -1,6 +1,8 @@
 #include "HttpUtils.hpp"
 #include <libhttp-server/StringDataSource.hpp>
 #include <liboslayer/Logger.hpp>
+#include <liboslayer/File.hpp>
+
 
 namespace UPNP {
 
@@ -8,8 +10,10 @@ namespace UPNP {
 	using namespace OS;
 	using namespace HTTP;
 	using namespace UTIL;
+	
 
-	static AutoRef<Logger> logger = LoggerFactory::inst().getObservingLogger(__FILE__);
+	static AutoRef<Logger> logger = LoggerFactory::instance().
+		getObservingLogger(File::basename(__FILE__));
 
 	unsigned long HttpUtils::connectionTimeout = 5000;
 	unsigned long HttpUtils::soTimeout = 5000;

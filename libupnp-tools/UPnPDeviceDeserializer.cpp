@@ -42,7 +42,7 @@ namespace UPNP {
 	void UPnPDeviceDeserializer::parseServiceListFromDeviceXmlNode(AutoRef<XmlNode> deviceXml, UPnPDevice & device) {
 		vector<AutoRef<XmlNode> > services = deviceXml->getElementsByTagNameInDepth("service", 2);
 		for (vector<AutoRef<XmlNode> >::iterator iter = services.begin(); iter != services.end(); iter++) {
-			AutoRef<UPnPService> service(new UPnPService(NULL));
+			AutoRef<UPnPService> service(new UPnPService);
 			parseServicePropertiesFromServiceXmlNode(*iter, &service);
 			device.addService(service);
 		}

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<root xmlns="urn:schemas-upnp-org:device-1-0">
+  <specVersion> 
+	<major>1</major> 
+	<minor>0</minor> 
+  </specVersion> 
+  <device> 
+	<deviceType>urn:schemas-upnp-org:device:BinaryLight:0.9</deviceType> 
+	<friendlyName>Living Room</friendlyName> 
+	<manufacturer>My company</manufacturer> 
+	<manufacturerURL>URL to manufacturer site</manufacturerURL> 
+	<modelDescription>Remote Light Control</modelDescription> 
+	<modelName>Light</modelName> 
+	<modelNumber>0001</modelNumber> 
+	<modelURL>URL to model site</modelURL> 
+	<serialNumber>SN0001</serialNumber> 
+	<UDN>uuid:UUID</UDN> 
+	<serviceList>
+      <service>
+		<serviceType>urn:schemas-upnp-org:service:SwitchPower:1</serviceType> 
+		<serviceId>urn:upnp-org:serviceId:SwitchPower:1</serviceId> 
+		<SCPDURL>/switchpower.xml</SCPDURL> 
+		<controlURL>URL for control</controlURL>
+		<eventSubURL>URL for eventing</eventSubURL>
+	  </service>
+	</serviceList>
+  </device> 
+</root> 

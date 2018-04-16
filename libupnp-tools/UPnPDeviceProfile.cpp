@@ -1,136 +1,105 @@
 #include "UPnPDeviceProfile.hpp"
+#include "UPnPDeviceSerializer.hpp"
 
 namespace UPNP {
 
 	using namespace std;
+	using namespace OS;
+
 
 	UPnPDeviceProfile::UPnPDeviceProfile() {
+	}
+
+	UPnPDeviceProfile::UPnPDeviceProfile(AutoRef<UPnPDevice> device)
+		: _device(device)
+	{
 	}
 	
 	UPnPDeviceProfile::~UPnPDeviceProfile() {
 	}
 	
-	UDN & UPnPDeviceProfile::udn() {
-		return _udn;
-	}
-	
-	UDN UPnPDeviceProfile::const_udn() const {
-		return _udn;
-	}
-	
-	string & UPnPDeviceProfile::deviceDescription() {
-		return _deviceDescription;
-	}
-	
-	string UPnPDeviceProfile::const_deviceDescription() const {
-		return _deviceDescription;
-	}
-	
-	vector<string> & UPnPDeviceProfile::deviceTypes() {
-		return _deviceTypes;
-	}
-	
-	string UPnPDeviceProfile::rootDeviceType() {
-		return _deviceTypes[0];
-	}
-	
-	vector<UPnPServiceProfile> & UPnPDeviceProfile::serviceProfiles() {
-		return _serviceProfiles;
-	}
-	
-	string & UPnPDeviceProfile::scpd(const string & serviceType) {
-		return getServiceProfileByServiceType(serviceType).scpd();
-	}
-	
-	bool UPnPDeviceProfile::hasDeviceType(const string & deviceType) {
-		for (vector<string>::iterator iter = _deviceTypes.begin();
-			 iter != _deviceTypes.end(); iter++) {
-			if (*iter == deviceType) {
-				return true;
-			}
-		}
-		return false;
+	UDN UPnPDeviceProfile::udn() const {
+		return _device->udn();
 	}
 
-	bool UPnPDeviceProfile::hasServiceByServiceType(const string & serviceType) {
-		for (vector<UPnPServiceProfile>::iterator iter = _serviceProfiles.begin();
-			 iter != _serviceProfiles.end(); iter++) {
-			if (iter->serviceType() == serviceType) {
-				return true;
-			}
+	void UPnPDeviceProfile::setUdn(const UDN & udn) {
+		_device->setUdn(udn);
+	}
+
+	AutoRef<UPnPDevice> & UPnPDeviceProfile::device() {
+		return _device;
+	}
+
+	vector<string> UPnPDeviceProfile::deviceTypes() const {
+		vector<string> types;
+		vector< AutoRef<UPnPDevice> > devices = _device->allDevices();
+		for (vector< AutoRef<UPnPDevice> >::iterator iter = devices.begin();
+			 iter != devices.end(); iter++)
+		{
+			types.push_back((*iter)->deviceType());
 		}
-		return false;
+		return types;
 	}
 	
-	bool UPnPDeviceProfile::hasServiceByScpdUrl(const string & scpdUrl) {
-		for (vector<UPnPServiceProfile>::iterator iter = _serviceProfiles.begin();
-			 iter != _serviceProfiles.end(); iter++) {
-			if (iter->scpdUrl() == scpdUrl) {
-				return true;
-			}
+	vector< AutoRef<UPnPService> > UPnPDeviceProfile::allServices() const {
+		return _device->allServices();
+	}
+
+	vector<string> UPnPDeviceProfile::serviceTypes() const {
+		vector<string> types;
+		vector< AutoRef<UPnPService> > services = allServices();
+		for (vector< AutoRef<UPnPService> >::iterator iter = services.begin();
+			 iter != services.end(); iter++)
+		{
+			AutoRef<UPnPService> service = *iter;
+			types.push_back(service->serviceType());
 		}
-		return false;
+		return types;
 	}
 	
-	bool UPnPDeviceProfile::hasServiceByControlUrl(const string & controlUrl) {
-		for (vector<UPnPServiceProfile>::iterator iter = _serviceProfiles.begin();
-			 iter != _serviceProfiles.end(); iter++) {
-			
-			if (iter->controlUrl() == controlUrl) {
-				return true;
+	AutoRef<UPnPService> UPnPDeviceProfile::getService(const string & serviceType) {
+		vector< AutoRef<UPnPService> > services = allServices();
+		for (vector< AutoRef<UPnPService> >::iterator iter = services.begin();
+			 iter != services.end(); iter++)
+		{
+			AutoRef<UPnPService> & service = *iter;
+			if (service->serviceType() == serviceType) {
+				return service;
 			}
 		}
-		return false;
+		return AutoRef<UPnPService>();
 	}
 	
-	bool UPnPDeviceProfile::hasServiceByEventSubUrl(const string & eventSubUrl) {
-		for (vector<UPnPServiceProfile>::iterator iter = _serviceProfiles.begin();
-			 iter != _serviceProfiles.end(); iter++) {
-			
-			if (iter->eventSubUrl() == eventSubUrl) {
-				return true;
+	AutoRef<UPnPDevice> UPnPDeviceProfile::getDeviceByType(const string & deviceType) {
+		if (_device->deviceType() == deviceType) {
+			return _device;
+		}
+		vector< AutoRef<UPnPDevice> > devices = _device->allDevices();
+		for (vector< AutoRef<UPnPDevice> >::iterator iter = devices.begin();
+			 iter != devices.end(); ++iter)
+		{
+			AutoRef<UPnPDevice> device = *iter;
+			if (device->deviceType() == deviceType) {
+				return device;
 			}
 		}
-		return false;
+		return AutoRef<UPnPDevice>();
 	}
 	
-	UPnPServiceProfile & UPnPDeviceProfile::getServiceProfileByServiceType(const string & serviceType) {
-		for (vector<UPnPServiceProfile>::iterator iter = _serviceProfiles.begin();
-			 iter != _serviceProfiles.end(); iter++) {
-			if (iter->serviceType() == serviceType) {
-				return *iter;
+	AutoRef<UPnPService> UPnPDeviceProfile::getServiceByType(const string & serviceType) {
+		vector< AutoRef<UPnPService> > services = _device->allServices();
+		for (vector< AutoRef<UPnPService> >::iterator iter = services.begin();
+			 iter != services.end(); ++iter)
+		{
+			AutoRef<UPnPService> service = *iter;
+			if (service->serviceType() == serviceType) {
+				return service;
 			}
 		}
-		throw OS::Exception("not found service", -1, 0);
+		return AutoRef<UPnPService>();
 	}
 	
-	UPnPServiceProfile & UPnPDeviceProfile::getServiceProfileByScpdUrl(const string & scpdUrl) {
-		for (vector<UPnPServiceProfile>::iterator iter = _serviceProfiles.begin();
-			 iter != _serviceProfiles.end(); iter++) {
-			if (iter->scpdUrl() == scpdUrl) {
-				return *iter;
-			}
-		}
-		throw OS::Exception("not found service");
-	}
-	
-	UPnPServiceProfile & UPnPDeviceProfile::getServiceProfileByControlUrl(const string & controlUrl) {
-		for (vector<UPnPServiceProfile>::iterator iter = _serviceProfiles.begin();
-			 iter != _serviceProfiles.end(); iter++) {
-			if (iter->controlUrl() == controlUrl) {
-				return *iter;
-			}
-		}
-		throw OS::Exception("not found service", -1, 0);
-	}
-	
-	UPnPServiceProfile & UPnPDeviceProfile::getServiceProfileByEventSubUrl(const string & eventSubUrl) {
-		for (vector<UPnPServiceProfile>::iterator iter = _serviceProfiles.begin();
-			 iter != _serviceProfiles.end(); iter++) {
-			if (iter->eventSubUrl() == eventSubUrl) {
-				return *iter;
-			}
-		}
-		throw OS::Exception("not found service", -1, 0);
+	string UPnPDeviceProfile::deviceDescription() const {
+		return UPnPDeviceSerializer::serializeDeviceDescription(*(&_device));
 	}
 }

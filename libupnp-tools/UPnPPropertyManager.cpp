@@ -25,15 +25,21 @@ namespace UPNP {
 	 * @brief
 	 */
 
-	NotificationRequest::NotificationRequest() : delay(0) {
+	NotificationRequest::NotificationRequest()
+		: delay(0)
+	{
 		creationTick = tick_milli();
 	}
 	
-	NotificationRequest::NotificationRequest(const string & sid) :  _sid(sid), delay(0) {
+	NotificationRequest::NotificationRequest(const string & sid)
+		: _sid(sid), delay(0)
+	{
 		creationTick = tick_milli();
 	}
 	
-	NotificationRequest::NotificationRequest(const string & sid, unsigned long delay) : _sid(sid), delay(delay) {
+	NotificationRequest::NotificationRequest(const string & sid, unsigned long delay)
+		: _sid(sid), delay(delay)
+	{
 		creationTick = tick_milli();
 	}
 	
@@ -94,30 +100,39 @@ namespace UPNP {
 	 */
 	UPnPPropertyManager::UPnPPropertyManager() {
 	}
+	
 	UPnPPropertyManager::~UPnPPropertyManager() {
 	}
-	string UPnPPropertyManager::makeKey(const UDN & udn, const string serviceType) {
+	
+	string UPnPPropertyManager::getKey(const UDN & udn, const string serviceType) {
 		return udn.toString() + "::" + serviceType;
 	}
+	
 	void UPnPPropertyManager::clear() {
 		registry.clear();
 		sessions.clear();
 	}
+	
 	bool UPnPPropertyManager::isRegisteredService(const UDN & udn, const string serviceType) {
-		return registry.find(makeKey(udn, serviceType)) != registry.end();
+		return registry.find(getKey(udn, serviceType)) != registry.end();
 	}
+	
 	void UPnPPropertyManager::registerService(const UDN & udn, const std::string serviceType, const LinkedStringMap & props) {
-		registry[makeKey(udn, serviceType)] = props;
+		registry[getKey(udn, serviceType)] = props;
 	}
+	
 	void UPnPPropertyManager::addSubscriptionSession(const AutoRef<UPnPEventSubscriptionSession> session) {
 		sessions[session->sid()] = session;
 	}
+	
 	bool UPnPPropertyManager::hasSubscriptionSession(const string & sid) {
 		return (sessions.find(sid) != sessions.end());
 	}
+	
 	void UPnPPropertyManager::removeSubscriptionSession(const string & sid) {
 		sessions.erase(sid);
 	}
+	
 	AutoRef<UPnPEventSubscriptionSession> UPnPPropertyManager::getSession(const string & sid) {
 		if (hasSubscriptionSession(sid)) {
 			return sessions[sid];
@@ -134,19 +149,27 @@ namespace UPNP {
 		}
 		return ret;
 	}
+
+	void UPnPPropertyManager::setProperty(const UDN & udn, const string & serviceType,
+										  const string & name, const string & value) {
+		LinkedStringMap & props = registry[getKey(udn, serviceType)];
+		props[name] = value;
+		notify(getSessionsByUdnAndServiceType(udn, serviceType), props);
+	}
 	
-	void UPnPPropertyManager::setProperties(const UDN & udn, const string & serviceType, const LinkedStringMap & props) {
-		registry[makeKey(udn, serviceType)] = props;
+	void UPnPPropertyManager::setProperties(const UDN & udn, const string & serviceType,
+											const LinkedStringMap & props) {
+		registry[getKey(udn, serviceType)] = props;
 		notify(getSessionsByUdnAndServiceType(udn, serviceType), props);
 	}
 
 	LinkedStringMap & UPnPPropertyManager::getProperties(const UDN & udn, const string & serviceType) {
-		return registry[makeKey(udn, serviceType)];
+		return registry[getKey(udn, serviceType)];
 	}
 	
 	LinkedStringMap & UPnPPropertyManager::getPropertiesBySid(const string & sid) {
 		AutoRef<UPnPEventSubscriptionSession> session = getSession(sid);
-		return registry[makeKey(session->udn(), session->serviceType())];
+		return registry[getKey(session->udn(), session->serviceType())];
 	}
 
 	void UPnPPropertyManager::notify(const string & sid) {

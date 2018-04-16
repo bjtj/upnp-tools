@@ -15,31 +15,22 @@ namespace UPNP {
 	 */
 	class UPnPDeviceProfile {
 	private:
-		UDN _udn;
-		std::string _deviceDescription;
-		std::vector<std::string> _deviceTypes;
-		std::vector<UPnPServiceProfile> _serviceProfiles;
+		OS::AutoRef<UPnPDevice> _device;
 		
 	public:
 		UPnPDeviceProfile();
+		UPnPDeviceProfile(OS::AutoRef<UPnPDevice> device);
 		virtual ~UPnPDeviceProfile();
-		UDN & udn();
-		UDN const_udn() const;
-		std::string & deviceDescription();
-		std::string const_deviceDescription() const;
-		std::vector<std::string> & deviceTypes();
-		std::string rootDeviceType();
-		std::vector<UPnPServiceProfile> & serviceProfiles();
-		std::string & scpd(const std::string & serviceType);
-		bool hasDeviceType(const std::string & deviceType);
-		bool hasServiceByServiceType(const std::string & serviceType);
-		bool hasServiceByScpdUrl(const std::string & scpdUrl);
-		bool hasServiceByControlUrl(const std::string & controlUrl);
-		bool hasServiceByEventSubUrl(const std::string & eventSubUrl);
-		UPnPServiceProfile & getServiceProfileByServiceType(const std::string & serviceType);
-		UPnPServiceProfile & getServiceProfileByScpdUrl(const std::string & scpdUrl);
-		UPnPServiceProfile & getServiceProfileByControlUrl(const std::string & controlUrl);
-		UPnPServiceProfile & getServiceProfileByEventSubUrl(const std::string & eventSubUrl);
+		UDN udn() const;
+		void setUdn(const UDN & udn);
+		std::string deviceDescription() const;
+		OS::AutoRef<UPnPDevice> & device();
+		std::vector<std::string> deviceTypes() const;
+		std::vector< OS::AutoRef<UPnPService> > allServices() const;
+		std::vector<std::string> serviceTypes() const;
+		OS::AutoRef<UPnPService> getService(const std::string & serviceType);
+		OS::AutoRef<UPnPDevice> getDeviceByType(const std::string & deviceType);
+		OS::AutoRef<UPnPService> getServiceByType(const std::string & serviceType);
 	};
 }
 

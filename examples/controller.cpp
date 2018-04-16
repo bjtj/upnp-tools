@@ -8,6 +8,7 @@
 #include <liboslayer/XmlParser.hpp>
 #include <liboslayer/FileStream.hpp>
 #include <liboslayer/Uuid.hpp>
+#include <liboslayer/File.hpp>
 #include <liboslayer/Logger.hpp>
 #include <libupnp-tools/UPnPControlPoint.hpp>
 #include <libupnp-tools/UPnPActionInvoker.hpp>
@@ -26,7 +27,8 @@ using namespace XML;
 
 // #define _DEBUG
 
-static AutoRef<Logger> logger = LoggerFactory::inst().getObservingLogger(__FILE__);
+static AutoRef<Logger> logger = LoggerFactory::instance().
+	getObservingLogger(File::basename(__FILE__));
 
 class MyEventListener : public UPnPEventListener {
 private:
@@ -49,7 +51,7 @@ static int run(int argc, char *args[]);
 int main(int argc, char *args[]) {
 
 #if defined(_DEBUG)
-	LoggerFactory::inst().setProfile("*", "basic", "console");
+	LoggerFactory::instance().setProfile("*", "basic", "console");
 #endif
 
 	try {
@@ -100,7 +102,7 @@ public:
 
 		str.append(depth, ' ');
 		if (depth > 0) { str.append(" - "); }
-		str.append(device->getFriendlyName() + " (" + device->getUdn().str() + ")");
+		str.append(device->friendlyName() + " (" + device->udn().str() + ")");
 
 		vector<AutoRef<UPnPService> > services = device->services();
 		for (vector<AutoRef<UPnPService> >::iterator iter = services.begin(); iter != services.end(); iter++) {
@@ -135,7 +137,7 @@ public:
 		string str;
 		str.append(depth, ' ');
 		if (depth > 0) { str.append("  - "); }
-		str.append(device->getFriendlyName() + " (" + device->getUdn().str() + ")");
+		str.append(device->friendlyName() + " (" + device->udn().str() + ")");
 		vector<AutoRef<UPnPDevice> > & devices = device->childDevices();
 		for (vector<AutoRef<UPnPDevice> >::iterator iter = devices.begin(); iter != devices.end(); iter++) {
 			str.append("\n");
@@ -177,11 +179,11 @@ public:
     virtual ~MyDeviceListener() {}
 
 	virtual void onDeviceAdded(AutoRef<UPnPDevice> device) {
-		cout << " ** Added: " << device->getFriendlyName() << endl;
+		cout << " ** Added: " << device->friendlyName() << endl;
 	}
 
 	virtual void onDeviceRemoved(AutoRef<UPnPDevice> device) {
-		cout << " ** Removed: " << device->getFriendlyName() << endl;
+		cout << " ** Removed: " << device->friendlyName() << endl;
 	}
 };
 
@@ -264,7 +266,7 @@ int run(int argc, char *args[]) {
 			cout << "idx : " << idx << endl;
 			AutoRef<UPnPDevice> device = selectDeviceByIndex(cp.getDevices(), (size_t)idx);
 			if (device.nil() == false) {
-				session.udn() = device->getUdn();
+				session.udn() = device->udn();
 				cout << "* SET UDN> " << session.udn().toString() << endl;
 			}
 		} else if (Text::startsWith(line, "udn ")) {
@@ -334,7 +336,7 @@ int run(int argc, char *args[]) {
 			vector<AutoRef<UPnPDevice> > devices;
 			list->list(devices);
 			for (vector< AutoRef<UPnPDevice> >::iterator iter = devices.begin(); iter != devices.end(); iter++) {
-				cout << " * " << (*iter)->getFriendlyName() << endl;
+				cout << " * " << (*iter)->friendlyName() << endl;
 			}
 		} else if (line == "dump") {
 			if (session.udn().empty()) {
