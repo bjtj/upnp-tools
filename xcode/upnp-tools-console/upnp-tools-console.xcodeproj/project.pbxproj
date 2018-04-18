@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E827BD191F740DBD00448271 /* controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E82F681C1D9C29BB00121B7E /* controller.cpp */; };
+		E83DB1E82087FE1700879942 /* server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E89386301CBEFD1C00D45426 /* server.cpp */; };
+		E83DB1EA2087FE9F00879942 /* data in Copy Files */ = {isa = PBXBuildFile; fileRef = E83DB1E92087FE9F00879942 /* data */; };
 		E8E0FEE81BD849CF00292C54 /* libupnp-tools-cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8E0FEE71BD849CA00292C54 /* libupnp-tools-cocoa.a */; };
 /* End PBXBuildFile section */
 
@@ -42,6 +43,7 @@
 			dstPath = res;
 			dstSubfolderSpec = 16;
 			files = (
+				E83DB1EA2087FE9F00879942 /* data in Copy Files */,
 			);
 			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -51,6 +53,7 @@
 /* Begin PBXFileReference section */
 		E82F681C1D9C29BB00121B7E /* controller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = controller.cpp; path = ../../examples/controller.cpp; sourceTree = "<group>"; };
 		E82F681D1D9C29BB00121B7E /* ssdp-discover.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "ssdp-discover.cpp"; path = "../../examples/ssdp-discover.cpp"; sourceTree = "<group>"; };
+		E83DB1E92087FE9F00879942 /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = data; path = ../../examples/data; sourceTree = "<group>"; };
 		E89386301CBEFD1C00D45426 /* server.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = server.cpp; path = ../../examples/server.cpp; sourceTree = "<group>"; };
 		E8E0FE6E1BD8480B00292C54 /* upnp-tools-console */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "upnp-tools-console"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8E0FE781BD8482A00292C54 /* upnp-tools.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "upnp-tools.xcodeproj"; path = "../upnp-tools/upnp-tools.xcodeproj"; sourceTree = "<group>"; };
@@ -71,6 +74,7 @@
 		E8E0FE651BD8480B00292C54 = {
 			isa = PBXGroup;
 			children = (
+				E83DB1E92087FE9F00879942 /* data */,
 				E8E79E431C7538F8001B7C06 /* upnp-tools-console */,
 				E8E0FE781BD8482A00292C54 /* upnp-tools.xcodeproj */,
 				E8E0FE6F1BD8480B00292C54 /* Products */,
@@ -131,7 +135,7 @@
 		E8E0FE661BD8480B00292C54 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0900;
+				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = TJ;
 				TargetAttributes = {
 					E8E0FE6D1BD8480B00292C54 = {
@@ -185,7 +189,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E827BD191F740DBD00448271 /* controller.cpp in Sources */,
+				E83DB1E82087FE1700879942 /* server.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -212,12 +216,14 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -261,12 +267,14 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -299,6 +307,7 @@
 					../../../oslayer,
 					"../../../http-server",
 				);
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				PRODUCT_NAME = "upnp-tools-console";
 			};
 			name = Debug;
@@ -311,6 +320,7 @@
 					../../../oslayer,
 					"../../../http-server",
 				);
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				PRODUCT_NAME = "upnp-tools-console";
 			};
 			name = Release;

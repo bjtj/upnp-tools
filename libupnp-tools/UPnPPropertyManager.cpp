@@ -1,5 +1,7 @@
 #include <liboslayer/Object.hpp>
 #include <liboslayer/Uuid.hpp>
+#include <liboslayer/File.hpp>
+#include <liboslayer/Logger.hpp>
 #include "UPnPPropertyManager.hpp"
 #include "HttpUtils.hpp"
 #include "XmlUtils.hpp"
@@ -9,6 +11,8 @@ namespace UPNP {
 	using namespace std;
 	using namespace OS;
 	using namespace UTIL;
+    
+    static AutoRef<Logger> logger = LoggerFactory::instance().getObservingLogger(File::basename(__FILE__));
 
 
 	UPnPEventSubscriptionSession::UPnPEventSubscriptionSession() {
@@ -190,7 +194,11 @@ namespace UPNP {
 		headers["Content-Type"] = "text/xml";
 		string content = makePropertiesXml(props);
 		for (vector<string>::iterator iter = urls.begin(); iter != urls.end(); iter++) {
-			HttpUtils::httpPost("NOTIFY", HTTP::Url(*iter), headers, content);
+            try {
+                HttpUtils::httpPost("NOTIFY", HTTP::Url(*iter), headers, content);
+            } catch (Exception e) {
+                logger->error("notify event failed with - " + e.message());
+            }
 		}
 	}
 

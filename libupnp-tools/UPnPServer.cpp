@@ -388,7 +388,6 @@ namespace UPNP {
 				handleScpd(request, response, profile);
 				return true;
 			} catch (Exception e) {
-				logger->error("scpd error: " + e.message());
 			}
 
 			try {
@@ -396,7 +395,6 @@ namespace UPNP {
 				handleControl(request, sink, response);
 				return true;
 			} catch (Exception e) {
-				logger->error("control error: " + e.message());
 			}
 
 			try {
@@ -405,11 +403,9 @@ namespace UPNP {
 				handleEvent(request, sink, response, profile);
 				return true;
 			} catch (Exception e) {
-				logger->error("event sub error:" + e.message());
 			}
 
 			return false;
-			
 		}
 
 		void handleDeviceDescription(HttpRequest & request, HttpResponse & response) {
@@ -462,7 +458,6 @@ namespace UPNP {
 				UDN udn(request.getParameter("udn"));
 				AutoRef<UPnPDeviceProfileSession> session = server.getProfileManager().getDeviceProfileSessionByUDN(udn);
 				if (!session->isEnabled()) {
-					logger->error("device is not enabled");
 					throw HttpException(404);
 				}
 				
@@ -475,6 +470,8 @@ namespace UPNP {
 				if (server.getHttpEventListener().nil() == false) {
 					server.getHttpEventListener()->onDeviceDescriptionRequest(request, response);
 				}
+            } catch (HttpException e) {
+                throw e;
 			} catch (Exception e) {
 				logger->error(e.message());
 				throw HttpException(404);

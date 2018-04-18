@@ -12,7 +12,6 @@
 #include <libupnp-tools/UPnPActionRequestHandler.hpp>
 #include <libupnp-tools/UPnPDeviceDeserializer.hpp>
 #include <libupnp-tools/UPnPResourceManager.hpp>
-#include <libupnp-tools/UPnPDeviceProfileBuilder.hpp>
 
 using namespace std;
 using namespace OS;
@@ -75,6 +74,10 @@ public:
  * @brief 
  */
 static void s_set_device(UPnPServer & server, const UDN & udn) {
+    
+#if !defined(DATA_PATH)
+    string DATA_PATH = File::merge(File::getCwd(), "data");
+#endif
 
 	server.registerDeviceProfile(udn, Url("file://" + string(DATA_PATH)
 										  + "/dimming-light.xml"));
