@@ -79,6 +79,13 @@ static void s_set_device(UPnPServer & server, const UDN & udn) {
 	server.registerDeviceProfile(udn, Url("file://" + string(DATA_PATH)
 										  + "/dimming-light.xml"));
 
+	server.getProfileManager().getDeviceProfileSessionByUDN(udn)->profile().
+		device()->setScpdUrl("/$udn/$serviceType/scpd.xml");
+	server.getProfileManager().getDeviceProfileSessionByUDN(udn)->profile().
+		device()->setControlUrl("/$udn/$serviceType/control.xml");
+	server.getProfileManager().getDeviceProfileSessionByUDN(udn)->profile().
+		device()->setEventSubUrl("/$udn/$serviceType/event.xml");
+
 	server.setProperty(udn, "urn:schemas-upnp-org:service:SwitchPower:1",
 					   "RetTargetValue", "0");
 	server.setProperty(udn, "urn:schemas-upnp-org:service:Dimming:1",

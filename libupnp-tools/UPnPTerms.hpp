@@ -1,5 +1,5 @@
-#ifndef __UPNP_UTILS_HPP__
-#define __UPNP_UTILS_HPP__
+#ifndef __UPNP_TERMS_HPP__
+#define __UPNP_TERMS_HPP__
 
 #include <string>
 #include <vector>
@@ -56,11 +56,10 @@ namespace UPNP {
 	private:
 		unsigned long _second;
 	public:
-		MaxAge(const std::string & phrase);
 		MaxAge(unsigned long second);
 		virtual ~MaxAge();
 		unsigned long & second();
-		static unsigned long parse(const std::string & phrase);
+		static MaxAge fromString(const std::string & phrase);
 		std::string toString() const;
 		static std::string toString(unsigned long second);
 	};
@@ -72,11 +71,10 @@ namespace UPNP {
 	private:
 		std::vector<std::string> _urls;
 	public:
-		CallbackUrls(const std::string & phrase);
 		CallbackUrls(const std::vector<std::string> & urls);
 		virtual ~CallbackUrls();
 		std::vector<std::string> & urls();
-		static std::vector<std::string> parse(const std::string & phrase);
+		static CallbackUrls fromString(const std::string & phrase);
 		std::string toString() const;
 		static std::string toString(const std::vector<std::string> & _urls);
 	};
@@ -88,11 +86,12 @@ namespace UPNP {
 	private:
 		unsigned long _second;
 	public:
-		Second(const std::string & phrase);
 		Second(unsigned long second);
 		virtual ~Second();
 		unsigned long & second();
-		static unsigned long parse(const std::string & phrase);
+		unsigned long second() const;
+		unsigned long milli() const;
+		static Second fromString(const std::string & phrase);
 		std::string toString() const;
 		static std::string toString(unsigned long second);
 	};

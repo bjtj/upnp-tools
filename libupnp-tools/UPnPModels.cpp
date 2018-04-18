@@ -195,10 +195,10 @@ namespace UPNP {
 		return _services;
 	}
 
-	vector< AutoRef<UPnPDevice> > UPnPDevice::allDevices() {
+	vector< AutoRef<UPnPDevice> > UPnPDevice::allChildDevices() {
 		vector< AutoRef<UPnPDevice> > ret;
 		for (vector<AutoRef<UPnPDevice> >::iterator iter = _childDevices.begin(); iter != _childDevices.end(); iter++) {
-			vector< AutoRef<UPnPDevice> > v = (*iter)->allDevices();
+			vector< AutoRef<UPnPDevice> > v = (*iter)->allChildDevices();
 			ret.insert(ret.end(), v.begin(), v.end());
 		}
 		return ret;

@@ -137,9 +137,6 @@ namespace UPNP {
 	 * max-age
 	 */
 
-	MaxAge::MaxAge(const string & phrase) : _second(parse(phrase)) {
-	}
-
 	MaxAge::MaxAge(unsigned long second) : _second(second) {
 	}
 
@@ -150,11 +147,11 @@ namespace UPNP {
 		return _second;
 	}
 
-	unsigned long MaxAge::parse(const string & phrase) {
+	MaxAge MaxAge::fromString(const string & phrase) {
 		if (Text::startsWithIgnoreCase(phrase, "max-age=") == false) {
 			throw UPnPParseException("max-age not occurred");
 		}
-		return (unsigned long)Text::toLong(phrase.substr(string("max-age=").size()));
+		return MaxAge((unsigned long)Text::toLong(phrase.substr(string("max-age=").size())));
 	}
 
 	string MaxAge::toString() const {
@@ -170,9 +167,6 @@ namespace UPNP {
 	 * callback urls
 	 */
 	
-	CallbackUrls::CallbackUrls(const string & phrase) : _urls(parse(phrase)) {
-	}
-	
 	CallbackUrls::CallbackUrls(const vector<string> & urls) : _urls(urls) {
 	}
 	
@@ -183,7 +177,7 @@ namespace UPNP {
 		return _urls;
 	}
 	
-	vector<string> CallbackUrls::parse(const string & phrase) {
+	CallbackUrls CallbackUrls::fromString(const string & phrase) {
 		vector<string> urls;
 		string buffer;
 		if (phrase.empty()) {
@@ -203,7 +197,7 @@ namespace UPNP {
 				urls.push_back(buffer);
 			}
 		}
-		return urls;
+		return CallbackUrls(urls);
 	}
 	
 	string CallbackUrls::toString() const {
@@ -225,8 +219,6 @@ namespace UPNP {
 	/**
 	 * second
 	 */
-	Second::Second(const string & phrase) : _second(parse(phrase)) {
-	}
 	
 	Second::Second(unsigned long second) : _second(second) {
 	}
@@ -237,12 +229,20 @@ namespace UPNP {
 	unsigned long & Second::second() {
 		return _second;
 	}
+
+	unsigned long Second::second() const {
+		return _second;
+	}
+
+	unsigned long Second::milli() const {
+		return _second * 1000;
+	}
 	
-	unsigned long Second::parse(const string & phrase) {
+	Second Second::fromString(const string & phrase) {
 		if (Text::startsWithIgnoreCase(phrase, "Second-") == false) {
 			throw UPnPParseException("Not found prefix 'Second-'");
 		}
-		return (unsigned long)Text::toLong(phrase.substr(string("Second-").size()));
+		return Second((unsigned long)Text::toLong(phrase.substr(string("Second-").size())));
 	}
 
 	string Second::toString() const {

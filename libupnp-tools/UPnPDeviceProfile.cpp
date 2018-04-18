@@ -26,13 +26,18 @@ namespace UPNP {
 		_device->setUdn(udn);
 	}
 
+	string UPnPDeviceProfile::deviceDescription() const {
+		return UPnPDeviceSerializer::serializeDeviceDescription(*(&_device));
+	}
+
 	AutoRef<UPnPDevice> & UPnPDeviceProfile::device() {
 		return _device;
 	}
 
 	vector<string> UPnPDeviceProfile::deviceTypes() const {
 		vector<string> types;
-		vector< AutoRef<UPnPDevice> > devices = _device->allDevices();
+		types.push_back(_device->deviceType());
+		vector< AutoRef<UPnPDevice> > devices = _device->allChildDevices();
 		for (vector< AutoRef<UPnPDevice> >::iterator iter = devices.begin();
 			 iter != devices.end(); iter++)
 		{
@@ -74,7 +79,7 @@ namespace UPNP {
 		if (_device->deviceType() == deviceType) {
 			return _device;
 		}
-		vector< AutoRef<UPnPDevice> > devices = _device->allDevices();
+		vector< AutoRef<UPnPDevice> > devices = _device->allChildDevices();
 		for (vector< AutoRef<UPnPDevice> >::iterator iter = devices.begin();
 			 iter != devices.end(); ++iter)
 		{
@@ -84,22 +89,5 @@ namespace UPNP {
 			}
 		}
 		return AutoRef<UPnPDevice>();
-	}
-	
-	AutoRef<UPnPService> UPnPDeviceProfile::getServiceByType(const string & serviceType) {
-		vector< AutoRef<UPnPService> > services = _device->allServices();
-		for (vector< AutoRef<UPnPService> >::iterator iter = services.begin();
-			 iter != services.end(); ++iter)
-		{
-			AutoRef<UPnPService> service = *iter;
-			if (service->serviceType() == serviceType) {
-				return service;
-			}
-		}
-		return AutoRef<UPnPService>();
-	}
-	
-	string UPnPDeviceProfile::deviceDescription() const {
-		return UPnPDeviceSerializer::serializeDeviceDescription(*(&_device));
 	}
 }

@@ -15,17 +15,17 @@ public:
 	virtual void test() {
 		UPnPCache cache;
 
-		cache.extend(1000);
+		cache.updateTime();
+		cache.timeout() = 1000;
 		idle(500);
 		ASSERT(cache.expired(), ==, false);
 
 		idle(1000);
 		ASSERT(cache.expired(), ==, true);
 
-		cache.extend(1000);
+		cache.updateTime();
+		cache.timeout() = 1000;
 		ASSERT(cache.expired(), ==, false);
-		ASSERT(cache.lifetimeFull(), >=, 1500);
-		ASSERT(cache.lifetimeRecent(), <=, 1500);
 	}
 };
 

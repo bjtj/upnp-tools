@@ -23,22 +23,22 @@ public:
 			ASSERT(ma.toString(), ==, "max-age=1800");
 		}
 		{
-			MaxAge ma("max-age=1800");
+			MaxAge ma = MaxAge::fromString("max-age=1800");
 			ASSERT(ma.second(), ==, 1800);
 			ASSERT(ma.toString(), ==, "max-age=1800");
 		}
 		{
-			MaxAge ma("MAX-AGE=1800");
+			MaxAge ma = MaxAge::fromString("MAX-AGE=1800");
 			ASSERT(ma.second(), ==, 1800);
 			ASSERT(ma.toString(), ==, "max-age=1800");
 		}
 		{
-			MaxAge ma("Max-Age=1800");
+			MaxAge ma = MaxAge::fromString("Max-Age=1800");
 			ASSERT(ma.second(), ==, 1800);
 			ASSERT(ma.toString(), ==, "max-age=1800");
 		}
 		try {
-			MaxAge ma("1800");
+			MaxAge ma = MaxAge::fromString("1800");
 			throw "must be throw!";
 		} catch (UPnPParseException e) {
 			ASSERT(e.toString().size(), >, 0);
@@ -56,14 +56,14 @@ public:
     virtual ~CallbackUrlsTestCase() {}
 	virtual void test() {
 		{
-			CallbackUrls cbs("<http://a>");
+			CallbackUrls cbs = CallbackUrls::fromString("<http://a>");
 			ASSERT(cbs.urls().size(), ==, 1);
 			ASSERT(cbs.urls()[0], ==, "http://a");
 		}
 
 		{
 			try {
-				CallbackUrls cbs("<>");
+				CallbackUrls cbs = CallbackUrls::fromString("<>");
 				throw "It should not be thrown!";
 			} catch (UPnPParseException e) {
 				cerr << "[expected exception] " << e.toString() << endl;
@@ -73,7 +73,7 @@ public:
 
 		{
 			try {
-				CallbackUrls cbs("<x>");
+				CallbackUrls cbs = CallbackUrls::fromString("<x>");
 				throw "It should not be thrown!";
 			} catch (UPnPParseException e) {
 				cerr << "[expected exception] " << e.toString() << endl;
@@ -82,7 +82,7 @@ public:
 		}
 
 		{
-			CallbackUrls cbs("<http://a> <http://b>");
+			CallbackUrls cbs = CallbackUrls::fromString("<http://a> <http://b>");
 			ASSERT(cbs.urls().size(), ==, 2);
 			ASSERT(cbs.urls()[0], ==, "http://a");
 			ASSERT(cbs.urls()[1], ==, "http://b");
@@ -98,14 +98,14 @@ public:
     SecondTestCase() : TestCase("second-test-case") {}
     virtual ~SecondTestCase() {}
 	virtual void test() {
-		Second second("Second-100");
+		Second second = Second::fromString("Second-100");
 		ASSERT(second.second(), ==, 100);
 
 		second = Second(140);
 		ASSERT(second.toString(), ==, "Second-140");
 
 		try {
-			Second::parse("120");
+			Second::fromString("120");
 			throw "It should not be thrown!";
 		} catch (UPnPParseException & e) {
 			ASSERT(e.toString().size(), >, 0);

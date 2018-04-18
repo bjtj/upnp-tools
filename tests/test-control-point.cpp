@@ -127,12 +127,12 @@ public:
     DeviceListener() {}
     virtual ~DeviceListener() {}
 	virtual void onDeviceAdded(AutoRef<UPnPDevice> device) {
-		cout << " ** added : " << device->getUdn().toString() << endl;
-		s_device_list[device->getUdn()] = device;
+		cout << " ** added : " << device->udn().toString() << endl;
+		s_device_list[device->udn()] = device;
 	}
 	virtual void onDeviceRemoved(AutoRef<UPnPDevice> device) {
-		cout << " ** removed : " << device->getUdn().toString() << endl;
-		s_device_list.erase(device->getUdn());
+		cout << " ** removed : " << device->udn().toString() << endl;
+		s_device_list.erase(device->udn());
 	}
 };
 
@@ -156,7 +156,7 @@ static void test_control_point() {
 	UDN udn("uuid:" + uuid);
 	cout << " ** test uuid : " << uuid << endl;
 	ASSERT(s_device_list.size(), ==, 1);
-	ASSERT(s_device_list[udn]->getUdn().toString(), ==, ("uuid:" + uuid));
+	ASSERT(s_device_list[udn]->udn().toString(), ==, ("uuid:" + uuid));
 
 	// second device
 	((RequestHandler*)&handler)->genUuid();
@@ -165,7 +165,7 @@ static void test_control_point() {
 	uuid = ((RequestHandler*)&handler)->uuid();
 	udn = UDN("uuid:" + uuid);
 	ASSERT(s_device_list.size(), ==, 2);
-	ASSERT(s_device_list[udn]->getUdn().toString(), ==, ("uuid:" + uuid));
+	ASSERT(s_device_list[udn]->udn().toString(), ==, ("uuid:" + uuid));
 
 	cp.stop();
 	server.stop();

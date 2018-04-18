@@ -5,7 +5,6 @@
 #include <vector>
 #include <map>
 #include "UPnPModels.hpp"
-#include "UPnPServiceProfile.hpp"
 #include "UPnPTerms.hpp"
 
 namespace UPNP {
@@ -30,7 +29,6 @@ namespace UPNP {
 		std::vector<std::string> serviceTypes() const;
 		OS::AutoRef<UPnPService> getService(const std::string & serviceType);
 		OS::AutoRef<UPnPDevice> getDeviceByType(const std::string & deviceType);
-		OS::AutoRef<UPnPService> getServiceByType(const std::string & serviceType);
 	};
 }
 

@@ -17,7 +17,7 @@ namespace UPNP {
 		virtual ~UPnPDeviceSerializer();
 
 		static std::string serializeDeviceDescription(UPnPDevice & device);
-		static std::string serializeDevice(UPnPDevice & device);
+		static std::string serializeDeviceNode(UPnPDevice & device);
 		static std::string serializeScpd(UPnPScpd & scpd);
 		static std::string serializeAction(UPnPAction & action);
 		static std::string serializeArgument(UPnPArgument & argument);

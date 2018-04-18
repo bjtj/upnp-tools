@@ -110,7 +110,8 @@ namespace UPNP {
 		
 	public:
 		UPnPServer(const Config & config);
-		UPnPServer(const Config & config, OS::AutoRef<NetworkStateManager> networkStateManager);
+		UPnPServer(const Config & config,
+				   OS::AutoRef<NetworkStateManager> networkStateManager);
 		virtual ~UPnPServer();
 		void startAsync();
 		void stop();
@@ -124,15 +125,21 @@ namespace UPNP {
 		void delayNotify(unsigned long delay, int type, const UPnPDeviceProfile & profile);
 		void notifyAliveAll();
 		void notifyAlive(UPnPDeviceProfile & profile);
-		void notifyAliveByDeviceType(UPnPDeviceProfile & profile, const std::string & deviceType);
-		std::string makeNotifyAlive(const std::string & location, const UDN & udn, const std::string & deviceType);
+		void notifyAliveByDeviceType(UPnPDeviceProfile & profile,
+									 const std::string & deviceType);
+		std::string makeNotifyAlive(const std::string & location,
+									const UDN & udn,
+									const std::string & deviceType);
 		void notifyByeBye(UPnPDeviceProfile & profile);
-		void notifyByeByeByDeviceType(UPnPDeviceProfile & profile, const std::string & deviceType);
+		void notifyByeByeByDeviceType(UPnPDeviceProfile & profile,
+									  const std::string & deviceType);
 		std::string makeNotifyByeBye(const UDN & udn, const std::string & deviceType);
 
 		// m-search response
 		void respondMsearch(const std::string & st, OS::InetAddress & remoteAddr);
-		std::string makeMsearchResponse(const std::string & location, const UDN & udn, const std::string & st);
+		std::string makeMsearchResponse(const std::string & location,
+										const UDN & udn,
+										const std::string & st);
 
 		// device profile management
 		UPnPDeviceProfileSessionManager & getProfileManager();
@@ -150,12 +157,16 @@ namespace UPNP {
 
 		// event notification
 		UPnPPropertyManager & getPropertyManager();
-		void setProperty(const UDN & udn, const std::string & serviceyType, const std::string & name, const std::string & value);
-		void setProperties(const UDN & udn, const std::string & serviceyType, UTIL::LinkedStringMap & props);
+		void setProperty(const UDN & udn, const std::string & serviceyType,
+						 const std::string & name, const std::string & value);
+		void setProperties(const UDN & udn, const std::string & serviceyType,
+						   UTIL::LinkedStringMap & props);
 		void notifyEvent(const std::string & sid);
 		void delayNotifyEvent(const std::string & sid, unsigned long delay);
-		std::string onSubscribe(OS::AutoRef<UPnPDevice> device, OS::AutoRef<UPnPService> service,
-								const std::vector<std::string> & callbacks, unsigned long timeout);
+		std::string onSubscribe(OS::AutoRef<UPnPDevice> device,
+								OS::AutoRef<UPnPService> service,
+								const std::vector<std::string> & callbacks,
+								unsigned long timeout);
 		bool onRenewSubscription(const std::string & sid, unsigned long timeout);
 		bool onUnsubscribe(const std::string & sid);
 		std::vector<std::string> parseCallbackUrls(const std::string & urls);

@@ -177,7 +177,7 @@ namespace UPNP {
 		OS::AutoRef<UPnPService> getServiceWithEventSubUrl(const std::string & eventSubUrl);
 		std::vector<OS::AutoRef<UPnPDevice> > & childDevices();
 		std::vector<OS::AutoRef<UPnPService> > & services();
-		std::vector< OS::AutoRef<UPnPDevice> > allDevices();
+		std::vector< OS::AutoRef<UPnPDevice> > allChildDevices();
 		std::vector< OS::AutoRef<UPnPService> > allServices();
 		UDN udn() const;
 		void setUdn(const UDN & udn);

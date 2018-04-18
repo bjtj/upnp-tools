@@ -31,10 +31,9 @@ namespace UPNP {
 
 	AutoRef<UPnPDevice> UPnPDeviceBuilder::execute() {
 		UPnPResourceManager & resMan = UPnPResourceManager::instance();
-		UPnPDeviceDeserializer deserializer;
 		LinkedStringMap meta;
 		UPnPResource res = resMan.getResource(_url);
-		_device = deserializer.parseDeviceXml(res.content());
+		_device = UPnPDeviceDeserializer::deserializeDevice(res.content());
 		_device->meta() = res.meta();
 		_device->baseUrl() = _url;
 		vector< AutoRef<UPnPService> > services = _device->allServices();
@@ -42,7 +41,7 @@ namespace UPNP {
 			 iter != services.end(); iter++)
 		{
 			try {
-				(*iter)->scpd() = deserializer.parseScpdXml(
+				(*iter)->scpd() = UPnPDeviceDeserializer::deserializeScpd(
 					resMan.getResourceContent(_url.relativePath((*iter)->scpdUrl())));
 			} catch (Exception e) {
 				if(_allow_fail_scpd == false) {

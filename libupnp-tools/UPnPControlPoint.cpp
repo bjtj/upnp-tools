@@ -455,7 +455,7 @@ namespace UPNP {
 
 	unsigned long UPnPControlPoint::parseCacheControlMilli(const string & cacheControl) {
 		try {
-			MaxAge maxAge(cacheControl);
+			MaxAge maxAge = MaxAge::fromString(cacheControl);
 			return maxAge.second() * 1000;
 		} catch (UPnPParseException e) {
 			logger->error("upnp parse exception - '" + e.toString() + "'");

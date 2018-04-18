@@ -79,11 +79,11 @@ static void test_deserialize() {
 	AutoRef<UPnPDevice> device = builder.execute();
 	ASSERT(device.nil(), ==, false);
 	
-	ASSERT(device->getUdn().toString(), ==, ("uuid:" + uuid));
-	ASSERT(device->getFriendlyName(), ==, "UPnP Test Device");
+	ASSERT(device->udn().toString(), ==, ("uuid:" + uuid));
+	ASSERT(device->friendlyName(), ==, "UPnP Test Device");
 
-	ASSERT(device->findService("urn:schemas-dummy-com:service:Dummy:1").nil(), ==, false);
-	ASSERT(device->findService("urn:schemas-dummy-com:service:Dummy:1")->scpd().action("GetProtocolInfo").arguments().size(), ==, 2);
+	ASSERT(device->getService("urn:schemas-dummy-com:service:Dummy:1").nil(), ==, false);
+	ASSERT(device->getService("urn:schemas-dummy-com:service:Dummy:1")->scpd().action("GetProtocolInfo").arguments().size(), ==, 2);
 
 	server.stop();
 }
@@ -104,11 +104,11 @@ static void test_filesystem_base_deserialize() {
 	UPnPDeviceBuilder builder(Url("file://" + File::getCwd() + "/device.xml"));
 	AutoRef<UPnPDevice> device = builder.execute();
 
-	ASSERT(device->getUdn().toString(), ==, ("uuid:" + uuid));
-	ASSERT(device->getFriendlyName(), ==, "UPnP Test Device");
+	ASSERT(device->udn().toString(), ==, ("uuid:" + uuid));
+	ASSERT(device->friendlyName(), ==, "UPnP Test Device");
 
-	ASSERT(device->findService("urn:schemas-dummy-com:service:Dummy:1").nil(), ==, false);
-	ASSERT(device->findService("urn:schemas-dummy-com:service:Dummy:1")->scpd().action("GetProtocolInfo").arguments().size(), ==, 2);
+	ASSERT(device->getService("urn:schemas-dummy-com:service:Dummy:1").nil(), ==, false);
+	ASSERT(device->getService("urn:schemas-dummy-com:service:Dummy:1")->scpd().action("GetProtocolInfo").arguments().size(), ==, 2);
 }
 
 static void test_serialize() {
@@ -122,11 +122,11 @@ static void test_serialize() {
 	UPnPDeviceBuilder builder(Url("http://127.0.0.1:9999/device.xml"));
 	AutoRef<UPnPDevice> device = builder.execute();
 
-	ASSERT(device->getUdn().toString(), ==, ("uuid:" + uuid));
-	ASSERT(device->getFriendlyName(), ==, "UPnP Test Device");
+	ASSERT(device->udn().toString(), ==, ("uuid:" + uuid));
+	ASSERT(device->friendlyName(), ==, "UPnP Test Device");
 
-	ASSERT(device->findService("urn:schemas-dummy-com:service:Dummy:1").nil(), ==, false);
-	ASSERT(device->findService("urn:schemas-dummy-com:service:Dummy:1")->scpd().action("GetProtocolInfo").arguments().size(), ==, 2);
+	ASSERT(device->getService("urn:schemas-dummy-com:service:Dummy:1").nil(), ==, false);
+	ASSERT(device->getService("urn:schemas-dummy-com:service:Dummy:1")->scpd().action("GetProtocolInfo").arguments().size(), ==, 2);
 	
 	string dd = UPnPDeviceSerializer::serializeDeviceDescription(*device);
 
@@ -134,18 +134,16 @@ static void test_serialize() {
 
 	AutoRef<UPnPDevice> deserialized(new UPnPDevice);
 	deserialized->baseUrl() = Url("http://127.0.0.1:9999/device.xml");
-	UPnPDeviceDeserializer deserializer;
-	deserializer.parseDeviceXml(dd, *deserialized);
+	deserialized = UPnPDeviceDeserializer::deserializeDevice(dd);
 
-	ASSERT(deserialized->getUdn().toString(), ==, ("uuid:" + uuid));
+	ASSERT(deserialized->udn().toString(), ==, ("uuid:" + uuid));
 
 	server.stop();
 }
 
 static void test_scpd_serialize() {
 	UPnPService service;
-	UPnPDeviceDeserializer deserializer;
-	UPnPScpd s = deserializer.parseScpdXml(scpd());
+	UPnPScpd s = UPnPDeviceDeserializer::deserializeScpd(scpd());
 	UPnPAction action = s.action("GetProtocolInfo");
 	ASSERT(action.name(), ==, "GetProtocolInfo");
 
@@ -153,7 +151,7 @@ static void test_scpd_serialize() {
 	ASSERT(xml.size(), >, 0);
 
 	UPnPService newService;
-	UPnPScpd scpd = deserializer.parseScpdXml(xml);
+	UPnPScpd scpd = UPnPDeviceDeserializer::deserializeScpd(xml);
 
 	action = scpd.action("GetProtocolInfo");
 	ASSERT(action.arguments()[0].name(), ==, "Source");

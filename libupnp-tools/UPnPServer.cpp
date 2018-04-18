@@ -171,7 +171,6 @@ namespace UPNP {
 			 iter != _sessions.end(); iter++)
 		{
 			AutoRef<UPnPDeviceProfileSession> session = iter->second;
-			logger->debug(session->profile().udn().toString());
 			if (session->profile().udn() == udn) {
 				return iter->second;
 			}
@@ -188,7 +187,6 @@ namespace UPNP {
 			for (vector< AutoRef<UPnPService> >::iterator it = services.begin();
 				 it != services.end(); ++it)
 			{
-				logger->debug("scpd url: " + (*it)->scpdUrl() + " and " + scpdUrl);
 				if ((*it)->scpdUrl() == scpdUrl) {
 					return session;
 				}
@@ -358,7 +356,7 @@ namespace UPNP {
 			if (response.getStatusCode() == 100 || response.getStatusCode() == 417) {
 				return;
 			}
-			logger->debug("[UPnPServer] HTTP REQUEST / full path - '" + request.getRawPath() + "'");
+			
 			try {
 				if (handleUPnP(request, sink, response) == true) {
 					return;
@@ -369,7 +367,7 @@ namespace UPNP {
 				response.setFixedTransfer(e.description());
 				return;
 			}
-			logger->debug("[UPnPServer] HTTP REQUEST / 404 not found");
+
 			response.setStatus(404);
 			response.setContentType("text/plain");
 			response.setFixedTransfer("Not found");
@@ -410,8 +408,6 @@ namespace UPNP {
 				logger->error("event sub error:" + e.message());
 			}
 
-			logger->debug("no handle for http request");
-
 			return false;
 			
 		}
@@ -446,7 +442,7 @@ namespace UPNP {
 
 		void validateMethod(HttpRequest & request, const string & expect) {
 			if (request.getMethod() != expect) {
-				logger->debug("[UPnPServer] HTTP REQUEST / unexpected method - " + request.getMethod());
+				logger->error("[UPnPServer] HTTP REQUEST / unexpected method - " + request.getMethod());
 				throw HttpException(405, HttpStatusCodes::getStatusString(405),
 									"Unexpected method - " + request.getMethod());
 			}
@@ -466,7 +462,7 @@ namespace UPNP {
 				UDN udn(request.getParameter("udn"));
 				AutoRef<UPnPDeviceProfileSession> session = server.getProfileManager().getDeviceProfileSessionByUDN(udn);
 				if (!session->isEnabled()) {
-					logger->debug("device is not enabled");
+					logger->error("device is not enabled");
 					throw HttpException(404);
 				}
 				
@@ -474,7 +470,6 @@ namespace UPNP {
 				response.setContentType("text/xml; charset=\"utf-8\"");
 				UPnPDeviceProfile profile = session->profile();
 				string description = profile.deviceDescription();
-				logger->debug(description);
 				response.setFixedTransfer(description);
 
 				if (server.getHttpEventListener().nil() == false) {
@@ -488,7 +483,6 @@ namespace UPNP {
 		
 		void onScpdRequest(HttpRequest & request, HttpResponse & response, UPnPDeviceProfile & profile) {
 			string path = request.getRawPath();
-			logger->debug("onScpdRequest with path - " + path);
 			response.setStatus(200);
 			response.setContentType("text/xml; charset=\"utf-8\"");
 			AutoRef<UPnPService> service = profile.device()->getServiceWithScpdUrl(path);
@@ -496,7 +490,6 @@ namespace UPNP {
 				logger->error("service not found");
 			}
 			string scpd = UPnPDeviceSerializer::serializeScpd(service->scpd());
-			logger->debug(scpd);
 			response.setFixedTransfer(scpd);
 
 			if (server.getHttpEventListener().nil() == false) {
@@ -534,7 +527,6 @@ namespace UPNP {
 		
 		void onEventSubscriptionRequest(HttpRequest & request, HttpResponse & response, UPnPDeviceProfile & profile) {
 			string path = request.getRawPath();
-			logger->debug("onEventSubscriptionRequest with path - " + path);
 			AutoRef<UPnPService> service = profile.device()->getServiceWithEventSubUrl(path);
 			if (request.getMethod() == "SUBSCRIBE") {
 				if (!request.getHeaderFieldIgnoreCase("SID").empty() &&
@@ -551,15 +543,16 @@ namespace UPNP {
 					}
 					vector<string> callbacks;
 					try {
-						CallbackUrls cbs(request.getHeaderFieldIgnoreCase("CALLBACK"));
+						CallbackUrls cbs = CallbackUrls::fromString(request.getHeaderFieldIgnoreCase("CALLBACK"));
 						callbacks = cbs.urls();
 					} catch (Exception e) {
 						response.setStatus(412, "Precondition Failed");
 						return;
 					}
 					;
-					unsigned long timeoutMilli =
-						Second::parse(request.getHeaderFieldIgnoreCase("TIMEOUT")) * 1000;
+					Second second = Second::fromString(
+						request.getHeaderFieldIgnoreCase("TIMEOUT"));
+					unsigned long timeoutMilli = second.milli();
 					if (timeoutMilli <= 1800 * 1000) {
 						timeoutMilli = 1800 * 1000;
 					}
@@ -571,14 +564,16 @@ namespace UPNP {
 					server.delayNotifyEvent(sid, 500);
 				} else { // re-subscribe
 					string sid = request.getHeaderFieldIgnoreCase("SID");
-					unsigned long timeoutMilli = Second::parse(
-						request.getHeaderFieldIgnoreCase("TIMEOUT")) * 1000;
+					Second second = Second::fromString(
+						request.getHeaderFieldIgnoreCase("TIMEOUT"));
+					unsigned long timeoutMilli = second.milli();
 					if (timeoutMilli <= 1800 * 1000) {
 						timeoutMilli = 1800 * 1000;
 					}
 					if (server.onRenewSubscription(sid, timeoutMilli)) {
 						response.setStatus(200);
-						response.setHeaderField("TIMEOUT", Second::toString(timeoutMilli / 1000));
+						response.setHeaderField("TIMEOUT",
+												Second::toString(timeoutMilli / 1000));
 						server.delayNotifyEvent(sid, 500);
 					} else {
 						response.setStatus(412, "Precondition Failed");
@@ -919,16 +914,10 @@ namespace UPNP {
 	}
 	
 	void UPnPServer::registerDeviceProfile(UPnPDeviceProfile & profile) {
-		profile.device()->setScpdUrl("/$udn/$serviceType/scpd.xml");
-		profile.device()->setControlUrl("/$udn/$serviceType/control.xml");
-		profile.device()->setEventSubUrl("/$udn/$serviceType/event.xml");
 		getProfileManager().registerProfile(profile);
 	}
 	
 	void UPnPServer::registerDeviceProfile(const UDN & udn, UPnPDeviceProfile & profile) {
-		profile.device()->setScpdUrl("/$udn/$serviceType/scpd.xml");
-		profile.device()->setControlUrl("/$udn/$serviceType/control.xml");
-		profile.device()->setEventSubUrl("/$udn/$serviceType/event.xml");
 		getProfileManager().registerProfile(udn, profile);
 	}
 

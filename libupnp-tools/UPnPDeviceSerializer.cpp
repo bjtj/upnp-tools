@@ -30,14 +30,14 @@ namespace UPNP {
 		ret.append("</specVersion>");
 		ret.append(NEWLINE);
 
-		ret.append(serializeDevice(device));
+		ret.append(serializeDeviceNode(device));
 			
 		ret.append("</root>");		
 		
 		return ret;
 	}
 
-	string UPnPDeviceSerializer::serializeDevice(UPnPDevice & device) {
+	string UPnPDeviceSerializer::serializeDeviceNode(UPnPDevice & device) {
 		
 		string ret = "<device>";
 		ret.append(NEWLINE);
@@ -80,7 +80,7 @@ namespace UPNP {
 			ret.append(NEWLINE);
 
 			for (size_t i = 0; i < device.childDevices().size(); i++) {
-				ret.append(serializeDevice(*device.childDevices()[i]));
+				ret.append(serializeDeviceNode(*device.childDevices()[i]));
 			}
 			
 			ret.append("</deviceList>");
@@ -95,7 +95,6 @@ namespace UPNP {
 	
 	string UPnPDeviceSerializer::serializeScpd(UPnPScpd & scpd) {
 		string ret = FIRSTLINE;
-		ret.append(NEWLINE);
 		ret.append("<scpd xmlns=\"urn:schemas-upnp-org:service-1-0\">");
 		ret.append(NEWLINE);
 		ret.append("<specVersion>");
@@ -124,7 +123,6 @@ namespace UPNP {
 		ret.append(NEWLINE);
 
 		ret.append("</scpd>");
-		ret.append(NEWLINE);
 		return ret;
 	}
 

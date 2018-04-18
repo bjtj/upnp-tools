@@ -34,7 +34,6 @@ libupnp_toolsinc_HEADERS = \
 	UPnPPropertyManager.hpp \
 	UPnPResourceManager.hpp \
 	UPnPServer.hpp \
-	UPnPServiceProfile.hpp \
 	UPnPSoapFormatter.hpp \
 	UPnPTerms.hpp \
 	XmlUtils.hpp
@@ -99,7 +98,6 @@ libupnp_tools_la_SOURCES = \
 	UPnPResourceManager.hpp \
 	UPnPServer.cpp \
 	UPnPServer.hpp \
-	UPnPServiceProfile.hpp \
 	UPnPSoapFormatter.cpp \
 	UPnPSoapFormatter.hpp \
 	UPnPTerms.cpp \

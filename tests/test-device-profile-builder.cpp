@@ -29,47 +29,48 @@ static void test_device_profile_builder() {
 
 	UPnPDeviceBuilder builder(Url("prop:///device.xml"));
 	AutoRef<UPnPDevice> device = builder.execute();
-	UPnPDeviceProfileBuilder profileBuilder(UDN("uuid:" + uuid), device);
-	UPnPDeviceProfile profile = profileBuilder.build();
+	device->setUdn(UDN("uuid:" + uuid));
+	UPnPDeviceProfile profile(device);
 
 	ASSERT(profile.udn().toString(), ==, ("uuid:" + uuid));
 	ASSERT(profile.deviceTypes()[0], ==, "urn:schemas-upnp-org:device:MediaServer:1");
-	ASSERT(profile.serviceProfiles()[0].serviceType(), ==, "urn:schemas-upnp-org:service:ContentDirectory:1");
-	ASSERT(profile.serviceProfiles()[1].serviceType(), ==, "urn:schemas-upnp-org:service:ConnectionManager:1");
+	ASSERT(profile.allServices()[0]->serviceType(), ==, "urn:schemas-upnp-org:service:ContentDirectory:1");
+	ASSERT(profile.allServices()[1]->serviceType(), ==, "urn:schemas-upnp-org:service:ConnectionManager:1");
 
-	UPnPDeviceDeserializer deserializer;
-	device = deserializer.parseDeviceXml(profile.deviceDescription());
-	ASSERT(device->getUdn().toString(), ==, ("uuid:" + uuid));
+	device = UPnPDeviceDeserializer::deserializeDevice(profile.deviceDescription());
+	ASSERT(device->udn().toString(), ==, ("uuid:" + uuid));
 }
 
 static void test_build_from_file() {
 	
-	UPnPDeviceBuilder builder(Url("file://" + File::mergePaths(DATA_PATH, "/dms.xml")));
+	UPnPDeviceBuilder builder(Url("file://" + File::merge(DATA_PATH, "/dms.xml")));
 	AutoRef<UPnPDevice> device = builder.execute();
-	UPnPDeviceProfileBuilder profileBuilder(device);
-	UPnPDeviceProfile profile = profileBuilder.build();
+	UPnPDeviceProfile profile(device);
 
-	vector<UPnPServiceProfile> services = profile.serviceProfiles();
-	for (vector<UPnPServiceProfile>::iterator iter = services.begin(); iter != services.end(); iter++) {
-		cout << iter->scpdUrl() << endl;
-		cout << iter->controlUrl() << endl;
-		cout << iter->eventSubUrl() << endl;
+	vector< AutoRef<UPnPService> > services = profile.allServices();
+	for (vector< AutoRef<UPnPService> >::iterator iter = services.begin();
+		 iter != services.end(); iter++)
+	{
+		cout << (*iter)->scpdUrl() << endl;
+		cout << (*iter)->controlUrl() << endl;
+		cout << (*iter)->eventSubUrl() << endl;
 	}
 }
 
 static void test_builder() {
 
-	Url url("file://" + File::mergePaths(DATA_PATH, "/dms.xml"));
+	Url url("file://" + File::merge(DATA_PATH, "/dms.xml"));
 
 	UPnPDeviceBuilder builder(url);
-	UPnPDeviceProfileBuilder profileBuilder(builder.execute());
-	UPnPDeviceProfile profile = profileBuilder.build();
+	UPnPDeviceProfile profile(builder.execute());
 
-	vector<UPnPServiceProfile> profiles = profile.serviceProfiles();
-	for (vector<UPnPServiceProfile>::iterator iter = profiles.begin(); iter != profiles.end(); iter++) {
-		cout << iter->scpdUrl() << endl;
-		cout << iter->controlUrl() << endl;
-		cout << iter->eventSubUrl() << endl;
+	vector< AutoRef<UPnPService> > profiles = profile.allServices();
+	for (vector< AutoRef<UPnPService> >::iterator iter = profiles.begin();
+		 iter != profiles.end(); iter++)
+	{
+		cout << (*iter)->scpdUrl() << endl;
+		cout << (*iter)->controlUrl() << endl;
+		cout << (*iter)->eventSubUrl() << endl;
 	}
 }
 

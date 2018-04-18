@@ -28,10 +28,10 @@ static string scpd_url(const UDN & udn, const string & serviceType) {
 	return ("/scpd.xml?udn=" + udn.toString() + "&serviceType=" + serviceType);
 }
 static string control_url(const UDN & udn, const string & serviceType) {
-	return ("/control?udn=" + udn.toString() + "&serviceType=" + serviceType);
+	return ("/control.xml?udn=" + udn.toString() + "&serviceType=" + serviceType);
 }
 static string event_url(const UDN & udn, const string & serviceType) {
-	return ("/event?udn=" + udn.toString() + "&serviceType=" + serviceType);
+	return ("/event.xml?udn=" + udn.toString() + "&serviceType=" + serviceType);
 }
 
 class MyActionHandler : public UPnPActionRequestHandler {
@@ -85,17 +85,14 @@ static void test_device_profile() {
 	UPnPServer server(UPnPServer::Config(9001));
 	server.setDebug(AutoRef<UPnPDebug>(new UPnPDebug));
 
-	UPnPDeviceProfile deviceProfile;
-	deviceProfile.udn() = udn;
-	deviceProfile.deviceDescription() = dd(udn);
-	UPnPServiceProfile serviceProfile;
-	serviceProfile.scpd() = scpd();
-	serviceProfile.serviceType() = "urn:schemas-dummy-com:service:Dummy:1";
-	serviceProfile.scpdUrl() = scpd_url(udn, serviceType);
-	serviceProfile.controlUrl() = control_url(udn, serviceType);
-	serviceProfile.eventSubUrl() = event_url(udn, serviceType);
-	deviceProfile.serviceProfiles().push_back(serviceProfile);
-	
+	UPnPDeviceProfile deviceProfile(UPnPDeviceDeserializer::deserializeDevice(dd(udn)));
+	deviceProfile.device()->setScpdUrl("/scpd.xml?udn=$udn&serviceType=$serviceType");
+	deviceProfile.device()->setControlUrl("/control.xml?udn=$udn&serviceType=$serviceType");
+	deviceProfile.device()->setEventSubUrl("/event.xml?udn=$udn&serviceType=$serviceType");
+
+	AutoRef<UPnPService> service = deviceProfile.device()->getService(serviceType);
+	service->scpd() = UPnPDeviceDeserializer::deserializeScpd(scpd());
+
 	server.registerDeviceProfile(udn, deviceProfile);
 	server.getProfileManager().getDeviceProfileSessionByUDN(udn)->setEnable(true);
 
@@ -106,7 +103,7 @@ static void test_device_profile() {
 	AutoRef<UPnPActionRequestHandler> handler(new MyActionHandler);
 	server.setActionRequestHandler(handler);
 
-	ASSERT(Second::parse("Second-300") * 1000, ==, 300000);
+	ASSERT(Second::fromString("Second-300").milli(), ==, 300000);
 
 	server.startAsync();
 
@@ -116,9 +113,15 @@ static void test_device_profile() {
 		cout << "scpd url: " << scpdUrl << endl;
 		UPnPDeviceProfile deviceProfile =
 			server.getProfileManager().getDeviceProfileSessionHasScpdUrl(scpdUrl)->profile();
-		UPnPServiceProfile service = deviceProfile.getServiceProfileByScpdUrl(scpdUrl);
-		ASSERT(service.serviceType(), ==, serviceType);
-		ASSERT(server.getProfileManager().hasDeviceProfileSessionByScpdUrl(scpdUrl), ==, true);
+		cout << "get service - " << scpdUrl << endl;
+		AutoRef<UPnPService> service = deviceProfile.device()->getServiceWithScpdUrl(scpdUrl);
+		ASSERT(service->serviceType(), ==, serviceType);
+		try {
+			server.getProfileManager().getDeviceProfileSessionHasScpdUrl(scpdUrl);
+		} catch (...) {
+			ASSERT(true, ==, false);
+		}
+		
 	}
 
 	// dd check
@@ -140,19 +143,20 @@ static void test_device_profile() {
 		XML::XmlDocument doc = XML::DomParser::parse(scpd());
 		ASSERT(doc.getRootNode().nil(), ==, false);
 		vector<AutoRef<XmlNode> > actions = doc.getRootNode()->getElementsByTagName("action");
-		for (vector<AutoRef<XmlNode> >::iterator iter = actions.begin(); iter != actions.end(); iter++) {
-			UPnPDeviceDeserializer deserializer;
-			UPnPAction action = deserializer.parseActionFromXmlNode(*iter);
+		for (vector<AutoRef<XmlNode> >::iterator iter = actions.begin();
+			 iter != actions.end(); iter++)
+		{
+			UPnPAction action = UPnPDeviceDeserializer::deserializeActionNode(*iter);
 			ASSERT(action.name(), ==, "GetProtocolInfo");
 		}
-		vector<AutoRef<XmlNode> > stateVariables = doc.getRootNode()->getElementsByTagName("stateVariable");
+		vector<AutoRef<XmlNode> > stateVariables =
+			doc.getRootNode()->getElementsByTagName("stateVariable");
 	}
 
 	// parsing test
 	{
 		UPnPService service;
-		UPnPDeviceDeserializer deserializer;
-		UPnPScpd s = deserializer.parseScpdXml(scpd());
+		UPnPScpd s = UPnPDeviceDeserializer::deserializeScpd(scpd());
 		ASSERT(s.hasStateVariable("SourceProtocolInfo"), ==, true);
 		s.stateVariable("SourceProtocolInfo").addAllowedValue("hello");
 		ASSERT(s.stateVariable("SourceProtocolInfo").hasAllowedValues(), ==, true);
@@ -200,62 +204,80 @@ int main(int argc, char *args[]) {
 
 string dd(const UDN & udn) {
 	string dummy = "urn:schemas-dummy-com:service:Dummy:1";
-	string xml = "<?xml version=\"1.0\"?>"
-		"<root xmlns=\"urn:schemas-upnp-org:device-1-0\">"
-		"<specVersion>"
-		"<major>1</major>"
-		"<minor>0</minor>"
-		"</specVersion><device>"
-		"<deviceType>urn:schemas-upnp-org:device:InternetGatewayDevice:1</deviceType>"
-		"<friendlyName>UPnP Test Device</friendlyName>"
-		"<manufacturer>Testers</manufacturer>"
-		"<manufacturerURL>www.example.com</manufacturerURL>"
-		"<modelDescription>UPnP Test Device</modelDescription>"
-		"<modelName>UPnP Test Device</modelName>"
-		"<modelNumber>1</modelNumber>"
-		"<modelURL>www.example.com</modelURL>"
-		"<serialNumber>12345678</serialNumber>"
-		"<UDN>" + udn.toString() + "</UDN>"
-		"<serviceList>"
-		"<service>"
-		"<serviceType>urn:schemas-dummy-com:service:Dummy:1</serviceType>"
-		"<serviceId>urn:dummy-com:serviceId:dummy1</serviceId>"
-		"<SCPDURL>" + XmlEncoder::encode(scpd_url(udn, dummy)) + "</SCPDURL>"
-		"<controlURL>" + XmlEncoder::encode(control_url(udn, dummy)) + "</controlURL>"
-		"<eventSubURL>" + XmlEncoder::encode(event_url(udn, dummy)) + "</eventSubURL>"
-		"</service></serviceList>"
+	string xml = "<?xml version=\"1.0\"?>\r\n"
+		"<root xmlns=\"urn:schemas-upnp-org:device-1-0\">\r\n"
+		"<specVersion>\r\n"
+		"<major>1</major>\r\n"
+		"<minor>0</minor>\r\n"
+		"</specVersion>\r\n"
+		"<device>\r\n"
+		"<deviceType>urn:schemas-upnp-org:device:InternetGatewayDevice:1</deviceType>\r\n"
+		"<friendlyName>UPnP Test Device</friendlyName>\r\n"
+		"<manufacturer>Testers</manufacturer>\r\n"
+		"<manufacturerURL>www.example.com</manufacturerURL>\r\n"
+		"<modelDescription>UPnP Test Device</modelDescription>\r\n"
+		"<modelName>UPnP Test Device</modelName>\r\n"
+		"<modelNumber>1</modelNumber>\r\n"
+		"<modelURL>www.example.com</modelURL>\r\n"
+		"<serialNumber>12345678</serialNumber>\r\n"
+		"<UDN>" + udn.toString() + "</UDN>\r\n"
+		"<serviceList>\r\n"
+		"<service>\r\n"
+		"<serviceType>urn:schemas-dummy-com:service:Dummy:1</serviceType>\r\n"
+		"<serviceId>urn:dummy-com:serviceId:dummy1</serviceId>\r\n"
+		"<SCPDURL>" + XmlEncoder::encode(scpd_url(udn, dummy)) + "</SCPDURL>\r\n"
+		"<controlURL>" + XmlEncoder::encode(control_url(udn, dummy)) + "</controlURL>\r\n"
+		"<eventSubURL>" + XmlEncoder::encode(event_url(udn, dummy)) + "</eventSubURL>\r\n"
+		"</service>\r\n"
+		"</serviceList>\r\n"
+		"</device>\r\n"
 		"</root>";
 
 	return xml;
 }
 
 string scpd() {
-	string xml = "<scpd xmlns=\"urn:schemas-upnp-org:service-1-0\">"
-		"<specVersion>"
-		"<major>1</major>"
-		"<minor>0</minor>"
-		"</specVersion>"
-		"<actionList>"
-		"<action><name>GetProtocolInfo</name><argumentList><argument><name>Source</name><direction>out</direction><relatedStateVariable>SourceProtocolInfo</relatedStateVariable></argument><argument><name>Sink</name><direction>out</direction><relatedStateVariable>SinkProtocolInfo</relatedStateVariable></argument></argumentList></action>"
-		"</actionList>"
-		"<serviceStateTable>"
-		"<stateVariable sendEvents=\"yes\">"
-		"<name>SourceProtocolInfo</name>"
-		"<dataType>string</dataType>"
-		"</stateVariable>"
-		"<stateVariable sendEvents=\"yes\">"
-		"<name>SinkProtocolInfo</name>"
-		"<dataType>string</dataType>"
-		"</stateVariable>"
-		"<stateVariable sendEvents=\"no\">"
-		"<name>A_ARG_TYPE_BrowseFlag</name>"
-		"<dataType>string</dataType>"
-		"<allowedValueList>"
-		"<allowedValue>BrowseMetadata</allowedValue>"
-		"<allowedValue>BrowseDirectChildren</allowedValue>"
-		"</allowedValueList>"
-		"</stateVariable>"
-		"</serviceStateTable>"
+	string xml = "<?xml version=\"1.0\"?>\r\n"
+		"<scpd xmlns=\"urn:schemas-upnp-org:service-1-0\">\r\n"
+		"<specVersion>\r\n"
+		"<major>1</major>\r\n"
+		"<minor>0</minor>\r\n"
+		"</specVersion>\r\n"
+		"<actionList>\r\n"
+		"<action>\r\n"
+		"<name>GetProtocolInfo</name>\r\n"
+		"<argumentList>\r\n"
+		"<argument>\r\n"
+		"<name>Source</name>\r\n"
+		"<direction>out</direction>\r\n"
+		"<relatedStateVariable>SourceProtocolInfo</relatedStateVariable>\r\n"
+		"</argument>\r\n"
+		"<argument>\r\n"
+		"<name>Sink</name>\r\n"
+		"<direction>out</direction>\r\n"
+		"<relatedStateVariable>SinkProtocolInfo</relatedStateVariable>\r\n"
+		"</argument>\r\n"
+		"</argumentList>\r\n"
+		"</action>\r\n"
+		"</actionList>\r\n"
+		"<serviceStateTable>\r\n"
+		"<stateVariable sendEvents=\"yes\">\r\n"
+		"<name>SourceProtocolInfo</name>\r\n"
+		"<dataType>string</dataType>\r\n"
+		"</stateVariable>\r\n"
+		"<stateVariable sendEvents=\"yes\">\r\n"
+		"<name>SinkProtocolInfo</name>\r\n"
+		"<dataType>string</dataType>\r\n"
+		"</stateVariable>\r\n"
+		"<stateVariable sendEvents=\"no\">\r\n"
+		"<name>A_ARG_TYPE_BrowseFlag</name>\r\n"
+		"<dataType>string</dataType>\r\n"
+		"<allowedValueList>\r\n"
+		"<allowedValue>BrowseMetadata</allowedValue>\r\n"
+		"<allowedValue>BrowseDirectChildren</allowedValue>\r\n"
+		"</allowedValueList>\r\n"
+		"</stateVariable>\r\n"
+		"</serviceStateTable>\r\n"
 		"</scpd>";
 
 	return xml;
