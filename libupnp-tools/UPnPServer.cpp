@@ -319,8 +319,8 @@ namespace UPNP {
 		 */
 		virtual void onMsearch(const SSDPHeader & header) {
 
-			if (header.getHeaderFieldIgnoreCase("MX").empty() ||
-				header.getHeaderFieldIgnoreCase("MAN").empty()) {
+			if (header.getHeaderField("MX").empty() ||
+				header.getHeaderField("MAN").empty()) {
 				return;
 			}
 			
@@ -343,7 +343,7 @@ namespace UPNP {
 		virtual void onHttpRequestHeaderCompleted(HttpRequest & request, HttpResponse & response) {
 			response.setContentLength(0);
 			// @ref https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
-			if (request.getHeaderFieldIgnoreCase("Expect") == "100-continue") {
+			if (request.getHeaderField("Expect") == "100-continue") {
 				request.clearTransfer();
 				response.setStatus(100); // 100 continue, 417 expectation failed
 			}
@@ -450,7 +450,7 @@ namespace UPNP {
 
 		void prepareCommonResponse(HttpRequest & request, HttpResponse & response) {
 			response.setHeaderField("Ext", "");
-			if (request.hasHeaderFieldIgnoreCase("ACCEPT-LANGUAGE")) {
+			if (request.hasHeaderField("ACCEPT-LANGUAGE")) {
 				response.setHeaderField("CONTENT-LANGUAGE", "en");
 			}
 			response.setHeaderField("Server", server.getServerInfo());
@@ -529,21 +529,21 @@ namespace UPNP {
 			string path = request.getRawPath();
 			AutoRef<UPnPService> service = profile.device()->getServiceWithEventSubUrl(path);
 			if (request.getMethod() == "SUBSCRIBE") {
-				if (!request.getHeaderFieldIgnoreCase("SID").empty() &&
-					(!request.getHeaderFieldIgnoreCase("NT").empty() ||
-					 !request.getHeaderFieldIgnoreCase("CALLBACK").empty())) {
+				if (!request.getHeaderField("SID").empty() &&
+					(!request.getHeaderField("NT").empty() ||
+					 !request.getHeaderField("CALLBACK").empty())) {
 					response.setStatus(400, "Incompatible header fields");
 					return;
 				}
-				if (request.getHeaderFieldIgnoreCase("SID").empty()) {
-					if (request.getHeaderFieldIgnoreCase("CALLBACK").empty() ||
-						request.getHeaderFieldIgnoreCase("NT") != "upnp:event") {
+				if (request.getHeaderField("SID").empty()) {
+					if (request.getHeaderField("CALLBACK").empty() ||
+						request.getHeaderField("NT") != "upnp:event") {
 						response.setStatus(412, "Precondition Failed");
 						return;
 					}
 					vector<string> callbacks;
 					try {
-						CallbackUrls cbs = CallbackUrls::fromString(request.getHeaderFieldIgnoreCase("CALLBACK"));
+						CallbackUrls cbs = CallbackUrls::fromString(request.getHeaderField("CALLBACK"));
 						callbacks = cbs.urls();
 					} catch (Exception e) {
 						response.setStatus(412, "Precondition Failed");
@@ -551,7 +551,7 @@ namespace UPNP {
 					}
 					;
 					Second second = Second::fromString(
-						request.getHeaderFieldIgnoreCase("TIMEOUT"));
+						request.getHeaderField("TIMEOUT"));
 					unsigned long timeoutMilli = second.milli();
 					if (timeoutMilli <= 1800 * 1000) {
 						timeoutMilli = 1800 * 1000;
@@ -563,9 +563,9 @@ namespace UPNP {
 					response.setHeaderField("TIMEOUT", Second::toString(timeoutMilli / 1000));
 					server.delayNotifyEvent(sid, 500);
 				} else { // re-subscribe
-					string sid = request.getHeaderFieldIgnoreCase("SID");
+					string sid = request.getHeaderField("SID");
 					Second second = Second::fromString(
-						request.getHeaderFieldIgnoreCase("TIMEOUT"));
+						request.getHeaderField("TIMEOUT"));
 					unsigned long timeoutMilli = second.milli();
 					if (timeoutMilli <= 1800 * 1000) {
 						timeoutMilli = 1800 * 1000;
@@ -580,13 +580,13 @@ namespace UPNP {
 					}
 				}
 			} else if (request.getMethod() == "UNSUBSCRIBE") {
-				if (!request.getHeaderFieldIgnoreCase("SID").empty() &&
-					(!request.getHeaderFieldIgnoreCase("NT").empty() ||
-					 !request.getHeaderFieldIgnoreCase("CALLBACK").empty())) {
+				if (!request.getHeaderField("SID").empty() &&
+					(!request.getHeaderField("NT").empty() ||
+					 !request.getHeaderField("CALLBACK").empty())) {
 					response.setStatus(400, "Incompatible header fields");
 					return;
 				}
-				if (server.onUnsubscribe(request.getHeaderFieldIgnoreCase("SID"))) {
+				if (server.onUnsubscribe(request.getHeaderField("SID"))) {
 					response.setStatus(200);
 				} else {
 					response.setStatus(412, "Precondition Failed");

@@ -78,27 +78,27 @@ namespace SSDP {
 	}
 
 	string SSDPHeader::getUsn() const {
-		return getHeaderFieldIgnoreCase("USN");
+		return getHeaderField("USN");
 	}
 
 	string SSDPHeader::getNotificationType() const {
-		return getHeaderFieldIgnoreCase("NT");
+		return getHeaderField("NT");
 	}
 
 	string SSDPHeader::getNotificationSubType() const {
-		return getHeaderFieldIgnoreCase("NTS");
+		return getHeaderField("NTS");
 	}
 
 	string SSDPHeader::getSearchTarget() const {
-		return getHeaderFieldIgnoreCase("ST");
+		return getHeaderField("ST");
 	}
 
 	string SSDPHeader::getLocation() const {
-		return getHeaderFieldIgnoreCase("LOCATION");
+		return getHeaderField("LOCATION");
 	}
 
 	string SSDPHeader::getMan() const {
-		return getHeaderFieldIgnoreCase("MAN");
+		return getHeaderField("MAN");
 	}
 
 	OS::InetAddress SSDPHeader::getRemoteAddr() const {
@@ -110,7 +110,7 @@ namespace SSDP {
 	}
 
 	string SSDPHeader::getCacheControl() const {
-		return getHeaderFieldIgnoreCase("Cache-Control");
+		return getHeaderField("Cache-Control");
 	}
 
 	void SSDPHeader::setCacheControl(int maxAge) {
