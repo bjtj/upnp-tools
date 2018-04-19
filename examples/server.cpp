@@ -24,14 +24,9 @@ static bool s_lightOn = false;
 static int s_level = 100;
 
 
-/**
- * @brief 
- */
-string readline(const string & prompt) {
-	cout << prompt;
-	FileStream fs(stdin);
-	return fs.readline();
-}
+static string s_readline(const string & prompt);
+static AutoRef<UPnPDeviceProfile> s_set_device(UPnPServer & server, const UDN & udn);
+static void s_list_profiles(UPnPServer & server);
 
 
 /**
@@ -70,27 +65,6 @@ public:
 	}
 };
 
-/**
- * @brief 
- */
-static void s_set_device(UPnPServer & server, const UDN & udn) {
-    
-#if !defined(DATA_PATH)
-    string DATA_PATH = File::merge(File::getCwd(), "data");
-#endif
-
-	AutoRef<UPnPDeviceProfile> profile = server.registerDeviceProfile(
-		udn, Url("file://" + string(DATA_PATH) + "/dimming-light.xml"));
-
-	profile->device()->setScpdUrl("/$udn/$serviceType/scpd.xml");
-	profile->device()->setControlUrl("/$udn/$serviceType/control.xml");
-	profile->device()->setEventSubUrl("/$udn/$serviceType/event.xml");
-
-	server.setProperty(udn, "urn:schemas-upnp-org:service:SwitchPower:1",
-					   "RetTargetValue", "0");
-	server.setProperty(udn, "urn:schemas-upnp-org:service:Dimming:1",
-					   "LoadLevelStatus", "100");
-}
 
 /**
  * @brief 
@@ -105,6 +79,9 @@ public:
 };
 
 
+/**
+ * @brief
+ */
 class PrintDebugInfo : public OnDebugInfoListener {
 private:
 	FileStream & stream;
@@ -142,19 +119,25 @@ int main(int argc, char * args[]) {
 		debug->setOnDebugInfoListener(AutoRef<OnDebugInfoListener>(new PrintDebugInfo(out)));
 		server.setDebug(debug);
 	}
-	
+
+	// set device
 	s_set_device(server, udn);
+	server.setProperty(udn, "urn:schemas-upnp-org:service:SwitchPower:1",
+					   "RetTargetValue", "0");
+	server.setProperty(udn, "urn:schemas-upnp-org:service:Dimming:1",
+					   "LoadLevelStatus", "100");
+
+	// action handler
 	server.setActionRequestHandler(AutoRef<UPnPActionRequestHandler>(new MyActionRequestHandler));
-	server.getPropertyManager().
-		setOnSubscriptionOutdatedListener(
-			AutoRef<OnSubscriptionOutdatedListener>(new OutdatedListener));
+	server.getPropertyManager().setOnSubscriptionOutdatedListener(
+		AutoRef<OnSubscriptionOutdatedListener>(new OutdatedListener));
 	server.startAsync();
 
 	cout << "UPnP Server running / uuid: " << uuid << endl;
 
 	while (1) {
 		string cmd;
-		if ((cmd = readline("> ")).size() > 0) {
+		if ((cmd = s_readline("> ")).size() > 0) {
 			if (cmd == "quit" || cmd == "q") {
 				cout << "[quit]" << endl;
 				break;
@@ -173,18 +156,10 @@ int main(int argc, char * args[]) {
 				cout << " * byebye : " << uuid << endl;
 				server.deactivateDevice(udn);
 			} else if (tokens[0] == "list") {
-				vector<AutoRef<UPnPDeviceProfile> > vec =
-					server.getProfileManager().profiles();
-				for (size_t i = 0; i < vec.size(); i++) {
-					AutoRef<UPnPDeviceProfile> profile = vec[i];
-					cout << "[" << i << "] " << profile->udn().toString() << " ; "
-						 << (profile->deviceTypes().size() > 0 ? profile->deviceTypes()[0] : "") <<
-						 " / " << (vec[i]->enabled() ? "enabled" : "disabled") << endl;
-				}
+			    s_list_profiles(server);
 			} else if (tokens[0] == "set-props") {
 				server.setProperty(udn, "urn:schemas-upnp-org:service:SwitchPower:1",
-								   "RetTargetValue", s_lightOn ? "1" : "0");
-
+								   "RetTargetValue", (s_lightOn ? "1" : "0"));
 				server.setProperty(udn, "urn:schemas-upnp-org:service:Dimming:1",
 								   "LoadLevelStatus", Text::toString(s_level));
 			} else if (tokens[0] == "load") {
@@ -210,4 +185,52 @@ int main(int argc, char * args[]) {
 	cout << "[done]" << endl;
     
     return 0;
+}
+
+
+/**
+ * @brief 
+ */
+static string s_readline(const string & prompt) {
+	cout << prompt;
+	FileStream fs(stdin);
+	return fs.readline();
+}
+
+
+/**
+ * @brief 
+ */
+static AutoRef<UPnPDeviceProfile> s_set_device(UPnPServer & server, const UDN & udn) {
+    
+#if !defined(DATA_PATH)
+    string DATA_PATH = File::merge(File::getCwd(), "data");
+#endif
+
+	AutoRef<UPnPDeviceProfile> profile =
+		server.registerDeviceProfile("file://" + string(DATA_PATH) + "/dimming-light.xml");
+
+	profile->setUdn(udn);
+	profile->device()->setScpdUrl("/$udn/$serviceType/scpd.xml");
+	profile->device()->setControlUrl("/$udn/$serviceType/control.xml");
+	profile->device()->setEventSubUrl("/$udn/$serviceType/event.xml");
+
+	return profile;
+}
+
+
+/**
+ * @brief
+ */
+static void s_list_profiles(UPnPServer & server) {
+	vector< AutoRef<UPnPDeviceProfile> > vec = server.getProfileManager().profiles();
+	for (size_t i = 0; i < vec.size(); i++) {
+		AutoRef<UPnPDeviceProfile> profile = vec[i];
+		cout << "[" << i << "] " <<
+			profile->udn().toString() <<
+			" ; " <<
+			(profile->deviceTypes().size() > 0 ? profile->deviceTypes()[0] : "") <<
+			" / " <<
+			(vec[i]->enabled() ? "enabled" : "disabled") << endl;
+	}
 }

@@ -24,7 +24,8 @@ static void s_set_dial_devcie(UPnPServer & server, const string & dd_path, const
 	FileStream fs(dd_path, "r");
 	string xml = fs.readFullAsString();
 	resMan.properties()["/device.xml"] = xml;
-	server.registerDeviceProfile(udn, Url("prop:///device.xml"));
+	AutoRef<UPnPDeviceProfile> profile = server.registerDeviceProfile(Url("prop:///device.xml"));
+	profile->setUdn(udn);
 }
 
 /**

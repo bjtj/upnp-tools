@@ -27,9 +27,11 @@ string scpd();
 static string scpd_url(const UDN & udn, const string & serviceType) {
 	return ("/scpd.xml?udn=" + udn.toString() + "&serviceType=" + serviceType);
 }
+
 static string control_url(const UDN & udn, const string & serviceType) {
 	return ("/control.xml?udn=" + udn.toString() + "&serviceType=" + serviceType);
 }
+
 static string event_url(const UDN & udn, const string & serviceType) {
 	return ("/event.xml?udn=" + udn.toString() + "&serviceType=" + serviceType);
 }
@@ -87,6 +89,7 @@ static void test_device_profile() {
 
 	AutoRef<UPnPDeviceProfile> deviceProfile(
 		new UPnPDeviceProfile(UPnPDeviceDeserializer::deserializeDevice(dd(udn))));
+	deviceProfile->setUdn(udn);
 	deviceProfile->device()->setScpdUrl("/scpd.xml?udn=$udn&serviceType=$serviceType");
 	deviceProfile->device()->setControlUrl("/control.xml?udn=$udn&serviceType=$serviceType");
 	deviceProfile->device()->setEventSubUrl("/event.xml?udn=$udn&serviceType=$serviceType");
@@ -94,8 +97,8 @@ static void test_device_profile() {
 	AutoRef<UPnPService> service = deviceProfile->device()->getService(serviceType);
 	service->scpd() = UPnPDeviceDeserializer::deserializeScpd(scpd());
 
-	server.registerDeviceProfile(udn, deviceProfile);
-	server.getProfileManager().getDeviceProfileByUDN(udn)->enabled() = true;
+	server.registerDeviceProfile(deviceProfile);
+	server.getProfileManager().getDeviceProfile(udn)->enabled() = true;
 
 	LinkedStringMap props;
 	props["xxx"] = "";
