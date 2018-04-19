@@ -101,9 +101,9 @@ int main(int argc, char *argv[])
 	server.startAsync();
 	server.getHttpServer()->registerRequestHandler("/dial*",
 												   AutoRef<HttpRequestHandler>(new DialRequestHandler));
-	server.setEnableDevice(udn, true);
+	server.activateDevice(udn);
 	getchar();
-	server.setEnableDevice(udn, false);
+	server.deactivateDevice(udn);
 	server.stop();
     return 0;
 }

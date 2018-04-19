@@ -168,10 +168,10 @@ int main(int argc, char * args[]) {
 
 			if (tokens[0] == "alive") {
 				cout << " * alive : " << uuid << endl;
-				server.setEnableDevice(udn, true);
+				server.activateDevice(udn);
 			} else if (tokens[0] == "byebye") {
 				cout << " * byebye : " << uuid << endl;
-				server.setEnableDevice(udn, false);
+				server.deactivateDevice(udn);
 			} else if (tokens[0] == "list") {
 				vector<AutoRef<UPnPDeviceProfile> > vec =
 					server.getProfileManager().profiles();
@@ -203,6 +203,7 @@ int main(int argc, char * args[]) {
 		}
 	}
 
+	server.deactivateAllDevices();
 	server.stop();
 
 	out.close();

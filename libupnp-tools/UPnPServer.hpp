@@ -104,8 +104,10 @@ namespace UPNP {
 		OS::AutoRef<HTTP::AnotherHttpServer> getHttpServer();
 		std::string makeLocation(const UDN & udn);
 
-		void setEnableDevice(const UDN & udn, bool enable);
-		void setEnableAllDevices(bool enable);
+		void activateDevice(const UDN & udn);
+		void deactivateDevice(const UDN & udn);
+		void activateAllDevices();
+		void deactivateAllDevices();
 
 		// announce
 		void delayNotify(unsigned long delay, int type, OS::AutoRef<UPnPDeviceProfile> profile);

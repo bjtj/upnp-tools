@@ -695,30 +695,38 @@ namespace UPNP {
 		return url.toString();
 	}
 
-	void UPnPServer::setEnableDevice(const UDN & udn, bool enable) {
-		getProfileManager().getDeviceProfileByUDN(udn)->enabled() = enable;
-		if (enable) {
-			notifyAlive(getProfileManager().getDeviceProfileByUDN(udn));
-		} else {
-			notifyByeBye(getProfileManager().getDeviceProfileByUDN(udn));
-		}
+	void UPnPServer::activateDevice(const UDN & udn) {
+		getProfileManager().getDeviceProfileByUDN(udn)->enabled() = true;
+		notifyAlive(getProfileManager().getDeviceProfileByUDN(udn));
 	}
-
-	void UPnPServer::setEnableAllDevices(bool enable) {
+	
+	void UPnPServer::deactivateDevice(const UDN & udn) {
+		getProfileManager().getDeviceProfileByUDN(udn)->enabled() = false;
+		notifyByeBye(getProfileManager().getDeviceProfileByUDN(udn));
+	}
+	
+	void UPnPServer::activateAllDevices() {
 		vector< AutoRef<UPnPDeviceProfile> > profiles = getProfileManager().profiles();
 		for (vector< AutoRef<UPnPDeviceProfile> >::iterator iter = profiles.begin();
 			 iter != profiles.end(); iter++)
 		{
-			(*iter)->enabled() = enable;
-			if (enable) {
-				delayNotify(0, NotifyTask::NOTIFY_ALIVE, (*iter));
-				delayNotify(200, NotifyTask::NOTIFY_ALIVE, (*iter));
-			} else {
-				delayNotify(0, NotifyTask::NOTIFY_BYEBYE, (*iter));
-				delayNotify(200, NotifyTask::NOTIFY_BYEBYE, (*iter));
-			}
+			(*iter)->enabled() = true;
+			delayNotify(0, NotifyTask::NOTIFY_ALIVE, (*iter));
+			delayNotify(200, NotifyTask::NOTIFY_ALIVE, (*iter));
 		}
 	}
+	
+	void UPnPServer::deactivateAllDevices() {
+		vector< AutoRef<UPnPDeviceProfile> > profiles = getProfileManager().profiles();
+		for (vector< AutoRef<UPnPDeviceProfile> >::iterator iter = profiles.begin();
+			 iter != profiles.end(); iter++)
+		{
+			(*iter)->enabled() = false;
+			delayNotify(0, NotifyTask::NOTIFY_BYEBYE, (*iter));
+			delayNotify(200, NotifyTask::NOTIFY_BYEBYE, (*iter));
+		}
+	}
+
 
 	void UPnPServer::delayNotify(unsigned long delay, int type, AutoRef<UPnPDeviceProfile> profile) {
 		timerThread.looper().delay(delay, AutoRef<TimerTask>(new NotifyTask(*this, type, profile)));
