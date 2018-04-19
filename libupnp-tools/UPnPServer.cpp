@@ -33,81 +33,53 @@ namespace UPNP {
 	static AutoRef<Logger> logger = LoggerFactory::instance().
 		getObservingLogger(File::basename(__FILE__));
 
-	/**
-	 * @brief upnp device profile session
-	 */
 
-	UPnPDeviceProfileSession::UPnPDeviceProfileSession(const UPnPDeviceProfile & profile) : enabled(false), _profile(profile){
+	UPnPDeviceProfileManager::UPnPDeviceProfileManager() {
 	}
 
-	UPnPDeviceProfileSession::~UPnPDeviceProfileSession() {
+	UPnPDeviceProfileManager::~UPnPDeviceProfileManager() {
 	}
 
-	UPnPDeviceProfile & UPnPDeviceProfileSession::profile() {
-		return _profile;
-	}
-
-	void UPnPDeviceProfileSession::setEnable(bool enable) {
-		this->enabled = enable;
-	}
-
-	bool UPnPDeviceProfileSession::isEnabled() {
-		return enabled;
-	}
-
-	
-	/**
-	 * @brief upnp device profile session manager
-	 */
-	
-	UPnPDeviceProfileSessionManager::UPnPDeviceProfileSessionManager() {
-	}
-
-	UPnPDeviceProfileSessionManager::~UPnPDeviceProfileSessionManager() {
-	}
-
-	map< UDN, AutoRef<UPnPDeviceProfileSession> > & UPnPDeviceProfileSessionManager::sessions() {
-		return _sessions;
-	}
-
-	vector<AutoRef<UPnPDeviceProfileSession> > UPnPDeviceProfileSessionManager::sessionList() {
-		vector<AutoRef<UPnPDeviceProfileSession> > ret;
-		for (map<UDN, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin(); iter != _sessions.end(); iter++) {
+	vector<AutoRef<UPnPDeviceProfile> > UPnPDeviceProfileManager::profiles() {
+		vector<AutoRef<UPnPDeviceProfile> > ret;
+		for (map<UDN, AutoRef<UPnPDeviceProfile> >::iterator iter = _profiles.begin();
+			 iter != _profiles.end(); iter++)
+		{
 			ret.push_back(iter->second);
 		}
 		return ret;
 	}
 
-	void UPnPDeviceProfileSessionManager::registerProfile(const UPnPDeviceProfile & profile) {
-		registerProfile(profile.udn(), profile);
+	void UPnPDeviceProfileManager::registerProfile(AutoRef<UPnPDeviceProfile> profile) {
+		registerProfile(profile->udn(), profile);
 	}
 
-	void UPnPDeviceProfileSessionManager::registerProfile(const UDN & udn, const UPnPDeviceProfile & profile) {
-		_sessions[udn] = AutoRef<UPnPDeviceProfileSession>(new UPnPDeviceProfileSession(profile));
+	void UPnPDeviceProfileManager::registerProfile(const UDN & udn, AutoRef<UPnPDeviceProfile> profile) {
+		_profiles[udn] = profile;
 	}
 
-	void UPnPDeviceProfileSessionManager::unregisterProfile(const UDN & udn) {
-		_sessions.erase(udn);
+	void UPnPDeviceProfileManager::unregisterProfile(const UDN & udn) {
+		_profiles.erase(udn);
 	}
 
-	vector<string> UPnPDeviceProfileSessionManager::getAllTypes() {
+	vector<string> UPnPDeviceProfileManager::getAllTypes() {
 		vector<string> types;
-		for (map<UDN, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin();
-			 iter != _sessions.end(); iter++) {
-			AutoRef<UPnPDeviceProfileSession> & session = iter->second;
+		for (map<UDN, AutoRef<UPnPDeviceProfile> >::iterator iter = _profiles.begin();
+			 iter != _profiles.end(); iter++) {
+			AutoRef<UPnPDeviceProfile> profile = iter->second;
 
-			UPNP::USN usn(session->profile().udn().toString());
+			UPNP::USN usn(profile->udn().toString());
 			types.push_back(usn.toString());
 			usn.rest() = "upnp:rootdevice";
 			types.push_back(usn.toString());
-			vector<string> deviceTypes = session->profile().deviceTypes();
+			vector<string> deviceTypes = profile->deviceTypes();
 			for (vector<string>::iterator iter = deviceTypes.begin();
 				 iter != deviceTypes.end(); iter++)
 			{
 				usn.rest() = (*iter);
 				types.push_back(usn.toString());
 			}
-			vector<string> serviceTypes = session->profile().serviceTypes();
+			vector<string> serviceTypes = profile->serviceTypes();
 			for (vector<string>::iterator iter = serviceTypes.begin();
 				 iter != serviceTypes.end(); iter++)
 			{
@@ -118,13 +90,13 @@ namespace UPNP {
 		return types;
 	}
 	
-	vector<string> UPnPDeviceProfileSessionManager::getTypes(const string & st) {
+	vector<string> UPnPDeviceProfileManager::getTypes(const string & st) {
 		vector<string> types;
-		for (map<UDN, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin();
-			 iter != _sessions.end(); iter++)
+		for (map<UDN, AutoRef<UPnPDeviceProfile> >::iterator iter = _profiles.begin();
+			 iter != _profiles.end(); iter++)
 		{
-			AutoRef<UPnPDeviceProfileSession> & session = iter->second;
-			UPNP::USN usn(session->profile().udn().toString());
+			AutoRef<UPnPDeviceProfile> profile = iter->second;
+			UPNP::USN usn(profile->udn().toString());
 			if (st == "upnp:rootdevice") {
 				usn.rest() = "upnp:rootdevice";
 				types.push_back(usn.toString());
@@ -136,7 +108,7 @@ namespace UPNP {
 			}
 
 			bool found = false;
-			vector<string> deviceTypes = session->profile().deviceTypes();
+			vector<string> deviceTypes = profile->deviceTypes();
 			for (vector<string>::iterator iter = deviceTypes.begin();
 				 iter != deviceTypes.end(); ++iter)
 			{
@@ -151,7 +123,7 @@ namespace UPNP {
 				continue;
 			}
 
-			vector<string> serviceTypes = session->profile().serviceTypes();
+			vector<string> serviceTypes = profile->serviceTypes();
 			for (vector<string>::iterator iter = serviceTypes.begin();
 				 iter != serviceTypes.end(); ++iter)
 			{
@@ -166,29 +138,29 @@ namespace UPNP {
 	}
 
 	
-	AutoRef<UPnPDeviceProfileSession> UPnPDeviceProfileSessionManager::getDeviceProfileSessionByUDN(const UDN & udn) {
-		for (map<UDN, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin();
-			 iter != _sessions.end(); iter++)
+	AutoRef<UPnPDeviceProfile> UPnPDeviceProfileManager::getDeviceProfileByUDN(const UDN & udn) {
+		for (map<UDN, AutoRef<UPnPDeviceProfile> >::iterator iter = _profiles.begin();
+			 iter != _profiles.end(); iter++)
 		{
-			AutoRef<UPnPDeviceProfileSession> session = iter->second;
-			if (session->profile().udn() == udn) {
+			AutoRef<UPnPDeviceProfile> profile = iter->second;
+			if (profile->udn() == udn) {
 				return iter->second;
 			}
 		}
 		throw Exception("not found device profile session by udn");
 	}
 	
-	AutoRef<UPnPDeviceProfileSession> UPnPDeviceProfileSessionManager::getDeviceProfileSessionHasScpdUrl(const string & scpdUrl) {
-		for (map< UDN, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin();
-			 iter != _sessions.end(); iter++)
+	AutoRef<UPnPDeviceProfile> UPnPDeviceProfileManager::getDeviceProfileHasScpdUrl(const string & scpdUrl) {
+		for (map< UDN, AutoRef<UPnPDeviceProfile> >::iterator iter = _profiles.begin();
+			 iter != _profiles.end(); iter++)
 		{
-			AutoRef<UPnPDeviceProfileSession> session = iter->second;
-			vector< AutoRef<UPnPService> > services = session->profile().allServices();
+			AutoRef<UPnPDeviceProfile> profile = iter->second;
+			vector< AutoRef<UPnPService> > services = profile->allServices();
 			for (vector< AutoRef<UPnPService> >::iterator it = services.begin();
 				 it != services.end(); ++it)
 			{
 				if ((*it)->scpdUrl() == scpdUrl) {
-					return session;
+					return profile;
 				}
 			}
 		}
@@ -196,17 +168,17 @@ namespace UPNP {
 	}
 
 
-	AutoRef<UPnPDeviceProfileSession> UPnPDeviceProfileSessionManager::getDeviceProfileSessionHasControlUrl(const string & controlUrl) {
-		for (map< UDN, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin();
-			 iter != _sessions.end(); iter++)
+	AutoRef<UPnPDeviceProfile> UPnPDeviceProfileManager::getDeviceProfileHasControlUrl(const string & controlUrl) {
+		for (map< UDN, AutoRef<UPnPDeviceProfile> >::iterator iter = _profiles.begin();
+			 iter != _profiles.end(); iter++)
 		{
-			AutoRef<UPnPDeviceProfileSession> session = iter->second;
-			vector< AutoRef<UPnPService> > services = session->profile().allServices();
+			AutoRef<UPnPDeviceProfile> profile = iter->second;
+			vector< AutoRef<UPnPService> > services = profile->allServices();
 			for (vector< AutoRef<UPnPService> >::iterator it = services.begin();
 				 it != services.end(); ++it)
 			{
 				if ((*it)->controlUrl() == controlUrl) {
-					return session;
+					return profile;
 				}
 			}
 		}
@@ -214,12 +186,12 @@ namespace UPNP {
 	}
 
 	
-	AutoRef<UPnPDeviceProfileSession> UPnPDeviceProfileSessionManager::getDeviceProfileSessionHasEventSubUrl(const string & eventSubUrl) {
-		for (map<UDN, AutoRef<UPnPDeviceProfileSession> >::iterator iter = _sessions.begin();
-			 iter != _sessions.end(); iter++)
+	AutoRef<UPnPDeviceProfile> UPnPDeviceProfileManager::getDeviceProfileHasEventSubUrl(const string & eventSubUrl) {
+		for (map<UDN, AutoRef<UPnPDeviceProfile> >::iterator iter = _profiles.begin();
+			 iter != _profiles.end(); iter++)
 		{
-			AutoRef<UPnPDeviceProfileSession> session = iter->second;
-			vector< AutoRef<UPnPService> > services = session->profile().allServices();
+			AutoRef<UPnPDeviceProfile> profile = iter->second;
+			vector< AutoRef<UPnPService> > services = profile->allServices();
 			for (vector< AutoRef<UPnPService> >::iterator it = services.begin();
 				 it != services.end(); ++it)
 			{
@@ -261,10 +233,10 @@ namespace UPNP {
 	private:
 		UPnPServer & server;
 		int type;
-		UPnPDeviceProfile profile;
+		AutoRef<UPnPDeviceProfile> profile;
 
 	public:
-		NotifyTask(UPnPServer & server, int type, const UPnPDeviceProfile & profile)
+		NotifyTask(UPnPServer & server, int type, AutoRef<UPnPDeviceProfile> profile)
 			: server(server), type(type), profile(profile)
 			{ /**/ }
 		virtual ~NotifyTask() { /**/ }
@@ -383,23 +355,23 @@ namespace UPNP {
 
 			try {
 
-				UPnPDeviceProfile profile = server.
-					getProfileManager().getDeviceProfileSessionHasScpdUrl(path)->profile();
+				AutoRef<UPnPDeviceProfile> profile = server.
+					getProfileManager().getDeviceProfileHasScpdUrl(path);
 				handleScpd(request, response, profile);
 				return true;
 			} catch (Exception e) {
 			}
 
 			try {
-				server.getProfileManager().getDeviceProfileSessionHasControlUrl(path);
+				server.getProfileManager().getDeviceProfileHasControlUrl(path);
 				handleControl(request, sink, response);
 				return true;
 			} catch (Exception e) {
 			}
 
 			try {
-				UPnPDeviceProfile profile = server.
-					getProfileManager().getDeviceProfileSessionHasEventSubUrl(path)->profile();
+				AutoRef<UPnPDeviceProfile> profile = server.
+					getProfileManager().getDeviceProfileHasEventSubUrl(path);
 				handleEvent(request, sink, response, profile);
 				return true;
 			} catch (Exception e) {
@@ -415,7 +387,7 @@ namespace UPNP {
 			onDeviceDescriptionRequest(request, response);
 		}
 
-		void handleScpd(HttpRequest & request, HttpResponse & response, UPnPDeviceProfile & profile) {
+		void handleScpd(HttpRequest & request, HttpResponse & response, AutoRef<UPnPDeviceProfile> profile) {
 			server.debug("upnp:scpd", request.header().toString());
 			validateMethod(request, "GET");
 			prepareCommonResponse(request, response);
@@ -429,7 +401,7 @@ namespace UPNP {
 			onControlRequest(request, response);
 		}
 
-		void handleEvent(HttpRequest & request, AutoRef<DataSink> sink, HttpResponse & response, UPnPDeviceProfile & profile) {
+		void handleEvent(HttpRequest & request, AutoRef<DataSink> sink, HttpResponse & response, AutoRef<UPnPDeviceProfile> profile) {
 			server.debug("upnp:event", request.header().toString() +
 						 (sink.nil() ? "" : ((StringDataSink*)&sink)->data()));
 			prepareCommonResponse(request, response);
@@ -456,15 +428,14 @@ namespace UPNP {
 		void onDeviceDescriptionRequest(HttpRequest & request, HttpResponse & response) {
 			try {
 				UDN udn(request.getParameter("udn"));
-				AutoRef<UPnPDeviceProfileSession> session = server.getProfileManager().getDeviceProfileSessionByUDN(udn);
-				if (!session->isEnabled()) {
+				AutoRef<UPnPDeviceProfile> profile = server.getProfileManager().getDeviceProfileByUDN(udn);
+				if (!profile->enabled()) {
 					throw HttpException(404);
 				}
 				
 				response.setStatus(200);
 				response.setContentType("text/xml; charset=\"utf-8\"");
-				UPnPDeviceProfile profile = session->profile();
-				string description = profile.deviceDescription();
+				string description = profile->deviceDescription();
 				response.setFixedTransfer(description);
 
 				if (server.getHttpEventListener().nil() == false) {
@@ -478,11 +449,11 @@ namespace UPNP {
 			}
 		}
 		
-		void onScpdRequest(HttpRequest & request, HttpResponse & response, UPnPDeviceProfile & profile) {
+		void onScpdRequest(HttpRequest & request, HttpResponse & response, AutoRef<UPnPDeviceProfile> profile) {
 			string path = request.getRawPath();
 			response.setStatus(200);
 			response.setContentType("text/xml; charset=\"utf-8\"");
-			AutoRef<UPnPService> service = profile.device()->getServiceWithScpdUrl(path);
+			AutoRef<UPnPService> service = profile->device()->getServiceWithScpdUrl(path);
 			if (service.nil()) {
 				logger->error("service not found");
 			}
@@ -522,9 +493,9 @@ namespace UPNP {
 			}
 		}
 		
-		void onEventSubscriptionRequest(HttpRequest & request, HttpResponse & response, UPnPDeviceProfile & profile) {
+		void onEventSubscriptionRequest(HttpRequest & request, HttpResponse & response, AutoRef<UPnPDeviceProfile> profile) {
 			string path = request.getRawPath();
-			AutoRef<UPnPService> service = profile.device()->getServiceWithEventSubUrl(path);
+			AutoRef<UPnPService> service = profile->device()->getServiceWithEventSubUrl(path);
 			if (request.getMethod() == "SUBSCRIBE") {
 				if (!request.getHeaderField("SID").empty() &&
 					(!request.getHeaderField("NT").empty() ||
@@ -554,7 +525,7 @@ namespace UPNP {
 						timeoutMilli = 1800 * 1000;
 					}
 					string sid = server.
-						onSubscribe(profile.device(), service, callbacks, timeoutMilli);
+						onSubscribe(profile->device(), service, callbacks, timeoutMilli);
 					response.setStatus(200);
 					response.setHeaderField("SID", sid);
 					response.setHeaderField("TIMEOUT", Second::toString(timeoutMilli / 1000));
@@ -725,59 +696,61 @@ namespace UPNP {
 	}
 
 	void UPnPServer::setEnableDevice(const UDN & udn, bool enable) {
-		getProfileManager().getDeviceProfileSessionByUDN(udn)->setEnable(enable);
+		getProfileManager().getDeviceProfileByUDN(udn)->enabled() = enable;
 		if (enable) {
-			notifyAlive(getProfileManager().
-						getDeviceProfileSessionByUDN(udn)->profile());
+			notifyAlive(getProfileManager().getDeviceProfileByUDN(udn));
 		} else {
-			notifyByeBye(getProfileManager().
-						 getDeviceProfileSessionByUDN(udn)->profile());
+			notifyByeBye(getProfileManager().getDeviceProfileByUDN(udn));
 		}
 	}
 
 	void UPnPServer::setEnableAllDevices(bool enable) {
-		vector<AutoRef<UPnPDeviceProfileSession> > profiles = getProfileManager().sessionList();
-		for (vector<AutoRef<UPnPDeviceProfileSession> >::iterator iter = profiles.begin(); iter != profiles.end(); iter++) {
-			(*iter)->setEnable(enable);
+		vector< AutoRef<UPnPDeviceProfile> > profiles = getProfileManager().profiles();
+		for (vector< AutoRef<UPnPDeviceProfile> >::iterator iter = profiles.begin();
+			 iter != profiles.end(); iter++)
+		{
+			(*iter)->enabled() = enable;
 			if (enable) {
-				delayNotify(0, NotifyTask::NOTIFY_ALIVE, (*iter)->profile());
-				delayNotify(200, NotifyTask::NOTIFY_ALIVE, (*iter)->profile());
+				delayNotify(0, NotifyTask::NOTIFY_ALIVE, (*iter));
+				delayNotify(200, NotifyTask::NOTIFY_ALIVE, (*iter));
 			} else {
-				delayNotify(0, NotifyTask::NOTIFY_BYEBYE, (*iter)->profile());
-				delayNotify(200, NotifyTask::NOTIFY_BYEBYE, (*iter)->profile());
+				delayNotify(0, NotifyTask::NOTIFY_BYEBYE, (*iter));
+				delayNotify(200, NotifyTask::NOTIFY_BYEBYE, (*iter));
 			}
 		}
 	}
 
-	void UPnPServer::delayNotify(unsigned long delay, int type, const UPnPDeviceProfile & profile) {
+	void UPnPServer::delayNotify(unsigned long delay, int type, AutoRef<UPnPDeviceProfile> profile) {
 		timerThread.looper().delay(delay, AutoRef<TimerTask>(new NotifyTask(*this, type, profile)));
 	}
 
 	void UPnPServer::notifyAliveAll() {
-		vector< AutoRef<UPnPDeviceProfileSession> > sessions = profileManager.sessionList();
-		for (vector< AutoRef<UPnPDeviceProfileSession> >::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
-			if ((*iter)->isEnabled()) {
-				notifyAlive((*iter)->profile());
+		vector< AutoRef<UPnPDeviceProfile> > profiles = profileManager.profiles();
+		for (vector< AutoRef<UPnPDeviceProfile> >::iterator iter = profiles.begin();
+			 iter != profiles.end(); iter++)
+		{
+			if ((*iter)->enabled()) {
+				notifyAlive((*iter));
 			}
 		}
 	}
 	
-	void UPnPServer::notifyAlive(UPnPDeviceProfile & profile) {
+	void UPnPServer::notifyAlive(AutoRef<UPnPDeviceProfile> profile) {
 		SSDPMsearchSender sender;
 		string host = "239.255.255.250";
 		int port = 1900;
-		UDN udn = profile.udn();
+		UDN udn = profile->udn();
 		string location = makeLocation(udn);
 		sender.sendMcastToAllInterfaces(makeNotifyAlive(location, udn, "upnp:rootdevice"),
 										host, port);
 		sender.sendMcastToAllInterfaces(makeNotifyAlive(location, udn, ""),
 										host, port);
-		vector<string> deviceTypes = profile.deviceTypes();
+		vector<string> deviceTypes = profile->deviceTypes();
 		for (vector<string>::iterator iter = deviceTypes.begin();
 			 iter != deviceTypes.end(); iter++) {
 			sender.sendMcastToAllInterfaces(makeNotifyAlive(location, udn, *iter),	host, port);
 		}
-		vector< AutoRef<UPnPService> > services = profile.allServices();
+		vector< AutoRef<UPnPService> > services = profile->allServices();
 		for (vector< AutoRef<UPnPService> >::iterator iter = services.begin();
 			 iter != services.end(); iter++) {
 			sender.sendMcastToAllInterfaces(
@@ -786,9 +759,9 @@ namespace UPNP {
 		sender.close();
 	}
 	
-	void UPnPServer::notifyAliveByDeviceType(UPnPDeviceProfile & profile, const string & deviceType) {
+	void UPnPServer::notifyAliveByDeviceType(AutoRef<UPnPDeviceProfile> profile, const string & deviceType) {
 
-		UDN udn = profile.udn();
+		UDN udn = profile->udn();
 		string location = makeLocation(udn);
 		
 		SSDPMsearchSender sender;
@@ -814,23 +787,23 @@ namespace UPNP {
 			"\r\n";
 	}
 
-	void UPnPServer::notifyByeBye(UPnPDeviceProfile & profile) {
+	void UPnPServer::notifyByeBye(AutoRef<UPnPDeviceProfile> profile) {
 
 		SSDPMsearchSender sender;
 		string host = "239.255.255.250";
 		int port = 1900;
 
-		UDN udn = profile.udn();
+		UDN udn = profile->udn();
 		string location = makeLocation(udn);
 		sender.sendMcastToAllInterfaces(makeNotifyByeBye(udn, "upnp:rootdevice"), host, port);
 		sender.sendMcastToAllInterfaces(makeNotifyByeBye(udn, ""), host, port);
 
-		vector<string> deviceTypes = profile.deviceTypes();
+		vector<string> deviceTypes = profile->deviceTypes();
 		for (vector<string>::iterator iter = deviceTypes.begin(); iter != deviceTypes.end(); iter++) {
 			sender.sendMcastToAllInterfaces(makeNotifyByeBye(udn, *iter), host, port);
 		}
 
-		vector< AutoRef<UPnPService> > services = profile.allServices();
+		vector< AutoRef<UPnPService> > services = profile->allServices();
 		for (vector< AutoRef<UPnPService> >::iterator iter = services.begin();
 			 iter != services.end(); iter++)
 		{
@@ -841,8 +814,8 @@ namespace UPNP {
 		sender.close();
 	}
 
-	void UPnPServer::notifyByeByeByDeviceType(UPnPDeviceProfile & profile, const string & deviceType) {
-		UDN udn = profile.udn();
+	void UPnPServer::notifyByeByeByDeviceType(AutoRef<UPnPDeviceProfile> profile, const string & deviceType) {
+		UDN udn = profile->udn();
 		SSDPMsearchSender sender;
 		string packet = makeNotifyByeBye(udn, deviceType);
 		debug("ssdp:notify-byebye", packet);
@@ -893,28 +866,30 @@ namespace UPNP {
 			"\r\n";
 	}
 
-	UPnPDeviceProfileSessionManager & UPnPServer::getProfileManager() {
+	UPnPDeviceProfileManager & UPnPServer::getProfileManager() {
 		return profileManager;
 	}
 
-	void UPnPServer::registerDeviceProfile(const Url & url) {
+	AutoRef<UPnPDeviceProfile> UPnPServer::registerDeviceProfile(const Url & url) {
 		UPnPDeviceBuilder builder(url);
-		UPnPDeviceProfile profile(builder.execute());
+		AutoRef<UPnPDeviceProfile> profile(new UPnPDeviceProfile(builder.execute()));
 		registerDeviceProfile(profile);
+		return profile;
 	}
 	
-	void UPnPServer::registerDeviceProfile(const UDN & udn, const Url & url) {
+	AutoRef<UPnPDeviceProfile> UPnPServer::registerDeviceProfile(const UDN & udn, const Url & url) {
 		UPnPDeviceBuilder builder(url);
-		UPnPDeviceProfile profile(builder.execute());
-		profile.setUdn(udn);
+		AutoRef<UPnPDeviceProfile> profile(new UPnPDeviceProfile(builder.execute()));
+		profile->setUdn(udn);
 		registerDeviceProfile(profile);
+		return profile;
 	}
 	
-	void UPnPServer::registerDeviceProfile(UPnPDeviceProfile & profile) {
+	void UPnPServer::registerDeviceProfile(AutoRef<UPnPDeviceProfile> profile) {
 		getProfileManager().registerProfile(profile);
 	}
 	
-	void UPnPServer::registerDeviceProfile(const UDN & udn, UPnPDeviceProfile & profile) {
+	void UPnPServer::registerDeviceProfile(const UDN & udn, AutoRef<UPnPDeviceProfile> profile) {
 		getProfileManager().registerProfile(udn, profile);
 	}
 

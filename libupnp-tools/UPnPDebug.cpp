@@ -5,6 +5,58 @@ namespace UPNP {
 	using namespace std;
 	using namespace OS;
 
+
+	/**
+	 * @brief
+	 */
+
+	UPnPDebugInfo::UPnPDebugInfo() : _creationTick(tick_milli()) {
+	}
+	
+	UPnPDebugInfo::~UPnPDebugInfo() {
+	}
+	
+	unsigned long & UPnPDebugInfo::creationTick() {
+		return _creationTick;
+	}
+	
+	unsigned long UPnPDebugInfo::creationTick() const {
+		return _creationTick;
+	}
+	
+	string & UPnPDebugInfo::tag() {
+		return _tag;
+	}
+
+	string UPnPDebugInfo::tag() const {
+		return _tag;
+	}
+	
+	InetAddress & UPnPDebugInfo::from() {
+		return _from;
+	}
+
+	InetAddress UPnPDebugInfo::from() const {
+		return _from;
+	}
+	
+	InetAddress & UPnPDebugInfo::to() {
+		return _to;
+	}
+
+	InetAddress UPnPDebugInfo::to() const {
+		return _to;
+	}
+	
+	string & UPnPDebugInfo::packet() {
+		return _packet;
+	}
+
+	string UPnPDebugInfo::packet() const {
+		return _packet;
+	}
+	
+
 	/**
 	 * @brief 
 	 */

@@ -7,19 +7,24 @@
 #include "UPnPModels.hpp"
 #include "UPnPTerms.hpp"
 
+
 namespace UPNP {
 
+	
 	/**
 	 * @brief 
 	 */
 	class UPnPDeviceProfile {
 	private:
+		bool _enabled;
 		OS::AutoRef<UPnPDevice> _device;
 		
 	public:
 		UPnPDeviceProfile();
 		UPnPDeviceProfile(OS::AutoRef<UPnPDevice> device);
 		virtual ~UPnPDeviceProfile();
+		bool & enabled();
+		bool enabled() const;
 		UDN udn() const;
 		void setUdn(const UDN & udn);
 		std::string deviceDescription() const;

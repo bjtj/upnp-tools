@@ -7,7 +7,9 @@
 #include <string>
 #include <deque>
 
+
 namespace UPNP {
+
 
 	/**
 	 * @brief 
@@ -21,21 +23,21 @@ namespace UPNP {
 		std::string _packet;
 		
 	public:
-		UPnPDebugInfo() : _creationTick(OS::tick_milli()) {}
-		virtual ~UPnPDebugInfo() {}
-		unsigned long & creationTick() { return _creationTick; }
-		std::string & tag() { return _tag; }
-		OS::InetAddress & from() { return _from; }
-		OS::InetAddress & to() { return _to; }
-		std::string & packet() { return _packet; }
-
-		unsigned long const_creationTick() const { return _creationTick; }
-		std::string const_tag() const { return _tag; }
-		OS::InetAddress const_from() const { return _from; }
-		OS::InetAddress const_to() const { return _to; }
-		std::string const_packet() const { return _packet; }
+		UPnPDebugInfo();
+		virtual ~UPnPDebugInfo();
+		unsigned long & creationTick();
+		unsigned long creationTick() const;
+		std::string & tag();
+		std::string tag() const;
+		OS::InetAddress & from();
+		OS::InetAddress from() const;
+		OS::InetAddress & to();
+		OS::InetAddress to() const;
+		std::string & packet();
+		std::string packet() const;
 	};
 
+	
 	/**
 	 * @brief 
 	 */

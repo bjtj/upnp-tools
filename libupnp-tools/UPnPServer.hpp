@@ -32,42 +32,28 @@ namespace UPNP {
 		virtual void onControlRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response) = 0;
 	};
 
-	/**
-	 * @brief upnp device profile session
-	 */
-	class UPnPDeviceProfileSession {
-	private:
-		bool enabled;
-		UPnPDeviceProfile _profile;
-	public:
-		UPnPDeviceProfileSession(const UPnPDeviceProfile & profile);
-		virtual ~UPnPDeviceProfileSession();
-		UPnPDeviceProfile & profile();
-		void setEnable(bool enable);
-		bool isEnabled();
-	};
 
 	/**
-	 * @brief upnp device profile session manager
+	 * 
 	 */
-	class UPnPDeviceProfileSessionManager {
+	class UPnPDeviceProfileManager {
 	private:
-		std::map< UDN, OS::AutoRef<UPnPDeviceProfileSession> > _sessions;
+		std::map< UDN, OS::AutoRef<UPnPDeviceProfile> > _profiles;
 	public:
-		UPnPDeviceProfileSessionManager();
-		virtual ~UPnPDeviceProfileSessionManager();
-		std::map<UDN, OS::AutoRef<UPnPDeviceProfileSession> > & sessions();
-		std::vector<OS::AutoRef<UPnPDeviceProfileSession> > sessionList();
-		void registerProfile(const UPnPDeviceProfile & profile);
-		void registerProfile(const UDN & udn, const UPnPDeviceProfile & profile);
+		UPnPDeviceProfileManager();
+		virtual ~UPnPDeviceProfileManager();
+		std::vector<OS::AutoRef<UPnPDeviceProfile> > profiles();
+		void registerProfile(OS::AutoRef<UPnPDeviceProfile> profile);
+		void registerProfile(const UDN & udn, OS::AutoRef<UPnPDeviceProfile> profile);
 		void unregisterProfile(const UDN & udn);
 		std::vector<std::string> getAllTypes();
 		std::vector<std::string> getTypes(const std::string & st);
-		OS::AutoRef<UPnPDeviceProfileSession> getDeviceProfileSessionByUDN(const UDN & udn);
-		OS::AutoRef<UPnPDeviceProfileSession> getDeviceProfileSessionHasScpdUrl(const std::string & scpdUrl);
-		OS::AutoRef<UPnPDeviceProfileSession> getDeviceProfileSessionHasControlUrl(const std::string & controlUrl);
-		OS::AutoRef<UPnPDeviceProfileSession> getDeviceProfileSessionHasEventSubUrl(const std::string & eventSubUrl);
+		OS::AutoRef<UPnPDeviceProfile> getDeviceProfileByUDN(const UDN & udn);
+		OS::AutoRef<UPnPDeviceProfile> getDeviceProfileHasScpdUrl(const std::string & scpdUrl);
+		OS::AutoRef<UPnPDeviceProfile> getDeviceProfileHasControlUrl(const std::string & controlUrl);
+		OS::AutoRef<UPnPDeviceProfile> getDeviceProfileHasEventSubUrl(const std::string & eventSubUrl);
 	};
+	
 
 	/**
 	 * @brief upnp server
@@ -92,7 +78,7 @@ namespace UPNP {
 
 		OS::AutoRef<NetworkStateManager> networkStateManager;
 		Config config;
-		UPnPDeviceProfileSessionManager profileManager;
+		UPnPDeviceProfileManager profileManager;
 		OS::AutoRef<HTTP::AnotherHttpServer> httpServer;
 		OS::AutoRef<UPnPActionRequestHandler> actionRequestHandler;
 		OS::AutoRef<HttpEventListener> httpEventListener;
@@ -122,16 +108,16 @@ namespace UPNP {
 		void setEnableAllDevices(bool enable);
 
 		// announce
-		void delayNotify(unsigned long delay, int type, const UPnPDeviceProfile & profile);
+		void delayNotify(unsigned long delay, int type, OS::AutoRef<UPnPDeviceProfile> profile);
 		void notifyAliveAll();
-		void notifyAlive(UPnPDeviceProfile & profile);
-		void notifyAliveByDeviceType(UPnPDeviceProfile & profile,
+		void notifyAlive(OS::AutoRef<UPnPDeviceProfile> profile);
+		void notifyAliveByDeviceType(OS::AutoRef<UPnPDeviceProfile> profile,
 									 const std::string & deviceType);
 		std::string makeNotifyAlive(const std::string & location,
 									const UDN & udn,
 									const std::string & deviceType);
-		void notifyByeBye(UPnPDeviceProfile & profile);
-		void notifyByeByeByDeviceType(UPnPDeviceProfile & profile,
+		void notifyByeBye(OS::AutoRef<UPnPDeviceProfile> profile);
+		void notifyByeByeByDeviceType(OS::AutoRef<UPnPDeviceProfile> profile,
 									  const std::string & deviceType);
 		std::string makeNotifyByeBye(const UDN & udn, const std::string & deviceType);
 
@@ -142,11 +128,11 @@ namespace UPNP {
 										const std::string & st);
 
 		// device profile management
-		UPnPDeviceProfileSessionManager & getProfileManager();
-		void registerDeviceProfile(const HTTP::Url & url);
-		void registerDeviceProfile(const UDN & udn, const HTTP::Url & url);
-		void registerDeviceProfile(UPnPDeviceProfile & profile);
-		void registerDeviceProfile(const UDN & udn, UPnPDeviceProfile & profile);
+		UPnPDeviceProfileManager & getProfileManager();
+		OS::AutoRef<UPnPDeviceProfile> registerDeviceProfile(const HTTP::Url & url);
+		OS::AutoRef<UPnPDeviceProfile> registerDeviceProfile(const UDN & udn, const HTTP::Url & url);
+		void registerDeviceProfile(OS::AutoRef<UPnPDeviceProfile> profile);
+		void registerDeviceProfile(const UDN & udn, OS::AutoRef<UPnPDeviceProfile> profile);
 		void unregisterDeviceProfile(const UDN & udn);
 
 		// application level control

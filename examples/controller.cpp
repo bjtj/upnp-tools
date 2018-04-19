@@ -226,7 +226,7 @@ public:
 	virtual ~PrintDebugInfo() {
 	}
 	virtual void onDebugInfo(const UPnPDebugInfo & info) {
-		stream.writeline(info.const_packet());
+		stream.writeline(info.packet());
 	}
 };
 

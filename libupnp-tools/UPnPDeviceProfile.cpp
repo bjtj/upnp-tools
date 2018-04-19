@@ -7,15 +7,24 @@ namespace UPNP {
 	using namespace OS;
 
 
-	UPnPDeviceProfile::UPnPDeviceProfile() {
+	UPnPDeviceProfile::UPnPDeviceProfile()
+		: _enabled(false) {
 	}
 
 	UPnPDeviceProfile::UPnPDeviceProfile(AutoRef<UPnPDevice> device)
-		: _device(device)
+		: _enabled(false), _device(device)
 	{
 	}
 	
 	UPnPDeviceProfile::~UPnPDeviceProfile() {
+	}
+
+	bool & UPnPDeviceProfile::enabled() {
+		return _enabled;
+	}
+
+	bool UPnPDeviceProfile::enabled() const {
+		return _enabled;
 	}
 	
 	UDN UPnPDeviceProfile::udn() const {

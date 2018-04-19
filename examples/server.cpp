@@ -79,15 +79,12 @@ static void s_set_device(UPnPServer & server, const UDN & udn) {
     string DATA_PATH = File::merge(File::getCwd(), "data");
 #endif
 
-	server.registerDeviceProfile(udn, Url("file://" + string(DATA_PATH)
-										  + "/dimming-light.xml"));
+	AutoRef<UPnPDeviceProfile> profile = server.registerDeviceProfile(
+		udn, Url("file://" + string(DATA_PATH) + "/dimming-light.xml"));
 
-	server.getProfileManager().getDeviceProfileSessionByUDN(udn)->profile().
-		device()->setScpdUrl("/$udn/$serviceType/scpd.xml");
-	server.getProfileManager().getDeviceProfileSessionByUDN(udn)->profile().
-		device()->setControlUrl("/$udn/$serviceType/control.xml");
-	server.getProfileManager().getDeviceProfileSessionByUDN(udn)->profile().
-		device()->setEventSubUrl("/$udn/$serviceType/event.xml");
+	profile->device()->setScpdUrl("/$udn/$serviceType/scpd.xml");
+	profile->device()->setControlUrl("/$udn/$serviceType/control.xml");
+	profile->device()->setEventSubUrl("/$udn/$serviceType/event.xml");
 
 	server.setProperty(udn, "urn:schemas-upnp-org:service:SwitchPower:1",
 					   "RetTargetValue", "0");
@@ -117,9 +114,8 @@ public:
 	virtual ~PrintDebugInfo() {
 	}
 	virtual void onDebugInfo(const UPnPDebugInfo & info) {
-		stream.writeline("[" + Date::format(Date::now(), "%Y-%c-%d %H:%i:%s.%f") + "] - " +
-						 info.const_tag());
-		stream.writeline(info.const_packet());
+		stream.writeline("[" + Date::format(Date::now(), "%Y-%c-%d %H:%i:%s.%f") + "] - " + info.tag());
+		stream.writeline(info.packet());
 	}
 };
 
@@ -177,13 +173,13 @@ int main(int argc, char * args[]) {
 				cout << " * byebye : " << uuid << endl;
 				server.setEnableDevice(udn, false);
 			} else if (tokens[0] == "list") {
-				vector<AutoRef<UPnPDeviceProfileSession> > vec =
-					server.getProfileManager().sessionList();
+				vector<AutoRef<UPnPDeviceProfile> > vec =
+					server.getProfileManager().profiles();
 				for (size_t i = 0; i < vec.size(); i++) {
-					UPnPDeviceProfile & profile = vec[i]->profile();
-					cout << "[" << i << "] " << profile.udn().toString() << " ; "
-						 << (profile.deviceTypes().size() > 0 ? profile.deviceTypes()[0] : "") <<
-						 " / " << (vec[i]->isEnabled() ? "enabled" : "disabled") << endl;
+					AutoRef<UPnPDeviceProfile> profile = vec[i];
+					cout << "[" << i << "] " << profile->udn().toString() << " ; "
+						 << (profile->deviceTypes().size() > 0 ? profile->deviceTypes()[0] : "") <<
+						 " / " << (vec[i]->enabled() ? "enabled" : "disabled") << endl;
 				}
 			} else if (tokens[0] == "set-props") {
 				server.setProperty(udn, "urn:schemas-upnp-org:service:SwitchPower:1",

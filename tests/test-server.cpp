@@ -85,16 +85,17 @@ static void test_device_profile() {
 	UPnPServer server(UPnPServer::Config(9001));
 	server.setDebug(AutoRef<UPnPDebug>(new UPnPDebug));
 
-	UPnPDeviceProfile deviceProfile(UPnPDeviceDeserializer::deserializeDevice(dd(udn)));
-	deviceProfile.device()->setScpdUrl("/scpd.xml?udn=$udn&serviceType=$serviceType");
-	deviceProfile.device()->setControlUrl("/control.xml?udn=$udn&serviceType=$serviceType");
-	deviceProfile.device()->setEventSubUrl("/event.xml?udn=$udn&serviceType=$serviceType");
+	AutoRef<UPnPDeviceProfile> deviceProfile(
+		new UPnPDeviceProfile(UPnPDeviceDeserializer::deserializeDevice(dd(udn))));
+	deviceProfile->device()->setScpdUrl("/scpd.xml?udn=$udn&serviceType=$serviceType");
+	deviceProfile->device()->setControlUrl("/control.xml?udn=$udn&serviceType=$serviceType");
+	deviceProfile->device()->setEventSubUrl("/event.xml?udn=$udn&serviceType=$serviceType");
 
-	AutoRef<UPnPService> service = deviceProfile.device()->getService(serviceType);
+	AutoRef<UPnPService> service = deviceProfile->device()->getService(serviceType);
 	service->scpd() = UPnPDeviceDeserializer::deserializeScpd(scpd());
 
 	server.registerDeviceProfile(udn, deviceProfile);
-	server.getProfileManager().getDeviceProfileSessionByUDN(udn)->setEnable(true);
+	server.getProfileManager().getDeviceProfileByUDN(udn)->enabled() = true;
 
 	LinkedStringMap props;
 	props["xxx"] = "";
@@ -111,13 +112,13 @@ static void test_device_profile() {
 	{
 		string scpdUrl = scpd_url(udn, serviceType);;
 		cout << "scpd url: " << scpdUrl << endl;
-		UPnPDeviceProfile deviceProfile =
-			server.getProfileManager().getDeviceProfileSessionHasScpdUrl(scpdUrl)->profile();
+		AutoRef<UPnPDeviceProfile> deviceProfile =
+			server.getProfileManager().getDeviceProfileHasScpdUrl(scpdUrl);
 		cout << "get service - " << scpdUrl << endl;
-		AutoRef<UPnPService> service = deviceProfile.device()->getServiceWithScpdUrl(scpdUrl);
+		AutoRef<UPnPService> service = deviceProfile->device()->getServiceWithScpdUrl(scpdUrl);
 		ASSERT(service->serviceType(), ==, serviceType);
 		try {
-			server.getProfileManager().getDeviceProfileSessionHasScpdUrl(scpdUrl);
+			server.getProfileManager().getDeviceProfileHasScpdUrl(scpdUrl);
 		} catch (...) {
 			ASSERT(true, ==, false);
 		}
