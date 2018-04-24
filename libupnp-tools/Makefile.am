@@ -60,6 +60,7 @@ libupnp_tools_la_SOURCES = \
 	SharedUPnPDeviceList.hpp \
 	UPnPActionErrorCodes.cpp \
 	UPnPActionErrorCodes.hpp \
+	UPnPActionInvoker.cpp \
 	UPnPActionInvoker.hpp \
 	UPnPActionRequest.cpp \
 	UPnPActionRequest.hpp \

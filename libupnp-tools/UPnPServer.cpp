@@ -270,7 +270,7 @@ namespace UPNP {
 		UPnPServerSsdpHandler(UPnPServer & server) : server(server) {}
 		virtual ~UPnPServerSsdpHandler() {}
 		virtual bool filter(const SSDPHeader & header) {
-			server.debug("ssdp", header.toString());
+			UPnPDebug::instance().debug("ssdp", header.toString());
 			return true;
 		}
 		/**
@@ -383,28 +383,28 @@ namespace UPNP {
 		}
 
 		void handleDeviceDescription(HttpRequest & request, HttpResponse & response) {
-			server.debug("upnp:device-description", request.header().toString());
+			UPnPDebug::instance().debug("upnp:device-description", request.header().toString());
 			validateMethod(request, "GET");
 			prepareCommonResponse(request, response);
 			onDeviceDescriptionRequest(request, response);
 		}
 
 		void handleScpd(HttpRequest & request, HttpResponse & response, AutoRef<UPnPDeviceProfile> profile) {
-			server.debug("upnp:scpd", request.header().toString());
+			UPnPDebug::instance().debug("upnp:scpd", request.header().toString());
 			validateMethod(request, "GET");
 			prepareCommonResponse(request, response);
 			onScpdRequest(request, response, profile);
 		}
 
 		void handleControl(HttpRequest & request, AutoRef<DataSink> sink, HttpResponse & response) {
-			server.debug("upnp:control", request.header().toString() + (sink.nil() ? "" : ((StringDataSink*)&sink)->data()));
+			UPnPDebug::instance().debug("upnp:control", request.header().toString() + (sink.nil() ? "" : ((StringDataSink*)&sink)->data()));
 			validateMethod(request, "POST");
 			prepareCommonResponse(request, response);
 			onControlRequest(request, response);
 		}
 
 		void handleEvent(HttpRequest & request, AutoRef<DataSink> sink, HttpResponse & response, AutoRef<UPnPDeviceProfile> profile) {
-			server.debug("upnp:event", request.header().toString() +
+			UPnPDebug::instance().debug("upnp:event", request.header().toString() +
 						 (sink.nil() ? "" : ((StringDataSink*)&sink)->data()));
 			prepareCommonResponse(request, response);
 			onEventSubscriptionRequest(request, response, profile);
@@ -776,7 +776,7 @@ namespace UPNP {
 		
 		SSDPMsearchSender sender;
 		string packet = makeNotifyAlive(location, udn, deviceType);
-		debug("ssdp:notify-alive", packet);
+		UPnPDebug::instance().debug("ssdp:notify-alive", packet);
 		sender.sendMcastToAllInterfaces(packet, "239.255.255.250", 1900);
 		sender.close();
 	}
@@ -828,7 +828,7 @@ namespace UPNP {
 		UDN udn = profile->udn();
 		SSDPMsearchSender sender;
 		string packet = makeNotifyByeBye(udn, deviceType);
-		debug("ssdp:notify-byebye", packet);
+		UPnPDebug::instance().debug("ssdp:notify-byebye", packet);
 		sender.sendMcastToAllInterfaces(packet, "239.255.255.250", 1900);
 		sender.close();
 	}
@@ -856,7 +856,7 @@ namespace UPNP {
 			UDN udn("uuid:" + usn.uuid());
 			string location = makeLocation(udn);
 			string packet = makeMsearchResponse(location, udn, usn.rest());
-			debug("ssdp:response-msearch", packet);
+			UPnPDebug::instance().debug("ssdp:response-msearch", packet);
 			sender.unicast(packet, remoteAddr);
 		}
 		sender.close();

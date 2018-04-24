@@ -77,7 +77,7 @@ namespace UPNP {
 	/**
 	 * @brief upnp control point
 	 */
-	class UPnPControlPoint : public UPnPDebuggable {
+	class UPnPControlPoint {
 	public:
 		class Config : public UTIL::Properties {
 		public:

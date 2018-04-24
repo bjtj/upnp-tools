@@ -6,8 +6,6 @@
 #include <libupnp-tools/UPnPActionRequestHandler.hpp>
 #include <libupnp-tools/UPnPDeviceDeserializer.hpp>
 #include <libupnp-tools/UPnPResourceManager.hpp>
-#include <libupnp-tools/UPnPDeviceProfileBuilder.hpp>
-#include <libupnp-tools/UPnPResourceManager.hpp>
 #include <libupnp-tools/NetworkUtil.hpp>
 #include <libhttp-server/Url.hpp>
 
@@ -84,7 +82,7 @@ int main(int argc, char *argv[])
 {
 
 #if defined(_DEBUG)
-	LoggerFactory::getInstance().setLoggerDescriptorSimple("*", "basic", "console");
+	LoggerFactory::instance().setLoggerDescriptorSimple("*", "basic", "console");
 #endif
 	
 	string ddPath = "dial.xml";

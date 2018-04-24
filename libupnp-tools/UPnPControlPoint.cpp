@@ -175,12 +175,17 @@ namespace UPNP {
 	private:
 		UPnPControlPoint & cp;
 	public:
-		ControlPointSSDPListener(UPnPControlPoint & cp) : cp(cp) {}
-		virtual ~ControlPointSSDPListener() {}
+		ControlPointSSDPListener(UPnPControlPoint & cp) : cp(cp) {
+		}
+		
+		virtual ~ControlPointSSDPListener() {
+		}
+		
 		virtual bool filter(const SSDPHeader & header) {
-			cp.debug("ssdp", header.toString());
+			UPnPDebug::instance().debug("ssdp", header.toString());
 			return true;
 		}
+		
 		virtual void onNotify(const SSDPHeader & header) {
 			InetAddress addr = header.getRemoteAddr();
 			if (header.isNotifyAlive()) {
@@ -189,6 +194,7 @@ namespace UPNP {
 				cp.removeDevice(header);
 			}
 		}
+		
 		virtual void onMsearchResponse(const SSDPHeader & header) {
 			InetAddress addr = header.getRemoteAddr();
 			cp.addDevice(header);
@@ -361,7 +367,6 @@ namespace UPNP {
 
 	UPnPActionInvoker UPnPControlPoint::prepareActionInvoke(const UDN & udn, const string & serviceType) {
 		AutoRef<UPnPDevice> device = findDevice(udn);
-		// AutoRef<UPnPService> service = device->findServiceRecursive(serviceType);
 		AutoRef<UPnPService> service = device->getService(serviceType);
 		if (service.nil()) {
 			throw Exception("service not found / type : " + serviceType);
@@ -395,7 +400,6 @@ namespace UPNP {
 
 	UPnPEventSubscriber UPnPControlPoint::prepareEventSubscriber(const UDN & udn, const string & serviceType) {
 		AutoRef<UPnPDevice> device = findDevice(udn);
-		// AutoRef<UPnPService> service = device->findServiceRecursive(serviceType);
 		AutoRef<UPnPService> service = device->getService(serviceType);
 		if (service.nil()) {
 			throw Exception("service not found / type : " + serviceType);

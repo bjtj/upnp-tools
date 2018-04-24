@@ -80,19 +80,20 @@ public:
 
 
 /**
- * @brief
+ * 
  */
-class PrintDebugInfo : public OnDebugInfoListener {
+class FileWriter : public LogWriter {
 private:
-	FileStream & stream;
+	FileStream _stream;
 public:
-	PrintDebugInfo(FileStream & stream) : stream(stream) {
+	FileWriter(const string & path) : _stream(path, "wb") {
 	}
-	virtual ~PrintDebugInfo() {
+	
+	virtual ~FileWriter() {
 	}
-	virtual void onDebugInfo(const UPnPDebugInfo & info) {
-		stream.writeline("[" + Date::format(Date::now(), "%Y-%c-%d %H:%i:%s.%f") + "] - " + info.tag());
-		stream.writeline(info.packet());
+	
+	virtual void write(const string & str) {
+		_stream.writeline(str);
 	}
 };
 
@@ -101,11 +102,12 @@ public:
  * @brief 
  */
 int main(int argc, char * args[]) {
-    
-    LoggerFactory::instance().setProfile("*", "basic", "console");
+
+	AutoRef<LogWriter> writer(new FileWriter(".controlpoint.log"));
+	LoggerFactory::instance().registerWriter("filewriter", writer);
+    LoggerFactory::instance().setProfile("UPnP*", "basic", "filewriter");
 
 	Arguments arguments = ArgumentParser::parse(argc, args);
-	FileStream out;
 
 	// UuidGeneratorVersion1 gen;
 	// string uuid = gen.generate();
@@ -113,12 +115,6 @@ int main(int argc, char * args[]) {
 	UDN udn("uuid:" + uuid);
 	
 	UPnPServer server(UPnPServer::Config(9001));
-	if (arguments.is_set("debug")) {
-		out = FileStream("./.server.log", "wb");
-		AutoRef<UPnPDebug> debug(new UPnPDebug);
-		debug->setOnDebugInfoListener(AutoRef<OnDebugInfoListener>(new PrintDebugInfo(out)));
-		server.setDebug(debug);
-	}
 
 	// set device
 	s_set_device(server, udn);
@@ -181,7 +177,6 @@ int main(int argc, char * args[]) {
 	server.deactivateAllDevices();
 	server.stop();
 
-	out.close();
 	cout << "[done]" << endl;
     
     return 0;

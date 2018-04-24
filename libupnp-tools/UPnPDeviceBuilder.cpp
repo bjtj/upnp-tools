@@ -33,6 +33,7 @@ namespace UPNP {
 		UPnPResourceManager & resMan = UPnPResourceManager::instance();
 		LinkedStringMap meta;
 		UPnPResource res = resMan.getResource(_url);
+		UPnPDebug::instance().debug("upnp", res.content());
 		_device = UPnPDeviceDeserializer::deserializeDevice(res.content());
 		_device->meta() = res.meta();
 		_device->baseUrl() = _url;
@@ -41,8 +42,9 @@ namespace UPNP {
 			 iter != services.end(); iter++)
 		{
 			try {
-				(*iter)->scpd() = UPnPDeviceDeserializer::deserializeScpd(
-					resMan.getResourceContent(_url.relativePath((*iter)->scpdUrl())));
+				string content = resMan.getResourceContent(_url.relativePath((*iter)->scpdUrl()));
+				UPnPDebug::instance().debug("upnp", content);
+				(*iter)->scpd() = UPnPDeviceDeserializer::deserializeScpd(content);
 			} catch (Exception e) {
 				if(_allow_fail_scpd == false) {
 					throw e;

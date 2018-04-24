@@ -25,7 +25,6 @@ using namespace UPNP;
 using namespace HTTP;
 using namespace XML;
 
-// #define _DEBUG
 
 static AutoRef<Logger> logger = LoggerFactory::instance().
 	getObservingLogger(File::basename(__FILE__));
@@ -48,11 +47,31 @@ public:
 
 static int run(int argc, char *args[]);
 
+
+/**
+ * 
+ */
+class FileWriter : public LogWriter {
+private:
+	FileStream _stream;
+public:
+	FileWriter(const string & path) : _stream(path, "wb") {
+	}
+	
+	virtual ~FileWriter() {
+	}
+	
+	virtual void write(const string & str) {
+		_stream.writeline(str);
+	}
+};
+
+
 int main(int argc, char *args[]) {
 
-#if defined(_DEBUG)
-	LoggerFactory::instance().setProfile("*", "basic", "console");
-#endif
+	AutoRef<LogWriter> writer(new FileWriter(".controlpoint.log"));
+	LoggerFactory::instance().registerWriter("filewriter", writer);
+	LoggerFactory::instance().setProfile("UPnP*", "basic", "filewriter");
 
 	try {
 		return run(argc, args);
@@ -209,40 +228,20 @@ static string s_str(const string & s, const string & e) {
 
 static void printSession(Session & session) {
 	cout << " -- Session --" << endl;
-	cout << " |UDN: " << s_str(session.udn().toString(), "(none)") << endl;
-	cout << " |Service: " << s_str(session.serviceType(), "(none)") << endl;
-	cout << " |Action: " << s_str(session.action(), "(none)") << endl;
+	cout << " | UDN: " << s_str(session.udn().toString(), "(none)") << endl;
+	cout << " | Service: " << s_str(session.serviceType(), "(none)") << endl;
+	cout << " | Action: " << s_str(session.action(), "(none)") << endl;
 }
 
-/**
- * @brief print debug info
- */
-class PrintDebugInfo : public OnDebugInfoListener {
-private:
-	FileStream & stream;
-public:
-	PrintDebugInfo(FileStream & stream) : stream(stream) {
-	}
-	virtual ~PrintDebugInfo() {
-	}
-	virtual void onDebugInfo(const UPnPDebugInfo & info) {
-		stream.writeline(info.packet());
-	}
-};
 
 /**
  * @brief run
  */
 int run(int argc, char *args[]) {
 
-	FileStream out("./.controller.log", "wb");
 	Session session;
-
-	AutoRef<UPnPDebug> debug(new UPnPDebug);
-	debug->setOnDebugInfoListener(AutoRef<OnDebugInfoListener>(new PrintDebugInfo(out)));
 	AutoRef<SharedUPnPDeviceList> list(new SharedUPnPDeviceList);
 	UPnPControlPoint cp(UPnPControlPoint::Config(9998));
-	cp.setDebug(debug);
 	cp.addSharedDeviceList(list);
 	cp.setDeviceListener(AutoRef<UPnPDeviceListener>(new MyDeviceListener));
 	cp.startAsync();
@@ -360,7 +359,6 @@ int run(int argc, char *args[]) {
 		}
 	}
 	cp.stop();
-	out.close();
 	cout << "[bye]" << endl;
     return 0;
 }

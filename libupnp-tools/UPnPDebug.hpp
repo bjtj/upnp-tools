@@ -50,40 +50,18 @@ namespace UPNP {
 
 
 	/**
-	 * @brief 
+	 * @brief
 	 */
-	class UPnPDebug {
+	class UPnPDebug
+	{
 	private:
-		std::deque<UPnPDebugInfo> _history;
-		OS::AutoRef<OnDebugInfoListener> _listener;
-		size_t _max_history;
-	public:
+		static UPnPDebug _instance;
+	private:
 		UPnPDebug();
-		UPnPDebug(size_t max_history);
-		virtual ~UPnPDebug();
-		void debug(const UPnPDebugInfo & info);
-		void clear();
-		std::deque<UPnPDebugInfo> & history();
-		void setOnDebugInfoListener(OS::AutoRef<OnDebugInfoListener> listener);
-	};
-
-	/**
-	 * @brief 
-	 */
-	class UPnPDebuggable {
-	private:
-		OS::AutoRef<UPnPDebug> _debug;
-		
 	public:
-		UPnPDebuggable();
-		virtual ~UPnPDebuggable();
-
-		void debug(const std::string & tag, const std::string & packet);
-		void debug(const std::string & tag, const std::string & packet,
-				   const OS::InetAddress & from, const OS::InetAddress & to);
-		void debug(const UPnPDebugInfo & info);
-		void setDebug(OS::AutoRef<UPnPDebug> debug);
-		OS::AutoRef<UPnPDebug> getDebug();
+		virtual ~UPnPDebug();
+		static UPnPDebug & instance();
+		void debug(const std::string & tag, const std::string & msg);
 	};
 
 }

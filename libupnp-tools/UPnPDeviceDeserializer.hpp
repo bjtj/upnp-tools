@@ -12,7 +12,7 @@ namespace UPNP {
 	/**
 	 * @brief 
 	 */
-	class UPnPDeviceDeserializer : public UPnPDebuggable {
+	class UPnPDeviceDeserializer {
 	private:
 	public:
 		UPnPDeviceDeserializer();

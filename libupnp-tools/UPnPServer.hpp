@@ -57,7 +57,7 @@ namespace UPNP {
 	/**
 	 * @brief upnp server
 	 */
-	class UPnPServer : public UPnPDebuggable {
+	class UPnPServer {
 	public:
 
 		/**

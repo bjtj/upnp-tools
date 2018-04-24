@@ -4,6 +4,7 @@
 #include <liboslayer/Text.hpp>
 #include <liboslayer/XmlParser.hpp>
 #include "XmlUtils.hpp"
+#include "UPnPDebug.hpp"
 
 namespace UPNP {
 
@@ -40,7 +41,9 @@ namespace UPNP {
 	}
 	
 	UPnPEventSubscription & UPnPEventSubscriptionRegistry::findSubscriptionByUdnAndServiceType(const UDN & udn, const string & serviceType) {
-		for (map<string, UPnPEventSubscription>::iterator iter = subscriptions.begin(); iter != subscriptions.end(); iter++) {
+		for (map<string, UPnPEventSubscription>::iterator iter = subscriptions.begin();
+			 iter != subscriptions.end(); iter++)
+		{
 			if (iter->second.udn() == udn && iter->second.serviceType() == serviceType) {
 				return iter->second;
 			}
@@ -77,6 +80,7 @@ namespace UPNP {
 			string seq = request.header()["SEQ"];
 			UPnPNotify notify(sid, Text::toLong(seq));
 			string dump = ((StringDataSink*)&sink)->data();
+			UPnPDebug::instance().debug("upnp:event", request.header().toString() + dump);
 			map<string, string> props = receiver.parseEventNotify(dump);
 			for (map<string, string>::iterator iter = props.begin(); iter != props.end(); iter++) {
 				notify[iter->first] = iter->second;
