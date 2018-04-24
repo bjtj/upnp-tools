@@ -10,13 +10,15 @@
 #include <liboslayer/Uuid.hpp>
 #include <liboslayer/File.hpp>
 #include <liboslayer/Logger.hpp>
+#include <libhttp-server/AnotherHttpServer.hpp>
 #include <libupnp-tools/UPnPControlPoint.hpp>
 #include <libupnp-tools/UPnPActionInvoker.hpp>
 #include <libupnp-tools/UPnPActionRequest.hpp>
 #include <libupnp-tools/UPnPActionResponse.hpp>
 #include <libupnp-tools/NetworkUtil.hpp>
 #include <libupnp-tools/UPnPEventSubscriber.hpp>
-#include <libhttp-server/AnotherHttpServer.hpp>
+#include <libupnp-tools/HttpUtils.hpp>
+
 
 using namespace std;
 using namespace OS;
