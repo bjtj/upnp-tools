@@ -154,7 +154,9 @@ namespace UPNP {
 
 		notify.subscription() = registry[notify.sid()];
 		
-		for (vector<AutoRef<UPnPEventListener> >::iterator iter = listeners.begin(); iter != listeners.end(); iter++) {
+		for (vector< AutoRef<UPnPEventListener> >::iterator iter = listeners.begin();
+			 iter != listeners.end(); iter++)
+		{
 			(*iter)->onNotify(notify);
 		}
 	}
@@ -167,11 +169,13 @@ namespace UPNP {
 	map<string, string> UPnPEventReceiver::parseEventNotify(const string & xml) {
 		map<string, string> props;
 		XmlDocument doc = DomParser::parse(xml);
-		if (doc.getRootNode().nil()) {
+		if (doc.rootNode().nil()) {
 			return props;
 		}
-		vector<AutoRef<XmlNode> > nodes = doc.getRootNode()->getElementsByTagName("property");
-		for (vector<AutoRef<XmlNode> >::iterator iter = nodes.begin(); iter != nodes.end(); iter++) {
+		vector< AutoRef<XmlNode> > nodes = doc.rootNode()->getElementsByTagName("property");
+		for (vector< AutoRef<XmlNode> >::iterator iter = nodes.begin();
+			 iter != nodes.end(); iter++)
+		{
 			AutoRef<XmlNode> node = *iter;
 			KeyValue kv = XmlUtils::toKeyValue(node->getFirstChildElement());
 			props[kv.key()] = kv.value();

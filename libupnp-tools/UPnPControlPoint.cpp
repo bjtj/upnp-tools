@@ -102,7 +102,7 @@ namespace UPNP {
 	}
 
 	vector< AutoRef<UPnPDeviceSession> > UPnPDeviceSessionManager::getSessions() {
-		vector<AutoRef<UPnPDeviceSession> > ret;
+		vector< AutoRef<UPnPDeviceSession> > ret;
 		for (map< UDN, AutoRef<UPnPDeviceSession> >::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
 			ret.push_back(iter->second);
 		}
@@ -110,7 +110,7 @@ namespace UPNP {
 	}
 
 	vector< AutoRef<UPnPDevice> > UPnPDeviceSessionManager::getDevices() {
-		vector<AutoRef<UPnPDevice> > ret;
+		vector< AutoRef<UPnPDevice> > ret;
 		for (map< UDN, AutoRef<UPnPDeviceSession> >::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
 			ret.push_back(iter->second->getRootDevice());
 		}
@@ -352,7 +352,7 @@ namespace UPNP {
 		return _sessionManager;
 	}
 	
-	vector<AutoRef<UPnPDevice> > UPnPControlPoint::getDevices() {
+	vector< AutoRef<UPnPDevice> > UPnPControlPoint::getDevices() {
 		return _sessionManager.getDevices();
 	}
 

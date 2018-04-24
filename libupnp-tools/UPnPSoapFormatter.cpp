@@ -95,16 +95,16 @@ namespace UPNP {
 	UPnPActionResponse UPnPSoapFormatter::parseResponse(const string & actionName, const string & xml) {
 		UPnPActionResponse response;
 		XmlDocument soapResponse = DomParser::parse(xml);
-		if (soapResponse.getRootNode().nil()) {
+		if (soapResponse.rootNode().nil()) {
 			throw Exception("invoke error / wrong response format");
 		}
 		string actionNameResponse = actionName + "Response";
-		AutoRef<XmlNode> node = soapResponse.getRootNode()->getElementByTagName(actionNameResponse);
+		AutoRef<XmlNode> node = soapResponse.rootNode()->getElementByTagName(actionNameResponse);
 		if (node.nil()) {
 			throw Exception("invoke error / wrong response format - no action response");
 		}
-		vector<AutoRef<XmlNode> > children = node->children();
-		for (vector<AutoRef<XmlNode> >::iterator iter = children.begin();
+		vector< AutoRef<XmlNode> > children = node->children();
+		for (vector< AutoRef<XmlNode> >::iterator iter = children.begin();
 			 iter != children.end(); iter++)
 		{
 			if (XmlUtils::testKeyValueXmlNode(*iter)) {

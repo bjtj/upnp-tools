@@ -144,8 +144,8 @@ namespace UPNP {
 		throw Exception("no session found with sid : " + sid);
 	}
 	
-	vector<AutoRef<UPnPEventSubscriptionSession> > UPnPPropertyManager::getSessionsByUdnAndServiceType(const UDN & udn, const string & serviceType) {
-		vector<AutoRef<UPnPEventSubscriptionSession> > ret;
+	vector< AutoRef<UPnPEventSubscriptionSession> > UPnPPropertyManager::getSessionsByUdnAndServiceType(const UDN & udn, const string & serviceType) {
+		vector< AutoRef<UPnPEventSubscriptionSession> > ret;
 		for (map< string, AutoRef<UPnPEventSubscriptionSession> >::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
 			if (iter->second->udn() == udn && iter->second->serviceType() == serviceType) {
 				ret.push_back(iter->second);
@@ -180,8 +180,8 @@ namespace UPNP {
 		notify(getSession(sid), getPropertiesBySid(sid));
 	}
 
-	void UPnPPropertyManager::notify(const vector<AutoRef<UPnPEventSubscriptionSession> > & sessions, const LinkedStringMap & props) {
-		for (vector<AutoRef<UPnPEventSubscriptionSession> >::const_iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
+	void UPnPPropertyManager::notify(const vector< AutoRef<UPnPEventSubscriptionSession> > & sessions, const LinkedStringMap & props) {
+		for (vector< AutoRef<UPnPEventSubscriptionSession> >::const_iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
 			notify(*iter, props);
 		}
 	}

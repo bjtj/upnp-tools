@@ -144,16 +144,16 @@ static void test_device_profile() {
 	// scpd check
 	{
 		XML::XmlDocument doc = XML::DomParser::parse(scpd());
-		ASSERT(doc.getRootNode().nil(), ==, false);
-		vector<AutoRef<XmlNode> > actions = doc.getRootNode()->getElementsByTagName("action");
-		for (vector<AutoRef<XmlNode> >::iterator iter = actions.begin();
+		ASSERT(doc.rootNode().nil(), ==, false);
+		vector< AutoRef<XmlNode> > actions = doc.rootNode()->getElementsByTagName("action");
+		for (vector< AutoRef<XmlNode> >::iterator iter = actions.begin();
 			 iter != actions.end(); iter++)
 		{
 			UPnPAction action = UPnPDeviceDeserializer::deserializeActionNode(*iter);
 			ASSERT(action.name(), ==, "GetProtocolInfo");
 		}
-		vector<AutoRef<XmlNode> > stateVariables =
-			doc.getRootNode()->getElementsByTagName("stateVariable");
+		vector< AutoRef<XmlNode> > stateVariables =
+			doc.rootNode()->getElementsByTagName("stateVariable");
 	}
 
 	// parsing test

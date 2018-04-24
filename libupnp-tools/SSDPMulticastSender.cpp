@@ -66,7 +66,9 @@ namespace SSDP {
 
 	void SSDPMulticastSender::onReceive(DatagramPacket & packet) {
 		SSDPHeader header(packet.getData(), packet.getRemoteAddr());
-		for (vector<AutoRef<SSDPEventListener> >::iterator iter = listeners.begin(); iter != listeners.end(); iter++) {
+		for (vector< AutoRef<SSDPEventListener> >::iterator iter = listeners.begin();
+			 iter != listeners.end(); iter++)
+		{
 			(*iter)->dispatch(header);
 		}
 	}
@@ -94,7 +96,9 @@ namespace SSDP {
 	}
 
 	void SSDPMulticastSender::removeSSDPEventListener(AutoRef<SSDPEventListener> listener) {
-		for (vector<AutoRef<SSDPEventListener> >::iterator iter = listeners.begin(); iter != listeners.end();) {
+		for (vector< AutoRef<SSDPEventListener> >::iterator iter = listeners.begin();
+			 iter != listeners.end();)
+		{
 			if ((*iter) == listener) {
 				iter = listeners.erase(iter);
 			} else {

@@ -55,8 +55,8 @@ namespace UPNP {
 
 		// services
 		
-		vector<AutoRef<UPnPService> > & services = device.services();
-		for (vector<AutoRef<UPnPService> >::iterator iter = services.begin(); iter != services.end(); iter++) {
+		vector< AutoRef<UPnPService> > & services = device.services();
+		for (vector< AutoRef<UPnPService> >::iterator iter = services.begin(); iter != services.end(); iter++) {
 			AutoRef<UPnPService> service = *iter;
 			
 			ret.append("<service>");

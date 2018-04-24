@@ -588,15 +588,15 @@ namespace UPNP {
 			actionRequest.actionName() = actionName;
 			string xml = ((StringDataSink*)&request.getTransfer()->sink())->data();
 			XML::XmlDocument doc = XML::DomParser::parse(xml);
-			if (doc.getRootNode().nil()) {
+			if (doc.rootNode().nil()) {
 				throw Exception("wrong soap action xml format");
 			}
-			AutoRef<XML::XmlNode> actionNode = doc.getRootNode()->getElementByTagName(actionName);
+			AutoRef<XML::XmlNode> actionNode = doc.rootNode()->getElementByTagName(actionName);
 			if (actionNode.nil()) {
 				throw Exception("wrong soap action xml format / no action name tag");
 			}
-			vector<AutoRef<XML::XmlNode> > children = actionNode->children();
-			for (vector<AutoRef<XML::XmlNode> >::iterator iter = children.begin();
+			vector< AutoRef<XML::XmlNode> > children = actionNode->children();
+			for (vector< AutoRef<XML::XmlNode> >::iterator iter = children.begin();
 				 iter != children.end(); iter++) {
 				if (XmlUtils::testKeyValueXmlNode(*iter)) {
 					KeyValue kv = XmlUtils::toKeyValue(*iter);

@@ -20,7 +20,7 @@ namespace UPNP {
 	vector< AutoRef<UPnPDevice> > SharedUPnPDeviceList::list() {
 		return _devices;
 	}
-	void SharedUPnPDeviceList::list(vector<AutoRef<UPnPDevice> > & vec) {
+	void SharedUPnPDeviceList::list(vector< AutoRef<UPnPDevice> > & vec) {
 		lock();
 		vec.insert(vec.end(), _devices.begin(), _devices.end());
 		unlock();
@@ -28,7 +28,7 @@ namespace UPNP {
 	AutoRef<UPnPDevice> SharedUPnPDeviceList::findByUdn(const UDN & udn) {
 		AutoRef<UPnPDevice> ret;
 		lock();
-		for (vector<AutoRef<UPnPDevice> >::iterator iter = _devices.begin(); iter != _devices.end(); iter++) {
+		for (vector< AutoRef<UPnPDevice> >::iterator iter = _devices.begin(); iter != _devices.end(); iter++) {
 			if ((*iter)->udn() == udn) {
 				ret = *iter;
 			}
@@ -43,7 +43,7 @@ namespace UPNP {
 	}
 	void SharedUPnPDeviceList::remove(AutoRef<UPnPDevice> device) {
 		lock();
-		for (vector<AutoRef<UPnPDevice> >::iterator iter = _devices.begin(); iter != _devices.end();) {
+		for (vector< AutoRef<UPnPDevice> >::iterator iter = _devices.begin(); iter != _devices.end();) {
 			if ((*iter) == device) {
 				iter = _devices.erase(iter);
 			} else {
