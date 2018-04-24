@@ -85,7 +85,6 @@ static void test_device_profile() {
 	notiServer.startAsync();
 
 	UPnPServer server(UPnPServer::Config(9001));
-	server.setDebug(AutoRef<UPnPDebug>(new UPnPDebug));
 
 	AutoRef<UPnPDeviceProfile> deviceProfile(
 		new UPnPDeviceProfile(UPnPDeviceDeserializer::deserializeDevice(dd(udn))));
