@@ -57,9 +57,6 @@
     <ClCompile Include="..\libupnp-tools\UPnPDeviceProfile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\libupnp-tools\UPnPDeviceProfileBuilder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\libupnp-tools\UPnPDeviceSerializer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -90,9 +87,6 @@
     <ClCompile Include="..\libupnp-tools\UPnPEventReceiver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\libupnp-tools\UPnPLocationResolver.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\libupnp-tools\UPnPPropertyManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -103,6 +97,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\libupnp-tools\UPnPDeviceBuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libupnp-tools\UPnPActionInvoker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libupnp-tools\UPnPConfig.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -128,9 +128,6 @@
     <ClInclude Include="..\libupnp-tools\NetworkUtil.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\libupnp-tools\SSDPEventHandler.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPActionInvoker.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -149,9 +146,6 @@
     <ClInclude Include="..\libupnp-tools\UPnPActionErrorCodes.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\libupnp-tools\UPnPActionHandler.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPActionRequest.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -162,9 +156,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPDeviceProfile.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\libupnp-tools\UPnPDeviceProfileBuilder.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPDeviceSerializer.hpp">
@@ -180,9 +171,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPServer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\libupnp-tools\UPnPServiceProfile.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\SharedUPnPDeviceList.hpp">
@@ -206,9 +194,6 @@
     <ClInclude Include="..\libupnp-tools\UPnPExceptions.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\libupnp-tools\UPnPLocationResolver.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPPropertyManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -225,6 +210,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\libupnp-tools\UPnPDeviceListener.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libupnp-tools\UPnPConfig.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
