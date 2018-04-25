@@ -149,7 +149,7 @@ static void test_control_point() {
 
 	// first device
 	cp.addDevice(((RequestHandler*)&handler)->getSSDPHeader());
-	idle(100);
+	idle(200);
 	string uuid = ((RequestHandler*)&handler)->uuid();
 	UDN udn("uuid:" + uuid);
 	cout << " ** test uuid : " << uuid << endl;
