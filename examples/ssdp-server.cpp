@@ -2,16 +2,14 @@
 #include <liboslayer/FileStream.hpp>
 #include <libhttp-server/AnotherHttpServer.hpp>
 #include <libhttp-server/HttpHeader.hpp>
-#include <libhttp-server/WebServerUtil.hpp>
 #include <libupnp-tools/SSDPServer.hpp>
 #include <libupnp-tools/NetworkUtil.hpp>
 
 using namespace std;
-using namespace OS;
-using namespace HTTP;
-using namespace UTIL;
-using namespace SSDP;
-using namespace UPNP;
+using namespace osl;
+using namespace http;
+using namespace ssdp;
+using namespace upnp;
 
 static const char * dd = 
 "<?xml version=\"1.0\"?>\n"
@@ -101,23 +99,23 @@ int main(int argc, char *args[]) {
 		}
 		if (line == "alive") {
 			SSDPHeader header;
-			header = server.getNotifyHeader("ssdp:alive", UPNP::USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0"));
+			header = server.getNotifyHeader("ssdp:alive", upnp::USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0"));
 			header.setLocation(getLocation());
 			server.sendNotify(header);
-			header = server.getNotifyHeader("ssdp:alive", UPNP::USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0::upnp:rootdevice"));
+			header = server.getNotifyHeader("ssdp:alive", upnp::USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0::upnp:rootdevice"));
 			header.setLocation(getLocation());
 			server.sendNotify(header);
-			header = server.getNotifyHeader("ssdp:alive", UPNP::USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0::urn:schemas-upnp-org:device:InternetGatewayDevice:1"));
+			header = server.getNotifyHeader("ssdp:alive", upnp::USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0::urn:schemas-upnp-org:device:InternetGatewayDevice:1"));
 			header.setLocation(getLocation());
 			server.sendNotify(header);
 		}
 		if (line == "byebye") {
 			SSDPHeader header;
-			header = server.getNotifyHeader("ssdp:byebye", UPNP::USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0::urn:schemas-upnp-org:device:InternetGatewayDevice:1"));
+			header = server.getNotifyHeader("ssdp:byebye", upnp::USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0::urn:schemas-upnp-org:device:InternetGatewayDevice:1"));
 			server.sendNotify(header);
-			header = server.getNotifyHeader("ssdp:byebye", UPNP::USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0::upnp:rootdevice"));
+			header = server.getNotifyHeader("ssdp:byebye", upnp::USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0::upnp:rootdevice"));
 			server.sendNotify(header);
-			header = server.getNotifyHeader("ssdp:byebye", UPNP::USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0"));
+			header = server.getNotifyHeader("ssdp:byebye", upnp::USN("uuid:fc4ec57e-b051-11db-88f8-0060085db3f0"));
 			server.sendNotify(header);
 		}
 	}

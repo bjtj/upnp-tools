@@ -21,13 +21,12 @@
 #include <liboslayer/Logger.hpp>
 
 
-namespace UPNP {
+namespace upnp {
 
 	using namespace std;
-	using namespace OS;
-	using namespace SSDP;
-	using namespace HTTP;
-	using namespace UTIL;
+	using namespace osl;
+	using namespace ssdp;
+	using namespace http;
 	
 
 	static AutoRef<Logger> logger = LoggerFactory::instance().
@@ -587,16 +586,16 @@ namespace UPNP {
 			actionRequest.serviceType() = serviceType;
 			actionRequest.actionName() = actionName;
 			string xml = ((StringDataSink*)&request.getTransfer()->sink())->data();
-			XML::XmlDocument doc = XML::DomParser::parse(xml);
+			osl::XmlDocument doc = osl::DomParser::parse(xml);
 			if (doc.rootNode().nil()) {
 				throw Exception("wrong soap action xml format");
 			}
-			AutoRef<XML::XmlNode> actionNode = doc.rootNode()->getElementByTagName(actionName);
+			AutoRef<osl::XmlNode> actionNode = doc.rootNode()->getElementByTagName(actionName);
 			if (actionNode.nil()) {
 				throw Exception("wrong soap action xml format / no action name tag");
 			}
-			vector< AutoRef<XML::XmlNode> > children = actionNode->children();
-			for (vector< AutoRef<XML::XmlNode> >::iterator iter = children.begin();
+			vector< AutoRef<osl::XmlNode> > children = actionNode->children();
+			for (vector< AutoRef<osl::XmlNode> >::iterator iter = children.begin();
 				 iter != children.end(); iter++) {
 				if (XmlUtils::testKeyValueXmlNode(*iter)) {
 					KeyValue kv = XmlUtils::toKeyValue(*iter);

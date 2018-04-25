@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-namespace UPNP {
+namespace upnp {
 
 	/**
 	 * USN (Unique Service Name)

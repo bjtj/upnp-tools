@@ -8,7 +8,7 @@
 #include "UPnPTerms.hpp"
 
 
-namespace UPNP {
+namespace upnp {
 
 	
 	/**
@@ -17,23 +17,23 @@ namespace UPNP {
 	class UPnPDeviceProfile {
 	private:
 		bool _enabled;
-		OS::AutoRef<UPnPDevice> _device;
+		osl::AutoRef<UPnPDevice> _device;
 		
 	public:
 		UPnPDeviceProfile();
-		UPnPDeviceProfile(OS::AutoRef<UPnPDevice> device);
+		UPnPDeviceProfile(osl::AutoRef<UPnPDevice> device);
 		virtual ~UPnPDeviceProfile();
 		bool & enabled();
 		bool enabled() const;
 		UDN udn() const;
 		void setUdn(const UDN & udn);
 		std::string deviceDescription() const;
-		OS::AutoRef<UPnPDevice> & device();
+		osl::AutoRef<UPnPDevice> & device();
 		std::vector<std::string> deviceTypes() const;
-		std::vector< OS::AutoRef<UPnPService> > allServices() const;
+		std::vector< osl::AutoRef<UPnPService> > allServices() const;
 		std::vector<std::string> serviceTypes() const;
-		OS::AutoRef<UPnPService> getService(const std::string & serviceType);
-		OS::AutoRef<UPnPDevice> getDeviceByType(const std::string & deviceType);
+		osl::AutoRef<UPnPService> getService(const std::string & serviceType);
+		osl::AutoRef<UPnPDevice> getDeviceByType(const std::string & deviceType);
 	};
 }
 

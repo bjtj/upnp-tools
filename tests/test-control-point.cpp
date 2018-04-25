@@ -4,14 +4,12 @@
 #include <libupnp-tools/UPnPControlPoint.hpp>
 #include <libhttp-server/AnotherHttpServer.hpp>
 #include <libhttp-server/StringDataSink.hpp>
-#include <libhttp-server/WebServerUtil.hpp>
 
 using namespace std;
-using namespace OS;
-using namespace UTIL;
-using namespace HTTP;
-using namespace UPNP;
-using namespace SSDP;
+using namespace osl;
+using namespace http;
+using namespace upnp;
+using namespace ssdp;
 
 class RequestHandler : public HttpRequestHandler {
 private:
@@ -48,10 +46,10 @@ public:
 		return _uuid;
 	}
 	SSDPHeader getSSDPHeader() {
-		OS::InetAddress addr;
+		InetAddress addr;
 		SSDPHeader header("NOTIFY * HTTP/1.1\r\n"
 						  "HOST: 239.255.255.250:1900\r\n"
-						  "Location: http://127.0.0.1:9998/device.xml\r\n"
+						  "Location: http://127.0.0.1:9001/device.xml\r\n"
 						  "NTS: ssdp:alive\r\n"
 						  "USN: uuid:" + _uuid + "::rootdevice\r\n"
 						  "\r\n", addr);
@@ -139,7 +137,7 @@ public:
 
 static void test_control_point() {
 
-	HttpServerConfig httpConfig(9998);
+	HttpServerConfig httpConfig(9001);
 	AnotherHttpServer server(httpConfig);
 	AutoRef<HttpRequestHandler> handler(new RequestHandler);
 	server.registerRequestHandler("/*", handler);

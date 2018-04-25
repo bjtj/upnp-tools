@@ -4,7 +4,7 @@
 #include <liboslayer/AutoRef.hpp>
 #include "UPnPModels.hpp"
 
-namespace UPNP {
+namespace upnp {
 
 	/**
 	 * upnp device listener
@@ -14,9 +14,9 @@ namespace UPNP {
 	public:
 		UPnPDeviceListener() {}
 		virtual ~UPnPDeviceListener() {}
-		virtual void onDeviceAdded(OS::AutoRef<UPnPDevice> device) {}
-		virtual void onDeviceUpdated(OS::AutoRef<UPnPDevice> device) {}
-		virtual void onDeviceRemoved(OS::AutoRef<UPnPDevice> device) {}
+		virtual void onDeviceAdded(osl::AutoRef<UPnPDevice> device) {}
+		virtual void onDeviceUpdated(osl::AutoRef<UPnPDevice> device) {}
+		virtual void onDeviceRemoved(osl::AutoRef<UPnPDevice> device) {}
 	};
 }
 

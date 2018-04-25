@@ -9,14 +9,13 @@
 #include <liboslayer/File.hpp>
 
 
-namespace UPNP {
-
-	using namespace UTIL;
-	using namespace HTTP;
-	using namespace SSDP;
-	using namespace std;
-	using namespace OS;
+namespace upnp {
 	
+	using namespace std;
+	using namespace osl;
+	using namespace http;
+	using namespace ssdp;
+
 
 	static AutoRef<Logger> logger = LoggerFactory::instance().
 		getObservingLogger(File::basename(__FILE__));
@@ -295,7 +294,7 @@ namespace UPNP {
 	}
 
 	void UPnPControlPoint::addDevice(const SSDPHeader & header) {;
-		UDN udn("uuid:" + UPNP::USN(header.getUsn()).uuid());
+		UDN udn("uuid:" + upnp::USN(header.getUsn()).uuid());
 		InetAddress addr = header.getRemoteAddr();
 		unsigned long timeout = parseCacheControlMilli(header.getCacheControl());
 		if (_sessionManager.contains(udn)) {
@@ -310,7 +309,7 @@ namespace UPNP {
 	}
 
 	void UPnPControlPoint::removeDevice(const SSDPHeader & header) {
-		UDN udn("uuid:" + UPNP::USN(header.getUsn()).uuid());
+		UDN udn("uuid:" + upnp::USN(header.getUsn()).uuid());
 		if (!deviceListener.nil() && !_sessionManager[udn].nil()) {
 			AutoRef<UPnPDevice> device = _sessionManager[udn]->getRootDevice();
 			onDeviceRemoved(device);

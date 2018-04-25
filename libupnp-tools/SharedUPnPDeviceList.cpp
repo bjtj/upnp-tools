@@ -1,10 +1,9 @@
 #include "SharedUPnPDeviceList.hpp"
 
-namespace UPNP {
+namespace upnp {
 
 	using namespace std;
-	using namespace OS;
-	using namespace UTIL;
+	using namespace osl;
 
 	SharedUPnPDeviceList::SharedUPnPDeviceList() : sem(1) {
 	}

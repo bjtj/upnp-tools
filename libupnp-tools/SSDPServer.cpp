@@ -1,12 +1,11 @@
 #include "SSDPServer.hpp"
 #include "SSDPMsearchSender.hpp"
 
-namespace SSDP {
+namespace ssdp {
 
 	using namespace std;
-	using namespace OS;
-	using namespace UTIL;
-	using namespace UPNP;
+	using namespace osl;
+	using namespace upnp;
 
 	static const char * MCAST_HOST = "239.255.255.250";
 	static const int MCAST_PORT = 1900;
@@ -251,7 +250,7 @@ namespace SSDP {
 		sender.sendMcastToAllInterfaces(header.toString(), MCAST_HOST, MCAST_PORT);
 		sender.close();
 	}
-	SSDPHeader SSDPServer::getNotifyHeader(const string & nts, const UPNP::USN & usn) {
+	SSDPHeader SSDPServer::getNotifyHeader(const string & nts, const upnp::USN & usn) {
 		SSDPHeader header;
 		header.setParts("NOTIFY", "*", "HTTP/1.1");
 		header.setNotificationSubType(nts);

@@ -5,7 +5,7 @@
 #include "UPnPSoapFormatter.hpp"
 #include <string>
 
-namespace UPNP {
+namespace upnp {
 
 	/**
 	 * UPnP Soap Exception

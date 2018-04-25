@@ -2,14 +2,11 @@
 #include "XmlUtils.hpp"
 #include "UPnPResourceManager.hpp"
 
-namespace UPNP {
+namespace upnp {
 
 	using namespace std;
-	using namespace OS;
-	using namespace SSDP;
-	using namespace XML;
-	using namespace HTTP;
-	using namespace UTIL;
+	using namespace osl;
+	using namespace http;
 
 	UPnPDeviceDeserializer::UPnPDeviceDeserializer() {
 	}
@@ -164,7 +161,7 @@ namespace UPNP {
 		UPnPScpd scpd;
 		XmlDocument doc = DomParser::parse(xml);
 		if (doc.rootNode().nil()) {
-			throw OS::Exception("wrong scpd format - xml parse failed");
+			throw osl::Exception("wrong scpd format - xml parse failed");
 		}
 		vector< AutoRef<XmlNode> > actions = doc.rootNode()->getElementsByTagName("action");
 		for (vector< AutoRef<XmlNode> >::iterator iter = actions.begin();

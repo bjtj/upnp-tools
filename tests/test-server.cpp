@@ -15,11 +15,9 @@
 #include "utils.hpp"
 
 using namespace std;
-using namespace OS;
-using namespace UPNP;
-using namespace XML;
-using namespace UTIL;
-using namespace HTTP;
+using namespace osl;
+using namespace http;
+using namespace upnp;
 
 string dd(const UDN & udn);
 string scpd();
@@ -143,7 +141,7 @@ static void test_device_profile() {
 
 	// scpd check
 	{
-		XML::XmlDocument doc = XML::DomParser::parse(scpd());
+		XmlDocument doc = DomParser::parse(scpd());
 		ASSERT(doc.rootNode().nil(), ==, false);
 		vector< AutoRef<XmlNode> > actions = doc.rootNode()->getElementsByTagName("action");
 		for (vector< AutoRef<XmlNode> >::iterator iter = actions.begin();

@@ -3,12 +3,11 @@
 #include <liboslayer/os.hpp>
 #include <liboslayer/FileStream.hpp>
 
-namespace UPNP {
+namespace upnp {
 
 	using namespace std;
-	using namespace HTTP;
-	using namespace UTIL;
-	using namespace OS;
+	using namespace http;
+	using namespace osl;
 
 	UPnPResource::UPnPResource() {
 	}

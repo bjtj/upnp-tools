@@ -5,10 +5,10 @@
 #include <libhttp-server/Url.hpp>
 
 using namespace std;
-using namespace OS;
-using namespace UPNP;
-using namespace HTTP;
-using namespace UTIL;
+using namespace osl;
+using namespace http;
+using namespace upnp;
+
 
 static void test_resource_manager() {
 

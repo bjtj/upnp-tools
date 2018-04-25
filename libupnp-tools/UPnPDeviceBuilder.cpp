@@ -3,12 +3,11 @@
 #include "UPnPDeviceDeserializer.hpp"
 #include "UPnPResourceManager.hpp"
 
-namespace UPNP {
+namespace upnp {
 
 	using namespace std;
-	using namespace HTTP;
-	using namespace OS;
-	using namespace UTIL;
+	using namespace http;
+	using namespace osl;
 
 	UPnPDeviceBuilder::UPnPDeviceBuilder(const Url & url)
 		: _url(url), _allow_fail_scpd(false) {

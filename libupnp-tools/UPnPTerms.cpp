@@ -3,11 +3,11 @@
 #include <liboslayer/Text.hpp>
 #include <libhttp-server/Url.hpp>
 
-namespace UPNP {
+namespace upnp {
 
 	using namespace std;
-	using namespace UTIL;
-	using namespace HTTP;
+	using namespace osl;
+	using namespace http;
 
 	/**
 	 * usn

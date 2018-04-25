@@ -4,12 +4,11 @@
 #include <liboslayer/File.hpp>
 
 
-namespace UPNP {
+namespace upnp {
 
 	using namespace std;
-	using namespace OS;
-	using namespace HTTP;
-	using namespace UTIL;
+	using namespace osl;
+	using namespace http;
 	
 
 	static AutoRef<Logger> logger = LoggerFactory::instance().
@@ -35,7 +34,7 @@ namespace UPNP {
 			dump = ((StringDataSink*)&sink)->data();
 		}
 	}
-	void HttpUtils::DumpResponseHandler::onError(OS::Exception & e, AutoRef<UserData> userData) {
+	void HttpUtils::DumpResponseHandler::onError(osl::Exception & e, AutoRef<UserData> userData) {
 		logger->error("Error/e: " + e.toString());
 	}
 	HttpResponseHeader & HttpUtils::DumpResponseHandler::getResponseHeader() {

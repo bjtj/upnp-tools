@@ -6,20 +6,20 @@
 #include <libhttp-server/Url.hpp>
 #include <liboslayer/StringElements.hpp>
 
-namespace UPNP {
+namespace upnp {
 
 	/**
 	 * 
 	 */
 	class UPnPResource {
 	private:
-		UTIL::LinkedStringMap _meta;
+		osl::LinkedStringMap _meta;
 		std::string _content;
 	public:
 		UPnPResource();
 		UPnPResource(const std::string & content);
 		virtual ~UPnPResource();
-		UTIL::LinkedStringMap & meta();
+		osl::LinkedStringMap & meta();
 		std::string & content();
 	};
 
@@ -28,7 +28,7 @@ namespace UPNP {
 	 */
 	class UPnPResourceManager {
 	private:
-		UTIL::Properties props;
+		osl::Properties props;
 		static UPnPResourceManager _instance;
 	private:
 		UPnPResourceManager();
@@ -37,9 +37,9 @@ namespace UPNP {
 	public:
 		virtual ~UPnPResourceManager();
 		static UPnPResourceManager & instance();
-		std::string getResourceContent(const HTTP::Url & url);
-		UPnPResource getResource(const HTTP::Url & url);
-		UTIL::Properties & properties();
+		std::string getResourceContent(const http::Url & url);
+		UPnPResource getResource(const http::Url & url);
+		osl::Properties & properties();
 	};
 }
 

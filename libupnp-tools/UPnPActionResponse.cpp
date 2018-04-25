@@ -1,10 +1,11 @@
 #include "UPnPActionResponse.hpp"
 #include "UPnPActionErrorCodes.hpp"
 
-namespace UPNP {
+namespace upnp {
 
 	using namespace std;
-	using namespace UTIL;
+	using namespace osl;
+
 	
 	UPnPActionResponse::UPnPActionResponse() : _errorCode(0) {
 	}

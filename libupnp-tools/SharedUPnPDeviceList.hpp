@@ -8,25 +8,25 @@
 #include <string>
 #include <vector>
 
-namespace UPNP {
+namespace upnp {
 
 	/**
 	 * 
 	 */
 	class SharedUPnPDeviceList {
 	private:
-		std::vector<OS::AutoRef<UPnPDevice> > _devices;
-		OS::Semaphore sem;
+		std::vector<osl::AutoRef<UPnPDevice> > _devices;
+		osl::Semaphore sem;
 	public:
 		SharedUPnPDeviceList();
 		virtual ~SharedUPnPDeviceList();
 		virtual void lock();
 		virtual void unlock();
-		std::vector< OS::AutoRef<UPnPDevice> > list();
-		void list(std::vector< OS::AutoRef<UPnPDevice> > & vec);
-		OS::AutoRef<UPnPDevice> findByUdn(const UDN & udn);
-		void add(OS::AutoRef<UPnPDevice> device);
-		void remove(OS::AutoRef<UPnPDevice> device);
+		std::vector< osl::AutoRef<UPnPDevice> > list();
+		void list(std::vector< osl::AutoRef<UPnPDevice> > & vec);
+		osl::AutoRef<UPnPDevice> findByUdn(const UDN & udn);
+		void add(osl::AutoRef<UPnPDevice> device);
+		void remove(osl::AutoRef<UPnPDevice> device);
 		size_t size();
 	};
 }

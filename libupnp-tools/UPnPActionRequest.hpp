@@ -3,7 +3,7 @@
 
 #include "UPnPModels.hpp"
 
-namespace UPNP {
+namespace upnp {
 
 	/**
 	 * @brief 

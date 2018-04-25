@@ -1,10 +1,9 @@
 #include "SSDPMulticastSender.hpp"
 
-namespace SSDP {
+namespace ssdp {
 
 	using namespace std;
-	using namespace OS;
-	using namespace UTIL;
+	using namespace osl;
 	
 	SSDPMulticastSender::SSDPMulticastSender() : selector(new Selector) {
 		init();

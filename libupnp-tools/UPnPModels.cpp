@@ -1,12 +1,11 @@
 #include "UPnPModels.hpp"
 #include <liboslayer/Text.hpp>
 
-namespace UPNP {
+namespace upnp {
 
 	using namespace std;
-	using namespace OS;
-	using namespace HTTP;
-	using namespace UTIL;
+	using namespace osl;
+	using namespace http;
 
 	UPnPScpd::UPnPScpd() {
 	}

@@ -5,10 +5,10 @@
 #include <libupnp-tools/HttpUtils.hpp>
 
 using namespace std;
-using namespace OS;
-using namespace UTIL;
-using namespace UPNP;
-using namespace HTTP;
+using namespace osl;
+using namespace http;
+using namespace upnp;
+
 
 static UPnPNotify s_notify;
 
@@ -43,7 +43,7 @@ static void send_notify(Url url) {
 
 static void test_notification_server() {
 
-	UPnPEventReceiverConfig config(9998);
+	UPnPEventReceiverConfig config(9002);
 	UPnPEventReceiver server(config);
 	
 	server.startAsync();
@@ -53,7 +53,7 @@ static void test_notification_server() {
 	UPnPEventSubscription subscription("uuid:xxxxx");
 	server.addSubscription(subscription);
 
-	send_notify(Url("http://127.0.0.1:9998/"));
+	send_notify(Url("http://127.0.0.1:9002/"));
 
 	idle(1000);
 

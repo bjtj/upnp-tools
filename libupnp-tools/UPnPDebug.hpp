@@ -8,7 +8,7 @@
 #include <deque>
 
 
-namespace UPNP {
+namespace upnp {
 
 
 	/**
@@ -18,8 +18,8 @@ namespace UPNP {
 	private:
 		unsigned long _creationTick;
 		std::string _tag;
-		OS::InetAddress _from;
-		OS::InetAddress _to;
+		osl::InetAddress _from;
+		osl::InetAddress _to;
 		std::string _packet;
 		
 	public:
@@ -29,10 +29,10 @@ namespace UPNP {
 		unsigned long creationTick() const;
 		std::string & tag();
 		std::string tag() const;
-		OS::InetAddress & from();
-		OS::InetAddress from() const;
-		OS::InetAddress & to();
-		OS::InetAddress to() const;
+		osl::InetAddress & from();
+		osl::InetAddress from() const;
+		osl::InetAddress & to();
+		osl::InetAddress to() const;
 		std::string & packet();
 		std::string packet() const;
 	};

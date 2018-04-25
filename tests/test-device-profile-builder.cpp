@@ -2,15 +2,14 @@
 #include <liboslayer/os.hpp>
 #include <liboslayer/Uuid.hpp>
 #include <libupnp-tools/UPnPDeviceBuilder.hpp>
+#include <libupnp-tools/UPnPDeviceProfile.hpp>
 #include <libupnp-tools/UPnPDeviceDeserializer.hpp>
-#include <libupnp-tools/UPnPDeviceProfileBuilder.hpp>
 #include <libupnp-tools/UPnPResourceManager.hpp>
 
 using namespace std;
-using namespace OS;
-using namespace UTIL;
-using namespace HTTP;
-using namespace UPNP;
+using namespace osl;
+using namespace http;
+using namespace upnp;
 
 static string dd(const string & uuid);
 static string scpd_cm();

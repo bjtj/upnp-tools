@@ -6,16 +6,16 @@
 #include "UPnPActionRequest.hpp"
 #include "UPnPActionResponse.hpp"
 
-namespace UPNP {
+namespace upnp {
 	
 	class UPnPActionInvoker {
 	private:
-		HTTP::Url _controlUrl;
+		http::Url _controlUrl;
 		
 	public:
-		UPnPActionInvoker(HTTP::Url controlUrl);
+		UPnPActionInvoker(http::Url controlUrl);
 		virtual ~UPnPActionInvoker();
-		HTTP::Url & controlUrl();
+		http::Url & controlUrl();
 		UPnPActionResponse invoke(UPnPActionRequest & request);
 	};
 }

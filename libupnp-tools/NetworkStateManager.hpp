@@ -7,16 +7,16 @@
 #include <liboslayer/Observer.hpp>
 #include <liboslayer/Network.hpp>
 
-namespace UPNP {
+namespace upnp {
 	
-	class NetworkStateManager : public UTIL::Observable {
+	class NetworkStateManager : public osl::Observable {
 	private:
 		std::string primaryInterface;
 	public:
 		NetworkStateManager();
 		virtual ~NetworkStateManager();
-		virtual std::vector<OS::InetAddress> getInetAddresses();
-		virtual std::vector<OS::NetworkInterface> getNetworkInterfaces();
+		virtual std::vector<osl::InetAddress> getInetAddresses();
+		virtual std::vector<osl::NetworkInterface> getNetworkInterfaces();
 		void setPrimaryInterface(const std::string & primaryInterface);
 		std::string getPirmaryInterface();
 	};

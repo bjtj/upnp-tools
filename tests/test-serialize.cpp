@@ -4,17 +4,15 @@
 #include <libhttp-server/AnotherHttpServer.hpp>
 #include <libhttp-server/StringDataSink.hpp>
 #include <libupnp-tools/SSDPHeader.hpp>
-#include <libhttp-server/WebServerUtil.hpp>
 #include <libupnp-tools/UPnPDeviceBuilder.hpp>
 #include <libupnp-tools/UPnPDeviceDeserializer.hpp>
 #include <libupnp-tools/UPnPDeviceSerializer.hpp>
 
 using namespace std;
-using namespace OS;
-using namespace HTTP;
-using namespace UTIL;
-using namespace SSDP;
-using namespace UPNP;
+using namespace osl;
+using namespace http;
+using namespace ssdp;
+using namespace upnp;
 
 static string dd(string uuid);
 static string dd_fs(string uuid);
@@ -54,7 +52,7 @@ public:
 		return _uuid;
 	}
 	SSDPHeader getSSDPHeader() {
-		OS::InetAddress addr;
+		InetAddress addr;
 		SSDPHeader header("NOTIFY * HTTP/1.1\r\n"
 						  "HOST: 239.255.255.250:1900\r\n"
 						  "Location: http://127.0.0.1:9998/device.xml\r\n"

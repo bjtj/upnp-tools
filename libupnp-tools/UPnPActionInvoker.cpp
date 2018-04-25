@@ -4,12 +4,11 @@
 #include "HttpUtils.hpp"
 
 
-namespace UPNP {
+namespace upnp {
 
 	using namespace std;
-	using namespace OS;
-	using namespace HTTP;
-	using namespace UTIL;
+	using namespace osl;
+	using namespace http;
 
 	
 	UPnPActionInvoker::UPnPActionInvoker(Url controlUrl) : _controlUrl(controlUrl) {

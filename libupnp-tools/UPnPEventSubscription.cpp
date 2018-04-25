@@ -1,10 +1,10 @@
 #include "UPnPEventSubscription.hpp"
 #include <liboslayer/os.hpp>
 
-namespace UPNP {
+namespace upnp {
 
 	using namespace std;
-	using namespace OS;
+	using namespace osl;
 
 	UPnPEventSubscription::UPnPEventSubscription() : _lastSeq(0) {
 	}

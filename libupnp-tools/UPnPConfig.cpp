@@ -1,6 +1,6 @@
 #include "UPnPConfig.hpp"
 
-namespace UPNP {
+namespace upnp {
 
 
 	UPnPConfig UPnPConfig::_instance;

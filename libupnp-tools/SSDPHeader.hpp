@@ -7,15 +7,15 @@
 #include <libhttp-server/HttpHeaderReader.hpp>
 #include "UPnPTerms.hpp"
 
-namespace SSDP {
+namespace ssdp {
 
-	class SSDPHeader : public HTTP::HttpHeader {
+	class SSDPHeader : public http::HttpHeader {
 	private:
 		std::string rawPacket;
-		OS::InetAddress remoteAddr;
+		osl::InetAddress remoteAddr;
 	public:
 		SSDPHeader();
-		SSDPHeader(const std::string & headerString, OS::InetAddress & remoteAddr);
+		SSDPHeader(const std::string & headerString, osl::InetAddress & remoteAddr);
 		virtual ~SSDPHeader();
 		bool isSSDPRequest() const;
 		bool isSSDPResponse() const;
@@ -31,7 +31,7 @@ namespace SSDP {
 		std::string getSearchTarget() const;
 		std::string getLocation() const;
 		std::string getMan() const;
-		OS::InetAddress getRemoteAddr() const;
+		osl::InetAddress getRemoteAddr() const;
 		std::string getRawPacket() const;
 		std::string getCacheControl() const;
 		void setCacheControl(int maxAge);
@@ -39,7 +39,7 @@ namespace SSDP {
 		void setNotificationSubType(const std::string & nts);
 		void setSearchTarget(const std::string & st);
 		void setLocation(const std::string & location);
-		void setUsn(const UPNP::USN & usn);
+		void setUsn(const upnp::USN & usn);
 	};
 
 }

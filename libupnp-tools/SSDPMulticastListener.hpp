@@ -7,18 +7,18 @@
 #include <liboslayer/DatagramSocket.hpp>
 #include "SSDPEventListener.hpp"
 
-namespace SSDP {
+namespace ssdp {
 
 	class SSDPMulticastListener {
 	private:
 		std::string group;
-		OS::MulticastSocket sock;
-		OS::AutoRef<OS::Selector> selector;
-		std::vector<OS::AutoRef<SSDPEventListener> > listeners;
+		osl::MulticastSocket sock;
+		osl::AutoRef<osl::Selector> selector;
+		std::vector<osl::AutoRef<SSDPEventListener> > listeners;
 
 	public:
 		SSDPMulticastListener(const std::string & group, int port);
-		SSDPMulticastListener(const std::string & group, int port, OS::AutoRef<OS::Selector> selector);
+		SSDPMulticastListener(const std::string & group, int port, osl::AutoRef<osl::Selector> selector);
 		virtual ~SSDPMulticastListener();
 
 		void start();
@@ -26,11 +26,11 @@ namespace SSDP {
 		bool isRunning();
 		void poll(unsigned long timeout);
 		bool isReadable();
-		bool isReadable(OS::Selector & selector);
+		bool isReadable(osl::Selector & selector);
 		void procRead();
-		void onReceive(OS::DatagramPacket & packet);
-		void addSSDPEventListener(OS::AutoRef<SSDPEventListener> listener);
-		void removeSSDPEventListener(OS::AutoRef<SSDPEventListener> listener);
+		void onReceive(osl::DatagramPacket & packet);
+		void addSSDPEventListener(osl::AutoRef<SSDPEventListener> listener);
+		void removeSSDPEventListener(osl::AutoRef<SSDPEventListener> listener);
 	};
 }
 

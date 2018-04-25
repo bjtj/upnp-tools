@@ -1,6 +1,6 @@
 #include "UPnPActionRequest.hpp"
 
-namespace UPNP {
+namespace upnp {
 
 	using namespace std;
 	

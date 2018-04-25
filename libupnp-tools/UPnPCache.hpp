@@ -1,7 +1,7 @@
 #ifndef __UPNP_CACHE_HPP__
 #define __UPNP_CACHE_HPP__
 
-namespace UPNP {
+namespace upnp {
 	
 	class UPnPCache {
 	private:

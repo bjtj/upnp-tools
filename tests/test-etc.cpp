@@ -3,9 +3,8 @@
 #include <libupnp-tools/UPnPExceptions.hpp>
 
 using namespace std;
-using namespace OS;
-using namespace UTIL;
-using namespace UPNP;
+using namespace osl;
+using namespace upnp;
 
 /**
  * max-age test case

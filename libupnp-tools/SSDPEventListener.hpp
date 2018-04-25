@@ -4,7 +4,7 @@
 #include <libhttp-server/HttpHeader.hpp>
 #include "SSDPHeader.hpp"
 
-namespace SSDP {
+namespace ssdp {
 
 	/**
 	 *

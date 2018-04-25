@@ -10,10 +10,9 @@
 #include <libhttp-server/Url.hpp>
 
 using namespace std;
-using namespace OS;
-using namespace UTIL;
-using namespace HTTP;
-using namespace UPNP;
+using namespace osl;
+using namespace http;
+using namespace upnp;
 
 // #define _DEBUG
 
@@ -37,14 +36,14 @@ public:
     virtual ~DialHttpEventListener() {
 	}
 	
-	virtual void onDeviceDescriptionRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response) {
+	virtual void onDeviceDescriptionRequest(http::HttpRequest & request, http::HttpResponse & response) {
 		string host = NetworkUtil::selectDefaultAddress().getHost();
 		response.setHeaderField("Application-URL",
 										 "http://" + host + ":9001/dial/");
 	}
-	virtual void onScpdRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response) {
+	virtual void onScpdRequest(http::HttpRequest & request, http::HttpResponse & response) {
 	}
-	virtual void onControlRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response) {
+	virtual void onControlRequest(http::HttpRequest & request, http::HttpResponse & response) {
 	}
 };
 

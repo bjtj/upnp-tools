@@ -5,11 +5,11 @@
 #include <liboslayer/Text.hpp>
 #include <libhttp-server/HttpHeader.hpp>
 
-namespace UPNP {
+namespace upnp {
 
 	using namespace std;
-	using namespace HTTP;
-	using namespace UTIL;
+	using namespace osl;
+	using namespace http;
 
 	/**
 	 *

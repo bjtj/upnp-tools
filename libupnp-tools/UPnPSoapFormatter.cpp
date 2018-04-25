@@ -5,12 +5,10 @@
 #include <liboslayer/StringElements.hpp>
 #include <liboslayer/XmlEncoderDecoder.hpp>
 
-namespace UPNP {
+namespace upnp {
 
 	using namespace std;
-	using namespace OS;
-	using namespace UTIL;
-	using namespace XML;
+	using namespace osl;
 
 
 	UPnPSoapFormatter::UPnPSoapFormatter() {
@@ -57,8 +55,8 @@ namespace UPNP {
 		xml.append("<u:" + actionName + "Response xmlns:u=\"" + serviceType + "\">\r\n");
 		for (size_t i = 0; i < parameters.size(); i++) {
 			KeyValue & kv = parameters[i];
-			string name = XML::XmlEncoder::encode(kv.key());
-			string value = XML::XmlEncoder::encode(kv.value());
+			string name = osl::XmlEncoder::encode(kv.key());
+			string value = osl::XmlEncoder::encode(kv.value());
 			xml.append("<" + name + ">" + value + "</" + name + ">\r\n");
 		}
 		xml.append("</u:" + actionName + "Response>");

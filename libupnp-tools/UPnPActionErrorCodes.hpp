@@ -4,7 +4,7 @@
 #include <string>
 #include <map>
 
-namespace UPNP {
+namespace upnp {
 	
 	class UPnPActionErrorCodes {
 	private:

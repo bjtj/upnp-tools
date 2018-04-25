@@ -11,7 +11,7 @@
 #include <libhttp-server/FixedTransfer.hpp>
 #include <libhttp-server/StringDataSink.hpp>
 
-namespace UPNP {
+namespace upnp {
 
 	class HttpUtils {
 	private:
@@ -21,19 +21,19 @@ namespace UPNP {
 		/**
 		 * 
 		 */
-		class DumpResponseHandler : public HTTP::OnHttpResponseListener {
+		class DumpResponseHandler : public http::OnHttpResponseListener {
 		private:
-			HTTP::HttpResponseHeader responseHeader;
+			http::HttpResponseHeader responseHeader;
 			std::string dump;
 		public:
 			DumpResponseHandler();
 			virtual ~DumpResponseHandler();
-			virtual OS::AutoRef<HTTP::DataSink> getDataSink();
-			virtual void onTransferDone(HTTP::HttpResponse & response,
-										OS::AutoRef<HTTP::DataSink> sink,
-										OS::AutoRef<HTTP::UserData> userData);
-			virtual void onError(OS::Exception & e, OS::AutoRef<HTTP::UserData> userData);
-			HTTP::HttpResponseHeader & getResponseHeader();
+			virtual osl::AutoRef<http::DataSink> getDataSink();
+			virtual void onTransferDone(http::HttpResponse & response,
+										osl::AutoRef<http::DataSink> sink,
+										osl::AutoRef<http::UserData> userData);
+			virtual void onError(osl::Exception & e, osl::AutoRef<http::UserData> userData);
+			http::HttpResponseHeader & getResponseHeader();
 			std::string & getDump();
 		};
 		
@@ -44,24 +44,24 @@ namespace UPNP {
 		static unsigned long getConnectionTimeout();
 		static void setRecvTimeout(unsigned long readTimeout);
 		static unsigned long getRecvTimeout();
-		static std::string httpGet(const HTTP::Url & url);
-		static std::string httpPost(const HTTP::Url & url,
-									const UTIL::LinkedStringMap & headers,
+		static std::string httpGet(const http::Url & url);
+		static std::string httpPost(const http::Url & url,
+									const osl::LinkedStringMap & headers,
 									const std::string & content);
 		static std::string httpPost(const std::string & method,
-									const HTTP::Url & url,
-									const UTIL::LinkedStringMap & headers,
+									const http::Url & url,
+									const osl::LinkedStringMap & headers,
 									const std::string & content);
-		static DumpResponseHandler httpRequest(const HTTP::Url & url,
+		static DumpResponseHandler httpRequest(const http::Url & url,
 											   const std::string & method);
-		static DumpResponseHandler httpRequest(const HTTP::Url & url,
+		static DumpResponseHandler httpRequest(const http::Url & url,
 											   const std::string & method,
-											   const UTIL::LinkedStringMap & headers);
-		static DumpResponseHandler httpRequest(const HTTP::Url & url,
+											   const osl::LinkedStringMap & headers);
+		static DumpResponseHandler httpRequest(const http::Url & url,
 											   const std::string & method,
-											   const UTIL::LinkedStringMap & headers,
+											   const osl::LinkedStringMap & headers,
 											   const std::string & content);
-		static void testHttpErrorCode(const HTTP::Url & url, int code);
+		static void testHttpErrorCode(const http::Url & url, int code);
 	};
 }
 

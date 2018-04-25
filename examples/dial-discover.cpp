@@ -7,11 +7,10 @@
 #include <liboslayer/Text.hpp>
 
 using namespace std;
-using namespace OS;
-using namespace SSDP;
-using namespace UTIL;
-using namespace UPNP;
-using namespace HTTP;
+using namespace osl;
+using namespace ssdp;
+using namespace upnp;
+using namespace http;
 
 class DialDevice {
 private:

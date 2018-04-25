@@ -10,7 +10,7 @@
 #include <libhttp-server/Url.hpp>
 #include "UPnPTerms.hpp"
 
-namespace UPNP {
+namespace upnp {
 
 	class UPnPService;
 	class UPnPDevice;
@@ -20,18 +20,18 @@ namespace UPNP {
 	 */
 	class UPnPModelObject {
 	private:
-		UTIL::PropertyMap _props;
-		UTIL::LinkedStringMap _meta;
+		osl::PropertyMap _props;
+		osl::LinkedStringMap _meta;
 	public:
 		UPnPModelObject() {}
 		virtual ~UPnPModelObject() {}
-		UTIL::PropertyMap & properties() {
+		osl::PropertyMap & properties() {
 			return _props;
 		}
-		UTIL::PropertyMap properties() const {
+		osl::PropertyMap properties() const {
 			return _props;
 		}
-		UTIL::LinkedStringMap & meta() {
+		osl::LinkedStringMap & meta() {
 			return _meta;
 		}
 		std::string & operator[] (const std::string & name) {
@@ -159,32 +159,32 @@ namespace UPNP {
 	class UPnPDevice : public UPnPModelObject {
 	private:
 		UPnPDevice * parent;
-		std::vector< OS::AutoRef<UPnPDevice> > _childDevices;
-		std::vector<OS::AutoRef<UPnPService> > _services;
-		HTTP::Url _baseUrl;
+		std::vector< osl::AutoRef<UPnPDevice> > _childDevices;
+		std::vector<osl::AutoRef<UPnPService> > _services;
+		http::Url _baseUrl;
 		
 	public:
 		UPnPDevice();
 		UPnPDevice(UPnPDevice * parent);
 		virtual ~UPnPDevice();
 		void setParent(UPnPDevice * parent);
-		OS::AutoRef<UPnPDevice> prepareDevice();
-		void addDevice(OS::AutoRef<UPnPDevice> device);
-		void addService(OS::AutoRef<UPnPService> service);
-		OS::AutoRef<UPnPService> getService(const std::string & serviceType);
-		OS::AutoRef<UPnPService> getServiceWithScpdUrl(const std::string & scpdUrl);
-		OS::AutoRef<UPnPService> getServiceWithControlUrl(const std::string & controlUrl);
-		OS::AutoRef<UPnPService> getServiceWithEventSubUrl(const std::string & eventSubUrl);
-		std::vector<OS::AutoRef<UPnPDevice> > & childDevices();
-		std::vector<OS::AutoRef<UPnPService> > & services();
-		std::vector< OS::AutoRef<UPnPDevice> > allChildDevices();
-		std::vector< OS::AutoRef<UPnPService> > allServices();
+		osl::AutoRef<UPnPDevice> prepareDevice();
+		void addDevice(osl::AutoRef<UPnPDevice> device);
+		void addService(osl::AutoRef<UPnPService> service);
+		osl::AutoRef<UPnPService> getService(const std::string & serviceType);
+		osl::AutoRef<UPnPService> getServiceWithScpdUrl(const std::string & scpdUrl);
+		osl::AutoRef<UPnPService> getServiceWithControlUrl(const std::string & controlUrl);
+		osl::AutoRef<UPnPService> getServiceWithEventSubUrl(const std::string & eventSubUrl);
+		std::vector<osl::AutoRef<UPnPDevice> > & childDevices();
+		std::vector<osl::AutoRef<UPnPService> > & services();
+		std::vector< osl::AutoRef<UPnPDevice> > allChildDevices();
+		std::vector< osl::AutoRef<UPnPService> > allServices();
 		UDN udn() const;
 		void setUdn(const UDN & udn);
 		std::string & friendlyName();
 		std::string & deviceType();
-		HTTP::Url & baseUrl();
-		std::string formatUrl(const std::string & url, OS::AutoRef<UPnPService> service);
+		http::Url & baseUrl();
+		std::string formatUrl(const std::string & url, osl::AutoRef<UPnPService> service);
 		void setScpdUrl(const std::string & scpdUrl);
 		void setControlUrl(const std::string & controlUrl);
 		void setEventSubUrl(const std::string & eventSubUrl);

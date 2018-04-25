@@ -2,11 +2,10 @@
 #include "XmlUtils.hpp"
 #include <liboslayer/Text.hpp>
 
-namespace UPNP {
+namespace upnp {
 
 	using namespace std;
-	using namespace OS;
-	using namespace UTIL;
+	using namespace osl;
 
 	string UPnPDeviceSerializer::FIRSTLINE = "<?xml version=\"1.0\"?>\r\n";
 	string UPnPDeviceSerializer::NEWLINE = "\r\n";

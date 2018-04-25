@@ -16,7 +16,7 @@
 #include "UPnPDebug.hpp"
 
 
-namespace UPNP {
+namespace upnp {
 
 
 	/**
@@ -27,9 +27,9 @@ namespace UPNP {
 	public:
 		HttpEventListener() {}
 		virtual ~HttpEventListener() {}
-		virtual void onDeviceDescriptionRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response) = 0;
-		virtual void onScpdRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response) = 0;
-		virtual void onControlRequest(HTTP::HttpRequest & request, HTTP::HttpResponse & response) = 0;
+		virtual void onDeviceDescriptionRequest(http::HttpRequest & request, http::HttpResponse & response) = 0;
+		virtual void onScpdRequest(http::HttpRequest & request, http::HttpResponse & response) = 0;
+		virtual void onControlRequest(http::HttpRequest & request, http::HttpResponse & response) = 0;
 	};
 
 
@@ -38,19 +38,19 @@ namespace UPNP {
 	 */
 	class UPnPDeviceProfileManager {
 	private:
-		std::vector< OS::AutoRef<UPnPDeviceProfile> > _profiles;
+		std::vector< osl::AutoRef<UPnPDeviceProfile> > _profiles;
 	public:
 		UPnPDeviceProfileManager();
 		virtual ~UPnPDeviceProfileManager();
-		std::vector<OS::AutoRef<UPnPDeviceProfile> > & profiles();
-		void registerProfile(OS::AutoRef<UPnPDeviceProfile> profile);
+		std::vector<osl::AutoRef<UPnPDeviceProfile> > & profiles();
+		void registerProfile(osl::AutoRef<UPnPDeviceProfile> profile);
 		void unregisterProfile(const UDN & udn);
 		std::vector<std::string> getAllTypes();
 		std::vector<std::string> getTypes(const std::string & st);
-		OS::AutoRef<UPnPDeviceProfile> getDeviceProfile(const UDN & udn);
-		OS::AutoRef<UPnPDeviceProfile> getDeviceProfileHasScpdUrl(const std::string & scpdUrl);
-		OS::AutoRef<UPnPDeviceProfile> getDeviceProfileHasControlUrl(const std::string & controlUrl);
-		OS::AutoRef<UPnPDeviceProfile> getDeviceProfileHasEventSubUrl(const std::string & eventSubUrl);
+		osl::AutoRef<UPnPDeviceProfile> getDeviceProfile(const UDN & udn);
+		osl::AutoRef<UPnPDeviceProfile> getDeviceProfileHasScpdUrl(const std::string & scpdUrl);
+		osl::AutoRef<UPnPDeviceProfile> getDeviceProfileHasControlUrl(const std::string & controlUrl);
+		osl::AutoRef<UPnPDeviceProfile> getDeviceProfileHasEventSubUrl(const std::string & eventSubUrl);
 	};
 	
 
@@ -63,7 +63,7 @@ namespace UPNP {
 		/**
 		 * @brief config
 		 */
-		class Config : public UTIL::Properties {
+		class Config : public osl::Properties {
 		public:
 			Config(int port) {
 				setProperty("listen.port", port);
@@ -75,17 +75,17 @@ namespace UPNP {
 		
 		static std::string DEFAULT_SERVER_INFO;
 
-		OS::AutoRef<NetworkStateManager> networkStateManager;
+		osl::AutoRef<NetworkStateManager> networkStateManager;
 		Config config;
 		UPnPDeviceProfileManager profileManager;
-		OS::AutoRef<HTTP::AnotherHttpServer> httpServer;
-		OS::AutoRef<UPnPActionRequestHandler> actionRequestHandler;
-		OS::AutoRef<HttpEventListener> httpEventListener;
+		osl::AutoRef<http::AnotherHttpServer> httpServer;
+		osl::AutoRef<UPnPActionRequestHandler> actionRequestHandler;
+		osl::AutoRef<HttpEventListener> httpEventListener;
 		UPnPPropertyManager propertyManager;
 		UPnPEventNotificationThread notificationThread;
-		UTIL::TimerLooperThread timerThread;
-		SSDP::SSDPServer ssdpServer;
-		OS::AutoRef<SSDP::SSDPEventListener> ssdpListener;
+		osl::TimerLooperThread timerThread;
+		ssdp::SSDPServer ssdpServer;
+		osl::AutoRef<ssdp::SSDPEventListener> ssdpListener;
 
 	private:
 		
@@ -96,11 +96,11 @@ namespace UPNP {
 	public:
 		UPnPServer(const Config & config);
 		UPnPServer(const Config & config,
-				   OS::AutoRef<NetworkStateManager> networkStateManager);
+				   osl::AutoRef<NetworkStateManager> networkStateManager);
 		virtual ~UPnPServer();
 		void startAsync();
 		void stop();
-		OS::AutoRef<HTTP::AnotherHttpServer> getHttpServer();
+		osl::AutoRef<http::AnotherHttpServer> getHttpServer();
 		std::string makeLocation(const UDN & udn);
 
 		void activateDevice(const UDN & udn);
@@ -109,47 +109,47 @@ namespace UPNP {
 		void deactivateAllDevices();
 
 		// announce
-		void delayNotify(unsigned long delay, int type, OS::AutoRef<UPnPDeviceProfile> profile);
+		void delayNotify(unsigned long delay, int type, osl::AutoRef<UPnPDeviceProfile> profile);
 		void notifyAliveAll();
-		void notifyAlive(OS::AutoRef<UPnPDeviceProfile> profile);
-		void notifyAliveByDeviceType(OS::AutoRef<UPnPDeviceProfile> profile,
+		void notifyAlive(osl::AutoRef<UPnPDeviceProfile> profile);
+		void notifyAliveByDeviceType(osl::AutoRef<UPnPDeviceProfile> profile,
 									 const std::string & deviceType);
 		std::string makeNotifyAlive(const std::string & location,
 									const UDN & udn,
 									const std::string & deviceType);
-		void notifyByeBye(OS::AutoRef<UPnPDeviceProfile> profile);
-		void notifyByeByeByDeviceType(OS::AutoRef<UPnPDeviceProfile> profile,
+		void notifyByeBye(osl::AutoRef<UPnPDeviceProfile> profile);
+		void notifyByeByeByDeviceType(osl::AutoRef<UPnPDeviceProfile> profile,
 									  const std::string & deviceType);
 		std::string makeNotifyByeBye(const UDN & udn, const std::string & deviceType);
 
 		// m-search response
-		void respondMsearch(const std::string & st, OS::InetAddress & remoteAddr);
+		void respondMsearch(const std::string & st, osl::InetAddress & remoteAddr);
 		std::string makeMsearchResponse(const std::string & location,
 										const UDN & udn,
 										const std::string & st);
 
 		// device profile management
 		UPnPDeviceProfileManager & getProfileManager();
-		OS::AutoRef<UPnPDeviceProfile> registerDeviceProfile(const HTTP::Url & url);
-		void registerDeviceProfile(OS::AutoRef<UPnPDeviceProfile> profile);
+		osl::AutoRef<UPnPDeviceProfile> registerDeviceProfile(const http::Url & url);
+		void registerDeviceProfile(osl::AutoRef<UPnPDeviceProfile> profile);
 		void unregisterDeviceProfile(const UDN & udn);
 
 		// application level control
-		void setActionRequestHandler(OS::AutoRef<UPnPActionRequestHandler> actionRequestHandler);
-		OS::AutoRef<UPnPActionRequestHandler> getActionRequestHandler();
-		void setHttpEventListener(OS::AutoRef<HttpEventListener> httpEventListener);
-		OS::AutoRef<HttpEventListener> getHttpEventListener();
+		void setActionRequestHandler(osl::AutoRef<UPnPActionRequestHandler> actionRequestHandler);
+		osl::AutoRef<UPnPActionRequestHandler> getActionRequestHandler();
+		void setHttpEventListener(osl::AutoRef<HttpEventListener> httpEventListener);
+		osl::AutoRef<HttpEventListener> getHttpEventListener();
 
 		// event notification
 		UPnPPropertyManager & getPropertyManager();
 		void setProperty(const UDN & udn, const std::string & serviceyType,
 						 const std::string & name, const std::string & value);
 		void setProperties(const UDN & udn, const std::string & serviceyType,
-						   UTIL::LinkedStringMap & props);
+						   osl::LinkedStringMap & props);
 		void notifyEvent(const std::string & sid);
 		void delayNotifyEvent(const std::string & sid, unsigned long delay);
-		std::string onSubscribe(OS::AutoRef<UPnPDevice> device,
-								OS::AutoRef<UPnPService> service,
+		std::string onSubscribe(osl::AutoRef<UPnPDevice> device,
+								osl::AutoRef<UPnPService> service,
 								const std::vector<std::string> & callbacks,
 								unsigned long timeout);
 		bool onRenewSubscription(const std::string & sid, unsigned long timeout);
@@ -158,7 +158,7 @@ namespace UPNP {
 		unsigned long parseTimeoutMilli(const std::string & phrase);
 
 		// session timeout manager
-		UTIL::TimerLooperThread & getTimerThread();
+		osl::TimerLooperThread & getTimerThread();
 
 		void collectExpired();
 

@@ -14,11 +14,10 @@
 #include <libupnp-tools/UPnPResourceManager.hpp>
 
 using namespace std;
-using namespace OS;
-using namespace SSDP;
-using namespace HTTP;
-using namespace UPNP;
-using namespace UTIL;
+using namespace osl;
+using namespace ssdp;
+using namespace http;
+using namespace upnp;
 
 static bool s_lightOn = false;
 static int s_level = 100;

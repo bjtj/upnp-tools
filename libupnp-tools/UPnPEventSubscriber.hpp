@@ -7,7 +7,7 @@
 #include <libhttp-server/Url.hpp>
 #include "UPnPEventSubscription.hpp"
 
-namespace UPNP {
+namespace upnp {
 
 	/**
 	 * @brief
@@ -65,9 +65,9 @@ namespace UPNP {
 	 */
 	class UPnPEventSubscriber {
 	private:
-		HTTP::Url eventSubUrl;
+		http::Url eventSubUrl;
 	public:
-		UPnPEventSubscriber(const HTTP::Url & eventSubUrl);
+		UPnPEventSubscriber(const http::Url & eventSubUrl);
 		virtual ~UPnPEventSubscriber();
 		UPnPEventSubscribeResponse subscribe(UPnPEventSubscribeRequest & request);
 		void unsubscribe(const std::string & sid);

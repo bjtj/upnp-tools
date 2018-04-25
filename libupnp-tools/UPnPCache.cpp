@@ -2,10 +2,10 @@
 #include <liboslayer/os.hpp>
 
 
-namespace UPNP {
+namespace upnp {
 	
 
-	using namespace OS;
+	using namespace osl;
 	
 	
 	UPnPCache::UPnPCache()

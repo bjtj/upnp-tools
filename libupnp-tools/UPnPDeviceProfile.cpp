@@ -1,10 +1,10 @@
 #include "UPnPDeviceProfile.hpp"
 #include "UPnPDeviceSerializer.hpp"
 
-namespace UPNP {
+namespace upnp {
 
 	using namespace std;
-	using namespace OS;
+	using namespace osl;
 
 
 	UPnPDeviceProfile::UPnPDeviceProfile()

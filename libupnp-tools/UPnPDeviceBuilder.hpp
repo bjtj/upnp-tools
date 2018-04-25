@@ -4,23 +4,23 @@
 #include <libhttp-server/Url.hpp>
 #include "UPnPModels.hpp"
 
-namespace UPNP {
+namespace upnp {
 
 	/**
 	 * upnp device builder
 	 */
 	class UPnPDeviceBuilder {
 	private:
-		HTTP::Url _url;
-		OS::AutoRef<UPnPDevice> _device;
+		http::Url _url;
+		osl::AutoRef<UPnPDevice> _device;
 		bool _allow_fail_scpd;
 	public:
-		UPnPDeviceBuilder(const HTTP::Url & url);
+		UPnPDeviceBuilder(const http::Url & url);
 		virtual ~UPnPDeviceBuilder();
-		HTTP::Url & url();
+		http::Url & url();
 		bool & allow_fail_scpd();
-		OS::AutoRef<UPnPDevice> & device();
-		OS::AutoRef<UPnPDevice> execute();
+		osl::AutoRef<UPnPDevice> & device();
+		osl::AutoRef<UPnPDevice> execute();
 	};
 }
 

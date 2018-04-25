@@ -5,7 +5,7 @@
 #include <string>
 #include "UPnPModels.hpp"
 
-namespace UPNP {
+namespace upnp {
 
 	/**
 	 * @brief 
@@ -16,7 +16,7 @@ namespace UPNP {
 		std::string _errorString;
 		std::string _serviceType;
 		std::string _actionName;
-		UTIL::LinkedStringMap _params;
+		osl::LinkedStringMap _params;
 		
 	public:
 		UPnPActionResponse();
@@ -28,7 +28,7 @@ namespace UPNP {
 		std::string & errorString();
 		std::string & serviceType();
 		std::string & actionName();
-		UTIL::LinkedStringMap & parameters();
+		osl::LinkedStringMap & parameters();
 		std::string & operator[] (const std::string & name);
 	};
 }

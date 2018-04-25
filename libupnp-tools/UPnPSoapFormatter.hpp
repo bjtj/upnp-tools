@@ -5,7 +5,7 @@
 #include "UPnPActionResponse.hpp"
 #include <string>
 
-namespace UPNP {
+namespace upnp {
 
 	/**
 	 * 

@@ -7,7 +7,7 @@
 #include "UPnPModels.hpp"
 #include "UPnPDebug.hpp"
 
-namespace UPNP {
+namespace upnp {
 
 	/**
 	 * @brief 
@@ -18,16 +18,16 @@ namespace UPNP {
 		UPnPDeviceDeserializer();
 		virtual ~UPnPDeviceDeserializer();
 
-		static void deserializeDeviceNode(OS::AutoRef<XML::XmlNode> deviceXml, UPnPDevice & device);
-		static void deserializeDeviceProperties(OS::AutoRef<XML::XmlNode> deviceXml, UPnPDevice & device);
-		static void deserializeServiceList(OS::AutoRef<XML::XmlNode> deviceXml, UPnPDevice & device);
-		static void deserializeServiceProperties(OS::AutoRef<XML::XmlNode> serviceXml, UPnPService * service);
-		static UPnPAction deserializeActionNode(OS::AutoRef<XML::XmlNode> actionXml);
-		static UPnPArgument deserializeArgumentNode(OS::AutoRef<XML::XmlNode> argumentXml);
-		static UPnPStateVariable deserializeStateVariable(OS::AutoRef<XML::XmlNode> stateVariableXml);
-		static void deserializeProperties(OS::AutoRef<XML::XmlNode> node, UPnPModelObject & obj);
+		static void deserializeDeviceNode(osl::AutoRef<osl::XmlNode> deviceXml, UPnPDevice & device);
+		static void deserializeDeviceProperties(osl::AutoRef<osl::XmlNode> deviceXml, UPnPDevice & device);
+		static void deserializeServiceList(osl::AutoRef<osl::XmlNode> deviceXml, UPnPDevice & device);
+		static void deserializeServiceProperties(osl::AutoRef<osl::XmlNode> serviceXml, UPnPService * service);
+		static UPnPAction deserializeActionNode(osl::AutoRef<osl::XmlNode> actionXml);
+		static UPnPArgument deserializeArgumentNode(osl::AutoRef<osl::XmlNode> argumentXml);
+		static UPnPStateVariable deserializeStateVariable(osl::AutoRef<osl::XmlNode> stateVariableXml);
+		static void deserializeProperties(osl::AutoRef<osl::XmlNode> node, UPnPModelObject & obj);
 
-		static OS::AutoRef<UPnPDevice> deserializeDevice(const std::string & xml);
+		static osl::AutoRef<UPnPDevice> deserializeDevice(const std::string & xml);
 		static UPnPScpd deserializeScpd(const std::string & xml);
 	};
 }

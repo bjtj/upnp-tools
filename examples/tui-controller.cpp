@@ -18,10 +18,10 @@
 #include <ncurses.h>
 
 using namespace std;
-using namespace UTIL;
-using namespace UPNP;
-using namespace HTTP;
-using namespace XML;
+using namespace osl;
+using namespace http;
+using namespace upnp;
+
 
 class Win {
 private:

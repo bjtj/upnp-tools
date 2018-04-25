@@ -1,6 +1,6 @@
 #include "UPnPActionErrorCodes.hpp"
 
-namespace UPNP {
+namespace upnp {
 
 	using namespace std;
 

@@ -1,17 +1,18 @@
 #include "SSDPHeader.hpp"
 #include <liboslayer/Text.hpp>
 
-namespace SSDP {
+namespace ssdp {
 
 	using namespace std;
-	using namespace UTIL;
+	using namespace osl;
+
 
 	SSDPHeader::SSDPHeader() {
 	}
 
-	SSDPHeader::SSDPHeader(const string & headerString, OS::InetAddress & remoteAddr)
+	SSDPHeader::SSDPHeader(const string & headerString, osl::InetAddress & remoteAddr)
 		: remoteAddr(remoteAddr) {
-		HTTP::HttpHeaderReader reader;
+		http::HttpHeaderReader reader;
 		reader.read(headerString.c_str(), headerString.length());
 		this->setHeader(reader.getHeader());
 		rawPacket = headerString;
@@ -101,7 +102,7 @@ namespace SSDP {
 		return getHeaderField("MAN");
 	}
 
-	OS::InetAddress SSDPHeader::getRemoteAddr() const {
+	osl::InetAddress SSDPHeader::getRemoteAddr() const {
 		return remoteAddr;
 	}
 
@@ -133,7 +134,7 @@ namespace SSDP {
 		setHeaderField("LOCATION", location);
 	}
 
-	void SSDPHeader::setUsn(const UPNP::USN & usn) {
+	void SSDPHeader::setUsn(const upnp::USN & usn) {
 		setHeaderField("USN", usn.toString());
 	}
 

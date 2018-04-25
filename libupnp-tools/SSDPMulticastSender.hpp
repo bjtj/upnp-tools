@@ -8,33 +8,33 @@
 #include <liboslayer/AutoRef.hpp>
 #include <liboslayer/DatagramSocket.hpp>
 
-namespace SSDP {
+namespace ssdp {
 	
 	class SSDPMulticastSender {
 	private:
-		OS::DatagramSocket sock;
-		OS::AutoRef<OS::Selector> selector;
-		std::vector<OS::AutoRef<SSDPEventListener> > listeners;
+		osl::DatagramSocket sock;
+		osl::AutoRef<osl::Selector> selector;
+		std::vector<osl::AutoRef<SSDPEventListener> > listeners;
 		
 	public:
 		SSDPMulticastSender();
-		SSDPMulticastSender(OS::AutoRef<OS::Selector> selector);
+		SSDPMulticastSender(osl::AutoRef<osl::Selector> selector);
 		SSDPMulticastSender(int port);
-		SSDPMulticastSender(int port, OS::AutoRef<OS::Selector> selector);
-		SSDPMulticastSender(OS::InetAddress & bindAddr);
-		SSDPMulticastSender(OS::InetAddress & bindAddr, OS::AutoRef<OS::Selector> selector);
+		SSDPMulticastSender(int port, osl::AutoRef<osl::Selector> selector);
+		SSDPMulticastSender(osl::InetAddress & bindAddr);
+		SSDPMulticastSender(osl::InetAddress & bindAddr, osl::AutoRef<osl::Selector> selector);
 		virtual ~SSDPMulticastSender();
 		void init();
 		void close();
 		void poll(unsigned long timeout);
 		bool isReadable();
-		bool isReadable(OS::Selector & selector);
+		bool isReadable(osl::Selector & selector);
 		void procRead();
-		void onReceive(OS::DatagramPacket & packet);
+		void onReceive(osl::DatagramPacket & packet);
 		void sendMcast(const std::string & content, const std::string & group, int port);
 		void sendMcastToAllInterfaces(const std::string & content, const std::string & group, int port);
-		void addSSDPEventListener(OS::AutoRef<SSDPEventListener> listener);
-		void removeSSDPEventListener(OS::AutoRef<SSDPEventListener> listener);
+		void addSSDPEventListener(osl::AutoRef<SSDPEventListener> listener);
+		void removeSSDPEventListener(osl::AutoRef<SSDPEventListener> listener);
 	};
 }
 

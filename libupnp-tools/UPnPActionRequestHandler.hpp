@@ -4,7 +4,7 @@
 #include "UPnPActionRequest.hpp"
 #include "UPnPActionResponse.hpp"
 
-namespace UPNP {
+namespace upnp {
 	
 	class UPnPActionRequestHandler {
 	private:

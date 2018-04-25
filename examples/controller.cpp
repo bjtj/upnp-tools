@@ -21,11 +21,9 @@
 
 
 using namespace std;
-using namespace OS;
-using namespace UTIL;
-using namespace UPNP;
-using namespace HTTP;
-using namespace XML;
+using namespace osl;
+using namespace upnp;
+using namespace http;
 
 
 static AutoRef<Logger> logger = LoggerFactory::instance().
@@ -83,7 +81,7 @@ int main(int argc, char *args[]) {
 	} catch (const string & e) {
 		cerr << "error occured - " << e << endl;
 		return 1;
-	} catch (OS::Exception & e) {
+	} catch (Exception & e) {
 		cerr << "error occured - " << e.toString() << endl;
 		return 1;
 	}
@@ -316,7 +314,7 @@ int run(int argc, char *args[]) {
 					cout << " - " << name << " := " << value << endl;
 				}
 				cout << "[elapsed : " << tick_milli() - tick << " ms.]" << endl;
-			} catch (OS::Exception & e) {
+			} catch (Exception & e) {
 				cout << "[error : " << e.toString() << "]" << endl;
 			}
 		} else if (line == "subs") {

@@ -7,7 +7,7 @@
 #include "SSDPEventListener.hpp"
 #include "SSDPMulticastSender.hpp"
 
-namespace SSDP {
+namespace ssdp {
 
 	class SSDPMsearchSender : public SSDPMulticastSender {
 	private:
@@ -15,11 +15,11 @@ namespace SSDP {
 
 	public:
 		SSDPMsearchSender();
-		SSDPMsearchSender(OS::AutoRef<OS::Selector> selector);
+		SSDPMsearchSender(osl::AutoRef<osl::Selector> selector);
 		SSDPMsearchSender(int port);
-		SSDPMsearchSender(int port, OS::AutoRef<OS::Selector> selector);
-		SSDPMsearchSender(OS::InetAddress & bindAddr);
-		SSDPMsearchSender(OS::InetAddress & bindAddr, OS::AutoRef<OS::Selector> selector);
+		SSDPMsearchSender(int port, osl::AutoRef<osl::Selector> selector);
+		SSDPMsearchSender(osl::InetAddress & bindAddr);
+		SSDPMsearchSender(osl::InetAddress & bindAddr, osl::AutoRef<osl::Selector> selector);
 		virtual ~SSDPMsearchSender();
 		void cancel();
 		void gather(unsigned long timeout);
@@ -27,7 +27,7 @@ namespace SSDP {
 		void sendMsearchAllInterfaces(const std::string & st, unsigned long timeoutSec, const std::string & group, int port);
 		std::string makeMsearchPacket(const std::string & st, unsigned long timeoutSec, const std::string & group, int port);
 		
-		void unicast(const std::string & content, OS::InetAddress & remoteAddr);
+		void unicast(const std::string & content, osl::InetAddress & remoteAddr);
 	};
 }
 

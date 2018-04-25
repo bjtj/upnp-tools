@@ -3,7 +3,7 @@
 
 #include <liboslayer/os.hpp>
 
-namespace UPNP {
+namespace upnp {
 
 	DECL_NAMED_EXCEPTION(UPnPException);
 	DECL_EXCEPTION(UPnPParseException, UPnPException);

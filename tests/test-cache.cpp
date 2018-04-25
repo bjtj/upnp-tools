@@ -2,9 +2,8 @@
 #include <libupnp-tools/UPnPCache.hpp>
 
 using namespace std;
-using namespace OS;
-using namespace UTIL;
-using namespace UPNP;
+using namespace osl;
+using namespace upnp;
 
 class CacheTestCase : public TestCase {
 public:

@@ -4,7 +4,7 @@
 #include <string>
 
 
-namespace UPNP {
+namespace upnp {
 
 	class UPnPConfig {
 	private:

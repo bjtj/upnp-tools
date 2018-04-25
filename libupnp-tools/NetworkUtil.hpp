@@ -4,14 +4,14 @@
 #include <liboslayer/os.hpp>
 #include <liboslayer/Network.hpp>
 
-namespace UPNP {
+namespace upnp {
     
     class NetworkUtil {
     private:
     public:
         NetworkUtil();
         virtual ~NetworkUtil();
-        static OS::InetAddress selectDefaultAddress();
+        static osl::InetAddress selectDefaultAddress();
     };
     
 }

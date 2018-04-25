@@ -3,9 +3,9 @@
 #include "utils.hpp"
 
 using namespace std;
-using namespace SSDP;
-using namespace OS;
-using namespace UTIL;
+using namespace osl;
+using namespace ssdp;
+
 
 #define SSDP_HOST "239.255.255.250"
 #define SSDP_PORT 1900

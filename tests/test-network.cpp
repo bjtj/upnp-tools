@@ -3,10 +3,11 @@
 #include "utils.hpp"
 
 using namespace std;
-using namespace UPNP;
+using namespace osl;
+using namespace upnp;
 
 static void test_network() {
-	OS::InetAddress addr = NetworkUtil::selectDefaultAddress();
+	InetAddress addr = NetworkUtil::selectDefaultAddress();
 	cout << addr.getHost() << endl;
 }
 

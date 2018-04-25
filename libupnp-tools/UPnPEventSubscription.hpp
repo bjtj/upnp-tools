@@ -4,7 +4,7 @@
 #include <string>
 #include "UPnPTerms.hpp"
 
-namespace UPNP {
+namespace upnp {
 	
 	/**
 	 * @brief

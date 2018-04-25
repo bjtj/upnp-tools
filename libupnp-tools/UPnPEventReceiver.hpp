@@ -9,7 +9,7 @@
 #include "UPnPEventSubscription.hpp"
 #include "UPnPTerms.hpp"
 
-namespace UPNP {
+namespace upnp {
 
 	/**
 	 * @brief
@@ -43,7 +43,7 @@ namespace UPNP {
 	 * @brief
 	 */
 
-	class UPnPEventReceiverConfig : public UTIL::Properties {
+	class UPnPEventReceiverConfig : public osl::Properties {
 	private:
 	public:
 		UPnPEventReceiverConfig() {}
@@ -58,8 +58,8 @@ namespace UPNP {
 	private:
 		UPnPEventReceiverConfig config;
 		UPnPEventSubscriptionRegistry registry;
-		std::vector<OS::AutoRef<UPnPEventListener> > listeners;
-		HTTP::AnotherHttpServer * server;
+		std::vector<osl::AutoRef<UPnPEventListener> > listeners;
+		http::AnotherHttpServer * server;
 		
 	public:
 		UPnPEventReceiver(UPnPEventReceiverConfig & config);
@@ -68,7 +68,7 @@ namespace UPNP {
 		void stop();
 		void addSubscription(UPnPEventSubscription & subscription);
 		void removeSubscription(UPnPEventSubscription & subscription);
-		void addEventListener(OS::AutoRef<UPnPEventListener> listener);
+		void addEventListener(osl::AutoRef<UPnPEventListener> listener);
 		UPnPEventSubscription & findSubscriptionByUdnAndServiceType(const UDN & udn, const std::string & serviceType);
 		virtual void onNotify(UPnPNotify & notify);
 		std::string getCallbackUrl(const std::string & host);

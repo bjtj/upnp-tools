@@ -9,7 +9,7 @@
 #include "UPnPCache.hpp"
 #include "UPnPTerms.hpp"
 
-namespace UPNP {
+namespace upnp {
 
 	class UPnPPropertyManager;
 
@@ -53,15 +53,15 @@ namespace UPNP {
 		bool prepared();
 	};
 
-	typedef OS::AutoRef<NotificationRequest> AutoNotificationRequest;
-	typedef UTIL::Message<AutoNotificationRequest> NotificationRequestMessage;
+	typedef osl::AutoRef<NotificationRequest> AutoNotificationRequest;
+	typedef osl::Message<AutoNotificationRequest> NotificationRequestMessage;
 
 	/**
 	 * @brief notify thread
 	 */
-	class UPnPEventNotificationThread : public OS::Thread {
+	class UPnPEventNotificationThread : public osl::Thread {
 	private:
-		UTIL::MessageQueue<AutoNotificationRequest> messageQueue;
+		osl::MessageQueue<AutoNotificationRequest> messageQueue;
 		UPnPPropertyManager & propertyManager;
 		
 	public:
@@ -77,9 +77,9 @@ namespace UPNP {
 	 */
 	class UPnPPropertyManager {
 	private:
-		std::map< std::string, UTIL::LinkedStringMap> registry;
-		std::map< std::string, OS::AutoRef<UPnPEventSubscriptionSession> > sessions;
-		OS::AutoRef<OnSubscriptionOutdatedListener> outdatedListener;
+		std::map< std::string, osl::LinkedStringMap> registry;
+		std::map< std::string, osl::AutoRef<UPnPEventSubscriptionSession> > sessions;
+		osl::AutoRef<OnSubscriptionOutdatedListener> outdatedListener;
 
 	private:
 		std::string getKey(const UDN & udn, const std::string serviceType);
@@ -89,24 +89,24 @@ namespace UPNP {
 		virtual ~UPnPPropertyManager();
 		void clear();
 		bool isRegisteredService(const UDN & udn, const std::string serviceType);
-		void registerService(const UDN & udn, const std::string serviceType, const UTIL::LinkedStringMap & props);
-		void addSubscriptionSession(const OS::AutoRef<UPnPEventSubscriptionSession> session);
+		void registerService(const UDN & udn, const std::string serviceType, const osl::LinkedStringMap & props);
+		void addSubscriptionSession(const osl::AutoRef<UPnPEventSubscriptionSession> session);
 		bool hasSubscriptionSession(const std::string & sid);
 		void removeSubscriptionSession(const std::string & sid);
-		OS::AutoRef<UPnPEventSubscriptionSession> getSession(const std::string & sid);
-		std::vector<OS::AutoRef<UPnPEventSubscriptionSession> > getSessionsByUdnAndServiceType(const UDN & udn, const std::string & serviceType);
+		osl::AutoRef<UPnPEventSubscriptionSession> getSession(const std::string & sid);
+		std::vector<osl::AutoRef<UPnPEventSubscriptionSession> > getSessionsByUdnAndServiceType(const UDN & udn, const std::string & serviceType);
 		void setProperty(const UDN & udn, const std::string & serviceType,
 						 const std::string & name, const std::string & value);
 		void setProperties(const UDN & udn, const std::string & serviceType,
-						   const UTIL::LinkedStringMap & props);
-		UTIL::LinkedStringMap & getProperties(const UDN & udn, const std::string & serviceType);
-		UTIL::LinkedStringMap & getPropertiesBySid(const std::string & sid);
+						   const osl::LinkedStringMap & props);
+		osl::LinkedStringMap & getProperties(const UDN & udn, const std::string & serviceType);
+		osl::LinkedStringMap & getPropertiesBySid(const std::string & sid);
 		void notify(const std::string & sid);
-		void notify(const std::vector<OS::AutoRef<UPnPEventSubscriptionSession> > & sessions, const UTIL::LinkedStringMap & props);
-		void notify(OS::AutoRef<UPnPEventSubscriptionSession> session, const UTIL::LinkedStringMap & props);
-		std::string makePropertiesXml(const UTIL::LinkedStringMap & props);
+		void notify(const std::vector<osl::AutoRef<UPnPEventSubscriptionSession> > & sessions, const osl::LinkedStringMap & props);
+		void notify(osl::AutoRef<UPnPEventSubscriptionSession> session, const osl::LinkedStringMap & props);
+		std::string makePropertiesXml(const osl::LinkedStringMap & props);
 		void collectExpired();
-		void setOnSubscriptionOutdatedListener(OS::AutoRef<OnSubscriptionOutdatedListener> listener);
+		void setOnSubscriptionOutdatedListener(osl::AutoRef<OnSubscriptionOutdatedListener> listener);
 	};
 }
 

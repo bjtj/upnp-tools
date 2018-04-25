@@ -6,11 +6,10 @@
 #include "HttpUtils.hpp"
 #include "XmlUtils.hpp"
 
-namespace UPNP {
+namespace upnp {
 
 	using namespace std;
-	using namespace OS;
-	using namespace UTIL;
+	using namespace osl;
     
     static AutoRef<Logger> logger = LoggerFactory::instance().getObservingLogger(File::basename(__FILE__));
 
@@ -195,7 +194,7 @@ namespace UPNP {
 		string content = makePropertiesXml(props);
 		for (vector<string>::iterator iter = urls.begin(); iter != urls.end(); iter++) {
             try {
-                HttpUtils::httpPost("NOTIFY", HTTP::Url(*iter), headers, content);
+                HttpUtils::httpPost("NOTIFY", http::Url(*iter), headers, content);
             } catch (Exception e) {
                 logger->error("notify event failed with - " + e.message());
             }

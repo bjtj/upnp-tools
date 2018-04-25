@@ -12,18 +12,18 @@
 #include "SSDPEventListener.hpp"
 #include "UPnPTerms.hpp"
 
-namespace SSDP {
+namespace ssdp {
 
 	/**
 	 * @brief 
 	 */
 	class SSDPServer {
 	private:
-		OS::AutoRef<OS::Selector> selector;
-		SSDP::SSDPMulticastListener mcastListener;
-		OS::AutoRef<SSDP::SSDPEventListener> listener;
-		OS::Thread * pollingThread;
-		OS::Thread * msearchResponseListenerThread;
+		osl::AutoRef<osl::Selector> selector;
+		ssdp::SSDPMulticastListener mcastListener;
+		osl::AutoRef<ssdp::SSDPEventListener> listener;
+		osl::Thread * pollingThread;
+		osl::Thread * msearchResponseListenerThread;
 
 	private:
 		// copy not allowed
@@ -48,13 +48,13 @@ namespace SSDP {
 		void sendMsearchAsync(const std::vector<std::string> & st, unsigned long timeoutSec);
 		void sendMsearchAndGather(const std::string & st, unsigned long timeoutSec);
 		void sendMsearchAndGather(std::vector<std::string> & st, unsigned long timeoutSec);
-		OS::AutoRef<SSDPMsearchSender> sendMsearch(const std::string & st, unsigned long timeoutSec);
-		OS::AutoRef<SSDPMsearchSender> sendMsearch(const std::string & st, unsigned long timeoutSec, OS::AutoRef<OS::Selector> selector);
-		OS::AutoRef<SSDPMsearchSender> sendMsearch(const std::vector<std::string> & st, unsigned long timeoutSec);
-		OS::AutoRef<SSDPMsearchSender> sendMsearch(const std::vector<std::string> & st, unsigned long timeoutSec, OS::AutoRef<OS::Selector> selector);
+		osl::AutoRef<SSDPMsearchSender> sendMsearch(const std::string & st, unsigned long timeoutSec);
+		osl::AutoRef<SSDPMsearchSender> sendMsearch(const std::string & st, unsigned long timeoutSec, osl::AutoRef<osl::Selector> selector);
+		osl::AutoRef<SSDPMsearchSender> sendMsearch(const std::vector<std::string> & st, unsigned long timeoutSec);
+		osl::AutoRef<SSDPMsearchSender> sendMsearch(const std::vector<std::string> & st, unsigned long timeoutSec, osl::AutoRef<osl::Selector> selector);
 		void sendNotify(const SSDPHeader & header);
-		SSDPHeader getNotifyHeader(const std::string & nts, const UPNP::USN & usn);
-		void addSSDPEventListener(OS::AutoRef<SSDPEventListener> listener);
+		SSDPHeader getNotifyHeader(const std::string & nts, const upnp::USN & usn);
+		void addSSDPEventListener(osl::AutoRef<SSDPEventListener> listener);
 	};
 }
 

@@ -2,11 +2,10 @@
 #include <liboslayer/File.hpp>
 #include <liboslayer/Logger.hpp>
 
-namespace SSDP {
+namespace ssdp {
 
 	using namespace std;
-	using namespace OS;
-	using namespace UTIL;
+	using namespace osl;
 
 	
     static AutoRef<Logger> logger = LoggerFactory::instance().

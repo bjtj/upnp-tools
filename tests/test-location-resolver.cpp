@@ -2,7 +2,7 @@
 #include <libupnp-tools/UPnPLocationResolver.hpp>
 
 using namespace std;
-using namespace UPNP;
+using namespace upnp;
 
 class ServiceLocationResolver : public UPnPLocationResolver {
 private:

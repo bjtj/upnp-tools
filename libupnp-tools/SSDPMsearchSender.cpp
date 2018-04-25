@@ -2,11 +2,10 @@
 #include <liboslayer/Text.hpp>
 #include "UPnPConfig.hpp"
 
-namespace SSDP {
+namespace ssdp {
 
 	using namespace std;
-	using namespace OS;
-	using namespace UTIL;
+	using namespace osl;
 
 	SSDPMsearchSender::SSDPMsearchSender()
 		: _cancel(false) {
@@ -60,7 +59,7 @@ namespace SSDP {
 			"MAN: \"ssdp:discover\"\r\n"
 			"MX: " + Text::toString(timeoutSec) + "\r\n"
 			"ST: " + st + "\r\n"
-			"USER-AGENT: " + UPNP::UPnPConfig::instance().user_agent() + "\r\n"
+			"USER-AGENT: " + upnp::UPnPConfig::instance().user_agent() + "\r\n"
 			"\r\n";
 	}
 

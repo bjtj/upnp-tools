@@ -3,9 +3,8 @@
 #include <libupnp-tools/SSDPServer.hpp>
 
 using namespace std;
-using namespace OS;
-using namespace UTIL;
-using namespace SSDP;
+using namespace osl;
+using namespace ssdp;
 
 class Debug {
 private:

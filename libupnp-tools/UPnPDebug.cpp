@@ -2,11 +2,10 @@
 #include <liboslayer/Logger.hpp>
 #include <liboslayer/File.hpp>
 
-namespace UPNP {
+namespace upnp {
 
 	using namespace std;
-	using namespace OS;
-	using namespace UTIL;
+	using namespace osl;
 
 
 	static AutoRef<Logger> logger = LoggerFactory::instance().
