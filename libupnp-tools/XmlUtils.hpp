@@ -6,6 +6,7 @@
 #include <liboslayer/StringElements.hpp>
 
 namespace upnp {
+	
 	class XmlUtils {
 	private:
 	public:
