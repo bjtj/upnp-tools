@@ -1,3 +1,5 @@
+#include <liboslayer/File.hpp>
+#include <liboslayer/Logger.hpp>
 #include <liboslayer/XmlParser.hpp>
 #include <liboslayer/MessageQueue.hpp>
 #include <liboslayer/Logger.hpp>
@@ -16,8 +18,7 @@
 #include "UPnPSoapException.hpp"
 #include "UPnPDeviceSerializer.hpp"
 #include "XmlUtils.hpp"
-#include <liboslayer/File.hpp>
-#include <liboslayer/Logger.hpp>
+#include "SSDP.hpp"
 
 
 namespace upnp {
@@ -745,24 +746,22 @@ namespace upnp {
 	
 	void UPnPServer::notifyAlive(AutoRef<UPnPDeviceProfile> profile) {
 		SSDPMsearchSender sender;
-		string host = "239.255.255.250";
-		int port = 1900;
 		string udn = profile->udn();
 		string location = makeLocation(udn);
 		sender.sendMcastToAllInterfaces(makeNotifyAlive(location, udn, "upnp:rootdevice"),
-										host, port);
+										SSDP::GROUP, SSDP::PORT);
 		sender.sendMcastToAllInterfaces(makeNotifyAlive(location, udn, ""),
-										host, port);
+										SSDP::GROUP, SSDP::PORT);
 		vector<string> deviceTypes = profile->deviceTypes();
 		for (vector<string>::iterator iter = deviceTypes.begin();
 			 iter != deviceTypes.end(); iter++) {
-			sender.sendMcastToAllInterfaces(makeNotifyAlive(location, udn, *iter),	host, port);
+			sender.sendMcastToAllInterfaces(makeNotifyAlive(location, udn, *iter), SSDP::GROUP, SSDP::PORT);
 		}
 		vector< AutoRef<UPnPService> > services = profile->allServices();
 		for (vector< AutoRef<UPnPService> >::iterator iter = services.begin();
 			 iter != services.end(); iter++) {
 			sender.sendMcastToAllInterfaces(
-				makeNotifyAlive(location, udn, (*iter)->serviceType()), host, port);
+				makeNotifyAlive(location, udn, (*iter)->serviceType()), SSDP::GROUP, SSDP::PORT);
 		}
 		sender.close();
 	}
@@ -775,7 +774,7 @@ namespace upnp {
 		SSDPMsearchSender sender;
 		string packet = makeNotifyAlive(location, udn, deviceType);
 		UPnPDebug::instance().debug("ssdp:notify-alive", packet);
-		sender.sendMcastToAllInterfaces(packet, "239.255.255.250", 1900);
+		sender.sendMcastToAllInterfaces(packet, SSDP::GROUP, SSDP::PORT);
 		sender.close();
 	}
 	
@@ -786,7 +785,7 @@ namespace upnp {
 		
 		return "NOTIFY * HTTP/1.1\r\n"
 			"Cache-Control: max-age=1800\r\n"
-			"HOST: 239.255.255.250:1900\r\n"
+			"HOST: " + SSDP::host() + "\r\n"
 			"Location: " + location + "\r\n"
 			"NT: " + (deviceType.empty() ? usn.toString() : deviceType) + "\r\n"
 			"NTS: ssdp:alive\r\n"
@@ -798,17 +797,15 @@ namespace upnp {
 	void UPnPServer::notifyByeBye(AutoRef<UPnPDeviceProfile> profile) {
 
 		SSDPMsearchSender sender;
-		string host = "239.255.255.250";
-		int port = 1900;
 
 		string udn = profile->udn();
 		string location = makeLocation(udn);
-		sender.sendMcastToAllInterfaces(makeNotifyByeBye(udn, "upnp:rootdevice"), host, port);
-		sender.sendMcastToAllInterfaces(makeNotifyByeBye(udn, ""), host, port);
+		sender.sendMcastToAllInterfaces(makeNotifyByeBye(udn, "upnp:rootdevice"), SSDP::GROUP, SSDP::PORT);
+		sender.sendMcastToAllInterfaces(makeNotifyByeBye(udn, ""), SSDP::GROUP, SSDP::PORT);
 
 		vector<string> deviceTypes = profile->deviceTypes();
 		for (vector<string>::iterator iter = deviceTypes.begin(); iter != deviceTypes.end(); iter++) {
-			sender.sendMcastToAllInterfaces(makeNotifyByeBye(udn, *iter), host, port);
+			sender.sendMcastToAllInterfaces(makeNotifyByeBye(udn, *iter), SSDP::GROUP, SSDP::PORT);
 		}
 
 		vector< AutoRef<UPnPService> > services = profile->allServices();
@@ -816,7 +813,7 @@ namespace upnp {
 			 iter != services.end(); iter++)
 		{
 			sender.sendMcastToAllInterfaces(
-				makeNotifyByeBye(udn, (*iter)->serviceType()), host, port);
+				makeNotifyByeBye(udn, (*iter)->serviceType()), SSDP::GROUP, SSDP::PORT);
 		}
 		
 		sender.close();
@@ -827,7 +824,7 @@ namespace upnp {
 		SSDPMsearchSender sender;
 		string packet = makeNotifyByeBye(udn, deviceType);
 		UPnPDebug::instance().debug("ssdp:notify-byebye", packet);
-		sender.sendMcastToAllInterfaces(packet, "239.255.255.250", 1900);
+		sender.sendMcastToAllInterfaces(packet, SSDP::GROUP, SSDP::PORT);
 		sender.close();
 	}
 
@@ -835,7 +832,7 @@ namespace upnp {
 		USN usn(udn);
 		usn.rest() = deviceType;
 		return "NOTIFY * HTTP/1.1\r\n"
-			"Host: 239.255.255.250:1900\r\n"
+			"Host: " + SSDP::host() + "\r\n"
 			"NT: " + (deviceType.empty() ? usn.toString() : deviceType)  + "\r\n"
 			"NTS: ssdp:byebye\r\n"
 			"USN: " + usn.toString() + "\r\n"
@@ -864,7 +861,7 @@ namespace upnp {
 		USN usn(udn);
 		return "HTTP/1.1 200 OK\r\n"
 			"Cache-Control: max-age=1800\r\n"
-			"HOST: 239.255.255.250:1900\r\n"
+			"HOST: " + SSDP::host() + "\r\n"
 			"Location: " + location + "\r\n"
 			"ST: " + (st.empty() ? usn.toString() : st) + "\r\n"
 			"Server: " + config.getProperty("server.info", DEFAULT_SERVER_INFO) + "\r\n"

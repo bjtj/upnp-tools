@@ -5,6 +5,7 @@ libupnp_toolsinc_HEADERS = \
 	HttpUtils.hpp \
 	NetworkStateManager.hpp \
 	NetworkUtil.hpp \
+	SSDP.hpp \
 	SSDPEventListener.hpp \
 	SSDPHeader.hpp \
 	SSDPMsearchSender.hpp \
@@ -45,6 +46,8 @@ libupnp_tools_la_SOURCES = \
 	NetworkStateManager.hpp \
 	NetworkUtil.cpp \
 	NetworkUtil.hpp \
+	SSDP.cpp \
+	SSDP.hpp \
 	SSDPEventListener.hpp \
 	SSDPHeader.cpp \
 	SSDPHeader.hpp \

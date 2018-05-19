@@ -1,14 +1,12 @@
 #include "SSDPServer.hpp"
 #include "SSDPMsearchSender.hpp"
+#include "SSDP.hpp"
 
 namespace ssdp {
 
 	using namespace std;
 	using namespace osl;
 	using namespace upnp;
-
-	static const char * MCAST_HOST = "239.255.255.250";
-	static const int MCAST_PORT = 1900;
 
 	/**
 	 * @brief 
@@ -126,7 +124,7 @@ namespace ssdp {
 
 	SSDPServer::SSDPServer()
 		: selector(new SharedSelector),
-		  mcastListener(MCAST_HOST, MCAST_PORT),
+		  mcastListener(SSDP::GROUP, SSDP::PORT),
 		  pollingThread(NULL),
 		  msearchResponseListenerThread(NULL){
 	}
@@ -231,7 +229,7 @@ namespace ssdp {
 	AutoRef<SSDPMsearchSender> SSDPServer::sendMsearch(const string & st, unsigned long timeoutSec, AutoRef<Selector> selector) {
 		AutoRef<SSDPMsearchSender> sender(new SSDPMsearchSender(selector));
 		sender->addSSDPEventListener(listener);
-		sender->sendMsearchAllInterfaces(st, timeoutSec, MCAST_HOST, MCAST_PORT);
+		sender->sendMsearchAllInterfaces(st, timeoutSec, SSDP::GROUP, SSDP::PORT);
 		return sender;
 	}
 	AutoRef<SSDPMsearchSender> SSDPServer::sendMsearch(const vector<string> & st, unsigned long timeoutSec) {
@@ -241,13 +239,13 @@ namespace ssdp {
 		AutoRef<SSDPMsearchSender> sender(new SSDPMsearchSender(selector));
 		sender->addSSDPEventListener(listener);
 		for (vector<string>::const_iterator iter = st.begin(); iter != st.end(); iter++) {
-			sender->sendMsearchAllInterfaces(*iter, timeoutSec, MCAST_HOST, MCAST_PORT);
+			sender->sendMsearchAllInterfaces(*iter, timeoutSec, SSDP::GROUP, SSDP::PORT);
 		}
 		return sender;
 	}
 	void SSDPServer::sendNotify(const SSDPHeader & header) {
 		SSDPMulticastSender sender;
-		sender.sendMcastToAllInterfaces(header.toString(), MCAST_HOST, MCAST_PORT);
+		sender.sendMcastToAllInterfaces(header.toString(), SSDP::GROUP, SSDP::PORT);
 		sender.close();
 	}
 	SSDPHeader SSDPServer::getNotifyHeader(const string & nts, const upnp::USN & usn) {
