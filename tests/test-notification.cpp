@@ -10,7 +10,7 @@ using namespace http;
 using namespace upnp;
 
 
-static UPnPNotify s_notify;
+static UPnPPropertySet s_propset;
 
 class NotificationListener : public UPnPEventListener {
 private:
@@ -19,9 +19,9 @@ public:
 	}
     virtual ~NotificationListener() {
 	}
-	virtual void onNotify(UPnPNotify & notify) {
-		s_notify = notify;
-		cout << "NOTIFY: " << notify.sid() << endl;
+	virtual void onNotify(UPnPPropertySet & propset) {
+		s_propset = propset;
+		cout << "Property: " << propset.sid() << endl;
 	}
 };
 
@@ -57,27 +57,16 @@ static void test_notification_server() {
 
 	idle(1000);
 
-	ASSERT(s_notify.sid(), ==, "uuid:xxxxx");
-	ASSERT(s_notify["SystemUpdateID"], ==, "72826040");
+	ASSERT(s_propset.sid(), ==, "uuid:xxxxx");
+	ASSERT(s_propset["SystemUpdateID"], ==, "72826040");
 
 	server.stop();
 }
 
-static void test_subscription_registry() {
-
-	UPnPEventSubscriptionRegistry registry;
-
-	UPnPEventSubscription subscription("uuid:xxxxx");
-	registry.addSubscription(subscription);
-
-	ASSERT(registry["uuid:xxxxx"].sid(), ==, "uuid:xxxxx");
-	ASSERT(registry["uuid:xxxxx"].lastSeq(), ==, 0);
-}
 
 int main(int argc, char *args[]) {
 
 	test_notification_server();
-	test_subscription_registry();
-    
+
     return 0;
 }

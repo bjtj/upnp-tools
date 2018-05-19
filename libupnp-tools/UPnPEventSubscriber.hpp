@@ -12,29 +12,6 @@ namespace upnp {
 	/**
 	 * @brief
 	 */
-	class UPnPNotify {
-	private:
-		std::string _sid;
-		unsigned long _seq;
-		std::map<std::string, std::string> props;
-		UPnPEventSubscription _subscription;
-		
-	public:
-		UPnPNotify();
-		UPnPNotify(const std::string & sid);
-		UPnPNotify(const std::string & sid, unsigned long seq);
-		virtual ~UPnPNotify();
-		std::string & sid();
-		unsigned long & seq();
-		std::vector<std::string> propertyNames();
-		std::string & operator[] (const std::string & name);
-		UPnPEventSubscription & subscription();
-	};
-
-
-	/**
-	 * @brief
-	 */
 	class UPnPEventSubscribeRequest {
 	private:
 		std::vector<std::string> _callbackUrls;

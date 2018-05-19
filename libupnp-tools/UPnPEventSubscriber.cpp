@@ -16,46 +16,6 @@ namespace upnp {
 	 *
 	 */
 
-	UPnPNotify::UPnPNotify() : _seq(0) {
-	}
-	
-	UPnPNotify::UPnPNotify(const string & sid) : _sid(sid), _seq(0) {
-	}
-	
-	UPnPNotify::UPnPNotify(const string & sid, unsigned long seq) : _sid(sid), _seq(seq) {
-	}
-	
-	UPnPNotify::~UPnPNotify() {
-	}
-	
-	string & UPnPNotify::sid() {
-		return _sid;
-	}
-	
-	unsigned long & UPnPNotify::seq() {
-		return _seq;
-	}
-	
-	vector<string> UPnPNotify::propertyNames() {
-		vector<string> names;
-		for (map<string, string>::iterator iter = props.begin(); iter != props.end(); iter++) {
-			names.push_back(iter->first);
-		}
-		return names;
-	}
-	
-	string & UPnPNotify::operator[] (const string & name) {
-		return props[name];
-	}
-	
-	UPnPEventSubscription & UPnPNotify::subscription() {
-		return _subscription;
-	}
-
-	/**
-	 *
-	 */
-
 	UPnPEventSubscribeRequest::UPnPEventSubscribeRequest() : _timeoutSec(0) {
 	}
 	UPnPEventSubscribeRequest::UPnPEventSubscribeRequest(vector<string> & callbackUrls,

@@ -33,6 +33,7 @@ libupnp_toolsinc_HEADERS = \
 	UPnPExceptions.hpp \
 	UPnPModels.hpp \
 	UPnPPropertyManager.hpp \
+	UPnPPropertySet.hpp \
 	UPnPResourceManager.hpp \
 	UPnPServer.hpp \
 	UPnPSoapFormatter.hpp \
@@ -98,6 +99,8 @@ libupnp_tools_la_SOURCES = \
 	UPnPModels.hpp \
 	UPnPPropertyManager.cpp \
 	UPnPPropertyManager.hpp \
+	UPnPPropertySet.cpp \
+	UPnPPropertySet.hpp \
 	UPnPResourceManager.cpp \
 	UPnPResourceManager.hpp \
 	UPnPServer.cpp \

@@ -34,11 +34,11 @@ private:
 public:
     MyEventListener() {}
     virtual ~MyEventListener() {}
-	virtual void onNotify(UPnPNotify & notify) {
-		cout << "Notify : " << notify.sid() << endl;
-		vector<string> names = notify.propertyNames();
+	virtual void onNotify(UPnPPropertySet & propset) {
+		cout << "Notify : " << propset.sid() << endl;
+		vector<string> names = propset.propertyNames();
 		for (vector<string>::iterator iter = names.begin(); iter != names.end(); iter++) {
-			string value = notify[*iter];
+			string value = propset[*iter];
 			cout << " - " << *iter << " : " << value << endl;
 		}
 	}
@@ -271,15 +271,15 @@ int run(int argc, char *args[]) {
 		} else if (Text::startsWith(line, "udn ")) {
 			session.udn() = line.substr(4);
 		} else if (line == "udn") {
-			cout << "[UDN: " << session.udn() << "]" << endl;
+			cout << "[session] udn: " << session.udn() << endl;
 		} else if (Text::startsWith(line, "service ")) {
 			session.serviceType() = line.substr(8);
 		} else if (line == "service") {
-			cout << "[Service : " << session.serviceType() << "]" << endl;
+			cout << "[session] service: " << session.serviceType() << endl;
 		} else if (Text::startsWith(line, "action ")) {
 			session.action() = line.substr(7);
 		} else if (line == "action") {
-			cout << "[Action : " << session.action() << "]" << endl;
+			cout << "[session] action: " << session.action() << endl;
 		} else if (line == "invoke" || line == "i") {
 			try {
 				UPnPActionInvoker invoker = cp.prepareActionInvoke(session.udn(), session.serviceType());
@@ -313,23 +313,29 @@ int run(int argc, char *args[]) {
 					string & value = kv.value();
 					cout << " - " << name << " := " << value << endl;
 				}
-				cout << "[elapsed : " << tick_milli() - tick << " ms.]" << endl;
+				cout << "[Invoke] " << tick_milli() - tick << " ms." << endl;
 			} catch (Exception & e) {
-				cout << "[error : " << e.toString() << "]" << endl;
+				cout << "[Error] " << e.toString() << endl;
 			}
 		} else if (line == "subscriptions") {
-			// TODO: subscription list
+			map< string, UPnPEventSubscription > subscriptions = cp.getSubscriptions();
+			cout << "[Subscriptions]" << endl;
+			for (map< string, UPnPEventSubscription >::iterator iter = subscriptions.begin();
+				 iter != subscriptions.end(); iter++)
+			{
+				cout << " * " << iter->first << endl;
+			}
 		} else if (line == "subscribe") {
 			if (session.udn().empty() || session.serviceType().empty()) {
-				throw "[error: select udn and sevice first]";
+				throw "[error] select udn and sevice first";
 			}
-			cout << "[Subscribe - " << session.udn() << " // " << session.serviceType() << "]" << endl;
+			cout << "[Subscribe] udn: " << session.udn() << " / service: " << session.serviceType() << endl;
 			cp.subscribe(session.udn(), session.serviceType());
 		} else if (line == "unsubscribe") {
 			if (session.udn().empty() || session.serviceType().empty()) {
-				throw "[error: select udn and sevice first]";
+				throw "[error] select udn and sevice first";
 			}
-			cout << "[Unsubscribe - " << session.udn() << " .. " << session.serviceType() << "]" <<endl;
+			cout << "[Unsubscribe] udn: " << session.udn() << " / service: " << session.serviceType() << endl;
 			cp.unsubscribe(session.udn(), session.serviceType());
 		} else if (line == "shared") {
 			vector<AutoRef<UPnPDevice> > devices;
@@ -348,13 +354,13 @@ int run(int argc, char *args[]) {
 				AutoRef<UPnPService> service = cp.getServiceByUdnAndServiceType(session.udn(), session.serviceType());
 				if (!service.nil()) {
 					url = cp.getBaseUrlByUdn(session.udn()).relativePath(service->scpdUrl());
-					cout << "[GET SCPD : " << url.toString() << "]" << endl;
+					cout << "[dump] get scpd : " << url.toString() << endl;
 					dd = HttpUtils::httpGet(url);
 					cout << dd << endl;
 				}
 			}
 		} else {
-			cout << "[Searching : '" << line << "']" << endl;
+			cout << "[search] type: '" << line << "'" << endl;
 			cp.sendMsearchAsync(line, 3);
 		}
 	}

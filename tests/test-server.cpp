@@ -19,19 +19,19 @@ using namespace osl;
 using namespace http;
 using namespace upnp;
 
-string dd(const UDN & udn);
+string dd(const string & udn);
 string scpd();
 
-static string scpd_url(const UDN & udn, const string & serviceType) {
-	return ("/scpd.xml?udn=" + udn.toString() + "&serviceType=" + serviceType);
+static string scpd_url(const string & udn, const string & serviceType) {
+	return ("/scpd.xml?udn=" + udn + "&serviceType=" + serviceType);
 }
 
-static string control_url(const UDN & udn, const string & serviceType) {
-	return ("/control.xml?udn=" + udn.toString() + "&serviceType=" + serviceType);
+static string control_url(const string & udn, const string & serviceType) {
+	return ("/control.xml?udn=" + udn + "&serviceType=" + serviceType);
 }
 
-static string event_url(const UDN & udn, const string & serviceType) {
-	return ("/event.xml?udn=" + udn.toString() + "&serviceType=" + serviceType);
+static string event_url(const string & udn, const string & serviceType) {
+	return ("/event.xml?udn=" + udn + "&serviceType=" + serviceType);
 }
 
 class MyActionHandler : public UPnPActionRequestHandler {
@@ -50,21 +50,21 @@ public:
 	}
 };
 
-static UPnPNotify s_notify;
+static UPnPPropertySet s_propset;
 
 class MyNotifyHandler: public UPnPEventListener {
 private:
 public:
     MyNotifyHandler() {}
     virtual ~MyNotifyHandler() {}
-	virtual void onNotify(UPnPNotify & notify) {
-		s_notify = notify;
+	virtual void onNotify(UPnPPropertySet & propset) {
+		s_propset = propset;
 		cout << "NOTIFY" << endl;
-		cout << " - SID: " << notify.sid() << endl;
-		cout << " - SEQ: " << notify.seq() << endl;
-		vector<string> names = notify.propertyNames();
+		cout << " - SID: " << propset.sid() << endl;
+		cout << " - SEQ: " << propset.seq() << endl;
+		vector<string> names = propset.propertyNames();
 		for (vector<string>::iterator iter = names.begin(); iter != names.end(); iter++) {
-			string value = notify[*iter];
+			string value = propset[*iter];
 			cout << "  ** " << *iter << " := " << value << endl;
 		}
 	}
@@ -74,7 +74,7 @@ static void test_device_profile() {
 
 	UuidGeneratorVersion1 gen;
 	string uuid = gen.generate();
-	UDN udn("uuid:" + uuid);
+	string udn("uuid:" + uuid);
 	string serviceType = "urn:schemas-dummy-com:service:Dummy:1";
 
 	UPnPEventReceiverConfig notiConfig(9998);
@@ -127,7 +127,7 @@ static void test_device_profile() {
 
 	// dd check
 	{
-		Url url("http://127.0.0.1:9001/device.xml?udn=" + udn.toString());
+		Url url("http://127.0.0.1:9001/device.xml?udn=" + udn);
 		string ddXml = HttpUtils::httpGet(url);
 		ASSERT(ddXml, ==, dd(udn));
 	}
@@ -190,7 +190,7 @@ static void test_device_profile() {
 		subscription.serviceType() = serviceType;
 		notiServer.addSubscription(subscription);
 		idle(1000);
-		ASSERT(s_notify.sid(), ==, response.sid());
+		ASSERT(s_propset.sid(), ==, response.sid());
 	}
 
 	notiServer.stop();
@@ -203,7 +203,7 @@ int main(int argc, char *args[]) {
     return 0;
 }
 
-string dd(const UDN & udn) {
+string dd(const string & udn) {
 	string dummy = "urn:schemas-dummy-com:service:Dummy:1";
 	string xml = "<?xml version=\"1.0\"?>\r\n"
 		"<root xmlns=\"urn:schemas-upnp-org:device-1-0\">\r\n"
@@ -221,7 +221,7 @@ string dd(const UDN & udn) {
 		"<modelNumber>1</modelNumber>\r\n"
 		"<modelURL>www.example.com</modelURL>\r\n"
 		"<serialNumber>12345678</serialNumber>\r\n"
-		"<UDN>" + udn.toString() + "</UDN>\r\n"
+		"<UDN>" + udn + "</UDN>\r\n"
 		"<serviceList>\r\n"
 		"<service>\r\n"
 		"<serviceType>urn:schemas-dummy-com:service:Dummy:1</serviceType>\r\n"

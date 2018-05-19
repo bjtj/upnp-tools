@@ -28,16 +28,16 @@ static void test_device_profile_builder() {
 
 	UPnPDeviceBuilder builder(Url("prop:///device.xml"));
 	AutoRef<UPnPDevice> device = builder.execute();
-	device->setUdn(UDN("uuid:" + uuid));
+	device->setUdn(uuid);
 	UPnPDeviceProfile profile(device);
 
-	ASSERT(profile.udn().toString(), ==, ("uuid:" + uuid));
+	ASSERT(profile.udn(), ==, uuid);
 	ASSERT(profile.deviceTypes()[0], ==, "urn:schemas-upnp-org:device:MediaServer:1");
 	ASSERT(profile.allServices()[0]->serviceType(), ==, "urn:schemas-upnp-org:service:ContentDirectory:1");
 	ASSERT(profile.allServices()[1]->serviceType(), ==, "urn:schemas-upnp-org:service:ConnectionManager:1");
 
 	device = UPnPDeviceDeserializer::deserializeDevice(profile.deviceDescription());
-	ASSERT(device->udn().toString(), ==, ("uuid:" + uuid));
+	ASSERT(device->udn(), ==, uuid);
 }
 
 static void test_build_from_file() {

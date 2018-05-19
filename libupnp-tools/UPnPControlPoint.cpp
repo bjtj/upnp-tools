@@ -21,7 +21,7 @@ namespace upnp {
 	
 
 	UPnPDeviceSession::UPnPDeviceSession(const string & udn)
-		: _udn(udn), _completed(false) {
+		: _udn(udn), _complete(false) {
 	}
 	
 	UPnPDeviceSession::~UPnPDeviceSession() {
@@ -31,22 +31,18 @@ namespace upnp {
 		return _udn;
 	}
 
-	bool UPnPDeviceSession::isCompleted() {
-		return _completed;
+	bool & UPnPDeviceSession::complete() {
+		return _complete;
 	}
 
-	void UPnPDeviceSession::setCompleted(bool completed) {
-		this->_completed = completed;
+	const bool & UPnPDeviceSession::complete() const {
+		return _complete;
 	}
 
-	AutoRef<UPnPDevice> UPnPDeviceSession::getRootDevice() {
-		return rootDevice;
+	AutoRef<UPnPDevice> & UPnPDeviceSession::device() {
+		return _device;
 	}
 
-	void UPnPDeviceSession::setRootDevice(AutoRef<UPnPDevice> device) {
-		rootDevice = device;
-	}
-	
 
 	/**
 	 * @brief
@@ -94,7 +90,7 @@ namespace upnp {
 	AutoRef<UPnPDevice> UPnPDeviceSessionManager::findDevice(const string & udn) {
 		AutoRef<UPnPDeviceSession> session = sessions[udn];
 		if (!session.nil()) {
-			return session->getRootDevice();
+			return session->device();
 		}
 		return AutoRef<UPnPDevice>();
 	}
@@ -109,8 +105,10 @@ namespace upnp {
 
 	vector< AutoRef<UPnPDevice> > UPnPDeviceSessionManager::getDevices() {
 		vector< AutoRef<UPnPDevice> > ret;
-		for (map< string, AutoRef<UPnPDeviceSession> >::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
-			ret.push_back(iter->second->getRootDevice());
+		for (map< string, AutoRef<UPnPDeviceSession> >::iterator iter = sessions.begin();
+			 iter != sessions.end(); iter++)
+		{
+			ret.push_back(iter->second->device());
 		}
 		return ret;
 	}
@@ -120,7 +118,9 @@ namespace upnp {
 	}
 
 	void UPnPDeviceSessionManager::collectExpired() {
-		for (map< string, AutoRef<UPnPDeviceSession> >::iterator iter = sessions.begin(); iter != sessions.end();) {
+		for (map< string, AutoRef<UPnPDeviceSession> >::iterator iter = sessions.begin();
+			 iter != sessions.end();)
+		{
 			if (iter->second->expired()) {
 				if (!onSessionOutdatedListener.nil()) {
 					onSessionOutdatedListener->onSessionOutdated(iter->second);
@@ -155,8 +155,8 @@ namespace upnp {
 		virtual ~DeviceBuildTask() {}
 		virtual void onTask() {
 			try {
-				session->setRootDevice(cp.buildDevice(header));
-				session->setCompleted(true);
+				session->device() = cp.buildDevice(header);
+				session->complete() = true;
 				cp.onDeviceBuildCompleted(session);
 			} catch (Exception e) {
 				logger->error("build device failed - " + e.message());
@@ -236,7 +236,7 @@ namespace upnp {
 			CPOnSessionOutdatedListener(UPnPControlPoint & cp) : cp(cp) {/**/}
 			virtual ~CPOnSessionOutdatedListener() {/**/}
 			virtual void onSessionOutdated(AutoRef<UPnPDeviceSession> session) {
-				cp.onDeviceRemoved(session->getRootDevice());
+				cp.onDeviceRemoved(session->device());
 			}
 		};
 
@@ -310,7 +310,7 @@ namespace upnp {
 	void UPnPControlPoint::removeDevice(const SSDPHeader & header) {
 		string udn = upnp::USN(header.getUsn()).uuid();
 		if (!deviceListener.nil() && !_sessionManager[udn].nil()) {
-			AutoRef<UPnPDevice> device = _sessionManager[udn]->getRootDevice();
+			AutoRef<UPnPDevice> device = _sessionManager[udn]->device();
 			onDeviceRemoved(device);
 		}
 		_sessionManager.remove(udn);
@@ -323,7 +323,7 @@ namespace upnp {
 	}
 
 	void UPnPControlPoint::onDeviceBuildCompleted(AutoRef<UPnPDeviceSession> session) {
-		onDeviceAdded(session->getRootDevice());
+		onDeviceAdded(session->device());
 	}
 	
 	void UPnPControlPoint::onDeviceBuildFailed(AutoRef<UPnPDeviceSession> session) {
@@ -372,6 +372,10 @@ namespace upnp {
 		return UPnPActionInvoker(device->baseUrl().relativePath(service->controlUrl()));
 	}
 
+	map< string, UPnPEventSubscription > UPnPControlPoint::getSubscriptions() {
+		return eventReceiver->getSubscriptions();
+	}
+
 	void UPnPControlPoint::subscribe(const string & udn, const string & serviceType) {
 		if (eventReceiver.nil()) {
 			throw Exception("event receiver is stopped");
@@ -394,6 +398,7 @@ namespace upnp {
 		UPnPEventSubscription subscription = eventReceiver->findSubscriptionByUdnAndServiceType(udn, serviceType);
 		UPnPEventSubscriber subscriber = prepareEventSubscriber(udn, serviceType);
 		subscriber.unsubscribe(subscription.sid());
+		eventReceiver->removeSubscription(subscription);
 	}
 
 	UPnPEventSubscriber UPnPControlPoint::prepareEventSubscriber(const string & udn, const string & serviceType) {
@@ -422,7 +427,9 @@ namespace upnp {
 	}
 
 	void UPnPControlPoint::removeSharedDeviceList(AutoRef<SharedUPnPDeviceList> list) {
-		for (vector< AutoRef<SharedUPnPDeviceList> >::iterator iter = sharedDeviceLists.begin(); iter != sharedDeviceLists.end();) {
+		for (vector< AutoRef<SharedUPnPDeviceList> >::iterator iter = sharedDeviceLists.begin();
+			 iter != sharedDeviceLists.end();)
+		{
 			if ((*iter) == list) {
 				iter = sharedDeviceLists.erase(iter);
 			} else {

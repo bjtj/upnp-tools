@@ -24,16 +24,15 @@ namespace upnp {
 	class UPnPDeviceSession : public UPnPCache {
 	private:
 		std::string _udn;
-		bool _completed;
-		osl::AutoRef<UPnPDevice> rootDevice;
+		bool _complete;
+		osl::AutoRef<UPnPDevice> _device;
 	public:
 		UPnPDeviceSession(const std::string & udn);
 		virtual ~UPnPDeviceSession();
 		std::string & udn();
-		bool isCompleted();
-		void setCompleted(bool completed);
-		osl::AutoRef<UPnPDevice> getRootDevice();
-		void setRootDevice(osl::AutoRef<UPnPDevice> device);
+		bool & complete();
+		const bool & complete() const;
+		osl::AutoRef<UPnPDevice> & device();
 	};
 
 	/**
@@ -132,6 +131,7 @@ namespace upnp {
 		http::Url getBaseUrlByUdn(const std::string & udn);
 		osl::AutoRef<UPnPService> getServiceByUdnAndServiceType(const std::string & udn, const std::string & serviceType);
 		UPnPActionInvoker prepareActionInvoke(const std::string & udn, const std::string & serviceType);
+		std::map< std::string, UPnPEventSubscription > getSubscriptions();
 		void subscribe(const std::string & udn, const std::string & serviceType);
 		void unsubscribe(const std::string & udn, const std::string & serviceType);
 		UPnPEventSubscriber prepareEventSubscriber(const std::string & udn, const std::string & serviceType);

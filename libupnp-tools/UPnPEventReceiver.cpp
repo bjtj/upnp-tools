@@ -12,47 +12,6 @@ namespace upnp {
 	using namespace osl;
 	using namespace http;
 
-	/**
-	 * @brief 
-	 */
-
-	UPnPEventSubscriptionRegistry::UPnPEventSubscriptionRegistry() {
-	}
-	
-	UPnPEventSubscriptionRegistry::~UPnPEventSubscriptionRegistry() {
-	}
-	
-	void UPnPEventSubscriptionRegistry::clear() {
-		subscriptions.clear();
-	}
-	
-	void UPnPEventSubscriptionRegistry::addSubscription(UPnPEventSubscription & subscription) {
-		subscriptions[subscription.sid()] = subscription;
-	}
-	
-	void UPnPEventSubscriptionRegistry::removeSubscription(const string & sid) {
-		subscriptions.erase(sid);
-	}
-	
-	bool UPnPEventSubscriptionRegistry::hasSubscription(const string & sid) {
-		return subscriptions.find(sid) != subscriptions.end();
-	}
-	
-	UPnPEventSubscription & UPnPEventSubscriptionRegistry::findSubscriptionByUdnAndServiceType(const string & udn, const string & serviceType) {
-		for (map<string, UPnPEventSubscription>::iterator iter = subscriptions.begin();
-			 iter != subscriptions.end(); iter++)
-		{
-			if (iter->second.udn() == udn && iter->second.serviceType() == serviceType) {
-				return iter->second;
-			}
-		}
-		throw Exception("No subscription found");
-	}
-	
-	UPnPEventSubscription & UPnPEventSubscriptionRegistry::operator[] (const string & sid) {
-		return subscriptions[sid];
-	}
-	
 
 	/**
 	 * @brief 
@@ -76,15 +35,15 @@ namespace upnp {
 			
 			string sid = request.header()["SID"];
 			string seq = request.header()["SEQ"];
-			UPnPNotify notify(sid, Text::toLong(seq));
+			UPnPPropertySet propset(sid, Text::toLong(seq));
 			string dump = ((StringDataSink*)&sink)->data();
 			UPnPDebug::instance().debug("upnp:event", request.header().toString() + dump);
-			map<string, string> props = receiver.parseEventNotify(dump);
+			map<string, string> props = receiver.parsePropertySet(dump);
 			for (map<string, string>::iterator iter = props.begin(); iter != props.end(); iter++) {
-				notify[iter->first] = iter->second;
+				propset[iter->first] = iter->second;
 			}
 
-			receiver.onNotify(notify);
+			receiver.onNotify(propset);
 
 			response.setStatus(200);
 		}	
@@ -127,13 +86,17 @@ namespace upnp {
 		delete server;
 		server = NULL;
 	}
+
+	map< string, UPnPEventSubscription > UPnPEventReceiver::getSubscriptions() {
+		return subscriptions;
+	}
 	
 	void UPnPEventReceiver::addSubscription(UPnPEventSubscription & subscription) {
-		registry.addSubscription(subscription);
+		subscriptions[subscription.sid()] = subscription;
 	}
 	
 	void UPnPEventReceiver::removeSubscription(UPnPEventSubscription & subscription) {
-		registry.removeSubscription(subscription.sid());
+		subscriptions.erase(subscription.sid());
 	}
 	
 	void UPnPEventReceiver::addEventListener(AutoRef<UPnPEventListener> listener) {
@@ -141,30 +104,37 @@ namespace upnp {
 	}
 
 	UPnPEventSubscription & UPnPEventReceiver::findSubscriptionByUdnAndServiceType(const string & udn, const string & serviceType) {
-		return registry.findSubscriptionByUdnAndServiceType(udn, serviceType);
+		
+		for (map<string, UPnPEventSubscription>::iterator iter = subscriptions.begin();
+			 iter != subscriptions.end(); iter++)
+		{
+			if (iter->second.udn() == udn && iter->second.serviceType() == serviceType) {
+				return iter->second;
+			}
+		}
+		throw Exception("No subscription found");
 	}
 	
-	void UPnPEventReceiver::onNotify(UPnPNotify & notify) {
+	void UPnPEventReceiver::onNotify(UPnPPropertySet & propset) {
 
-		if (!registry.hasSubscription(notify.sid())) {
-			throw Exception("No registred subscription ID : " + notify.sid());
+		if (subscriptions.find(propset.sid()) == subscriptions.end()) {
+			throw Exception("No registred subscription ID : " + propset.sid());
 		}
 
-		notify.subscription() = registry[notify.sid()];
+		propset.subscription() = subscriptions[propset.sid()];
 		
 		for (vector< AutoRef<UPnPEventListener> >::iterator iter = listeners.begin();
 			 iter != listeners.end(); iter++)
 		{
-			(*iter)->onNotify(notify);
+			(*iter)->onNotify(propset);
 		}
 	}
 
 	string UPnPEventReceiver::getCallbackUrl(const string & host) {
-		return "http://" + host + ":" + config["listen.port"] + "/notify";
+		return "http://" + host + ":" + config["listen.port"] + "/event";
 	}
 
-
-	map<string, string> UPnPEventReceiver::parseEventNotify(const string & xml) {
+	map<string, string> UPnPEventReceiver::parsePropertySet(const string & xml) {
 		map<string, string> props;
 		XmlDocument doc = DomParser::parse(xml);
 		if (doc.rootNode().nil()) {

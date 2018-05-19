@@ -25,10 +25,10 @@ static string dummy = "urn:schemas-dummy-com:service:Dummy:1";
  */
 class RequestHandler : public HttpRequestHandler {
 private:
-	string _uuid;
+	string _udn;
 public:
-    RequestHandler(const string & uuid) {
-		_uuid = uuid;
+    RequestHandler(const string & udn) {
+		_udn = udn;
 	}
     virtual ~RequestHandler() {}
 	virtual AutoRef<DataSink> getDataSink() {
@@ -39,8 +39,8 @@ public:
 		if (request.getPath() == "/device.xml") {
 			response.setStatus(200);
 			response.setContentType("text/xml");
-			response.setFixedTransfer(dd(_uuid));
-		} else if (request.getRawPath() == "/scpd.xml?udn=" + _uuid + "&serviceType=" + dummy) {
+			response.setFixedTransfer(dd(_udn));
+		} else if (request.getRawPath() == "/scpd.xml?udn=" + _udn + "&serviceType=" + dummy) {
 			response.setStatus(200);
 			response.setContentType("text/xml");
 			response.setFixedTransfer(scpd());
@@ -48,8 +48,8 @@ public:
 			response.setStatus(404);
 		}
 	}
-	string & uuid() {
-		return _uuid;
+	string & udn() {
+		return _udn;
 	}
 	SSDPHeader getSSDPHeader() {
 		InetAddress addr;
@@ -57,7 +57,7 @@ public:
 						  "HOST: 239.255.255.250:1900\r\n"
 						  "Location: http://127.0.0.1:9998/device.xml\r\n"
 						  "NTS: ssdp:alive\r\n"
-						  "USN: uuid:" + _uuid + "::rootdevice\r\n"
+						  "USN: " + _udn + "::rootdevice\r\n"
 						  "\r\n", addr);
 		return header;
 	}
@@ -67,17 +67,17 @@ public:
 static void test_deserialize() {
 	
 	UuidGeneratorVersion1 gen;
-	string uuid = gen.generate();
+	string udn = "uuid:" + gen.generate();
 	HttpServerConfig config(9999);
 	AnotherHttpServer server(config);
-	server.registerRequestHandler("/*", AutoRef<HttpRequestHandler>(new RequestHandler(uuid)));
+	server.registerRequestHandler("/*", AutoRef<HttpRequestHandler>(new RequestHandler(udn)));
 	server.startAsync();
 
 	UPnPDeviceBuilder builder(Url("http://127.0.0.1:9999/device.xml"));
 	AutoRef<UPnPDevice> device = builder.execute();
 	ASSERT(device.nil(), ==, false);
 	
-	ASSERT(device->udn().toString(), ==, ("uuid:" + uuid));
+	ASSERT(device->udn(), ==, udn);
 	ASSERT(device->friendlyName(), ==, "UPnP Test Device");
 
 	ASSERT(device->getService("urn:schemas-dummy-com:service:Dummy:1").nil(), ==, false);
@@ -89,10 +89,10 @@ static void test_deserialize() {
 static void test_filesystem_base_deserialize() {
 
 	UuidGeneratorVersion1 gen;
-	string uuid = gen.generate();
+	string udn = "uuid:" + gen.generate();
 	
 	FileStream fs("device.xml", "wb");
-	fs.write(dd_fs(uuid).c_str(), dd_fs(uuid).size());
+	fs.write(dd_fs(udn).c_str(), dd_fs(udn).size());
 	fs.close();
 
 	fs = FileStream("scpd.xml", "wb");
@@ -102,7 +102,7 @@ static void test_filesystem_base_deserialize() {
 	UPnPDeviceBuilder builder(Url("file://" + File::getCwd() + "/device.xml"));
 	AutoRef<UPnPDevice> device = builder.execute();
 
-	ASSERT(device->udn().toString(), ==, ("uuid:" + uuid));
+	ASSERT(device->udn(), ==, udn);
 	ASSERT(device->friendlyName(), ==, "UPnP Test Device");
 
 	ASSERT(device->getService("urn:schemas-dummy-com:service:Dummy:1").nil(), ==, false);
@@ -120,7 +120,7 @@ static void test_serialize() {
 	UPnPDeviceBuilder builder(Url("http://127.0.0.1:9999/device.xml"));
 	AutoRef<UPnPDevice> device = builder.execute();
 
-	ASSERT(device->udn().toString(), ==, ("uuid:" + uuid));
+	ASSERT(device->udn(), ==, uuid);
 	ASSERT(device->friendlyName(), ==, "UPnP Test Device");
 
 	ASSERT(device->getService("urn:schemas-dummy-com:service:Dummy:1").nil(), ==, false);
@@ -134,7 +134,7 @@ static void test_serialize() {
 	deserialized->baseUrl() = Url("http://127.0.0.1:9999/device.xml");
 	deserialized = UPnPDeviceDeserializer::deserializeDevice(dd);
 
-	ASSERT(deserialized->udn().toString(), ==, ("uuid:" + uuid));
+	ASSERT(deserialized->udn(), ==, uuid);
 
 	server.stop();
 }
@@ -175,7 +175,7 @@ int main(int argc, char *args[]) {
     return 0;
 }
 
-static string dd(string uuid) {
+static string dd(string udn) {
 		
 	string xml = "<?xml version=\"1.0\"?>"
 		"<root xmlns=\"urn:schemas-upnp-org:device-1-0\">"
@@ -192,21 +192,21 @@ static string dd(string uuid) {
 		"<modelNumber>1</modelNumber>"
 		"<modelURL>www.example.com</modelURL>"
 		"<serialNumber>12345678</serialNumber>"
-		"<UDN>uuid:" + uuid + "</UDN>"
+		"<UDN>" + udn + "</UDN>"
 		"<serviceList>"
 		"<service>"
 		"<serviceType>urn:schemas-dummy-com:service:Dummy:1</serviceType>"
 		"<serviceId>urn:dummy-com:serviceId:dummy1</serviceId>"
-		"<controlURL>/control?udn=" + uuid + "&amp;serviceType=" + dummy + "</controlURL>"
-		"<eventSubURL>/event?udn=" + uuid + "&amp;serviceType=" + dummy + "</eventSubURL>"
-		"<SCPDURL>/scpd.xml?udn=" + uuid + "&amp;serviceType=" + dummy + "</SCPDURL>"
+		"<controlURL>/control?udn=" + udn + "&amp;serviceType=" + dummy + "</controlURL>"
+		"<eventSubURL>/event?udn=" + udn + "&amp;serviceType=" + dummy + "</eventSubURL>"
+		"<SCPDURL>/scpd.xml?udn=" + udn + "&amp;serviceType=" + dummy + "</SCPDURL>"
 		"</service></serviceList>"
 		"</root>";
 
 	return xml;
 }
 
-static string dd_fs(string uuid) {
+static string dd_fs(string udn) {
 		
 	string xml = "<?xml version=\"1.0\"?>"
 		"<root xmlns=\"urn:schemas-upnp-org:device-1-0\">"
@@ -223,7 +223,7 @@ static string dd_fs(string uuid) {
 		"<modelNumber>1</modelNumber>"
 		"<modelURL>www.example.com</modelURL>"
 		"<serialNumber>12345678</serialNumber>"
-		"<UDN>uuid:" + uuid + "</UDN>"
+		"<UDN>" + udn + "</UDN>"
 		"<serviceList>"
 		"<service>"
 		"<serviceType>urn:schemas-dummy-com:service:Dummy:1</serviceType>"
