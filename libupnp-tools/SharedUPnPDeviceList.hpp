@@ -24,7 +24,7 @@ namespace upnp {
 		virtual void unlock();
 		std::vector< osl::AutoRef<UPnPDevice> > list();
 		void list(std::vector< osl::AutoRef<UPnPDevice> > & vec);
-		osl::AutoRef<UPnPDevice> findByUdn(const UDN & udn);
+		osl::AutoRef<UPnPDevice> getDeviceByUdn(const std::string & udn);
 		void add(osl::AutoRef<UPnPDevice> device);
 		void remove(osl::AutoRef<UPnPDevice> device);
 		size_t size();

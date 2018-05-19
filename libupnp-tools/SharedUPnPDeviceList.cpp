@@ -24,7 +24,8 @@ namespace upnp {
 		vec.insert(vec.end(), _devices.begin(), _devices.end());
 		unlock();
 	}
-	AutoRef<UPnPDevice> SharedUPnPDeviceList::findByUdn(const UDN & udn) {
+
+	AutoRef<UPnPDevice> SharedUPnPDeviceList::getDeviceByUdn(const string & udn) {
 		AutoRef<UPnPDevice> ret;
 		lock();
 		for (vector< AutoRef<UPnPDevice> >::iterator iter = _devices.begin(); iter != _devices.end(); iter++) {

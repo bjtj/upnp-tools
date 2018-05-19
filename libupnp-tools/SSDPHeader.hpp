@@ -5,7 +5,7 @@
 #include <liboslayer/Network.hpp>
 #include <libhttp-server/HttpHeader.hpp>
 #include <libhttp-server/HttpHeaderReader.hpp>
-#include "UPnPTerms.hpp"
+#include "UPnPUsn.hpp"
 
 namespace ssdp {
 
@@ -41,7 +41,6 @@ namespace ssdp {
 		void setLocation(const std::string & location);
 		void setUsn(const upnp::USN & usn);
 	};
-
 }
 
 #endif

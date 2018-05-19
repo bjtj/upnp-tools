@@ -19,7 +19,7 @@ namespace upnp {
 		return _sid;
 	}
 
-	UDN & UPnPEventSubscription::udn() {
+	string & UPnPEventSubscription::udn() {
 		return _udn;
 	}
 

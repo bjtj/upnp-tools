@@ -15,7 +15,6 @@
 #include "UPnPSoapFormatter.hpp"
 #include "UPnPSoapException.hpp"
 #include "UPnPDeviceSerializer.hpp"
-#include "UPnPTerms.hpp"
 #include "XmlUtils.hpp"
 #include <liboslayer/File.hpp>
 #include <liboslayer/Logger.hpp>
@@ -54,7 +53,7 @@ namespace upnp {
 		_profiles.push_back(profile);
 	}
 
-	void UPnPDeviceProfileManager::unregisterProfile(const UDN & udn) {
+	void UPnPDeviceProfileManager::unregisterProfile(const string & udn) {
 		for (vector< AutoRef<UPnPDeviceProfile> >::iterator iter = _profiles.begin();
 			 iter != _profiles.end(); iter++)
 		{
@@ -69,7 +68,7 @@ namespace upnp {
 		for (vector< AutoRef<UPnPDeviceProfile> >::iterator iter = _profiles.begin();
 			 iter != _profiles.end(); iter++) {
 			AutoRef<UPnPDeviceProfile> profile = (*iter);
-			USN usn(profile->udn().toString());
+			USN usn(profile->udn());
 			types.push_back(usn.toString());
 			usn.rest() = "upnp:rootdevice";
 			types.push_back(usn.toString());
@@ -97,14 +96,14 @@ namespace upnp {
 			 iter != _profiles.end(); iter++)
 		{
 			AutoRef<UPnPDeviceProfile> profile = (*iter);
-			USN usn(profile->udn().toString());
+			USN usn(profile->udn());
 			if (st == "upnp:rootdevice") {
 				usn.rest() = "upnp:rootdevice";
 				types.push_back(usn.toString());
 				continue;
 			}
-			if (Text::startsWith(st, "uuid:") && usn.uuid() == USN(st).uuid()) {
-				types.push_back("uuid:" + usn.uuid());
+			if (usn.uuid() == USN(st).uuid()) {
+				types.push_back(usn.uuid());
 				continue;
 			}
 
@@ -139,7 +138,7 @@ namespace upnp {
 	}
 
 	
-	AutoRef<UPnPDeviceProfile> UPnPDeviceProfileManager::getDeviceProfile(const UDN & udn) {
+	AutoRef<UPnPDeviceProfile> UPnPDeviceProfileManager::getDeviceProfile(const string & udn) {
 		for (vector< AutoRef<UPnPDeviceProfile> >::iterator iter = _profiles.begin();
 			 iter != _profiles.end(); iter++)
 		{
@@ -428,7 +427,7 @@ namespace upnp {
 
 		void onDeviceDescriptionRequest(HttpRequest & request, HttpResponse & response) {
 			try {
-				UDN udn(request.getParameter("udn"));
+				string udn(request.getParameter("udn"));
 				AutoRef<UPnPDeviceProfile> profile = server.getProfileManager().getDeviceProfile(udn);
 				if (!profile->enabled()) {
 					throw HttpException(404);
@@ -686,22 +685,22 @@ namespace upnp {
 		return httpServer;
 	}
 
-	string UPnPServer::makeLocation(const UDN & udn) {
+	string UPnPServer::makeLocation(const string & udn) {
 		Url url;
 		url.setProtocol("http");
 		url.setHost(NetworkUtil::selectDefaultAddress().getHost());
 		url.setPort(config["listen.port"]);
 		url.setPath("device.xml");
-		url.setParameter("udn", udn.toString());
+		url.setParameter("udn", udn);
 		return url.toString();
 	}
 
-	void UPnPServer::activateDevice(const UDN & udn) {
+	void UPnPServer::activateDevice(const string & udn) {
 		getProfileManager().getDeviceProfile(udn)->enabled() = true;
 		notifyAlive(getProfileManager().getDeviceProfile(udn));
 	}
 	
-	void UPnPServer::deactivateDevice(const UDN & udn) {
+	void UPnPServer::deactivateDevice(const string & udn) {
 		getProfileManager().getDeviceProfile(udn)->enabled() = false;
 		notifyByeBye(getProfileManager().getDeviceProfile(udn));
 	}
@@ -748,7 +747,7 @@ namespace upnp {
 		SSDPMsearchSender sender;
 		string host = "239.255.255.250";
 		int port = 1900;
-		UDN udn = profile->udn();
+		string udn = profile->udn();
 		string location = makeLocation(udn);
 		sender.sendMcastToAllInterfaces(makeNotifyAlive(location, udn, "upnp:rootdevice"),
 										host, port);
@@ -770,7 +769,7 @@ namespace upnp {
 	
 	void UPnPServer::notifyAliveByDeviceType(AutoRef<UPnPDeviceProfile> profile, const string & deviceType) {
 
-		UDN udn = profile->udn();
+		string udn = profile->udn();
 		string location = makeLocation(udn);
 		
 		SSDPMsearchSender sender;
@@ -780,9 +779,9 @@ namespace upnp {
 		sender.close();
 	}
 	
-	string UPnPServer::makeNotifyAlive(const string & location, const UDN & udn, const string & deviceType) {
+	string UPnPServer::makeNotifyAlive(const string & location, const string & udn, const string & deviceType) {
 
-		USN usn(udn.toString());
+		USN usn(udn);
 		usn.rest() = deviceType;
 		
 		return "NOTIFY * HTTP/1.1\r\n"
@@ -802,7 +801,7 @@ namespace upnp {
 		string host = "239.255.255.250";
 		int port = 1900;
 
-		UDN udn = profile->udn();
+		string udn = profile->udn();
 		string location = makeLocation(udn);
 		sender.sendMcastToAllInterfaces(makeNotifyByeBye(udn, "upnp:rootdevice"), host, port);
 		sender.sendMcastToAllInterfaces(makeNotifyByeBye(udn, ""), host, port);
@@ -824,7 +823,7 @@ namespace upnp {
 	}
 
 	void UPnPServer::notifyByeByeByDeviceType(AutoRef<UPnPDeviceProfile> profile, const string & deviceType) {
-		UDN udn = profile->udn();
+		string udn = profile->udn();
 		SSDPMsearchSender sender;
 		string packet = makeNotifyByeBye(udn, deviceType);
 		UPnPDebug::instance().debug("ssdp:notify-byebye", packet);
@@ -832,8 +831,8 @@ namespace upnp {
 		sender.close();
 	}
 
-	string UPnPServer::makeNotifyByeBye(const UDN & udn, const string & deviceType) {
-		USN usn(udn.toString());
+	string UPnPServer::makeNotifyByeBye(const string & udn, const string & deviceType) {
+		USN usn(udn);
 		usn.rest() = deviceType;
 		return "NOTIFY * HTTP/1.1\r\n"
 			"Host: 239.255.255.250:1900\r\n"
@@ -852,7 +851,7 @@ namespace upnp {
 
 		for (vector<string>::iterator iter = types.begin(); iter != types.end(); iter++) {
 			USN usn(*iter);
-			UDN udn("uuid:" + usn.uuid());
+			string udn = usn.uuid();
 			string location = makeLocation(udn);
 			string packet = makeMsearchResponse(location, udn, usn.rest());
 			UPnPDebug::instance().debug("ssdp:response-msearch", packet);
@@ -861,8 +860,8 @@ namespace upnp {
 		sender.close();
 	}
 
-	string UPnPServer::makeMsearchResponse(const string & location, const UDN & udn, const string & st) {
-		USN usn(udn.toString());
+	string UPnPServer::makeMsearchResponse(const string & location, const string & udn, const string & st) {
+		USN usn(udn);
 		return "HTTP/1.1 200 OK\r\n"
 			"Cache-Control: max-age=1800\r\n"
 			"HOST: 239.255.255.250:1900\r\n"
@@ -890,7 +889,7 @@ namespace upnp {
 		getProfileManager().registerProfile(profile);
 	}
 
-	void UPnPServer::unregisterDeviceProfile(const UDN & udn) {
+	void UPnPServer::unregisterDeviceProfile(const string & udn) {
 		getProfileManager().unregisterProfile(udn);
 	}
 	
@@ -914,12 +913,12 @@ namespace upnp {
 		return propertyManager;
 	}
 
-	void UPnPServer::setProperty(const UDN & udn, const string & serviceType,
+	void UPnPServer::setProperty(const string & udn, const string & serviceType,
 								 const string & name, const string & value) {
 		getPropertyManager().setProperty(udn, serviceType, name, value);
 	}
 
-	void UPnPServer::setProperties(const UDN & udn, const string & serviceType,
+	void UPnPServer::setProperties(const string & udn, const string & serviceType,
 								   LinkedStringMap & props) {
 		getPropertyManager().setProperties(udn, serviceType, props);
 	}

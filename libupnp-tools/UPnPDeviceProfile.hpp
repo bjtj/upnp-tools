@@ -5,8 +5,6 @@
 #include <vector>
 #include <map>
 #include "UPnPModels.hpp"
-#include "UPnPTerms.hpp"
-
 
 namespace upnp {
 
@@ -25,8 +23,8 @@ namespace upnp {
 		virtual ~UPnPDeviceProfile();
 		bool & enabled();
 		bool enabled() const;
-		UDN udn() const;
-		void setUdn(const UDN & udn);
+		std::string udn() const;
+		void setUdn(const std::string & udn);
 		std::string deviceDescription() const;
 		osl::AutoRef<UPnPDevice> & device();
 		std::vector<std::string> deviceTypes() const;

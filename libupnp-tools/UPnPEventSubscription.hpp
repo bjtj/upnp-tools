@@ -2,17 +2,18 @@
 #define __UPNP_EVENT_SUBSCRIPTION_HPP__
 
 #include <string>
-#include "UPnPTerms.hpp"
+#include "UPnPUsn.hpp"
 
 namespace upnp {
 	
+
 	/**
 	 * @brief
 	 */
 	class UPnPEventSubscription {
 	private:
 		std::string _sid;
-		UDN _udn;
+		std::string _udn;
 		std::string _serviceType;
 		unsigned long _lastSeq;
 		
@@ -21,7 +22,7 @@ namespace upnp {
 		UPnPEventSubscription(const std::string & sid);
 		virtual ~UPnPEventSubscription();
 		std::string & sid();
-		UDN & udn();
+		std::string & udn();
 		std::string & serviceType();
 		unsigned long & lastSeq();
 	};

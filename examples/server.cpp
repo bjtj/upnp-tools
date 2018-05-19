@@ -24,7 +24,7 @@ static int s_level = 100;
 
 
 static string s_readline(const string & prompt);
-static AutoRef<UPnPDeviceProfile> s_set_device(UPnPServer & server, const UDN & udn);
+static AutoRef<UPnPDeviceProfile> s_set_device(UPnPServer & server, const string & udn);
 static void s_list_profiles(UPnPServer & server);
 
 
@@ -111,7 +111,7 @@ int main(int argc, char * args[]) {
 	// UuidGeneratorVersion1 gen;
 	// string uuid = gen.generate();
 	string uuid = "e399855c-7ecb-1fff-8000-000000000000";
-	UDN udn("uuid:" + uuid);
+	string udn = uuid;
 	
 	UPnPServer server(UPnPServer::Config(9001));
 
@@ -195,7 +195,7 @@ static string s_readline(const string & prompt) {
 /**
  * @brief 
  */
-static AutoRef<UPnPDeviceProfile> s_set_device(UPnPServer & server, const UDN & udn) {
+static AutoRef<UPnPDeviceProfile> s_set_device(UPnPServer & server, const string & udn) {
     
 #if !defined(DATA_PATH)
     string DATA_PATH = File::merge(File::getCwd(), "data");
@@ -221,7 +221,7 @@ static void s_list_profiles(UPnPServer & server) {
 	for (size_t i = 0; i < vec.size(); i++) {
 		AutoRef<UPnPDeviceProfile> profile = vec[i];
 		cout << "[" << i << "] " <<
-			profile->udn().toString() <<
+			profile->udn() <<
 			" ; " <<
 			(profile->deviceTypes().size() > 0 ? profile->deviceTypes()[0] : "") <<
 			" / " <<

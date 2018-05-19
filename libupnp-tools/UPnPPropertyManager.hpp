@@ -7,7 +7,6 @@
 #include <liboslayer/MessageQueue.hpp>
 #include "UPnPEventSubscription.hpp"
 #include "UPnPCache.hpp"
-#include "UPnPTerms.hpp"
 
 namespace upnp {
 
@@ -82,24 +81,24 @@ namespace upnp {
 		osl::AutoRef<OnSubscriptionOutdatedListener> outdatedListener;
 
 	private:
-		std::string getKey(const UDN & udn, const std::string serviceType);
+		std::string getKey(const std::string & udn, const std::string serviceType);
 		
 	public:
 		UPnPPropertyManager();
 		virtual ~UPnPPropertyManager();
 		void clear();
-		bool isRegisteredService(const UDN & udn, const std::string serviceType);
-		void registerService(const UDN & udn, const std::string serviceType, const osl::LinkedStringMap & props);
+		bool isRegisteredService(const std::string & udn, const std::string serviceType);
+		void registerService(const std::string & udn, const std::string serviceType, const osl::LinkedStringMap & props);
 		void addSubscriptionSession(const osl::AutoRef<UPnPEventSubscriptionSession> session);
 		bool hasSubscriptionSession(const std::string & sid);
 		void removeSubscriptionSession(const std::string & sid);
 		osl::AutoRef<UPnPEventSubscriptionSession> getSession(const std::string & sid);
-		std::vector<osl::AutoRef<UPnPEventSubscriptionSession> > getSessionsByUdnAndServiceType(const UDN & udn, const std::string & serviceType);
-		void setProperty(const UDN & udn, const std::string & serviceType,
+		std::vector<osl::AutoRef<UPnPEventSubscriptionSession> > getSessionsByUdnAndServiceType(const std::string & udn, const std::string & serviceType);
+		void setProperty(const std::string & udn, const std::string & serviceType,
 						 const std::string & name, const std::string & value);
-		void setProperties(const UDN & udn, const std::string & serviceType,
+		void setProperties(const std::string & udn, const std::string & serviceType,
 						   const osl::LinkedStringMap & props);
-		osl::LinkedStringMap & getProperties(const UDN & udn, const std::string & serviceType);
+		osl::LinkedStringMap & getProperties(const std::string & udn, const std::string & serviceType);
 		osl::LinkedStringMap & getPropertiesBySid(const std::string & sid);
 		void notify(const std::string & sid);
 		void notify(const std::vector<osl::AutoRef<UPnPEventSubscriptionSession> > & sessions, const osl::LinkedStringMap & props);

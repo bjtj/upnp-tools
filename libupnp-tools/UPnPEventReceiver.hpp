@@ -7,7 +7,6 @@
 #include <libhttp-server/AnotherHttpServer.hpp>
 #include "UPnPEventSubscriber.hpp"
 #include "UPnPEventSubscription.hpp"
-#include "UPnPTerms.hpp"
 
 namespace upnp {
 
@@ -24,7 +23,7 @@ namespace upnp {
 		void addSubscription(UPnPEventSubscription & subscription);
 		void removeSubscription(const std::string & sid);
 		bool hasSubscription(const std::string & sid);
-		UPnPEventSubscription & findSubscriptionByUdnAndServiceType(const UDN & udn, const std::string & serviceType);
+		UPnPEventSubscription & findSubscriptionByUdnAndServiceType(const std::string & udn, const std::string & serviceType);
 		UPnPEventSubscription & operator[] (const std::string & sid);
 	};
 
@@ -69,7 +68,7 @@ namespace upnp {
 		void addSubscription(UPnPEventSubscription & subscription);
 		void removeSubscription(UPnPEventSubscription & subscription);
 		void addEventListener(osl::AutoRef<UPnPEventListener> listener);
-		UPnPEventSubscription & findSubscriptionByUdnAndServiceType(const UDN & udn, const std::string & serviceType);
+		UPnPEventSubscription & findSubscriptionByUdnAndServiceType(const std::string & udn, const std::string & serviceType);
 		virtual void onNotify(UPnPNotify & notify);
 		std::string getCallbackUrl(const std::string & host);
 		std::map<std::string, std::string> parseEventNotify(const std::string & xml);

@@ -16,7 +16,7 @@ using namespace upnp;
 
 // #define _DEBUG
 
-static void s_set_dial_devcie(UPnPServer & server, const string & dd_path, const UDN & udn) {
+static void s_set_dial_devcie(UPnPServer & server, const string & dd_path, const string & udn) {
 	UPnPResourceManager & resMan = UPnPResourceManager::instance();
 	FileStream fs(dd_path, "r");
 	string xml = fs.readFullAsString();
@@ -90,14 +90,13 @@ int main(int argc, char *argv[])
 	
 	UuidGeneratorVersion1 gen;
 	string uuid = gen.generate();
-	UDN udn("uuid:" + uuid);
+	string udn = uuid;
 	
     UPnPServer server(UPnPServer::Config(9001));
 	s_set_dial_devcie(server, ddPath, udn);
 	server.setHttpEventListener(AutoRef<HttpEventListener>(new DialHttpEventListener()));
 	server.startAsync();
-	server.getHttpServer()->registerRequestHandler("/dial*",
-												   AutoRef<HttpRequestHandler>(new DialRequestHandler));
+	server.getHttpServer()->registerRequestHandler("/dial*", AutoRef<HttpRequestHandler>(new DialRequestHandler));
 	server.activateDevice(udn);
 	getchar();
 	server.deactivateDevice(udn);

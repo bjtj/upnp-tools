@@ -2,7 +2,6 @@
 #include "UPnPDeviceDeserializer.hpp"
 #include "UPnPDeviceBuilder.hpp"
 #include "NetworkUtil.hpp"
-#include "UPnPTerms.hpp"
 #include "UPnPExceptions.hpp"
 #include <liboslayer/Uuid.hpp>
 #include <liboslayer/Logger.hpp>
@@ -21,14 +20,14 @@ namespace upnp {
 		getObservingLogger(File::basename(__FILE__));
 	
 
-	UPnPDeviceSession::UPnPDeviceSession(const UDN & udn)
+	UPnPDeviceSession::UPnPDeviceSession(const string & udn)
 		: _udn(udn), _completed(false) {
 	}
 	
 	UPnPDeviceSession::~UPnPDeviceSession() {
 	}
 
-	UDN & UPnPDeviceSession::udn() {
+	string & UPnPDeviceSession::udn() {
 		return _udn;
 	}
 
@@ -69,7 +68,7 @@ namespace upnp {
 	UPnPDeviceSessionManager::~UPnPDeviceSessionManager() {
 	}
 
-	bool UPnPDeviceSessionManager::contains(const UDN & udn) {
+	bool UPnPDeviceSessionManager::contains(const string & udn) {
 		return (sessions.find(udn) != sessions.end());
 	}
 
@@ -77,14 +76,14 @@ namespace upnp {
 		sessions.clear();
 	}
 
-	AutoRef<UPnPDeviceSession> UPnPDeviceSessionManager::prepareSession(const UDN & udn) {
+	AutoRef<UPnPDeviceSession> UPnPDeviceSessionManager::prepareSession(const string & udn) {
 		if (!contains(udn)) {
 			sessions[udn] = AutoRef<UPnPDeviceSession>(new UPnPDeviceSession(udn));
 		}
 		return sessions[udn];
 	}
 
-	void UPnPDeviceSessionManager::remove(const UDN & udn) {
+	void UPnPDeviceSessionManager::remove(const string & udn) {
 		sessions.erase(udn);
 	}
 
@@ -92,7 +91,7 @@ namespace upnp {
 		return sessions.size();
 	}
 
-	AutoRef<UPnPDevice> UPnPDeviceSessionManager::findDevice(const UDN & udn) {
+	AutoRef<UPnPDevice> UPnPDeviceSessionManager::findDevice(const string & udn) {
 		AutoRef<UPnPDeviceSession> session = sessions[udn];
 		if (!session.nil()) {
 			return session->getRootDevice();
@@ -102,7 +101,7 @@ namespace upnp {
 
 	vector< AutoRef<UPnPDeviceSession> > UPnPDeviceSessionManager::getSessions() {
 		vector< AutoRef<UPnPDeviceSession> > ret;
-		for (map< UDN, AutoRef<UPnPDeviceSession> >::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
+		for (map< string, AutoRef<UPnPDeviceSession> >::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
 			ret.push_back(iter->second);
 		}
 		return ret;
@@ -110,18 +109,18 @@ namespace upnp {
 
 	vector< AutoRef<UPnPDevice> > UPnPDeviceSessionManager::getDevices() {
 		vector< AutoRef<UPnPDevice> > ret;
-		for (map< UDN, AutoRef<UPnPDeviceSession> >::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
+		for (map< string, AutoRef<UPnPDeviceSession> >::iterator iter = sessions.begin(); iter != sessions.end(); iter++) {
 			ret.push_back(iter->second->getRootDevice());
 		}
 		return ret;
 	}
 
-	AutoRef<UPnPDeviceSession> UPnPDeviceSessionManager::operator[] (const UDN & udn) {
+	AutoRef<UPnPDeviceSession> UPnPDeviceSessionManager::operator[] (const string & udn) {
 		return sessions[udn];
 	}
 
 	void UPnPDeviceSessionManager::collectExpired() {
-		for (map< UDN, AutoRef<UPnPDeviceSession> >::iterator iter = sessions.begin(); iter != sessions.end();) {
+		for (map< string, AutoRef<UPnPDeviceSession> >::iterator iter = sessions.begin(); iter != sessions.end();) {
 			if (iter->second->expired()) {
 				if (!onSessionOutdatedListener.nil()) {
 					onSessionOutdatedListener->onSessionOutdated(iter->second);
@@ -294,7 +293,7 @@ namespace upnp {
 	}
 
 	void UPnPControlPoint::addDevice(const SSDPHeader & header) {;
-		UDN udn("uuid:" + upnp::USN(header.getUsn()).uuid());
+		string udn = upnp::USN(header.getUsn()).uuid();
 		InetAddress addr = header.getRemoteAddr();
 		unsigned long timeout = parseCacheControlMilli(header.getCacheControl());
 		if (_sessionManager.contains(udn)) {
@@ -309,7 +308,7 @@ namespace upnp {
 	}
 
 	void UPnPControlPoint::removeDevice(const SSDPHeader & header) {
-		UDN udn("uuid:" + upnp::USN(header.getUsn()).uuid());
+		string udn = upnp::USN(header.getUsn()).uuid();
 		if (!deviceListener.nil() && !_sessionManager[udn].nil()) {
 			AutoRef<UPnPDevice> device = _sessionManager[udn]->getRootDevice();
 			onDeviceRemoved(device);
@@ -331,7 +330,7 @@ namespace upnp {
 		_sessionManager.remove(session->udn());
 	}
 
-	AutoRef<UPnPDevice> UPnPControlPoint::findDevice(const UDN & udn) {
+	AutoRef<UPnPDevice> UPnPControlPoint::findDevice(const string & udn) {
 		return _sessionManager.findDevice(udn);
 	}
 
@@ -355,16 +354,16 @@ namespace upnp {
 		return _sessionManager.getDevices();
 	}
 
-	Url UPnPControlPoint::getBaseUrlByUdn(const UDN & udn) {
+	Url UPnPControlPoint::getBaseUrlByUdn(const string & udn) {
 		return findDevice(udn)->baseUrl();
 	}
 
-	AutoRef<UPnPService> UPnPControlPoint::getServiceByUdnAndServiceType(const UDN & udn, const string & serviceType) {
+	AutoRef<UPnPService> UPnPControlPoint::getServiceByUdnAndServiceType(const string & udn, const string & serviceType) {
 		AutoRef<UPnPDevice> device = findDevice(udn);
 		return device->getService(serviceType);
 	}
 
-	UPnPActionInvoker UPnPControlPoint::prepareActionInvoke(const UDN & udn, const string & serviceType) {
+	UPnPActionInvoker UPnPControlPoint::prepareActionInvoke(const string & udn, const string & serviceType) {
 		AutoRef<UPnPDevice> device = findDevice(udn);
 		AutoRef<UPnPService> service = device->getService(serviceType);
 		if (service.nil()) {
@@ -373,7 +372,7 @@ namespace upnp {
 		return UPnPActionInvoker(device->baseUrl().relativePath(service->controlUrl()));
 	}
 
-	void UPnPControlPoint::subscribe(const UDN & udn, const string & serviceType) {
+	void UPnPControlPoint::subscribe(const string & udn, const string & serviceType) {
 		if (eventReceiver.nil()) {
 			throw Exception("event receiver is stopped");
 		}
@@ -387,7 +386,7 @@ namespace upnp {
 		eventReceiver->addSubscription(subscription);
 	}
 
-	void UPnPControlPoint::unsubscribe(const UDN & udn, const string & serviceType) {
+	void UPnPControlPoint::unsubscribe(const string & udn, const string & serviceType) {
 		if (eventReceiver.nil()) {
 			throw Exception("event receiver is stopped");
 		}
@@ -397,7 +396,7 @@ namespace upnp {
 		subscriber.unsubscribe(subscription.sid());
 	}
 
-	UPnPEventSubscriber UPnPControlPoint::prepareEventSubscriber(const UDN & udn, const string & serviceType) {
+	UPnPEventSubscriber UPnPControlPoint::prepareEventSubscriber(const string & udn, const string & serviceType) {
 		AutoRef<UPnPDevice> device = findDevice(udn);
 		AutoRef<UPnPService> service = device->getService(serviceType);
 		if (service.nil()) {

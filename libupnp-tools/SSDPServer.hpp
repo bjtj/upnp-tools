@@ -10,7 +10,6 @@
 #include "SSDPMsearchSender.hpp"
 #include "SSDPMulticastListener.hpp"
 #include "SSDPEventListener.hpp"
-#include "UPnPTerms.hpp"
 
 namespace ssdp {
 

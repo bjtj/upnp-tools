@@ -8,12 +8,60 @@
 #include <liboslayer/StringElements.hpp>
 #include <liboslayer/PropertyMap.hpp>
 #include <libhttp-server/Url.hpp>
-#include "UPnPTerms.hpp"
 
 namespace upnp {
 
 	class UPnPService;
 	class UPnPDevice;
+
+	/**
+	 * max age
+	 */
+	class MaxAge {
+	private:
+		unsigned long _second;
+	public:
+		MaxAge(unsigned long second);
+		virtual ~MaxAge();
+		unsigned long & second();
+		static MaxAge fromString(const std::string & phrase);
+		std::string toString() const;
+		static std::string toString(unsigned long second);
+	};
+
+	/**
+	 * callback urls
+	 */
+	class CallbackUrls {
+	private:
+		std::vector<std::string> _urls;
+	public:
+		CallbackUrls(const std::vector<std::string> & urls);
+		virtual ~CallbackUrls();
+		std::vector<std::string> & urls();
+		static CallbackUrls fromString(const std::string & phrase);
+		std::string toString() const;
+		static std::string toString(const std::vector<std::string> & _urls);
+	};
+
+	/**
+	 * second
+	 */
+	class Second {
+	private:
+		unsigned long _second;
+	public:
+		Second(unsigned long second);
+		virtual ~Second();
+		unsigned long & second();
+		unsigned long second() const;
+		unsigned long milli() const;
+		static Second fromString(const std::string & phrase);
+		std::string toString() const;
+		static std::string toString(unsigned long second);
+	};
+
+	
 
 	/**
 	 * @brief upnp base object
@@ -140,7 +188,6 @@ namespace upnp {
 	 */
 	class UPnPService : public UPnPModelObject {
 	private:
-		// UPnPDevice * device;
 		UPnPScpd _scpd;
 	public:
 		UPnPService();
@@ -160,7 +207,7 @@ namespace upnp {
 	private:
 		UPnPDevice * parent;
 		std::vector< osl::AutoRef<UPnPDevice> > _childDevices;
-		std::vector<osl::AutoRef<UPnPService> > _services;
+		std::vector< osl::AutoRef<UPnPService> > _services;
 		http::Url _baseUrl;
 		
 	public:
@@ -179,10 +226,13 @@ namespace upnp {
 		std::vector<osl::AutoRef<UPnPService> > & services();
 		std::vector< osl::AutoRef<UPnPDevice> > allChildDevices();
 		std::vector< osl::AutoRef<UPnPService> > allServices();
-		UDN udn() const;
-		void setUdn(const UDN & udn);
+		std::string & udn();
+		void setUdn(const std::string & udn);
+		const std::string & udn() const;
 		std::string & friendlyName();
+		const std::string & friendlyName() const;
 		std::string & deviceType();
+		const std::string & deviceType() const;
 		http::Url & baseUrl();
 		std::string formatUrl(const std::string & url, osl::AutoRef<UPnPService> service);
 		void setScpdUrl(const std::string & scpdUrl);

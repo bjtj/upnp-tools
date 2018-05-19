@@ -27,11 +27,11 @@ namespace upnp {
 		return _enabled;
 	}
 	
-	UDN UPnPDeviceProfile::udn() const {
+	string UPnPDeviceProfile::udn() const {
 		return _device->udn();
 	}
 
-	void UPnPDeviceProfile::setUdn(const UDN & udn) {
+	void UPnPDeviceProfile::setUdn(const string & udn) {
 		_device->setUdn(udn);
 	}
 
