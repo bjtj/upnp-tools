@@ -61,7 +61,7 @@ namespace upnp {
 											   const std::string & method,
 											   const osl::LinkedStringMap & headers,
 											   const std::string & content);
-		static void testHttpErrorCode(const http::Url & url, int code);
+		static void testHttpErrorCode(const http::Url & url, HttpUtils::DumpResponseHandler & res);
 	};
 }
 

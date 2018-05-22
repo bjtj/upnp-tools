@@ -467,9 +467,8 @@ namespace upnp {
 			MaxAge maxAge = MaxAge::fromString(cacheControl);
 			return maxAge.second() * 1000;
 		} catch (UPnPParseException e) {
-			logger->error("upnp parse exception - '" + e.toString() + "'");
+			logger->error("upnp parse exception / " + e.toString() + " / set default");
 			return DEFAULT_DEVICE_SESSION_TIMEOUT;
 		}
 	}
-
 }

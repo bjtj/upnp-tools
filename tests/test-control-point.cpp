@@ -1,4 +1,5 @@
 #include "utils.hpp"
+#include <liboslayer/Logger.hpp>
 #include <liboslayer/Uuid.hpp>
 #include <libupnp-tools/SSDPHeader.hpp>
 #include <libupnp-tools/UPnPControlPoint.hpp>
@@ -16,18 +17,22 @@ private:
 	UuidGeneratorVersion1 gen;
 	string _udn;
 	string dummy;
+	
 public:
     RequestHandler() {
 		genUdn();
 		dummy = "urn:schemas-dummy-com:service:Dummy:1";
 	}
     virtual ~RequestHandler() {}
+	
 	void genUdn() {
 		_udn = "uuid:" + gen.generate();
 	}
+	
 	virtual AutoRef<DataSink> getDataSink() {
 		return AutoRef<DataSink>(new StringDataSink);
 	}
+	
 	virtual void onHttpRequestContentCompleted(HttpRequest & request, AutoRef<DataSink> sink, HttpResponse & response) {
 		cout << " ** path : " << request.getRawPath() << endl;
 		if (request.getPath() == "/device.xml") {
@@ -42,19 +47,22 @@ public:
 			response.setStatus(404);
 		}
 	}
+	
 	string & udn() {
 		return _udn;
 	}
+	
 	SSDPHeader getSSDPHeader() {
 		InetAddress addr;
 		SSDPHeader header("NOTIFY * HTTP/1.1\r\n"
 						  "HOST: 239.255.255.250:1900\r\n"
-						  "Location: http://127.0.0.1:9001/device.xml\r\n"
+						  "Location: http://127.0.0.1:9003/device.xml\r\n"
 						  "NTS: ssdp:alive\r\n"
 						  "USN: " + _udn + "::rootdevice\r\n"
 						  "\r\n", addr);
 		return header;
 	}
+	
 	string dd(const string & udn) {
 		string xml = "<?xml version=\"1.0\"?>"
 			"<root xmlns=\"urn:schemas-upnp-org:device-1-0\">"
@@ -84,6 +92,7 @@ public:
 
 		return xml;
 	}
+	
 	string scpd() {
 		string xml = "<scpd xmlns=\"urn:schemas-upnp-org:service-1-0\">"
 			"<specVersion>"
@@ -117,8 +126,10 @@ public:
 	}
 };
 
+// 
 static map< string, AutoRef<UPnPDevice> > s_device_list;
 
+// 
 class DeviceListener : public UPnPDeviceListener {
 private:
 public:
@@ -137,7 +148,7 @@ public:
 
 static void test_control_point() {
 
-	HttpServerConfig httpConfig(9001);
+	HttpServerConfig httpConfig(9003);
 	AnotherHttpServer server(httpConfig);
 	AutoRef<HttpRequestHandler> handler(new RequestHandler);
 	server.registerRequestHandler("/*", handler);
@@ -146,6 +157,8 @@ static void test_control_point() {
 	UPnPControlPoint cp(UPnPControlPoint::Config(9999));
 	cp.setDeviceListener(AutoRef<UPnPDeviceListener>(new DeviceListener));
 	cp.startAsync();
+
+	idle(200);
 
 	// first device
 	cp.addDevice(((RequestHandler*)&handler)->getSSDPHeader());
@@ -168,6 +181,8 @@ static void test_control_point() {
 }
 
 int main(int argc, char *args[]) {
+
+	LoggerFactory::instance().setProfile("*", "basic", "console");
 
 	test_control_point();
     

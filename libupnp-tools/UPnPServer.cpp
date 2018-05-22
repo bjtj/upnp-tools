@@ -650,9 +650,7 @@ namespace upnp {
 		httpServerConfig["listen.port"] = config["listen.port"];
 		httpServerConfig["thread.count"] = config.getProperty("thread.count", "5");
 		httpServer = AutoRef<AnotherHttpServer>(new AnotherHttpServer(httpServerConfig));
-		httpServer->registerRequestHandler("/*",
-										   AutoRef<HttpRequestHandler>(
-											   new UPnPServerHttpRequestHandler(*this)));
+		httpServer->registerRequestHandler("/*", AutoRef<HttpRequestHandler>(new UPnPServerHttpRequestHandler(*this)));
 		httpServer->startAsync();
 
 		notificationThread.start();

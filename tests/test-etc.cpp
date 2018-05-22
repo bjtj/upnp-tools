@@ -1,5 +1,4 @@
 #include <liboslayer/TestSuite.hpp>
-#include <libupnp-tools/UPnPTerms.hpp>
 #include <libupnp-tools/UPnPExceptions.hpp>
 #include <libupnp-tools/UPnPModels.hpp>
 

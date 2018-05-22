@@ -11,7 +11,6 @@
 #include <libupnp-tools/UPnPDeviceDeserializer.hpp>
 #include <libupnp-tools/UPnPEventSubscriber.hpp>
 #include <libupnp-tools/UPnPEventReceiver.hpp>
-#include <libupnp-tools/UPnPTerms.hpp>
 #include "utils.hpp"
 
 using namespace std;

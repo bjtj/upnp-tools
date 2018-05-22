@@ -54,7 +54,7 @@ namespace upnp {
 	 * @brief 
 	 */
 	
-	UPnPEventReceiver::UPnPEventReceiver(UPnPEventReceiverConfig & config) : config(config), server(NULL) {
+	UPnPEventReceiver::UPnPEventReceiver(UPnPEventReceiverConfig & config) : config(config) {
 	}
 	
 	UPnPEventReceiver::~UPnPEventReceiver() {
@@ -62,7 +62,7 @@ namespace upnp {
 	
 	void UPnPEventReceiver::startAsync() {
 		
-		if (server) {
+		if (server.nil() == false) {
 			return;
 		}
 
@@ -78,12 +78,11 @@ namespace upnp {
 	
 	void UPnPEventReceiver::stop() {
 		
-		if (!server) {
+		if (server.nil() == true) {
 			return;
 		}
 
 		server->stop();
-		delete server;
 		server = NULL;
 	}
 

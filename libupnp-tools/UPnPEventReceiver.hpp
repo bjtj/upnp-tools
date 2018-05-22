@@ -43,7 +43,7 @@ namespace upnp {
 		UPnPEventReceiverConfig config;
 		std::map< std::string, UPnPEventSubscription > subscriptions;
 		std::vector< osl::AutoRef<UPnPEventListener> > listeners;
-		http::AnotherHttpServer * server;
+		osl::AutoRef<http::AnotherHttpServer> server;
 		
 	public:
 		UPnPEventReceiver(UPnPEventReceiverConfig & config);

@@ -25,7 +25,7 @@ namespace upnp {
 
 	MaxAge MaxAge::fromString(const string & phrase) {
 		if (Text::startsWithIgnoreCase(phrase, "max-age=") == false) {
-			throw UPnPParseException("max-age not occurred");
+			throw UPnPParseException("max-age format error - '" + phrase + "'");
 		}
 		return MaxAge((unsigned long)Text::toLong(phrase.substr(string("max-age=").size())));
 	}
