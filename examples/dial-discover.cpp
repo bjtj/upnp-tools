@@ -5,6 +5,7 @@
 #include <libupnp-tools/UPnPControlPoint.hpp>
 #include <liboslayer/FileStream.hpp>
 #include <liboslayer/Text.hpp>
+#include <liboslayer/Tokenizer.hpp>
 
 using namespace std;
 using namespace osl;
@@ -129,6 +130,17 @@ void printList(vector<DialDevice> & devices) {
 	}
 }
 
+static void valid_idx(DialLauncher & launcher, size_t idx) {
+	if (idx >= launcher.devices().size()) {
+		throw Exception("invalid index");
+	}
+}
+
+static void valid_tokens(Tokenizer & tokenizer, size_t expect) {
+	if (tokenizer.size() != expect) {
+		throw Exception("invalid arguments");
+	}
+}
 
 /**
  * @brief 
@@ -150,33 +162,42 @@ int main(int argc, char *args[]) {
 	cout << "(h or help)" << endl;
 
 	while (1) {
-		string line = readline();
-		vector<string> toks = Text::split(line, " ");
-		if (toks.empty()) {
+		Tokenizer tokenizer(readline(), " ");
+		if (tokenizer.size() == 0) {
 			printList(launcher.devices());
 			continue;
 		}
-		
-		if (line == "q" || line == "quit") {
-			break;
-		} else if (line == "h" || line == "help") {
-			cout << "[help] commands: h|help, q|quit, scan, launch, status, stop" << endl;
-		} else if (line == "scan") {
-			cp.sendMsearchAsync(dialServiceType, 3);
-		} else if (toks[0] == "status") {
-			int idx = Text::toInt(toks[1]) - 1;
-			string appName = toks[2];
-			launcher.status(launcher[idx], appName);
-		} else if (toks[0] == "launch") {
-			int idx = Text::toInt(toks[1]) - 1;
-			string appName = toks[2];
-			launcher.launch(launcher[idx], appName);
-		} else if (toks[0] == "stop") {
-			int idx = Text::toInt(toks[1]) - 1;
-			string appName = toks[2];
-			launcher.stop(launcher[idx], appName);
-		} else {
-			cout << "No operation -- '" << line << "'" << endl;
+
+		try {
+			if (tokenizer.text() == "q" || tokenizer.text() == "quit") {
+				break;
+			} else if (tokenizer.text() == "h" || tokenizer.text() == "help") {
+				cout << "[help] commands: h|help, q|quit, scan, launch, status, stop" << endl;
+			} else if (tokenizer.text() == "scan") {
+				cp.sendMsearchAsync(dialServiceType, 3);
+			} else if (tokenizer.token(0) == "status") {
+				valid_tokens(tokenizer, 3);
+				int idx = Text::toInt(tokenizer.token(1)) - 1;
+				valid_idx(launcher, idx);
+				string appName = tokenizer.token(2);
+				launcher.status(launcher[idx], appName);
+			} else if (tokenizer.token(0) == "launch") {
+				valid_tokens(tokenizer, 3);
+				int idx = Text::toInt(tokenizer.token(1)) - 1;
+				valid_idx(launcher, idx);
+				string appName = tokenizer.token(2);
+				launcher.launch(launcher[idx], appName);
+			} else if (tokenizer.token(0) == "stop") {
+				valid_tokens(tokenizer, 3);
+				int idx = Text::toInt(tokenizer.token(1)) - 1;
+				valid_idx(launcher, idx);
+				string appName = tokenizer.token(2);
+				launcher.stop(launcher[idx], appName);
+			} else {
+				cout << "[ERR] no operation -- '" << tokenizer.text() << "'" << endl;
+			}
+		} catch (Exception e) {
+			cout << "[ERR] exception (msg: " << e.message() << ")" << endl;
 		}
 	}
 
