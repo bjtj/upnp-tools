@@ -46,28 +46,64 @@ public:
 	}
 };
 
+class DialApp
+{
+private:
+	string _name;
+	bool _running;
+public:
+    DialApp(const string & name) : _name(name), _running(false) {
+	}
+    virtual ~DialApp() {
+	}
+	string & name() {
+		return _name;
+	}
+	bool running() {
+		return _running;
+	}
+	void launch() {
+		_running = true;
+	}
+	void stop() {
+		_running = false;
+	}
+};
+
 /**
  * 
  */
 class DialRequestHandler : public HttpRequestHandler
 {
+private:
+	vector<DialApp> _apps;
 public:
-    DialRequestHandler() {}
+    DialRequestHandler() {
+		_apps.push_back(DialApp("YouTube"));
+	}
     virtual ~DialRequestHandler() {}
 	virtual void onHttpRequestContentCompleted(HttpRequest & request, AutoRef<DataSink> sink, HttpResponse & response) {
+		DialApp & app = _apps[0];
 		if (request.getMethod() == "GET") {
+			cout << "[GET] status" << endl;
 			response.setStatus(200);
 			string xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 			xml.append("<service xmlns=\"urn:dial-multiscreen-org:schemas:dial\">\n");
-			xml.append("    <name>YouTube</name>\n");
+			xml.append("    <name>" + app.name() + "</name>\n");
 			xml.append("    <options allowStop=\"true\" />\n");
-			xml.append("    <state>stopped</state>\n");
+			xml.append("    <state>" + string(app.running() ? "running" : "stopped") + "</state>\n");
 			xml.append("</service>");
 			response.setFixedTransfer(xml);
 		} else if (request.getMethod() == "POST") {
+			cout << "[POST] launch" << endl;
+			app.launch();
 			response.setStatus(201);
 		} else if (request.getMethod() == "DELETE") {
+			cout << "[DELETE] stop" << endl;
+			app.stop();
 			response.setStatus(200);
+		} else {
+			cout << "no operation" << endl;
 		}
 	}
 };
@@ -80,7 +116,7 @@ int main(int argc, char *argv[])
 {
 
 #if defined(_DEBUG)
-	LoggerFactory::instance().setLoggerDescriptorSimple("*", "basic", "console");
+	LoggerFactory::instance().setProfile("*", "basic", "console");
 #endif
 	
 	string ddPath = "dial.xml";
@@ -91,15 +127,19 @@ int main(int argc, char *argv[])
 	UuidGeneratorVersion1 gen;
 	string uuid = gen.generate();
 	string udn = uuid;
-	
-    UPnPServer server(UPnPServer::Config(9001));
+
+	UPnPServer::Config config(9001);
+	config["thread.count"] = "50";
+    UPnPServer server(config);
 	s_set_dial_devcie(server, ddPath, udn);
 	server.setHttpEventListener(AutoRef<HttpEventListener>(new DialHttpEventListener()));
 	server.startAsync();
 	server.getHttpServer()->registerRequestHandler("/dial*", AutoRef<HttpRequestHandler>(new DialRequestHandler));
 	server.activateDevice(udn);
+	cout << "(press any key to stop)" << endl;
 	getchar();
 	server.deactivateDevice(udn);
 	server.stop();
+	cout << "BYE." << endl;
     return 0;
 }
