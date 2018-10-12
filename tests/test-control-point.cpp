@@ -52,11 +52,12 @@ public:
 		return _udn;
 	}
 	
-	SSDPHeader getSSDPHeader() {
+	SSDPHeader getSSDPHeader(int port) {
+		string portStr = Text::toString(port);
 		InetAddress addr;
 		SSDPHeader header("NOTIFY * HTTP/1.1\r\n"
 						  "HOST: 239.255.255.250:1900\r\n"
-						  "Location: http://127.0.0.1:9003/device.xml\r\n"
+						  "Location: http://127.0.0.1:" + portStr + "/device.xml\r\n"
 						  "NTS: ssdp:alive\r\n"
 						  "USN: " + _udn + "::rootdevice\r\n"
 						  "\r\n", addr);
@@ -148,20 +149,22 @@ public:
 
 static void test_control_point() {
 
-	HttpServerConfig httpConfig(9003);
+	HttpServerConfig httpConfig(0);
 	AnotherHttpServer server(httpConfig);
 	AutoRef<HttpRequestHandler> handler(new RequestHandler);
 	server.registerRequestHandler("/*", handler);
 	server.startAsync();
 
-	UPnPControlPoint cp(UPnPControlPoint::Config(9999));
+	UPnPControlPoint cp(UPnPControlPoint::Config(0));
 	cp.setDeviceListener(AutoRef<UPnPDeviceListener>(new DeviceListener));
 	cp.startAsync();
 
 	idle(200);
 
+	int port = server.getServerAddress().getPort();
+
 	// first device
-	cp.addDevice(((RequestHandler*)&handler)->getSSDPHeader());
+	cp.addDevice(((RequestHandler*)&handler)->getSSDPHeader(port));
 	idle(200);
 	string udn = ((RequestHandler*)&handler)->udn();
 	cout << " ** test udn : " << udn << endl;
@@ -170,7 +173,7 @@ static void test_control_point() {
 
 	// second device
 	((RequestHandler*)&handler)->genUdn();
-	cp.addDevice(((RequestHandler*)&handler)->getSSDPHeader());
+	cp.addDevice(((RequestHandler*)&handler)->getSSDPHeader(port));
 	idle(100);
 	udn = ((RequestHandler*)&handler)->udn();
 	ASSERT(s_device_list.size(), ==, 2);

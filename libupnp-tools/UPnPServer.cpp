@@ -671,10 +671,10 @@ namespace upnp {
 	ssdpServer.stop();
 
 	timerThread.stop();
-	timerThread.wait();
+	timerThread.join();
 		
 	notificationThread.interrupt();
-	notificationThread.wait();
+	notificationThread.join();
 		
 	httpServer->stop();
 	httpServer = NULL;

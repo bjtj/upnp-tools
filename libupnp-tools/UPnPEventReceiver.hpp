@@ -50,6 +50,7 @@ namespace upnp {
 		virtual ~UPnPEventReceiver();
 		void startAsync();
 		void stop();
+		osl::AutoRef<http::AnotherHttpServer> getHttpServer();
 		std::map< std::string, UPnPEventSubscription > getSubscriptions();
 		void addSubscription(UPnPEventSubscription & subscription);
 		void removeSubscription(UPnPEventSubscription & subscription);

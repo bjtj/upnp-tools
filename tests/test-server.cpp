@@ -76,12 +76,12 @@ static void test_device_profile() {
 	string udn("uuid:" + uuid);
 	string serviceType = "urn:schemas-dummy-com:service:Dummy:1";
 
-	UPnPEventReceiverConfig notiConfig(9998);
+	UPnPEventReceiverConfig notiConfig(0);
 	UPnPEventReceiver notiServer(notiConfig);
 	notiServer.addEventListener(AutoRef<UPnPEventListener>(new MyNotifyHandler));
 	notiServer.startAsync();
 
-	UPnPServer server(UPnPServer::Config(9001));
+	UPnPServer server(UPnPServer::Config(0));
 
 	AutoRef<UPnPDeviceProfile> deviceProfile(
 		new UPnPDeviceProfile(UPnPDeviceDeserializer::deserializeDevice(dd(udn))));
@@ -107,6 +107,10 @@ static void test_device_profile() {
 
 	server.startAsync();
 
+
+	string notiServerPort = Text::toString(notiServer.getHttpServer()->getServerAddress().getPort());
+	string upnpServerPort = Text::toString(server.getHttpServer()->getServerAddress().getPort());
+
 	// profile search check
 	{
 		string scpdUrl = scpd_url(udn, serviceType);;
@@ -126,14 +130,14 @@ static void test_device_profile() {
 
 	// dd check
 	{
-		Url url("http://127.0.0.1:9001/device.xml?udn=" + udn);
+		Url url("http://127.0.0.1:" + upnpServerPort + "/device.xml?udn=" + udn);
 		string ddXml = HttpUtils::httpGet(url);
 		ASSERT(ddXml, ==, dd(udn));
 	}
 
 	// scpd check
 	{
-		Url url("http://127.0.0.1:9001" + scpd_url(udn, serviceType));
+		Url url("http://127.0.0.1:" + upnpServerPort + scpd_url(udn, serviceType));
 		string scpdXml = HttpUtils::httpGet(url);
 		ASSERT(scpdXml, ==, scpd());
 	}
@@ -166,7 +170,7 @@ static void test_device_profile() {
 
 	// action test
 	{
-		Url url = Url("http://127.0.0.1:9001" + control_url(udn, serviceType));
+		Url url = Url("http://127.0.0.1:" + upnpServerPort + control_url(udn, serviceType));
 		UPnPActionInvoker invoker(url);
 		UPnPActionRequest request;
 		request.serviceType() = serviceType;
@@ -178,9 +182,9 @@ static void test_device_profile() {
 
 	// event test
 	{
-		Url url = Url("http://127.0.0.1:9001" + event_url(udn, serviceType));
+		Url url = Url("http://127.0.0.1:" + upnpServerPort + event_url(udn, serviceType));
 		UPnPEventSubscriber subscriber(url);
-		UPnPEventSubscribeRequest request("http://127.0.0.1:9998", 300);
+		UPnPEventSubscribeRequest request("http://127.0.0.1:" + notiServerPort, 300);
 		UPnPEventSubscribeResponse response = subscriber.subscribe(request);
 		cout << " ** Recieved SID : " << response.sid() << endl;
 		ASSERT(response.sid().empty(), ==, false);

@@ -86,6 +86,10 @@ namespace upnp {
 		server = NULL;
 	}
 
+	AutoRef<AnotherHttpServer> UPnPEventReceiver::getHttpServer() {
+		return server;
+	}
+
 	map< string, UPnPEventSubscription > UPnPEventReceiver::getSubscriptions() {
 		return subscriptions;
 	}
