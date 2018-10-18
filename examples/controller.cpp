@@ -227,7 +227,7 @@ static string s_str(const string & s, const string & e) {
 }
 
 static void printSession(Session & session) {
-	cout << " -- Session --" << endl;
+	cout << " -- Selection --" << endl;
 	cout << " | UDN: " << s_str(session.udn(), "(none)") << endl;
 	cout << " | Service: " << s_str(session.serviceType(), "(none)") << endl;
 	cout << " | Action: " << s_str(session.action(), "(none)") << endl;
@@ -247,6 +247,8 @@ int run(int argc, char *args[]) {
 	cp.startAsync();
 	cp.getEventReceiver()->addEventListener(AutoRef<UPnPEventListener>(new MyEventListener));
 
+	cout << "h|help -- display help" << endl;
+
 	while (1) {
 		string line;
 		if ((line = readline()).size() == 0) {
@@ -254,19 +256,50 @@ int run(int argc, char *args[]) {
 			cout << endl;
 			printSession(session);
 			continue;
-		}		
-		if (line == "q" || line == "quit") {
+		}
+		
+		if (line == "h" || line == "help") {
+			cout << endl;
+			cout << "HELP" << endl;
+			cout << "====" << endl;
+			cout << endl;
+			cout << "  h|help -- display help (this)" << endl;
+			cout << "  q|quit -- quit" << endl;
+			cout << "  all -- send msearch (ssdp:all)" << endl;
+			cout << "  search <st> -- send msearch (<st>)" << endl;
+			cout << "  clear -- remove all devices" << endl;
+			cout << "  [0-9]+ -- select device " << endl;
+			cout << "  udn <udn> -- select <udn>" << endl;
+			cout << "  service <service> -- select <service>" << endl;
+			cout << "  action <action> -- select <action>" << endl;
+			cout << "  i|invoke -- invoke action (required selected service and action)" << endl;
+			cout << "  subscriptions -- list subscriptions" << endl;
+			cout << "  subscribe -- subscribe event (required selected service)" << endl;
+			cout << "  unsubscribe -- unsubscribe event (required selected service)" << endl;
+			cout << "  (empty) -- print device list and selection status" << endl;
+			cout << endl;
+		} else if (line == "q" || line == "quit") {
 			cout << "[quit]" << endl;
 			break;
+		} else if (line == "all") {
+			string st = "ssdp:all";
+			cout << "[search all] type: '" << st << "'" << endl;
+			cp.sendMsearchAsync(st, 3);
+		} else if (Text::startsWith(line, "search ")) {
+			string st = line.substr(string("search ").size());
+			cout << "[search] type: '" << st << "'" << endl;
+			cp.sendMsearchAsync(st, 3);
 		} else if (line == "clear") {
 			cp.clearDevices();
 		} else if (line.find_first_not_of("0123456789") == string::npos) {
 			int idx = Text::toInt(line);
 			cout << "idx : " << idx << endl;
 			AutoRef<UPnPDevice> device = selectDeviceByIndex(cp.getDevices(), (size_t)idx);
-			if (device.nil() == false) {
+			if (device.nil()) {
+				cout << "No device" << endl;
+			} else {
 				session.udn() = device->udn();
-				cout << "* SET UDN> " << session.udn() << endl;
+				cout << "Select device -- udn: " << session.udn() << endl;
 			}
 		} else if (Text::startsWith(line, "udn ")) {
 			session.udn() = line.substr(4);
@@ -319,7 +352,8 @@ int run(int argc, char *args[]) {
 			}
 		} else if (line == "subscriptions") {
 			map< string, UPnPEventSubscription > subscriptions = cp.getSubscriptions();
-			cout << "[Subscriptions]" << endl;
+			cout << " == Subscriptions ==" << endl;
+			cout << "count: " << subscriptions.size() << endl;
 			for (map< string, UPnPEventSubscription >::iterator iter = subscriptions.begin();
 				 iter != subscriptions.end(); iter++)
 			{
@@ -360,8 +394,7 @@ int run(int argc, char *args[]) {
 				}
 			}
 		} else {
-			cout << "[search] type: '" << line << "'" << endl;
-			cp.sendMsearchAsync(line, 3);
+			cout << "Unknown command -- " << line << endl;
 		}
 	}
 	cp.stop();
