@@ -1,4 +1,4 @@
-noinst_PROGRAMS = controller server ssdp-discover ssdp-server dial-discover dial-server
+noinst_PROGRAMS = controller server ssdp-discover ssdp-server dial-discover dial-server msearch
 
 if WITH_NCURSES
 noinst_PROGRAMS += tui-controller
@@ -12,6 +12,8 @@ ssdp_discover_SOURCES = ssdp-discover.cpp
 ssdp_server_SOURCES = ssdp-server.cpp
 dial_discover_SOURCES = dial-discover.cpp
 dial_server_SOURCES = dial-server.cpp
+msearch_SOURCES = msearch.cpp
+
 
 if WITH_NCURSES
 tui_controller_SOURCES = tui-controller.cpp

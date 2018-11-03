@@ -2,16 +2,16 @@
 
 #include <liboslayer/Text.hpp>
 
-namespace upnp {
+namespace ssdp {
 
-	using namespace std;
-	using namespace osl;
+    using namespace std;
+    using namespace osl;
 
-	string SSDP::GROUP = "239.255.255.250";
-	int SSDP::PORT = 1900;
+    string SSDP::GROUP = "239.255.255.250";
+    int SSDP::PORT = 1900;
 
-	string SSDP::host() {
-		return GROUP + ":" + Text::toString(PORT);
-	}
+    string SSDP::host() {
+	return GROUP + ":" + Text::toString(PORT);
+    }
 	
 }

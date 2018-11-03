@@ -6,32 +6,32 @@
 
 namespace ssdp {
 
-	/**
-	 *
-	 */
-	class SSDPEventListener {
-	private:
-	public:
-		SSDPEventListener() {}
-		virtual ~SSDPEventListener() {}
+    /**
+     *
+     */
+    class SSDPEventListener {
+    private:
+    public:
+	SSDPEventListener() {}
+	virtual ~SSDPEventListener() {}
 
         virtual bool filter(const SSDPHeader & header) {return true;}
-		virtual void onMsearch(const SSDPHeader & header) {}
-		virtual void onNotify(const SSDPHeader & header) {}
-		virtual void onMsearchResponse(const SSDPHeader & header) {}
+	virtual void onMsearch(const SSDPHeader & header) {}
+	virtual void onNotify(const SSDPHeader & header) {}
+	virtual void onMsearchResponse(const SSDPHeader & header) {}
 
-		void dispatch(SSDPHeader & header) {
-			if (filter(header)) {
-				if (header.isMsearch()) {
-					onMsearch(header);
-				} else if (header.isNotify()) {
-					onNotify(header);
-				} else if (header.isSSDPResponse()) {
-					onMsearchResponse(header);
-				}
-			}
+	void dispatch(SSDPHeader & header) {
+	    if (filter(header)) {
+		if (header.isMsearch()) {
+		    onMsearch(header);
+		} else if (header.isNotify()) {
+		    onNotify(header);
+		} else if (header.isSSDPResponse()) {
+		    onMsearchResponse(header);
 		}
-	};
+	    }
+	}
+    };
 }
 
 #endif

@@ -3,19 +3,19 @@
 
 #include <string>
 
-namespace upnp {
+namespace ssdp {
 
-	class SSDP
-	{
-	public:
-		static std::string GROUP;
-		static int PORT;
-	private:
-		SSDP();
-		virtual ~SSDP();
-	public:
-		static std::string host();
-	};
+    class SSDP
+    {
+    public:
+	static std::string GROUP;
+	static int PORT;
+    private:
+	SSDP();
+	virtual ~SSDP();
+    public:
+	static std::string host();
+    };
 }
 
 #endif
