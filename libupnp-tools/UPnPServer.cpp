@@ -71,20 +71,20 @@ namespace upnp {
 	    AutoRef<UPnPDeviceProfile> profile = (*iter);
 	    USN usn(profile->udn());
 	    types.push_back(usn.toString());
-	    usn.rest() = "upnp:rootdevice";
+	    usn.type() = "upnp:rootdevice";
 	    types.push_back(usn.toString());
 	    vector<string> deviceTypes = profile->deviceTypes();
 	    for (vector<string>::iterator iter = deviceTypes.begin();
 		 iter != deviceTypes.end(); iter++)
 	    {
-		usn.rest() = (*iter);
+		usn.type() = (*iter);
 		types.push_back(usn.toString());
 	    }
 	    vector<string> serviceTypes = profile->serviceTypes();
 	    for (vector<string>::iterator iter = serviceTypes.begin();
 		 iter != serviceTypes.end(); iter++)
 	    {
-		usn.rest() = (*iter);
+		usn.type() = (*iter);
 		types.push_back(usn.toString());
 	    }
 	}
@@ -99,7 +99,7 @@ namespace upnp {
 	    AutoRef<UPnPDeviceProfile> profile = (*iter);
 	    USN usn(profile->udn());
 	    if (st == "upnp:rootdevice") {
-		usn.rest() = "upnp:rootdevice";
+		usn.type() = "upnp:rootdevice";
 		types.push_back(usn.toString());
 		continue;
 	    }
@@ -114,7 +114,7 @@ namespace upnp {
 		 iter != deviceTypes.end(); ++iter)
 	    {
 		if (*iter == st) {
-		    usn.rest() = st;
+		    usn.type() = st;
 		    types.push_back(usn.toString());
 		    found = true;
 		    break;
@@ -129,7 +129,7 @@ namespace upnp {
 		 iter != serviceTypes.end(); ++iter)
 	    {
 		if (*iter == st) {
-		    usn.rest() = st;
+		    usn.type() = st;
 		    types.push_back(usn.toString());
 		    break;
 		}
@@ -779,7 +779,7 @@ namespace upnp {
     string UPnPServer::makeNotifyAlive(const string & location, const string & udn, const string & deviceType) {
 
 	USN usn(udn);
-	usn.rest() = deviceType;
+	usn.type() = deviceType;
 		
 	return "NOTIFY * HTTP/1.1\r\n"
 	    "Cache-Control: max-age=1800\r\n"
@@ -828,7 +828,7 @@ namespace upnp {
 
     string UPnPServer::makeNotifyByeBye(const string & udn, const string & deviceType) {
 	USN usn(udn);
-	usn.rest() = deviceType;
+	usn.type() = deviceType;
 	return "NOTIFY * HTTP/1.1\r\n"
 	    "Host: " + SSDP::host() + "\r\n"
 	    "NT: " + (deviceType.empty() ? usn.toString() : deviceType)  + "\r\n"
@@ -848,7 +848,7 @@ namespace upnp {
 	    USN usn(*iter);
 	    string udn = usn.uuid();
 	    string location = makeLocation(udn);
-	    string packet = makeMsearchResponse(location, udn, usn.rest());
+	    string packet = makeMsearchResponse(location, udn, usn.type());
 	    UPnPDebug::instance().debug("ssdp:response-msearch", packet);
 	    sender.unicast(packet, remoteAddr);
 	}

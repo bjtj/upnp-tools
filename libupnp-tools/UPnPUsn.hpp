@@ -18,7 +18,7 @@ namespace upnp {
 	std::string & str();
 	std::string str() const;
 	std::string uuid() const;
-	std::string rest() const;
+	std::string type() const;
 	bool empty() const;
 	std::string toString() const;
     };

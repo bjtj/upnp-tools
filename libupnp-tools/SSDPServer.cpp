@@ -252,7 +252,7 @@ namespace ssdp {
 		SSDPHeader header;
 		header.setParts("NOTIFY", "*", "HTTP/1.1");
 		header.setNotificationSubType(nts);
-		header.setNotificationType(usn.rest().empty() ? usn.toString() : usn.rest());
+		header.setNotificationType(usn.type().empty() ? usn.toString() : usn.type());
 		header.setUsn(usn);
 		header.setCacheControl(30 * 60);
 		return header;

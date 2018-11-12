@@ -33,7 +33,7 @@ namespace upnp {
 		return _str;
 	}
 
-	string USN::rest() const {
+	string USN::type() const {
 		size_t s = _str.find("::");
 		if (s != string::npos) {
 			return _str.substr(s + 2);
